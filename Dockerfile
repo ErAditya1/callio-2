@@ -1,15 +1,15 @@
 # syntax=docker/dockerfile:1
-# Multi-stage build
+# Multi-stage build for Callio AI Production Frontend
+
 # Stage 1: Dependencies
 FROM node:22-alpine AS deps
 WORKDIR /app
 
 # Install Python and build dependencies for native modules
-# This helps with ARM64 builds and native module compilation
 RUN apk add --no-cache python3 make g++ libc6-compat
 
 # Copy package files
-COPY ui/package*.json ./
+COPY package*.json ./
 
 # Clean install with proper handling of native modules
 RUN --mount=type=cache,target=/root/.npm npm ci
@@ -25,22 +25,23 @@ RUN apk add --no-cache libc6-compat
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy all files needed for build
-COPY ui/package*.json ./
-COPY ui/tsconfig.json ./
-COPY ui/next.config.ts ./
-COPY ui/components.json ./
-COPY ui/sentry.edge.config.ts ./
-COPY ui/sentry.server.config.ts ./
-COPY ui/postcss.config.mjs ./
-COPY ui/public ./public
-COPY ui/src ./src
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY next.config.ts ./
+COPY components.json ./
+COPY sentry.edge.config.ts ./
+COPY sentry.server.config.ts ./
+COPY postcss.config.mjs ./
+COPY public ./public
+COPY src ./src
 
 # Set build-time environment variables (needed for Next.js build)
 ENV NEXT_PUBLIC_NODE_ENV="oss"
 ENV NEXT_TELEMETRY_DISABLED="1"
-ENV NEXT_PUBLIC_CHATWOOT_URL="https://chat.dograh.com"
-ENV NEXT_PUBLIC_CHATWOOT_TOKEN="3fkFx2mCEjNHjM9gaNc4A82X"
-ENV BACKEND_URL="http://api:8000"
+ARG NEXT_PUBLIC_BACKEND_URL="https://calling.cheetahagi.com"
+ARG BACKEND_URL="http://dograh-api:8000"
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ENV BACKEND_URL=$BACKEND_URL
 
 # Build the application with standalone mode
 # Increase Node.js heap size to prevent out-of-memory errors during build
@@ -54,6 +55,8 @@ WORKDIR /app
 
 # Environment variables will be provided by docker-compose
 ENV NODE_ENV=production
+ENV PORT=3010
+ENV HOSTNAME="0.0.0.0"
 
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs && \
@@ -71,4 +74,4 @@ USER nextjs
 EXPOSE 3010
 
 # Start the production server using the standalone Node.js server
-CMD sh -c "echo '🚀 Application ready at http://localhost:3010' && PORT=3010 node server.js"
+CMD ["node", "server.js"]
