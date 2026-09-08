@@ -1,0 +1,102 @@
+import "./globals.css";
+
+import { GoogleTagManager } from "@next/third-parties/google";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+
+import ChatwootWidget from "@/components/ChatwootWidget";
+import AppLayout from "@/components/layout/AppLayout";
+import MetaPixel from "@/components/MetaPixel";
+import PostHogIdentify from "@/components/PostHogIdentify";
+import ReoProvider from "@/components/ReoProvider";
+import { SentryErrorBoundary } from "@/components/SentryErrorBoundary";
+import SpinLoader from "@/components/SpinLoader";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
+import { AppConfigProvider } from "@/context/AppConfigContext";
+import { OnboardingProvider } from "@/context/OnboardingContext";
+import { OrgConfigProvider } from "@/context/OrgConfigContext";
+import { TelephonyConfigWarningsProvider } from "@/context/TelephonyConfigWarningsContext";
+import { AuthProvider } from "@/lib/auth";
+
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "CallioAI — Autonomous AI Voice Calling for Modern Business",
+  description: "Deploy human-sounding AI phone agents that resolve customer inquiries, book qualified appointments, and execute outbound calling at enterprise scale.",
+};
+
+export default function RootLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID?.trim();
+  const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim();
+  const reoClientId = process.env.NEXT_PUBLIC_REO_CLIENT_ID?.trim();
+
+  return (
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        {/* Inline script to prevent flash of light theme - runs before React hydrates.
+            Dark is the locked default: only an explicit stored 'light' opts out. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  if (theme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                  } else {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {gtmId ? <GoogleTagManager gtmId={gtmId} /> : null}
+        {metaPixelId ? <MetaPixel pixelId={metaPixelId} /> : null}
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+          <SentryErrorBoundary>
+            <AuthProvider>
+              <AppConfigProvider>
+                <Suspense fallback={<SpinLoader />}>
+                  <OrgConfigProvider>
+                    <TelephonyConfigWarningsProvider>
+                      <OnboardingProvider>
+                        <PostHogIdentify />
+                        {reoClientId ? <ReoProvider clientId={reoClientId} /> : null}
+                        <AppLayout>
+                          {children}
+                        </AppLayout>
+                        <Toaster />
+                        <ChatwootWidget />
+                      </OnboardingProvider>
+                    </TelephonyConfigWarningsProvider>
+                  </OrgConfigProvider>
+                </Suspense>
+              </AppConfigProvider>
+            </AuthProvider>
+          </SentryErrorBoundary>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
