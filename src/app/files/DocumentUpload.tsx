@@ -33,20 +33,17 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const ossNotice = isOSS ? (
-    <div className="flex gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/50 dark:bg-amber-950/30">
-      <Info className="h-4 w-4 flex-shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
-      <div className="text-xs text-amber-900 dark:text-amber-200">
-        <p className="font-medium">Processed by an external service</p>
+  const ossNotice = (
+    <div className="flex gap-3 rounded-lg border border-border/70 bg-card/60 p-3">
+      <Info className="h-4 w-4 flex-shrink-0 text-primary mt-0.5" />
+      <div className="text-xs text-muted-foreground">
+        <p className="font-medium text-foreground">Secure Document Embedding</p>
         <p className="mt-1">
-          Uploaded documents are sent to Dograh&apos;s managed Model Proxy Service for
-          parsing and chunking. Dograh Model Proxy Service does not store or read your documents -
-          the extracted text and embeddings are returned and stored locally in your
-          self-hosted database.
+          Uploaded documents are parsed, chunked, and stored with vector embeddings in your private workspace for agent knowledge retrieval.
         </p>
       </div>
     </div>
-  ) : null;
+  );
 
   const validateFile = (file: File): boolean => {
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();

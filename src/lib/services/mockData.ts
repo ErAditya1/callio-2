@@ -364,9 +364,9 @@ export const MOCK_CALLS: CallRecord[] = [
       'Primary Pain Point': 'Missed late-night driver check-ins'
     },
     transcript: [
-      { timestamp: '00:02', speaker: 'ai', text: 'Hi Robert! Alex calling from Dograh. I saw you checked out our automated dispatch calling. Did you have two minutes?' },
+      { timestamp: '00:02', speaker: 'ai', text: 'Hi Robert! Alex calling from CallioAI. I saw you checked out our automated dispatch calling. Did you have two minutes?' },
       { timestamp: '00:08', speaker: 'customer', text: 'Yeah, sure. We are losing calls after 7 PM when our dispatch team logs off.' },
-      { timestamp: '00:16', speaker: 'ai', text: 'That is exactly what we solve. Dograh answers every driver call, logs load numbers, and escalates emergencies. How many loads do you track daily?' },
+      { timestamp: '00:16', speaker: 'ai', text: 'That is exactly what we solve. CallioAI answers every driver call, logs load numbers, and escalates emergencies. How many loads do you track daily?' },
       { timestamp: '00:25', speaker: 'customer', text: 'Around 150 to 200 loads a day.' },
       { timestamp: '00:30', speaker: 'ai', text: 'Terrific. Let’s have our senior solutions architect walk your team through our automated driver check-in workflow. Does Friday at 11 AM EST work for you?' },
       { timestamp: '00:39', speaker: 'customer', text: 'Sounds good. Send the invite to my work email.' }

@@ -274,7 +274,7 @@ export default function RunsPage() {
         async (targetUserId: number | undefined, redirectPath?: string) => {
             if (!targetUserId || !auth.isAuthenticated) return;
             if (auth.provider !== 'stack') {
-                alert('Impersonation is only available when using Stack Auth Cloud. In Self-Hosted (OSS) mode, manage runs and resources directly as Superadmin.');
+                alert('Impersonation is only available on enterprise cloud accounts. Please sign in directly with the target account credentials.');
                 return;
             }
             try {

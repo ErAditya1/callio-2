@@ -325,7 +325,7 @@ export default function APIKeysPage() {
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold mb-2">Developer Portal</h1>
-                        <p className="text-muted-foreground">Manage your API keys to access Dograh services programmatically</p>
+                        <p className="text-muted-foreground">Manage your API keys to access CallioAI services programmatically</p>
                     </div>
 
                     {error && (
@@ -472,8 +472,8 @@ export default function APIKeysPage() {
                                             Create Service Key
                                         </Button>
                                     ) : (
-                                        <span className="text">
-                                            To generate additional service keys, <a href="https://app.dograh.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Sign up on app.dograh.com</a>
+                                        <span className="text-xs text-muted-foreground">
+                                            To generate additional service keys, please contact your account administrator.
                                         </span>
                                     )}
                                 </div>

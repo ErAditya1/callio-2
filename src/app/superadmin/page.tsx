@@ -55,7 +55,7 @@ export default function SuperadminPage() {
       setError({
         target,
         message:
-          "User impersonation is only available when using Stack Auth. In local development / OSS mode, sign in directly with the target account credentials.",
+          "User impersonation is only available on enterprise cloud authentication. Sign in directly with the target account credentials.",
       });
       return;
     }

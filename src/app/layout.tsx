@@ -34,6 +34,26 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CallioAI — Autonomous AI Voice Calling for Modern Business",
   description: "Deploy human-sounding AI phone agents that resolve customer inquiries, book qualified appointments, and execute outbound calling at enterprise scale.",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+    ],
+    shortcut: "/icon.png",
+    apple: [
+      { url: "/icon.png", type: "image/png" },
+    ],
+  },
+  openGraph: {
+    title: "CallioAI — Autonomous AI Voice Calling for Modern Business",
+    description: "Deploy human-sounding AI phone agents that resolve customer inquiries, book qualified appointments, and execute outbound calling at enterprise scale.",
+    images: [{ url: "/icon.png", width: 512, height: 512, alt: "CallioAI Logo" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "CallioAI — Autonomous AI Voice Calling for Modern Business",
+    description: "Deploy human-sounding AI phone agents that resolve customer inquiries, book qualified appointments, and execute outbound calling at enterprise scale.",
+    images: ["/icon.png"],
+  },
 };
 
 export default function RootLayout({
