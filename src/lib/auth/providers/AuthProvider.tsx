@@ -50,13 +50,16 @@ interface ResolvedAuthConfig {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [config, setConfig] = useState<ResolvedAuthConfig | null>(null);
+  const [config, setConfig] = useState<ResolvedAuthConfig>({
+    provider: 'local',
+    stack: null,
+  });
 
   useEffect(() => {
     fetch('/api/config/auth')
       .then((res) => res.json())
       .then((data) => {
-        logger.debug(`Setting auth provider as ${data.provider}`)
+        logger.debug(`Setting auth provider as ${data.provider}`);
         setConfig({
           provider: data.provider || 'local',
           stack:
@@ -66,17 +69,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   publishableClientKey: data.stackPublishableClientKey,
                 }
               : null,
-        })
+        });
       })
       .catch((e) => {
-        logger.error(`Got error ${e} while setting auth provider`)
-        setConfig({ provider: 'local', stack: null })
+        logger.error(`Got error ${e} while setting auth provider`);
+        setConfig({ provider: 'local', stack: null });
       });
   }, []);
-
-  if (!config) {
-    return LoadingFallback;
-  }
 
   // For Stack provider, use the dedicated wrapper
   if (config.provider === 'stack') {

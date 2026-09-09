@@ -1,19 +1,17 @@
 import {
   ArrowRight,
-  Bot,
   BrainCircuit,
   Calendar,
-  CheckCircle2,
   Headphones,
   PhoneCall,
-  Radio,
   Sparkles,
   Zap
 } from 'lucide-react';
 import Link from 'next/link';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { VoiceAgentsGrid } from '@/components/marketing/VoiceAgentsGrid';
+import { VoiceAgentsHero } from '@/components/marketing/VoiceAgentsHero';
 
 export const metadata = {
   title: 'AI Voice Agents — CallioAI',
@@ -22,33 +20,13 @@ export const metadata = {
 
 export default function AIVoiceAgentsPage() {
   return (
-    <div className="py-12 lg:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Hero */}
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <Badge variant="outline" className="mb-3 border-indigo-500/30 text-indigo-400 bg-indigo-500/10 px-3 py-1">
-          <Bot className="w-3.5 h-3.5 mr-1.5 inline" />
-          Autonomous Workforce
-        </Badge>
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-foreground">
-          Your AI workforce for every conversation.
-        </h1>
-        <p className="mt-5 text-lg sm:text-xl text-muted-foreground leading-relaxed">
-          Deploy intelligent voice agents that answer calls, speak naturally, understand complex intent, and take real business actions.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Button asChild size="lg" className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/25">
-            <Link href="/dashboard/agents/create">
-              Build an AI Voice Agent
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="rounded-xl">
-            <Link href="/demo">
-              <Radio className="w-4 h-4 mr-2 text-rose-500 animate-pulse" />
-              Try Live Demo
-            </Link>
-          </Button>
-        </div>
+    <div className="py-10 lg:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Attractive and Professional Hero Section with Interactive Console */}
+      <VoiceAgentsHero />
+
+      {/* Production-Ready Agents Grid (Click to Call via Modal, No Images) */}
+      <div id="agents-directory">
+        <VoiceAgentsGrid />
       </div>
 
       {/* Capabilities Grid */}

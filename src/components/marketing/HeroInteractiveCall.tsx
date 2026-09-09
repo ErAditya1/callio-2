@@ -1,248 +1,415 @@
 'use client';
 
 import {
-  Award,
-  CheckCircle2,
+  AlertCircle,
   Clock,
   Mic,
   MicOff,
   Phone,
   PhoneOff,
-  Play,
+  Radio,
   RotateCcw,
   Sparkles,
-  Volume2
+  Volume2,
 } from 'lucide-react';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-interface Message {
-  speaker: 'ai' | 'customer';
-  text: string;
-  delayMs: number;
+type CallStatus = 'idle' | 'connecting' | 'connected' | 'failed';
+
+declare global {
+  interface Window {
+    DograhWidget?: {
+      start: () => Promise<void> | void;
+      end: () => Promise<void> | void;
+      stop?: () => void;
+      onStatusChange?: (callback: (status: CallStatus) => void) => void;
+      onCallStart?: (callback: () => void) => void;
+      onCallConnected?: (callback: () => void) => void;
+      onCallDisconnected?: (callback: () => void) => void;
+      onCallEnd?: (callback: () => void) => void;
+      onError?: (callback: (err: unknown) => void) => void;
+      setContext?: (ctx: Record<string, unknown>) => void;
+      getState?: () => unknown;
+    };
+  }
 }
 
-const CONVERSATION_FLOW: Message[] = [
-  { speaker: 'ai', text: 'Hi! Thank you for calling Acme Health. My name is Sarah. How can I assist you today?', delayMs: 1200 },
-  { speaker: 'customer', text: 'Hi Sarah, I would like to book an appointment with Dr. Sharma for a routine checkup.', delayMs: 3800 },
-  { speaker: 'ai', text: 'I can certainly take care of that. Dr. Sharma has openings this Thursday at 2:30 PM or Friday at 10:00 AM. Which works best for you?', delayMs: 6500 },
-  { speaker: 'customer', text: 'Thursday at 2:30 PM would be perfect.', delayMs: 9500 },
-  { speaker: 'ai', text: 'You are all set for Thursday at 2:30 PM. I have sent an instant calendar invite and confirmation SMS to your phone.', delayMs: 12000 }
+const CONVERSATION_TOPICS = [
+  '🗓️ "Book an appointment"',
+  '💰 "What are your pricing tiers?"',
+  '⚡ "How fast is your voice latency?"',
+  '🏥 "Do you take new patients?"',
 ];
 
 export function HeroInteractiveCall() {
-  const [callActive, setCallActive] = useState(true);
+  const [status, setStatus] = useState<CallStatus>('idle');
+  const [isScriptReady, setIsScriptReady] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [elapsedSec, setElapsedSec] = useState(34);
-  const [currentStep, setCurrentStep] = useState(3);
-  const [activeSpeaker, setActiveSpeaker] = useState<'ai' | 'customer' | null>('ai');
+  const [callDuration, setCallDuration] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Timer simulation
-  useEffect(() => {
-    if (!callActive) return;
-    const timer = setInterval(() => {
-      setElapsedSec((prev) => prev + 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [callActive]);
+  const durationTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Speaking indicator cycle
+  // 1. Load Dograh Embed Script dynamically
   useEffect(() => {
-    if (!callActive) {
-      setActiveSpeaker(null);
-      return;
+    const SCRIPT_ID = 'dograh-widget';
+    const WIDGET_URL =
+      'https://calling.cheetahagi.com/embed/dograh-widget.js?token=emb_F5Us8WpPaOgt4hqKPBtInzDTbRj-okXSBvtFTyzc5-w&environment=production&apiEndpoint=https://calling.cheetahagi.com';
+
+    if (!document.getElementById(SCRIPT_ID)) {
+      const script = document.createElement('script');
+      script.id = SCRIPT_ID;
+      script.src = WIDGET_URL;
+      script.async = true;
+      script.setAttribute(
+        'data-dograh-context',
+        JSON.stringify({
+          page_url: typeof window !== 'undefined' ? window.location.href : '',
+          today: new Date().toISOString().slice(0, 10),
+          source: 'hero_landing_page',
+        })
+      );
+      document.body.appendChild(script);
     }
-    const interval = setInterval(() => {
-      setActiveSpeaker((prev) => (prev === 'ai' ? 'customer' : 'ai'));
-    }, 4500);
-    return () => clearInterval(interval);
-  }, [callActive]);
 
-  const formatDuration = (sec: number) => {
-    const mins = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${mins.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    const interval = setInterval(() => {
+      if (typeof window !== 'undefined' && window.DograhWidget) {
+        setIsScriptReady(true);
+
+        if (window.DograhWidget.onStatusChange) {
+          window.DograhWidget.onStatusChange((newStatus: CallStatus) => {
+            setStatus(newStatus);
+            if (newStatus === 'failed') {
+              setErrorMessage('Microphone access denied or connection lost.');
+            } else if (newStatus === 'idle') {
+              setErrorMessage(null);
+            }
+          });
+        }
+
+        if (window.DograhWidget.onCallStart) {
+          window.DograhWidget.onCallStart(() => setStatus('connecting'));
+        }
+
+        if (window.DograhWidget.onCallConnected) {
+          window.DograhWidget.onCallConnected(() => setStatus('connected'));
+        }
+
+        if (window.DograhWidget.onCallEnd) {
+          window.DograhWidget.onCallEnd(() => setStatus('idle'));
+        }
+
+        if (window.DograhWidget.onError) {
+          window.DograhWidget.onError(() => {
+            setStatus('failed');
+            setErrorMessage('Unable to connect to audio service. Please retry.');
+          });
+        }
+
+        clearInterval(interval);
+      }
+    }, 250);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // 2. Timer when connected
+  useEffect(() => {
+    if (status === 'connected') {
+      setCallDuration(0);
+      durationTimerRef.current = setInterval(() => {
+        setCallDuration((prev) => prev + 1);
+      }, 1000);
+    } else {
+      if (durationTimerRef.current) {
+        clearInterval(durationTimerRef.current);
+        durationTimerRef.current = null;
+      }
+    }
+    return () => {
+      if (durationTimerRef.current) clearInterval(durationTimerRef.current);
+    };
+  }, [status]);
+
+  const isLive = status === 'connected' || status === 'connecting';
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleRestart = () => {
-    setCallActive(true);
-    setElapsedSec(0);
-    setCurrentStep(1);
-    setActiveSpeaker('ai');
+  const handleToggleCall = async () => {
+    setErrorMessage(null);
+
+    if (isLive) {
+      if (window.DograhWidget?.end) {
+        try {
+          await window.DograhWidget.end();
+        } catch (e) {
+          console.error('Error ending call', e);
+        }
+      }
+      setStatus('idle');
+    } else {
+      setStatus('connecting');
+      if (window.DograhWidget?.start) {
+        try {
+          await window.DograhWidget.start();
+        } catch (err) {
+          console.error('Error starting call', err);
+          setStatus('failed');
+          setErrorMessage('Could not open microphone stream.');
+        }
+      } else {
+        setTimeout(() => {
+          if (window.DograhWidget?.start) {
+            window.DograhWidget.start();
+          } else {
+            setStatus('failed');
+            setErrorMessage('Voice engine is initializing. Please try again.');
+          }
+        }, 1200);
+      }
+    }
   };
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto">
-      {/* Outer subtle glow */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-blue-500/20 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-opacity" />
+    <div className="w-full max-w-2xl mx-auto">
+      {/* Minimal Card Container */}
+      <div className="relative rounded-2xl border border-border/70 bg-card/70 dark:bg-[#0d1017]/70 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden transition-all duration-300">
+        {/* Subtle Ambient Radial Highlight */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-indigo-500/5 blur-2xl pointer-events-none" />
 
-      {/* Main Container */}
-      <div className="relative rounded-3xl border border-border/80 bg-card/90 backdrop-blur-2xl shadow-2xl shadow-black/40 overflow-hidden">
-        {/* Top Header Bar */}
-        <div className="flex items-center justify-between px-5 sm:px-7 py-4 border-b border-border/60 bg-muted/40">
+        {/* Minimal Card Header */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/50">
           <div className="flex items-center gap-3">
-            <div className="relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80"
-                alt="Sarah"
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-500/30"
+            <div className="relative flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center text-xs font-semibold text-indigo-500 dark:text-indigo-400">
+                A
+              </div>
+              <span
+                className={cn(
+                  'absolute bottom-0 right-0 w-2 h-2 rounded-full border border-background',
+                  status === 'connected'
+                    ? 'bg-emerald-500 animate-ping'
+                    : status === 'connecting'
+                    ? 'bg-amber-400 animate-pulse'
+                    : status === 'failed'
+                    ? 'bg-rose-500'
+                    : 'bg-emerald-500'
+                )}
               />
-              <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-background ${callActive ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`} />
+              <span
+                className={cn(
+                  'absolute bottom-0 right-0 w-2 h-2 rounded-full border border-background',
+                  status === 'connected'
+                    ? 'bg-emerald-500'
+                    : status === 'connecting'
+                    ? 'bg-amber-400'
+                    : status === 'failed'
+                    ? 'bg-rose-500'
+                    : 'bg-emerald-500'
+                )}
+              />
             </div>
+
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-foreground text-sm sm:text-base">Sarah</span>
-                <Badge variant="outline" className="text-xs bg-indigo-500/10 text-indigo-400 border-indigo-500/20 py-0">
-                  AI Receptionist
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  {callActive ? 'Live Call' : 'Call Completed'}
-                </span>
-                <span>•</span>
-                <span className="font-mono">{formatDuration(elapsedSec)}</span>
-                <span>•</span>
-                <span>English (US)</span>
+                <span className="text-sm font-semibold text-foreground tracking-tight">Arushi</span>
+                <span className="text-[11px] text-muted-foreground font-normal">• AI Voice Agent</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="hidden sm:flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-xs py-1">
-              <Award className="w-3 h-3" />
-              98% Positive Sentiment
-            </Badge>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleRestart}
-              className="text-muted-foreground hover:text-foreground h-8 w-8"
-              title="Replay Simulation"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-            </Button>
+            {status === 'connected' ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-medium text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  {formatTime(callDuration)}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsMuted(!isMuted)}
+                  className={cn(
+                    'h-7 w-7 rounded-md',
+                    isMuted ? 'text-rose-400 bg-rose-500/10' : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  title={isMuted ? 'Unmute' : 'Mute'}
+                >
+                  {isMuted ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
+                </Button>
+              </div>
+            ) : (
+              <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Live Demo
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Live Call Center Stage */}
-        <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-          {/* Waveform & Speaking Visualizer */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 rounded-2xl bg-muted/20 border border-border/40 text-center">
-            <div className="mb-4">
-              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                {callActive ? (activeSpeaker === 'ai' ? 'Sarah is speaking...' : 'Customer speaking...') : 'Call Ended'}
-              </span>
-            </div>
+        {/* Minimal Central Stage */}
+        <div className="px-6 py-8 sm:py-10 flex flex-col items-center justify-center text-center">
+          {/* Subtle Ambient Waveform Orb */}
+          <div className="relative my-3 flex items-center justify-center">
+            {/* Soft Ambient Rings */}
+            <div
+              className={cn(
+                'absolute w-24 h-24 rounded-full transition-all duration-700 pointer-events-none',
+                status === 'connected'
+                  ? 'scale-125 bg-emerald-500/15 animate-ping'
+                  : status === 'connecting'
+                  ? 'scale-110 bg-indigo-500/10 animate-pulse'
+                  : 'scale-90 opacity-0'
+              )}
+            />
 
-            {/* Dynamic Waveform Simulation */}
-            <div className="flex items-center justify-center gap-1.5 h-16 w-full max-w-[200px] my-2">
-              {[40, 75, 95, 60, 85, 100, 70, 90, 45, 65, 80, 50].map((height, i) => (
-                <div
-                  key={i}
-                  className={`w-1.5 rounded-full transition-all duration-300 ${
-                    callActive
-                      ? activeSpeaker === 'ai'
-                        ? 'bg-gradient-to-t from-indigo-600 to-violet-400 animate-pulse'
-                        : 'bg-gradient-to-t from-emerald-500 to-teal-300 animate-pulse'
-                      : 'bg-muted-foreground/30 h-2'
-                  }`}
-                  style={{
-                    height: callActive ? `${Math.max(8, (height * (i % 2 === 0 ? 1 : 0.75)))}%` : '6px',
-                    animationDelay: `${i * 90}ms`,
-                    animationDuration: '1.2s'
-                  }}
-                />
-              ))}
+            {/* Clean Center Core */}
+            <div
+              className={cn(
+                'relative w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg',
+                status === 'connected'
+                  ? 'bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-emerald-500/20 text-white'
+                  : status === 'connecting'
+                  ? 'bg-gradient-to-tr from-indigo-600 to-violet-600 shadow-indigo-500/20 text-white animate-pulse'
+                  : status === 'failed'
+                  ? 'bg-rose-600 shadow-rose-500/20 text-white'
+                  : 'bg-indigo-600 dark:bg-indigo-500 shadow-indigo-500/20 text-white hover:scale-105'
+              )}
+            >
+              {status === 'connecting' ? (
+                <Radio className="w-6 h-6 animate-spin" />
+              ) : status === 'connected' ? (
+                <Volume2 className="w-6 h-6 animate-pulse" />
+              ) : status === 'failed' ? (
+                <RotateCcw className="w-6 h-6" />
+              ) : (
+                <Phone className="w-6 h-6" />
+              )}
             </div>
+          </div>
 
-            {/* Live Audio Controls */}
-            <div className="flex items-center gap-3 mt-5">
-              <Button
-                size="sm"
-                variant={isMuted ? 'destructive' : 'secondary'}
-                onClick={() => setIsMuted(!isMuted)}
-                className="rounded-full w-9 h-9 p-0"
-              >
-                {isMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-              </Button>
-              <Button
-                size="sm"
-                variant={callActive ? 'destructive' : 'default'}
-                onClick={() => setCallActive(!callActive)}
-                className={`rounded-full px-4 h-9 flex items-center gap-1.5 text-xs font-semibold ${
-                  callActive ? 'bg-rose-600 hover:bg-rose-500 text-white' : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                }`}
-              >
-                {callActive ? (
-                  <>
-                    <PhoneOff className="w-3.5 h-3.5" />
-                    End Call
-                  </>
-                ) : (
-                  <>
-                    <Phone className="w-3.5 h-3.5" />
-                    Restart Call
-                  </>
+          {/* Audio Wave Spectrum (Clean Minimal Bars) */}
+          <div className="flex items-center justify-center gap-1 h-8 w-44 my-4">
+            {[30, 60, 90, 45, 80, 100, 70, 85, 40, 65, 80, 50].map((h, i) => (
+              <div
+                key={i}
+                className={cn(
+                  'w-1 rounded-full transition-all duration-150',
+                  status === 'connected'
+                    ? 'bg-emerald-500/80 animate-pulse'
+                    : status === 'connecting'
+                    ? 'bg-indigo-400/60 animate-pulse'
+                    : 'bg-muted-foreground/20 h-1.5'
                 )}
-              </Button>
-              <Button size="sm" variant="secondary" className="rounded-full w-9 h-9 p-0">
-                <Volume2 className="w-4 h-4" />
-              </Button>
-            </div>
+                style={{
+                  height:
+                    status === 'connected'
+                      ? `${Math.max(15, h * (i % 2 === 0 ? 1 : 0.8))}%`
+                      : status === 'connecting'
+                      ? `${Math.max(12, h * 0.4)}%`
+                      : '4px',
+                  animationDelay: `${i * 60}ms`,
+                  animationDuration: '0.8s',
+                }}
+              />
+            ))}
           </div>
 
-          {/* Real-time Streaming Transcript */}
-          <div className="lg:col-span-7 flex flex-col justify-between space-y-3">
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
-              <span>Live Conversation Transcript</span>
-              <span className="text-[10px] text-indigo-400 font-mono">LATENCY ~350ms</span>
-            </div>
+          {/* Clear, Minimal Description */}
+          <div className="max-w-md">
+            {status === 'idle' && (
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Speak directly with Arushi in your browser. Zero setup or login needed.
+              </p>
+            )}
 
-            <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
-              {CONVERSATION_FLOW.slice(0, currentStep + 1).map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex flex-col ${
-                    msg.speaker === 'ai' ? 'items-start' : 'items-end'
-                  }`}
+            {status === 'connecting' && (
+              <p className="text-xs sm:text-sm text-indigo-400 font-medium flex items-center justify-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 animate-spin" />
+                Connecting voice stream...
+              </p>
+            )}
+
+            {status === 'connected' && (
+              <p className="text-xs sm:text-sm text-emerald-400 font-medium">
+                Arushi is listening. Speak freely (you can interrupt anytime).
+              </p>
+            )}
+
+            {status === 'failed' && (
+              <div className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg p-2.5">
+                {errorMessage || 'Connection failed. Check microphone permissions.'}
+              </div>
+            )}
+          </div>
+
+          {/* Single Focused Action Button */}
+          <div className="mt-6 w-full max-w-xs">
+            <Button
+              size="lg"
+              onClick={handleToggleCall}
+              disabled={status === 'connecting' && !isScriptReady}
+              className={cn(
+                'w-full rounded-xl h-11 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2',
+                status === 'connected'
+                  ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-sm'
+                  : status === 'connecting'
+                  ? 'bg-indigo-600/80 text-white cursor-wait'
+                  : status === 'failed'
+                  ? 'bg-rose-600 hover:bg-rose-500 text-white'
+                  : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20'
+              )}
+            >
+              {status === 'connected' ? (
+                <>
+                  <PhoneOff className="w-4 h-4" />
+                  <span>End Call ({formatTime(callDuration)})</span>
+                </>
+              ) : status === 'connecting' ? (
+                <>
+                  <Radio className="w-4 h-4 animate-spin" />
+                  <span>Connecting...</span>
+                </>
+              ) : status === 'failed' ? (
+                <>
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Try Again</span>
+                </>
+              ) : (
+                <>
+                  <Mic className="w-4 h-4" />
+                  <span>Talk with Arushi</span>
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Conversation Starter Chips (Muted, Clean) */}
+          {status === 'idle' && (
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-1.5 max-w-lg">
+              {CONVERSATION_TOPICS.map((topic, i) => (
+                <span
+                  key={i}
+                  className="text-[11px] px-2.5 py-1 rounded-md bg-muted/40 border border-border/50 text-muted-foreground"
                 >
-                  <div
-                    className={`max-w-[88%] rounded-2xl px-4 py-2.5 text-xs sm:text-sm leading-relaxed shadow-sm ${
-                      msg.speaker === 'ai'
-                        ? 'bg-muted/80 text-foreground border border-border/50 rounded-tl-sm'
-                        : 'bg-indigo-600 text-white rounded-tr-sm'
-                    }`}
-                  >
-                    <div className="text-[10px] font-semibold opacity-70 mb-0.5">
-                      {msg.speaker === 'ai' ? 'Sarah (AI)' : 'Customer'}
-                    </div>
-                    {msg.text}
-                  </div>
-                </div>
+                  {topic}
+                </span>
               ))}
             </div>
+          )}
+        </div>
 
-            {/* Live Detected Intent & Outcome */}
-            <div className="pt-3 border-t border-border/60 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-1.5 text-emerald-400">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span className="font-medium">Outcome: Appointment Confirmed (Dr. Sharma)</span>
-              </div>
-              <Link
-                href="/demo/call"
-                className="text-indigo-400 hover:text-indigo-300 font-medium inline-flex items-center gap-1 group"
-              >
-                Try Fullscreen Demo
-                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
-              </Link>
-            </div>
-          </div>
+        {/* Minimal Bottom Info Row */}
+        <div className="px-5 py-2.5 border-t border-border/40 bg-muted/20 flex items-center justify-between text-[11px] text-muted-foreground">
+          <span>WebRTC In-Browser Call</span>
+          <span>~350ms Real-time Latency</span>
         </div>
       </div>
     </div>

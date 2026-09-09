@@ -39,11 +39,10 @@ export function MarketingNavbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
           ? 'bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-sm shadow-black/5 py-3'
           : 'bg-transparent py-5'
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
@@ -126,11 +125,11 @@ export function MarketingNavbar() {
                         <span>Voice Marketplace</span>
                       </Link>
                       <Link
-                        href="/demo"
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted text-xs font-medium text-rose-400 hover:text-rose-300 transition-colors"
+                        href="/ai-voice-agents"
+                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
                       >
-                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                        <span>Try Live Demo</span>
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Try Live Agents</span>
                       </Link>
                     </div>
                   </div>
@@ -217,21 +216,13 @@ export function MarketingNavbar() {
               )}
             </div>
 
-            {/* Pricing */}
+            {/* Voice Agents */}
             <Link
-              href="/pricing"
-              className="px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              href="/ai-voice-agents"
+              className="px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors flex items-center gap-1.5"
             >
-              Pricing
-            </Link>
-
-            {/* Live Demo link for public visitors */}
-            <Link
-              href="/demo"
-              className="px-3 py-2 rounded-lg text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors flex items-center gap-1.5"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-              <span>Live Demo</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Voice Agents</span>
             </Link>
           </div>
 
@@ -239,9 +230,7 @@ export function MarketingNavbar() {
           <div className="hidden sm:flex items-center gap-3">
             {!loading && isAuthenticated ? (
               <>
-                <Button variant="ghost" size="sm" asChild className="text-sm font-medium">
-                  <Link href="/workflow">Studio</Link>
-                </Button>
+
                 <Button
                   size="sm"
                   asChild
@@ -262,7 +251,7 @@ export function MarketingNavbar() {
                   asChild
                   className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/25 rounded-xl font-medium px-4 h-9"
                 >
-                  <Link href="/demo">
+                  <Link href="/ai-voice-agents">
                     Try Demo
                   </Link>
                 </Button>
@@ -303,19 +292,12 @@ export function MarketingNavbar() {
               AI Calling Platform
             </Link>
             <Link
-              href="/demo"
+              href="/ai-voice-agents"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-rose-400 hover:bg-muted"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-emerald-400 hover:bg-muted"
             >
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-              <span>Try Live Demo</span>
-            </Link>
-            <Link
-              href="/pricing"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium hover:bg-muted"
-            >
-              Pricing
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Voice Agents (Live Demos)</span>
             </Link>
             {!loading && isAuthenticated && (
               <Link
@@ -343,8 +325,8 @@ export function MarketingNavbar() {
                   </Link>
                 </Button>
                 <Button asChild className="w-full bg-indigo-600 hover:bg-indigo-500 text-white">
-                  <Link href="/demo" onClick={() => setMobileMenuOpen(false)}>
-                    Try Live Demo
+                  <Link href="/ai-voice-agents" onClick={() => setMobileMenuOpen(false)}>
+                    Explore Voice Agents
                   </Link>
                 </Button>
               </>

@@ -45,7 +45,7 @@ export default function AICallingPage() {
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="rounded-xl">
-            <Link href="/demo">
+            <Link href="/ai-voice-agents">
               <Radio className="w-4 h-4 mr-2 text-rose-500 animate-pulse" />
               Try a Live Demo Call
             </Link>

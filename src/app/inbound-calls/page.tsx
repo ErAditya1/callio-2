@@ -5,132 +5,131 @@ import {
   Headphones,
   PhoneCall,
   PhoneIncoming,
-  Radio,
   ShieldCheck,
-  Sparkles,
-  Users,
-  Zap
+  Zap,
 } from 'lucide-react';
 import Link from 'next/link';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 export const metadata = {
   title: 'Inbound Calls & AI Receptionist — CallioAI',
-  description: 'Never miss another customer call. 24/7 AI front desk answering, calendar booking, FAQ resolution, and smart staff routing.',
+  description:
+    'Never miss another customer call. 24/7 AI front desk answering, calendar booking, and intelligent routing.',
 };
 
 export default function InboundCallsPage() {
   return (
-    <div className="py-12 lg:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-12 sm:py-16 max-w-5xl mx-auto px-4 sm:px-6">
       {/* Hero */}
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <Badge variant="outline" className="mb-3 border-blue-500/30 text-blue-400 bg-blue-500/10 px-3 py-1">
-          <PhoneIncoming className="w-3.5 h-3.5 mr-1.5 inline" />
-          Always-On Front Desk
-        </Badge>
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-foreground">
-          Never miss another customer call.
+      <div className="text-center max-w-2xl mx-auto mb-14">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/70 bg-muted/30 text-xs text-muted-foreground mb-4">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <span>24/7 Front Desk Reception</span>
+        </div>
+        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground leading-[1.15]">
+          Never miss another customer phone call.
         </h1>
-        <p className="mt-5 text-lg sm:text-xl text-muted-foreground leading-relaxed">
-          Every missed call is a missed customer. CallioAI answers instantly on ring #1, handles appointments, answers questions accurately, and routes urgent issues to your staff.
+        <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed">
+          Every missed call is lost revenue. CallioAI answers instantly on the first ring, handles appointment scheduling, answers complex questions, and transfers urgent cases to your staff.
         </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Button asChild size="lg" className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/25">
-            <Link href="/dashboard/agents/create?template=agent-receptionist">
-              Deploy an AI Receptionist
-              <ArrowRight className="w-4 h-4 ml-2" />
+        <div className="mt-7 flex items-center justify-center gap-3">
+          <Button asChild className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-5 h-10 text-xs font-semibold">
+            <Link href="/workflow">
+              Deploy Inbound Agent
+              <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
             </Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="rounded-xl">
-            <Link href="/demo/call?agent=agent-receptionist">
-              <Radio className="w-4 h-4 mr-2 text-rose-500 animate-pulse" />
-              Call Sarah (AI Receptionist)
-            </Link>
+          <Button asChild variant="outline" className="rounded-lg px-4 h-10 text-xs font-medium border-border/70">
+            <Link href="/ai-voice-agents">Try Voice Agents</Link>
           </Button>
         </div>
       </div>
 
-      {/* Visual Sequence */}
-      <div className="p-8 sm:p-12 rounded-3xl border border-border/80 bg-card mb-20 shadow-xl text-center space-y-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-          What Happens When a Customer Dials Your Number
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs font-semibold text-left">
-          <div className="p-4 rounded-2xl bg-muted/40 border border-border/50 space-y-2">
-            <div className="text-muted-foreground font-mono">STEP 1</div>
-            <div className="text-sm font-bold text-foreground">Phone Rings</div>
-            <p className="text-muted-foreground font-normal">Customer dials your office, clinic, or business number.</p>
+      {/* 5-Step Process Sequence (Minimal & Horizontal) */}
+      <div className="rounded-xl border border-border/70 bg-card/40 p-6 sm:p-8 mb-16">
+        <div className="text-center max-w-md mx-auto mb-8">
+          <h2 className="text-base sm:text-lg font-bold text-foreground">
+            How Incoming Calls Are Handled
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1">Autonomous decision loop on every phone ring</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs">
+          <div className="p-3.5 rounded-lg bg-muted/20 border border-border/50 space-y-1">
+            <span className="text-[10px] font-mono text-muted-foreground">01</span>
+            <div className="font-semibold text-foreground">Customer Calls</div>
+            <p className="text-[11px] text-muted-foreground">Dials your office or clinic phone number.</p>
           </div>
-          <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 space-y-2">
-            <div className="text-indigo-400 font-mono">STEP 2</div>
-            <div className="text-sm font-bold text-foreground">CallioAI Answers</div>
-            <p className="text-muted-foreground font-normal">Picks up on ring #1 with warm, personalized greeting.</p>
+          <div className="p-3.5 rounded-lg bg-indigo-500/10 border border-indigo-500/25 space-y-1">
+            <span className="text-[10px] font-mono text-indigo-400">02</span>
+            <div className="font-semibold text-foreground">Instant Answer</div>
+            <p className="text-[11px] text-muted-foreground">Picks up on ring #1 with zero hold time.</p>
           </div>
-          <div className="p-4 rounded-2xl bg-muted/40 border border-border/50 space-y-2">
-            <div className="text-muted-foreground font-mono">STEP 3</div>
-            <div className="text-sm font-bold text-foreground">Understands Intent</div>
-            <p className="text-muted-foreground font-normal">Identifies if caller wants booking, hours, pricing, or staff.</p>
+          <div className="p-3.5 rounded-lg bg-muted/20 border border-border/50 space-y-1">
+            <span className="text-[10px] font-mono text-muted-foreground">03</span>
+            <div className="font-semibold text-foreground">Understands Intent</div>
+            <p className="text-[11px] text-muted-foreground">Identifies bookings, pricing, or support.</p>
           </div>
-          <div className="p-4 rounded-2xl bg-muted/40 border border-border/50 space-y-2">
-            <div className="text-muted-foreground font-mono">STEP 4</div>
-            <div className="text-sm font-bold text-foreground">Executes Request</div>
-            <p className="text-muted-foreground font-normal">Books calendar, answers FAQ, or warm-transfers to human.</p>
+          <div className="p-3.5 rounded-lg bg-muted/20 border border-border/50 space-y-1">
+            <span className="text-[10px] font-mono text-muted-foreground">04</span>
+            <div className="font-semibold text-foreground">Executes Request</div>
+            <p className="text-[11px] text-muted-foreground">Schedules calendar or routes to staff.</p>
           </div>
-          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 space-y-2">
-            <div className="text-emerald-400 font-mono">STEP 5</div>
-            <div className="text-sm font-bold text-foreground">Logs & Texts</div>
-            <p className="text-muted-foreground font-normal">Sends SMS confirmation and logs structured notes to CRM.</p>
+          <div className="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 space-y-1">
+            <span className="text-[10px] font-mono text-emerald-400">05</span>
+            <div className="font-semibold text-foreground">Syncs & Texts</div>
+            <p className="text-[11px] text-muted-foreground">Sends SMS confirmation and logs to CRM.</p>
           </div>
         </div>
       </div>
 
-      {/* 6 Feature Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+      {/* 6 High-Focus Feature Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
         {[
           {
-            title: '24/7/365 Front Desk Answering',
-            desc: 'Cover late nights, weekends, and lunch hour peaks without adding expensive shifts or temp agencies.'
+            title: '24/7/365 Answering',
+            desc: 'Cover late nights, weekends, and holidays without hiring costly after-hours staff.',
           },
           {
-            title: 'Direct Calendar Integration',
-            desc: 'Books appointments directly into Google Calendar, Outlook, and Cal.com with zero double-booking.'
+            title: 'Direct Calendar Booking',
+            desc: 'Real-time synchronization with Google Calendar, Outlook, and Cal.com.',
           },
           {
-            title: 'Smart Human Handoff',
-            desc: 'Routes urgent medical or VIP calls to your cell or desk phone with a quick private voice briefing.'
+            title: 'Warm Human Transfer',
+            desc: 'Transfers callers to team phones with a private voice briefing before connecting.',
           },
           {
-            title: 'Structured Call Summaries',
-            desc: 'Every call generates a neat bulleted summary, sentiment score, and action items synced to your CRM.'
+            title: 'Zero Hold Queues',
+            desc: 'Can handle 100+ incoming calls simultaneously with zero busy signals.',
           },
           {
-            title: 'Zero Hold Times',
-            desc: 'Handles 1 or 1,000 calls simultaneously without busy signals, queues, or frustrating elevator hold music.'
+            title: 'Automated SMS Texts',
+            desc: 'Instantly text driving directions, appointment links, or intake forms while on call.',
           },
           {
-            title: 'SMS Follow-up Automation',
-            desc: 'Texts caller directions, booking confirmations, or payment links while the conversation is still active.'
-          }
+            title: 'Instant CRM Logging',
+            desc: 'Every call generates a structured bulleted transcript and logs to your CRM.',
+          },
         ].map((feat, idx) => (
-          <div key={idx} className="p-6 sm:p-8 rounded-3xl border border-border/80 bg-card space-y-3 shadow-md">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-            <h3 className="text-lg font-bold text-foreground">{feat.title}</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">{feat.desc}</p>
+          <div key={idx} className="p-5 rounded-xl border border-border/70 bg-card/40 space-y-2">
+            <h3 className="text-sm font-bold text-foreground">{feat.title}</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">{feat.desc}</p>
           </div>
         ))}
       </div>
 
-      {/* CTA */}
-      <div className="rounded-3xl border border-border/80 bg-card p-10 sm:p-14 text-center space-y-4">
-        <h2 className="text-3xl font-extrabold text-foreground">Turn missed calls into revenue today.</h2>
-        <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          Set up your receptionist agent in under 5 minutes and forward your calls with ease.
+      {/* Minimal CTA */}
+      <div className="rounded-xl border border-border/70 bg-card/40 p-8 text-center space-y-3">
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground">Turn missed calls into revenue.</h2>
+        <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+          Deploy your AI receptionist in under 5 minutes and forward your calls with ease.
         </p>
-        <Button asChild size="lg" className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-7">
-          <Link href="/dashboard/agents/create">Build Your Inbound Agent →</Link>
-        </Button>
+        <div className="pt-2">
+          <Button asChild className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs h-9 px-5">
+            <Link href="/workflow">Create Inbound Agent</Link>
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -23,8 +23,15 @@ function AppHeader() {
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border/60 bg-background/80 px-4 backdrop-blur-md">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="Open menu" className="md:hidden">
-          <Menu className="h-5 w-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleSidebar}
+          aria-label="Toggle sidebar"
+          title="Toggle sidebar"
+          className="h-8 w-8 hover:bg-accent rounded-lg text-muted-foreground hover:text-foreground flex items-center justify-center shrink-0 md:hidden"
+        >
+          <Menu className="h-4.5 w-4.5" />
         </Button>
         <Link href="/overview" className="flex items-center gap-2.5">
           <BrandLogo mark className="h-6" />

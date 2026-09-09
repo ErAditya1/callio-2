@@ -24,8 +24,34 @@ export function LocalProviderWrapper({ children }: { children: React.ReactNode }
           setUser(data.user);
           logger.info('OSS auth initialized', { user: data.user });
         } else if (response.status === 401) {
-          // No token - redirect to login (but not if already on auth pages)
-          if (!window.location.pathname.startsWith('/auth/')) {
+          // No token - redirect to login only if on private dashboard pages
+          const isPublicPath = [
+            '/',
+            '/ai-voice-agents',
+            '/ai-calling',
+            '/inbound-calls',
+            '/outbound-calls',
+            '/voices',
+            '/demo',
+            '/use-cases',
+            '/pricing',
+            '/integrations',
+            '/customer-stories',
+            '/security',
+            '/about',
+            '/contact',
+            '/resources',
+            '/blog',
+            '/faq',
+            '/legal',
+            '/terms',
+            '/privacy',
+            '/cookies',
+            '/status',
+            '/embed',
+          ].some((p) => window.location.pathname === p || window.location.pathname.startsWith(`${p}/`));
+
+          if (!isPublicPath && !window.location.pathname.startsWith('/auth/')) {
             window.location.href = '/auth/login';
             return;
           }

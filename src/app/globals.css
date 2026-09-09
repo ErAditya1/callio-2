@@ -273,22 +273,16 @@
    layer than @layer components — un-layered author CSS beats both.
 --------------------------------------------------------------------------- */
 
-/* Floating-dock sidebar: detached rounded panel. Targets the shadcn sidebar's
-   inner panel; applied via .app-sidebar-dock on <Sidebar variant="floating">. */
-.app-sidebar-dock [data-slot="sidebar-inner"] {
-  border-radius: 1.25rem;
-  overflow: hidden;
+/* Modern Edge-to-Edge SaaS Sidebar (Flush with viewport, no Dograh floating capsule) */
+[data-slot="sidebar-container"] {
+  border-right: 1px solid var(--border);
 }
-/* Flat carbon-charcoal panel with a soft light glow along the LEFT edge:
-   a 1px highlight line plus an inner bloom fading rightwards. */
-.dark .app-sidebar-dock [data-slot="sidebar-inner"] {
-  border-color: rgb(255 255 255 / 0.1);
-  background-color: oklch(0.18 0.002 80);
-  box-shadow:
-    inset 1px 0 0 rgb(255 255 255 / 0.1),
-    inset 3px 0 6px -4px rgb(255 255 255 / 0.08),
-    0 24px 50px -14px rgb(0 0 0 / 0.85);
+
+[data-slot="sidebar-inner"] {
+  border-radius: 0 !important;
+  background-color: var(--sidebar);
 }
+
 
 /* Card surface ("Crosshatch + Top-Lit Edge", user-approved 2026-06-11 after a
    3-round design board): a 45° hairline twill weave at 1% laid over the panel
@@ -360,3 +354,9 @@
   box-shadow: none;
   border-bottom-color: var(--cta);
 }
+
+/* Suppress default bottom-right floating widget bubble when driven via custom Hero UI */
+.dograh-widget-container {
+  display: none !important;
+}
+

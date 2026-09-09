@@ -32,6 +32,7 @@ async function resolveAuthConfig(): Promise<ResolvedAuthConfig> {
     const backendUrl = getServerBackendUrl();
     const res = await fetch(`${backendUrl}/api/v1/health`, {
       next: { revalidate: 300 },
+      signal: AbortSignal.timeout(1500),
     });
     if (res.ok) {
       const data = await res.json();

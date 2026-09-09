@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverSourceMaps: true,
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', '@radix-ui/react-slot'],
   },
   async rewrites() {
     return [

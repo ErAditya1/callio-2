@@ -2,28 +2,24 @@
 
 import {
   ArrowRight,
-  AudioLines,
+  AudioWaveform,
   Bot,
-  Brain,
-  CircleDollarSign,
-  Database,
-  ExternalLink,
-  FileText,
-  Key,
-  Megaphone,
-  Phone,
+  CheckCircle2,
+  Clock,
+  KeyRound,
+  PhoneCall,
+  Plus,
   Radio,
+  Sliders,
   Sparkles,
   TrendingUp,
-  Wrench,
-  Zap
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth";
 
 export default function OverviewPage() {
@@ -31,245 +27,221 @@ export default function OverviewPage() {
   const userName = user?.displayName?.split(" ")[0] || "Operator";
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
-      {/* Executive Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-br from-card via-card/90 to-muted/40 p-8 shadow-xl">
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-96 h-96 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-12 w-64 h-64 rounded-full bg-violet-500/10 blur-2xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge className="bg-indigo-500/15 text-indigo-400 border-indigo-500/30 text-xs font-semibold px-2.5 py-0.5">
-                <Sparkles className="w-3 h-3 mr-1.5 inline" />
-                Callio AI Platform
-              </Badge>
-              <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-                ● Telephony Pipeline: Active
-              </Badge>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-              Welcome, {userName}
-            </h1>
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Autonomous conversational voice operations. Build, orchestrate, and deploy human-grade voice AI agents with live telephony, sub-second latency, and enterprise function calling.
-            </p>
+    <div className="container mx-auto px-4 py-8 max-w-5xl space-y-8">
+      {/* 1. Concentrative Header Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-xs font-semibold text-emerald-500 tracking-wide uppercase">
+              Rumik Voice Core • Operational
+            </span>
           </div>
-
-          <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 w-full sm:w-auto">
-            <Button
-              asChild
-              className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-600/25 rounded-xl font-semibold h-11 px-5"
-            >
-              <Link href="/workflow">
-                <Bot className="w-4 h-4 mr-2" />
-                Open Agent Studio
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              asChild
-              className="rounded-xl h-11 border-border/80 hover:bg-muted font-medium"
-            >
-              <Link href="/campaigns">
-                <Megaphone className="w-4 h-4 mr-2 text-indigo-400" />
-                Launch Campaign
-              </Link>
-            </Button>
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            Welcome back, {userName}
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+            Your centralized control room for voice agents, telephone numbers, and call logs.
+          </p>
         </div>
 
-        {/* Real-Time Telemetry Stats Row */}
-        <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-border/50">
-          <div>
-            <div className="text-xs text-muted-foreground font-medium">Average Response Latency</div>
-            <div className="text-xl font-bold text-foreground mt-0.5 flex items-center gap-1.5">
-              <span>~540ms</span>
-              <span className="text-[10px] text-emerald-400 font-normal">Ultra-Fast</span>
-            </div>
-          </div>
-          <div>
-            <div className="text-xs text-muted-foreground font-medium">Voice Synthesis Engine</div>
-            <div className="text-xl font-bold text-foreground mt-0.5">ElevenLabs & Cartesia</div>
-          </div>
-          <div>
-            <div className="text-xs text-muted-foreground font-medium">Speech Recognition (STT)</div>
-            <div className="text-xl font-bold text-foreground mt-0.5">Deepgram Nova-3</div>
-          </div>
-          <div>
-            <div className="text-xs text-muted-foreground font-medium">Supported Protocols</div>
-            <div className="text-xl font-bold text-foreground mt-0.5">SIP URI / WebRTC</div>
-          </div>
+        <div className="flex items-center gap-2.5 shrink-0">
+          <Button
+            asChild
+            className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-4 h-9 text-xs font-semibold shadow-sm"
+          >
+            <Link href="/workflow">
+              <Plus className="w-3.5 h-3.5 mr-1.5" />
+              New Voice Agent
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-lg px-3.5 h-9 text-xs font-medium border-border/70"
+          >
+            <Link href="/telephony-configurations">
+              <PhoneCall className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
+              Phone Numbers
+            </Link>
+          </Button>
         </div>
       </div>
 
-      {/* Primary Action Modules Grid */}
-      <div className="space-y-4">
+      {/* 2. Key Telemetry at a Glance (4 High-Signal Tiles) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <Link
+          href="/workflow"
+          className="p-4 rounded-xl border border-border/60 bg-card/40 hover:bg-card/80 hover:border-border transition-all block group"
+        >
+          <div className="flex items-center justify-between text-muted-foreground mb-1.5">
+            <span className="text-xs font-medium">Voice Agents</span>
+            <Bot className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="text-2xl font-bold text-foreground">Active</div>
+          <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1">
+            <span>Manage studio canvas</span>
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+        </Link>
+
+        <Link
+          href="/telephony-configurations"
+          className="p-4 rounded-xl border border-border/60 bg-card/40 hover:bg-card/80 hover:border-border transition-all block group"
+        >
+          <div className="flex items-center justify-between text-muted-foreground mb-1.5">
+            <span className="text-xs font-medium">Telephony</span>
+            <PhoneCall className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="text-2xl font-bold text-foreground">SIP & Carriers</div>
+          <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1">
+            <span>Inbound DID routing</span>
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+        </Link>
+
+        <Link
+          href="/recordings"
+          className="p-4 rounded-xl border border-border/60 bg-card/40 hover:bg-card/80 hover:border-border transition-all block group"
+        >
+          <div className="flex items-center justify-between text-muted-foreground mb-1.5">
+            <span className="text-xs font-medium">Call Intelligence</span>
+            <AudioWaveform className="w-4 h-4 text-violet-400 group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="text-2xl font-bold text-foreground">Transcripts</div>
+          <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1">
+            <span>Inspect audio & logs</span>
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+        </Link>
+
+        <Link
+          href="/usage"
+          className="p-4 rounded-xl border border-border/60 bg-card/40 hover:bg-card/80 hover:border-border transition-all block group"
+        >
+          <div className="flex items-center justify-between text-muted-foreground mb-1.5">
+            <span className="text-xs font-medium">Response Latency</span>
+            <Zap className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="text-2xl font-bold text-foreground">~350ms</div>
+          <div className="text-[11px] text-emerald-500 font-medium mt-1">
+            Ultra-low speech latency
+          </div>
+        </Link>
+      </div>
+
+      {/* 3. 3-Step Setup Guide (Clear & Easy to Understand) */}
+      <div className="rounded-xl border border-border/70 bg-card/30 p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-foreground">Core AI Capabilities</h2>
-            <p className="text-xs text-muted-foreground">Manage every stage of your conversational voice architecture</p>
+            <h2 className="text-sm font-bold text-foreground">Quick Setup: Launch Your First Phone Agent</h2>
+            <p className="text-xs text-muted-foreground">Follow these 3 straightforward steps to start answering calls</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* Card 1: Agent Studio */}
-          <Card className="hover:border-indigo-500/40 transition-all hover:shadow-lg hover:shadow-indigo-500/5 group">
-            <CardHeader className="pb-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Bot className="w-5 h-5" />
-              </div>
-              <CardTitle className="text-base font-bold">Voice Agent Studio</CardTitle>
-              <CardDescription className="text-xs leading-relaxed">
-                Visual node graph editor with prompt engineering, interruptibility, and branch routing.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild variant="ghost" size="sm" className="p-0 text-indigo-400 hover:text-indigo-300 font-semibold text-xs">
-                <Link href="/workflow" className="flex items-center gap-1">
-                  Launch Canvas <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link
+            href="/workflow"
+            className="p-4 rounded-lg border border-border/60 bg-card/50 hover:bg-card/90 transition-colors space-y-2 block group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold text-indigo-500 bg-indigo-500/10 px-2 py-0.5 rounded">
+                STEP 1
+              </span>
+              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <h3 className="text-xs font-bold text-foreground">Configure Agent & Prompt</h3>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Define agent instructions, select a human-like studio voice, and test it directly in your browser.
+            </p>
+          </Link>
 
-          {/* Card 2: AI Models & Voices */}
-          <Card className="hover:border-indigo-500/40 transition-all hover:shadow-lg hover:shadow-indigo-500/5 group">
-            <CardHeader className="pb-3">
-              <div className="w-10 h-10 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Brain className="w-5 h-5" />
-              </div>
-              <CardTitle className="text-base font-bold">AI Models & Voice Library</CardTitle>
-              <CardDescription className="text-xs leading-relaxed">
-                Connect LLMs (OpenAI, Anthropic, Gemini, Groq) and ultra-realistic voice models.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild variant="ghost" size="sm" className="p-0 text-indigo-400 hover:text-indigo-300 font-semibold text-xs">
-                <Link href="/model-configurations" className="flex items-center gap-1">
-                  Configure Voices <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <Link
+            href="/telephony-configurations"
+            className="p-4 rounded-lg border border-border/60 bg-card/50 hover:bg-card/90 transition-colors space-y-2 block group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">
+                STEP 2
+              </span>
+              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <h3 className="text-xs font-bold text-foreground">Connect Phone Number</h3>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Attach a Twilio, Telnyx, Vonage, or private SIP trunk to assign a real telephone number.
+            </p>
+          </Link>
 
-          {/* Card 3: Telephony & SIP */}
-          <Card className="hover:border-indigo-500/40 transition-all hover:shadow-lg hover:shadow-indigo-500/5 group">
-            <CardHeader className="pb-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Phone className="w-5 h-5" />
-              </div>
-              <CardTitle className="text-base font-bold">Telephony & Numbers</CardTitle>
-              <CardDescription className="text-xs leading-relaxed">
-                Connect custom SIP trunks, Twilio/Telnyx numbers, and configure inbound DID routes.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild variant="ghost" size="sm" className="p-0 text-indigo-400 hover:text-indigo-300 font-semibold text-xs">
-                <Link href="/telephony-configurations" className="flex items-center gap-1">
-                  Manage Telephony <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Card 4: Outbound Campaigns */}
-          <Card className="hover:border-indigo-500/40 transition-all hover:shadow-lg hover:shadow-indigo-500/5 group">
-            <CardHeader className="pb-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Megaphone className="w-5 h-5" />
-              </div>
-              <CardTitle className="text-base font-bold">Outbound Calling</CardTitle>
-              <CardDescription className="text-xs leading-relaxed">
-                Launch automated dialers, lead qualification sequences, and dynamic campaign workflows.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild variant="ghost" size="sm" className="p-0 text-indigo-400 hover:text-indigo-300 font-semibold text-xs">
-                <Link href="/campaigns" className="flex items-center gap-1">
-                  View Campaigns <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Card 5: Tools & Actions */}
-          <Card className="hover:border-indigo-500/40 transition-all hover:shadow-lg hover:shadow-indigo-500/5 group">
-            <CardHeader className="pb-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Wrench className="w-5 h-5" />
-              </div>
-              <CardTitle className="text-base font-bold">Tools & API Webhooks</CardTitle>
-              <CardDescription className="text-xs leading-relaxed">
-                Equip your agents with custom API integrations, calendar booking, and CRM sync.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild variant="ghost" size="sm" className="p-0 text-indigo-400 hover:text-indigo-300 font-semibold text-xs">
-                <Link href="/tools" className="flex items-center gap-1">
-                  Define Functions <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Card 6: Recordings & Intelligence */}
-          <Card className="hover:border-indigo-500/40 transition-all hover:shadow-lg hover:shadow-indigo-500/5 group">
-            <CardHeader className="pb-3">
-              <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <AudioLines className="w-5 h-5" />
-              </div>
-              <CardTitle className="text-base font-bold">Call Intelligence & Audio</CardTitle>
-              <CardDescription className="text-xs leading-relaxed">
-                Stream recorded audio, inspect latency waterfalls, and export conversation transcripts.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild variant="ghost" size="sm" className="p-0 text-indigo-400 hover:text-indigo-300 font-semibold text-xs">
-                <Link href="/recordings" className="flex items-center gap-1">
-                  Browse Recordings <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <Link
+            href="/recordings"
+            className="p-4 rounded-lg border border-border/60 bg-card/50 hover:bg-card/90 transition-colors space-y-2 block group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold text-violet-500 bg-violet-500/10 px-2 py-0.5 rounded">
+                STEP 3
+              </span>
+              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <h3 className="text-xs font-bold text-foreground">Call & Review Transcripts</h3>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Dial your agent number from your mobile phone and review real-time recordings and transcripts.
+            </p>
+          </Link>
         </div>
       </div>
 
-      {/* Enterprise Developer & Analytics Banner */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <Card className="bg-card/60 border-border/70 p-6 flex items-start gap-4">
-          <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 shrink-0">
-            <Key className="w-6 h-6" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-bold text-foreground text-sm">Developer API & Webhooks</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Programmatically trigger inbound sessions, dispatch outbound batch calls, and receive real-time webhook events for completed conversations.
-            </p>
-            <Button asChild size="sm" variant="outline" className="rounded-lg text-xs h-8">
-              <Link href="/api-keys">
-                Generate API Credentials →
-              </Link>
-            </Button>
-          </div>
-        </Card>
+      {/* 4. Core Operational Hub (Focused 3-Card Grid) */}
+      <div className="space-y-3">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          Workspace Management
+        </h2>
 
-        <Card className="bg-card/60 border-border/70 p-6 flex items-start gap-4">
-          <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-400 shrink-0">
-            <TrendingUp className="w-6 h-6" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-bold text-foreground text-sm">Real-Time Usage & Telemetry</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Monitor concurrent call capacity, track talk-time metrics, inspect token consumption, and audit latency metrics across all live agents.
-            </p>
-            <Button asChild size="sm" variant="outline" className="rounded-lg text-xs h-8">
-              <Link href="/usage">
-                View Operational Usage →
-              </Link>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-5 rounded-xl border border-border/70 bg-card/40 flex flex-col justify-between space-y-4">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <Bot className="w-4 h-4 text-indigo-500" />
+                <h3 className="text-sm font-bold text-foreground">Voice Agent Studio</h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Design conversational flows, prompt engineering, appointment booking logic, and webhook actions.
+              </p>
+            </div>
+            <Button asChild variant="outline" size="sm" className="w-full text-xs h-8 border-border/70 rounded-lg">
+              <Link href="/workflow">Open Canvas Studio →</Link>
             </Button>
           </div>
-        </Card>
+
+          <div className="p-5 rounded-xl border border-border/70 bg-card/40 flex flex-col justify-between space-y-4">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-violet-500" />
+                <h3 className="text-sm font-bold text-foreground">Voices & LLM Models</h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Configure OpenAI, Gemini, Groq, or Anthropic LLM models alongside ElevenLabs and Cartesia voices.
+              </p>
+            </div>
+            <Button asChild variant="outline" size="sm" className="w-full text-xs h-8 border-border/70 rounded-lg">
+              <Link href="/model-configurations">Configure Models →</Link>
+            </Button>
+          </div>
+
+          <div className="p-5 rounded-xl border border-border/70 bg-card/40 flex flex-col justify-between space-y-4">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <KeyRound className="w-4 h-4 text-amber-500" />
+                <h3 className="text-sm font-bold text-foreground">API Keys & Webhooks</h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Generate developer tokens to programmatically initiate calls and receive call completion webhooks.
+              </p>
+            </div>
+            <Button asChild variant="outline" size="sm" className="w-full text-xs h-8 border-border/70 rounded-lg">
+              <Link href="/api-keys">Manage API Keys →</Link>
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

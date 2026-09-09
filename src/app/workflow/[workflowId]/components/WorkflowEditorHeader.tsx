@@ -237,7 +237,8 @@ export const WorkflowEditorHeader = ({
                 <button
                     onClick={toggleSidebar}
                     className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors md:hidden"
-                    aria-label="Open menu"
+                    aria-label="Toggle sidebar"
+                    title="Toggle sidebar"
                 >
                     <Menu className="w-5 h-5" />
                 </button>

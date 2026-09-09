@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { useIsSuperuser } from "@/hooks/useIsSuperuser";
 import { useAuth } from "@/lib/auth";
 import { impersonateAsSuperadmin } from "@/lib/utils";
+import { SuperadminShowcaseManager } from "@/components/superadmin/SuperadminShowcaseManager";
 
 type ImpersonationTarget = "provider" | "email";
 
@@ -267,6 +268,9 @@ export default function SuperadminPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dynamic Public Showcase Agents Manager */}
+      <SuperadminShowcaseManager />
     </main>
   );
 }
