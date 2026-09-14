@@ -6,7 +6,10 @@ export function getErrorMessage(error: unknown) {
 export function extractSdkErrorMessage(error: unknown, fallback: string) {
     if (!error) return fallback;
     if (typeof error === "string") return error;
+    if (error instanceof Error) return error.message;
     if (typeof error === "object") {
+        const message = (error as { message?: unknown }).message;
+        if (typeof message === "string") return message;
         const detail = (error as { detail?: unknown }).detail;
         if (typeof detail === "string") return detail;
         if (

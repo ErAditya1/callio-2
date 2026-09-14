@@ -16,6 +16,7 @@ import { MarketingNavbar } from "@/components/marketing/MarketingNavbar";
 
 import { BrandLogo } from "@/components/BrandLogo";
 import { AppSidebar } from "./AppSidebar";
+import { WalletBalanceBadge } from "./WalletBalanceBadge";
 
 function AppHeader() {
   const { toggleSidebar } = useSidebar();
@@ -39,10 +40,11 @@ function AppHeader() {
           <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Console</span>
         </Link>
       </div>
-      <div className="flex items-center gap-3">
-        <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground border border-border/50 rounded-full px-3 py-1 bg-muted/20">
+      <div className="flex items-center gap-2.5 sm:gap-3">
+        <WalletBalanceBadge />
+        <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground border border-border/50 rounded-full px-3 py-1 bg-muted/20">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Callio Voice Core: Online</span>
+          <span>Core: Online</span>
         </div>
         <Button size="sm" asChild className="h-8 text-xs font-medium bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg">
           <Link href="/workflow">

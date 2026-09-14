@@ -323,7 +323,7 @@ export default function TelephonyConfigurationsPage() {
                           variant={isShared ? "default" : "outline"}
                           className={`text-xs ${
                             isShared
-                              ? "bg-blue-600 hover:bg-blue-700 text-white"
+                              ? "bg-blue-600 hover:bg-blue-700 text-white font-semibold"
                               : "border-purple-500/40 text-purple-600 dark:text-purple-400"
                           }`}
                         >
@@ -331,50 +331,58 @@ export default function TelephonyConfigurationsPage() {
                         </Badge>
                       </div>
 
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                         <span className="capitalize font-medium text-foreground">{num.carrier}</span>
                         <span>•</span>
                         <span>
                           {isShared ? "Free for testing" : `$${(num.monthly_price_cents / 100).toFixed(2)}/mo`}
                         </span>
                       </div>
+
+                      {isShared && (
+                        <div className="mb-3 text-[11px] leading-tight text-blue-700 dark:text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded p-1.5 flex items-start gap-1">
+                          <span>Sandbox testing only. Live campaigns are prevented from using this number.</span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="pt-2 border-t flex items-center justify-between">
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
                         <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                        {isShared ? "Instant Pool" : "Dedicated Caller ID"}
+                        {isShared ? "Instant Sandbox" : "Dedicated Caller ID"}
                       </span>
 
-                      {isAlreadyInUse ? (
+                      {isShared ? (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => {
+                            navigator.clipboard.writeText(num.phone_number);
+                            toast.success(`Copied test number ${num.phone_number} to clipboard!`);
+                          }}
+                          className="h-8 gap-1.5 text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 border border-blue-500/30"
+                        >
+                          <Copy className="h-3.5 w-3.5" /> Copy Test Number
+                        </Button>
+                      ) : isAlreadyInUse ? (
                         <Badge variant="secondary" className="text-xs opacity-75">
-                          Assigned
+                          Claimed
                         </Badge>
                       ) : (
                         <Button
                           size="sm"
-                          variant={isShared ? "default" : "outline"}
+                          variant="outline"
                           disabled={isClaiming}
-                          onClick={() => {
-                            if (isShared) {
-                              handleClaimNumber(num);
-                            } else {
-                              setPurchasingNumber(num);
-                            }
-                          }}
-                          className="h-8 gap-1.5 text-xs font-medium"
+                          onClick={() => setPurchasingNumber(num)}
+                          className="h-8 gap-1.5 text-xs font-medium border-primary/30 hover:bg-primary/10"
                         >
                           {isClaiming ? (
                             <>
                               <Loader2 className="h-3.5 w-3.5 animate-spin" /> Claiming...
                             </>
-                          ) : isShared ? (
-                            <>
-                              <Zap className="h-3.5 w-3.5" /> Claim for Free
-                            </>
                           ) : (
                             <>
-                              <ShoppingCart className="h-3.5 w-3.5" /> Purchase &amp; Claim
+                              <ShoppingCart className="h-3.5 w-3.5" /> Claim Number
                             </>
                           )}
                         </Button>

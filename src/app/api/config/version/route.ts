@@ -6,7 +6,7 @@ import { getServerBackendUrl } from "@/lib/apiClient";
 // Import version from package.json at build time
 import packageJson from "../../../../../package.json";
 
-const HEALTHCHECK_TIMEOUT_MS = 3000;
+const HEALTHCHECK_TIMEOUT_MS = 6000;
 
 function trimTrailingSlash(url: string) {
   return url.endsWith("/") ? url.slice(0, -1) : url;
@@ -40,15 +40,25 @@ export async function GET() {
   let backendStatus: "reachable" | "unreachable" = "unreachable";
   let backendMessage: string | null = `Backend is not reachable at ${backendUrl}.`;
 
-  try {
-    const response = await fetch(healthcheckUrl, {
-      cache: "no-store",
-      signal: AbortSignal.timeout(HEALTHCHECK_TIMEOUT_MS),
-    });
+  const candidateUrls = [healthcheckUrl];
+  if (backendUrl.includes("localhost")) {
+    candidateUrls.push(healthcheckUrl.replace("localhost", "127.0.0.1"));
+  } else if (backendUrl.includes("127.0.0.1")) {
+    candidateUrls.push(healthcheckUrl.replace("127.0.0.1", "localhost"));
+  }
 
-    if (!response.ok) {
-      backendMessage = `Backend health check at ${healthcheckUrl} returned HTTP ${response.status}.`;
-    } else {
+  for (const url of candidateUrls) {
+    try {
+      const response = await fetch(url, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(HEALTHCHECK_TIMEOUT_MS),
+      });
+
+      if (!response.ok) {
+        backendMessage = `Backend health check at ${url} returned HTTP ${response.status}.`;
+        continue;
+      }
+
       const data = (await response.json()) as HealthResponse;
       apiVersion = data.version;
       deploymentMode = data.deployment_mode;
@@ -63,10 +73,11 @@ export async function GET() {
           : null;
       backendStatus = "reachable";
       backendMessage = null;
+      break;
+    } catch (error) {
+      apiVersion = "unavailable";
+      backendMessage = getHealthcheckFailureMessage(error, url);
     }
-  } catch (error) {
-    apiVersion = "unavailable";
-    backendMessage = getHealthcheckFailureMessage(error, backendUrl);
   }
 
   return NextResponse.json({

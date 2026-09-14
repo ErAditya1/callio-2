@@ -51,6 +51,16 @@ interface WorkflowRunResponse {
     cost_info: {
         dograh_token_usage?: number | null;
         call_duration_seconds?: number | null;
+        charge_usd?: number | null;
+        total_cost_usd?: number | null;
+        rate_per_minute?: number | null;
+        rates?: Record<string, number> | null;
+    } | null;
+    usage_info: {
+        llm?: Record<string, { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number }> | null;
+        tts?: Record<string, number> | null;
+        stt?: Record<string, number> | null;
+        call_duration_seconds?: number | null;
     } | null;
     initial_context: Record<string, string | number | boolean | object> | null;
     gathered_context: Record<string, string | number | boolean | object> | null;
@@ -538,27 +548,95 @@ function SplitTracksSection({
 
 function RunMetricsSection({
     costInfo,
+    usageInfo,
     logs,
     gatheredContext,
 }: {
     costInfo: WorkflowRunResponse['cost_info'];
+    usageInfo: WorkflowRunResponse['usage_info'];
     logs: WorkflowRunLogs | null;
     gatheredContext: Record<string, string | number | boolean | object> | null;
 }) {
     const metrics = getTranscriptMetrics(logs, gatheredContext);
 
+    const cost = typeof costInfo?.charge_usd === 'number'
+        ? costInfo.charge_usd
+        : typeof costInfo?.total_cost_usd === 'number'
+        ? costInfo.total_cost_usd
+        : typeof costInfo?.call_duration_seconds === 'number' && costInfo.call_duration_seconds > 0
+        ? (costInfo.call_duration_seconds / 60) * 0.06
+        : null;
+
+    const ratePerMin = typeof costInfo?.rate_per_minute === 'number'
+        ? costInfo.rate_per_minute
+        : 0.06;
+
+    // Extract provider names from usage_info keys (format: "ServiceName#N|||provider/model")
+    const extractProvider = (key: string): string => {
+        const parts = key.split('|||');
+        if (parts.length > 1) return parts[1];
+        return key.split('#')[0] || key;
+    };
+
+    const llmEntries = Object.entries(usageInfo?.llm || {});
+    const ttsEntries = Object.entries(usageInfo?.tts || {});
+    const sttEntries = Object.entries(usageInfo?.stt || {});
+    const hasProviderUsage = llmEntries.length > 0 || ttsEntries.length > 0 || sttEntries.length > 0;
+
     return (
         <Card className="border-border">
-            <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Run Metrics</CardTitle>
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle className="text-lg">Run Metrics &amp; Usage</CardTitle>
+                    <p className="text-xs text-muted-foreground mt-0.5">Call duration, cost calculation, and conversation analytics</p>
+                </div>
+                {cost !== null && (
+                    <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                        <span>Total Cost: ${cost.toFixed(4)} USD</span>
+                    </div>
+                )}
             </CardHeader>
             <CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <MetricCard label="Call Cost" value={cost !== null ? `$${cost.toFixed(4)} USD` : 'Free / Testing'} />
+                <MetricCard label="Billing Rate" value={`$${ratePerMin.toFixed(2)} / min`} />
                 <MetricCard label="Duration" value={formatDuration(costInfo?.call_duration_seconds)} />
                 <MetricCard label="User Turns" value={String(metrics.userTurns)} />
                 <MetricCard label="Bot Turns" value={String(metrics.botTurns)} />
                 <MetricCard label="Tool Calls" value={String(metrics.toolCalls)} />
                 <MetricCard label="Nodes Visited" value={String(metrics.visitedNodes)} />
             </CardContent>
+            {hasProviderUsage && (
+                <CardContent className="pt-0">
+                    <div className="border-t border-border pt-4">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Provider Usage Breakdown</p>
+                        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                            {ttsEntries.map(([key, chars]) => (
+                                <div key={key} className="rounded-xl border border-border bg-muted/40 px-4 py-3">
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sky-500">TTS</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{extractProvider(key)}</p>
+                                    <p className="mt-1 text-sm font-semibold text-foreground">{typeof chars === 'number' ? `${chars.toLocaleString()} chars` : '-'}</p>
+                                </div>
+                            ))}
+                            {sttEntries.map(([key, seconds]) => (
+                                <div key={key} className="rounded-xl border border-border bg-muted/40 px-4 py-3">
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-violet-500">STT</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{extractProvider(key)}</p>
+                                    <p className="mt-1 text-sm font-semibold text-foreground">{typeof seconds === 'number' ? `${seconds.toFixed(1)}s` : '-'}</p>
+                                </div>
+                            ))}
+                            {llmEntries.map(([key, usage]) => (
+                                <div key={key} className="rounded-xl border border-border bg-muted/40 px-4 py-3">
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-emerald-500">LLM</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{extractProvider(key)}</p>
+                                    <p className="mt-1 text-sm font-semibold text-foreground">
+                                        {typeof usage?.total_tokens === 'number' ? `${usage.total_tokens.toLocaleString()} tokens` : '-'}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </CardContent>
+            )}
         </Card>
     );
 }
@@ -661,6 +739,7 @@ export default function WorkflowRunPage() {
                     user_recording_url: runResponse.data?.user_recording_url ?? null,
                     bot_recording_url: runResponse.data?.bot_recording_url ?? null,
                     cost_info: runResponse.data?.cost_info ?? null,
+                    usage_info: runResponse.data?.usage_info as WorkflowRunResponse['usage_info'] ?? null,
                     initial_context: runResponse.data?.initial_context as Record<string, string> | null ?? null,
                     gathered_context: runResponse.data?.gathered_context as Record<string, string> | null ?? null,
                     logs: runResponse.data?.logs as WorkflowRunLogs | null ?? null,
@@ -844,6 +923,7 @@ export default function WorkflowRunPage() {
 
                         <RunMetricsSection
                             costInfo={workflowRun?.cost_info ?? null}
+                            usageInfo={workflowRun?.usage_info ?? null}
                             logs={workflowRun?.logs ?? null}
                             gatheredContext={workflowRun?.gathered_context ?? null}
                         />

@@ -113,6 +113,16 @@ export function AppConfigProvider({ children }: { children: ReactNode }) {
         loadConfig();
     }, [loadConfig]);
 
+    useEffect(() => {
+        if (!config || config.backendStatus === 'reachable') {
+            return;
+        }
+        const intervalId = setInterval(() => {
+            loadConfig();
+        }, 4000);
+        return () => clearInterval(intervalId);
+    }, [config, loadConfig]);
+
     return (
         <AppConfigContext.Provider value={{ config, loading, refresh: loadConfig }}>
             {children}

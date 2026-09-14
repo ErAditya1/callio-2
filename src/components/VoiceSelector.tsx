@@ -13,9 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-// Providers that have MPS voice endpoints
-type TTSProviderWithVoices = "elevenlabs" | "deepgram" | "sarvam" | "cartesia" | "dograh" | "rime";
-const MPS_VOICE_PROVIDERS: TTSProviderWithVoices[] = ["elevenlabs", "deepgram", "sarvam", "cartesia", "dograh", "rime"];
+// Providers that have voice endpoints
 const ALL_FILTER_VALUE = "__all__";
 
 interface VoiceSelectorProps {
@@ -52,22 +50,15 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
     const [playingPreview, setPlayingPreview] = useState<string | null>(null);
     const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
 
-    // Check if provider has MPS voice endpoint
+    // Check if provider has dynamic voice endpoint
     const hasMPSVoiceEndpoint = useCallback((providerName: string): boolean => {
-        return MPS_VOICE_PROVIDERS.includes(providerName.toLowerCase() as TTSProviderWithVoices);
+        return Boolean(providerName && providerName.trim());
     }, []);
 
     // Map provider names to API-compatible provider names
-    const getProviderKey = useCallback((providerName: string): TTSProviderWithVoices | null => {
-        const providerMap: Record<string, TTSProviderWithVoices> = {
-            elevenlabs: "elevenlabs",
-            deepgram: "deepgram",
-            sarvam: "sarvam",
-            cartesia: "cartesia",
-            dograh: "dograh",
-            rime: "rime",
-        };
-        return providerMap[providerName.toLowerCase()] || null;
+    const getProviderKey = useCallback((providerName: string): string | null => {
+        if (!providerName) return null;
+        return providerName.toLowerCase().trim();
     }, []);
 
     const fetchVoices = useCallback(async () => {
@@ -85,7 +76,7 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
             if (model) query.model = model;
             if (language) query.language = language;
             const response = await getVoicesApiV1UserConfigurationsVoicesProviderGet({
-                path: { provider: providerKey },
+                path: { provider: providerKey as never },
                 query: Object.keys(query).length > 0 ? query : undefined,
             });
 

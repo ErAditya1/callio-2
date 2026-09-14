@@ -21,10 +21,10 @@ import { cn } from "@/lib/utils";
 
 const ALL_FILTER_VALUE = "__all__";
 
-// Defaults so the modal opens on a focused set instead of the full catalog.
-const DEFAULT_GENDER = "female";
-const DEFAULT_ACCENT = "us"; // American
-const DEFAULT_LANGUAGE = "en";
+// Defaults: open with all voices displayed so user immediately sees options
+const DEFAULT_GENDER = ALL_FILTER_VALUE;
+const DEFAULT_ACCENT = ALL_FILTER_VALUE;
+const DEFAULT_LANGUAGE = ALL_FILTER_VALUE;
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -35,6 +35,79 @@ interface Facets {
 }
 
 const EMPTY_FACETS: Facets = { genders: [], accents: [], languages: [] };
+
+const FALLBACK_PRESETS: Record<string, VoiceInfo[]> = {
+    cartesia: [
+        { voice_id: "f786b574-daa5-4673-aa0c-cbe3e8534c02", name: "Jasper - Service Specialist", accent: "gb", gender: "male", language: "en", description: "British · Male · English" },
+        { voice_id: "3faa81ae-d3d8-4ab1-9e44-e50e46d33c30", name: "Cartesia Default Voice", accent: "us", gender: "female", language: "en", description: "American · Female · English" },
+        { voice_id: "a0e99841-438c-4a64-b679-ae501e7d6091", name: "Barbershop Man", accent: "us", gender: "male", language: "en", description: "American · Male · English" },
+        { voice_id: "79a125e8-cd45-4c13-8a67-188112f4dd22", name: "British Lady", accent: "gb", gender: "female", language: "en", description: "British · Female · English" },
+        { voice_id: "69267136-1bdc-4103-a11a-7a0676499302", name: "Commercial Lady", accent: "us", gender: "female", language: "en", description: "American · Female · English" },
+    ],
+    elevenlabs: [
+        { voice_id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel", accent: "us", gender: "female", language: "en", description: "Calm & Friendly" },
+        { voice_id: "AZnzlk1XvdvUeBnXmlld", name: "Domi", accent: "us", gender: "female", language: "en", description: "Strong & Engaged" },
+        { voice_id: "EXAVITQu4vr4xnSDxMaL", name: "Bella", accent: "us", gender: "female", language: "en", description: "Soft & Expressive" },
+        { voice_id: "ErXwobaYiN019PkySvjV", name: "Antoni", accent: "us", gender: "male", language: "en", description: "Well-rounded" },
+        { voice_id: "MF3mGyEYCl7XYWbV9V6O", name: "Elli", accent: "us", gender: "female", language: "en", description: "Young Emotional" },
+        { voice_id: "TxGEqnHWrfWFTfGW9XjX", name: "Josh", accent: "us", gender: "male", language: "en", description: "Deep Authoritative" },
+    ],
+    deepgram: [
+        { voice_id: "aura-asteria-en", name: "Asteria", accent: "us", gender: "female", language: "en", description: "Confident & Clear" },
+        { voice_id: "aura-luna-en", name: "Luna", accent: "us", gender: "female", language: "en", description: "Pleasant & Calm" },
+        { voice_id: "aura-stella-en", name: "Stella", accent: "us", gender: "female", language: "en", description: "Warm & Expressive" },
+        { voice_id: "aura-athena-en", name: "Athena", accent: "gb", gender: "female", language: "en", description: "Sophisticated British" },
+        { voice_id: "aura-orion-en", name: "Orion", accent: "us", gender: "male", language: "en", description: "Authoritative & Deep" },
+        { voice_id: "aura-helios-en", name: "Helios", accent: "gb", gender: "male", language: "en", description: "Clear British Male" },
+        { voice_id: "aura-angus-en", name: "Angus", accent: "ie", gender: "male", language: "en", description: "Irish Male" },
+        { voice_id: "aura-zeus-en", name: "Zeus", accent: "us", gender: "male", language: "en", description: "Deep Resonant Male" },
+    ],
+    sarvam: [
+        { voice_id: "anushka", name: "Anushka", accent: "in", gender: "female", language: "hi", description: "Natural Indian Female" },
+        { voice_id: "manisha", name: "Manisha", accent: "in", gender: "female", language: "hi", description: "Clear Indian Female" },
+        { voice_id: "vidya", name: "Vidya", accent: "in", gender: "female", language: "hi", description: "Warm Indian Female" },
+        { voice_id: "arya", name: "Arya", accent: "in", gender: "female", language: "hi", description: "Engaging Indian Female" },
+        { voice_id: "abhilash", name: "Abhilash", accent: "in", gender: "male", language: "hi", description: "Professional Indian Male" },
+        { voice_id: "karun", name: "Karun", accent: "in", gender: "male", language: "hi", description: "Casual Indian Male" },
+        { voice_id: "hitesh", name: "Hitesh", accent: "in", gender: "male", language: "hi", description: "Conversational Indian Male" },
+    ],
+    openai: [
+        { voice_id: "alloy", name: "Alloy", accent: "us", gender: "neutral", language: "en", description: "Balanced & Neutral" },
+        { voice_id: "echo", name: "Echo", accent: "us", gender: "male", language: "en", description: "Warm Male" },
+        { voice_id: "fable", name: "Fable", accent: "gb", gender: "male", language: "en", description: "British Expressive" },
+        { voice_id: "onyx", name: "Onyx", accent: "us", gender: "male", language: "en", description: "Deep Male" },
+        { voice_id: "nova", name: "Nova", accent: "us", gender: "female", language: "en", description: "Energetic Female" },
+        { voice_id: "shimmer", name: "Shimmer", accent: "us", gender: "female", language: "en", description: "Clear Female" },
+    ],
+    google: [
+        { voice_id: "en-US-Chirp3-HD-Charon", name: "Charon", accent: "us", gender: "male", language: "en", description: "US English HD Male" },
+        { voice_id: "en-US-Chirp3-HD-Aoede", name: "Aoede", accent: "us", gender: "female", language: "en", description: "US English HD Female" },
+        { voice_id: "en-US-Chirp3-HD-Fenrir", name: "Fenrir", accent: "us", gender: "male", language: "en", description: "US English HD Male" },
+        { voice_id: "en-US-Chirp3-HD-Kore", name: "Kore", accent: "us", gender: "female", language: "en", description: "US English HD Female" },
+    ],
+    smallest: [
+        { voice_id: "sophia", name: "Sophia", accent: "us", gender: "female", language: "en", description: "American Female" },
+        { voice_id: "emily", name: "Emily", accent: "gb", gender: "female", language: "en", description: "British Female" },
+        { voice_id: "aravind", name: "Aravind", accent: "in", gender: "male", language: "en", description: "Indian English Male" },
+        { voice_id: "diya", name: "Diya", accent: "in", gender: "female", language: "hi", description: "Hindi Indian Female" },
+    ],
+    azure: [
+        { voice_id: "en-US-AriaNeural", name: "Aria", accent: "us", gender: "female", language: "en", description: "US English Neural Female" },
+        { voice_id: "en-US-GuyNeural", name: "Guy", accent: "us", gender: "male", language: "en", description: "US English Neural Male" },
+        { voice_id: "en-US-JennyNeural", name: "Jenny", accent: "us", gender: "female", language: "en", description: "US English Neural Female" },
+        { voice_id: "en-IN-NeerjaNeural", name: "Neerja", accent: "in", gender: "female", language: "en", description: "Indian English Female" },
+        { voice_id: "en-IN-PrabhatNeural", name: "Prabhat", accent: "in", gender: "male", language: "en", description: "Indian English Male" },
+    ],
+    rime: [
+        { voice_id: "celeste", name: "Celeste", accent: "us", gender: "female", language: "en", description: "Natural Female" },
+        { voice_id: "allison", name: "Allison", accent: "us", gender: "female", language: "en", description: "Expressive Female" },
+        { voice_id: "marsh", name: "Marsh", accent: "us", gender: "male", language: "en", description: "Smooth Male" },
+        { voice_id: "spire", name: "Spire", accent: "us", gender: "male", language: "en", description: "Dynamic Male" },
+    ],
+    inworld: [
+        { voice_id: "Ashley", name: "Ashley", accent: "us", gender: "female", language: "en", description: "Inworld Character Voice" },
+    ],
+};
 
 interface VoiceSelectorModalProps {
     provider: string;
@@ -82,7 +155,7 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Filters drive a server-side query (we never fetch the whole catalog).
+    // Filters drive a server-side query (default to all to view entire catalog).
     const [gender, setGender] = useState(DEFAULT_GENDER);
     const [accent, setAccent] = useState(DEFAULT_ACCENT);
     const [language, setLanguage] = useState(DEFAULT_LANGUAGE);
@@ -114,8 +187,7 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
         return () => clearTimeout(timer);
     }, [searchInput]);
 
-    // Resolve the currently-selected voice (for the trigger label) without
-    // pulling the catalog: a targeted lookup by voice ID.
+    // Resolve the currently-selected voice (for the trigger label)
     useEffect(() => {
         if (!value) {
             setSelectedVoiceInfo(null);
@@ -123,21 +195,34 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
         }
         let active = true;
         (async () => {
-            const response = await getVoicesApiV1UserConfigurationsVoicesProviderGet({
-                path: { provider: provider as never },
-                query: { q: value },
-            });
-            if (!active) return;
-            const found = response.data?.voices?.find((voice) => voice.voice_id === value) ?? null;
-            setSelectedVoiceInfo(found);
+            const provKey = (provider || '').toLowerCase();
+            const local = FALLBACK_PRESETS[provKey]?.find((v) => v.voice_id === value);
+            if (local && active) setSelectedVoiceInfo(local);
+
+            try {
+                const response = await getVoicesApiV1UserConfigurationsVoicesProviderGet({
+                    path: { provider: provider as never },
+                    query: { q: value },
+                });
+                if (!active) return;
+                const found = response.data?.voices?.find((voice) => voice.voice_id === value) ?? null;
+                if (found) {
+                    setSelectedVoiceInfo(found);
+                } else if (!local) {
+                    setSelectedVoiceInfo({ voice_id: value, name: value });
+                }
+            } catch {
+                if (active && !local) {
+                    setSelectedVoiceInfo({ voice_id: value, name: value });
+                }
+            }
         })();
         return () => {
             active = false;
         };
     }, [value, provider]);
 
-    // Fetch the filtered voice list (server-side) whenever the modal is open
-    // and a filter changes. A request counter discards out-of-order responses.
+    // Fetch the voice list whenever the modal is open or a filter changes.
     useEffect(() => {
         if (!isOpen || manualMode) return;
         const id = ++requestId.current;
@@ -152,23 +237,58 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
             const search = debouncedSearch.trim();
             if (search) query.q = search;
 
-            const response = await getVoicesApiV1UserConfigurationsVoicesProviderGet({
-                path: { provider: provider as never },
-                query,
-            });
-            if (id !== requestId.current) return; // a newer request superseded this one
+            let fetchedVoices: VoiceInfo[] = [];
+            let fetchedFacets: Facets | null = null;
 
-            if (response.error) {
-                setError("Failed to load voices");
-                setVoices([]);
+            try {
+                const response = await getVoicesApiV1UserConfigurationsVoicesProviderGet({
+                    path: { provider: provider as never },
+                    query,
+                });
+                if (response.data?.voices && response.data.voices.length > 0) {
+                    fetchedVoices = response.data.voices;
+                    if (response.data.facets) {
+                        fetchedFacets = {
+                            genders: response.data.facets.genders ?? [],
+                            accents: response.data.facets.accents ?? [],
+                            languages: response.data.facets.languages ?? [],
+                        };
+                    }
+                }
+            } catch {
+                // Ignore network failure; fallback handles it
+            }
+
+            if (id !== requestId.current) return;
+
+            if (fetchedVoices.length === 0) {
+                // Fallback to presets
+                const provKey = (provider || '').toLowerCase();
+                const presets = FALLBACK_PRESETS[provKey] || [];
+                let filtered = presets;
+                const s = debouncedSearch.trim().toLowerCase();
+                if (s) {
+                    filtered = filtered.filter(v =>
+                        v.name.toLowerCase().includes(s) ||
+                        v.voice_id.toLowerCase().includes(s) ||
+                        (v.description && v.description.toLowerCase().includes(s))
+                    );
+                }
+                if (gender !== ALL_FILTER_VALUE) filtered = filtered.filter(v => v.gender?.toLowerCase() === gender.toLowerCase());
+                if (accent !== ALL_FILTER_VALUE) filtered = filtered.filter(v => v.accent?.toLowerCase() === accent.toLowerCase());
+                if (language !== ALL_FILTER_VALUE) filtered = filtered.filter(v => v.language?.toLowerCase() === language.toLowerCase());
+
+                setVoices(filtered);
+                setFacets({
+                    genders: Array.from(new Set(presets.map(v => v.gender).filter(Boolean) as string[])),
+                    accents: Array.from(new Set(presets.map(v => v.accent).filter(Boolean) as string[])),
+                    languages: Array.from(new Set(presets.map(v => v.language).filter(Boolean) as string[])),
+                });
+                setError(null);
             } else {
-                setVoices(response.data?.voices ?? []);
-                if (response.data?.facets) {
-                    setFacets({
-                        genders: response.data.facets.genders ?? [],
-                        accents: response.data.facets.accents ?? [],
-                        languages: response.data.facets.languages ?? [],
-                    });
+                setVoices(fetchedVoices);
+                if (fetchedFacets) {
+                    setFacets(fetchedFacets);
                 }
             }
             setIsLoading(false);
@@ -202,9 +322,9 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
     );
 
     const openModal = () => {
-        setGender(DEFAULT_GENDER);
-        setAccent(DEFAULT_ACCENT);
-        setLanguage(DEFAULT_LANGUAGE);
+        setGender(ALL_FILTER_VALUE);
+        setAccent(ALL_FILTER_VALUE);
+        setLanguage(ALL_FILTER_VALUE);
         setSearchInput("");
         setDebouncedSearch("");
         setManualMode(false);

@@ -52,8 +52,8 @@ export function MarketingFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/ai-voice-agents" className="hover:text-foreground transition-colors">
-                  AI Voice Agents
+                <Link href="/pricing" className="hover:text-foreground transition-colors">
+                  Pricing & Plans
                 </Link>
               </li>
             </ul>

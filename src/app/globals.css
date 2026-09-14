@@ -360,3 +360,46 @@
   display: none !important;
 }
 
+/* Modern Marketing Landing Page Utilities */
+.marketing-grid-bg {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.marketing-dots-bg {
+  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+}
+
+.marketing-glow-card {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.marketing-glow-card:hover {
+  box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.15), 0 8px 16px -6px rgba(0, 0, 0, 0.3);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+@keyframes voice-wave-active {
+  0%, 100% {
+    height: 6px;
+    opacity: 0.5;
+  }
+  50% {
+    height: 28px;
+    opacity: 1;
+  }
+}
+
+.voice-wave-bar {
+  width: 3px;
+  border-radius: 9999px;
+  background-color: currentColor;
+  animation: voice-wave-active 1.2s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+

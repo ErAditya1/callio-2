@@ -2,7 +2,11 @@ import type { Client } from '@/client/client';
 import type { CreateClientConfig } from '@/client/client.gen';
 
 export function getServerBackendUrl() {
-    return process.env.BACKEND_URL || 'http://api:8000';
+    return (
+        process.env.BACKEND_URL ||
+        process.env.NEXT_PUBLIC_BACKEND_URL ||
+        'http://127.0.0.1:8000'
+    );
 }
 
 /**

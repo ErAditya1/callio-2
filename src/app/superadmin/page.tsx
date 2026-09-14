@@ -1,6 +1,17 @@
 "use client";
 
-import { ArrowRight, List, Loader2, ShieldAlert } from "lucide-react";
+import {
+  ArrowRight,
+  List,
+  Loader2,
+  ShieldAlert,
+  Key,
+  Phone,
+  DollarSign,
+  Sparkles,
+  Users,
+  ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -14,10 +25,15 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { useIsSuperuser } from "@/hooks/useIsSuperuser";
 import { useAuth } from "@/lib/auth";
 import { impersonateAsSuperadmin } from "@/lib/utils";
 import { SuperadminShowcaseManager } from "@/components/superadmin/SuperadminShowcaseManager";
+import { SuperadminMasterKeysManager } from "@/components/superadmin/SuperadminMasterKeysManager";
+import { SuperadminTelephonyInventoryManager } from "@/components/superadmin/SuperadminTelephonyInventoryManager";
+import { SuperadminWalletManager } from "@/components/superadmin/SuperadminWalletManager";
 
 type ImpersonationTarget = "provider" | "email";
 
@@ -152,125 +168,174 @@ export default function SuperadminPage() {
   }
 
   return (
-    <main className="container mx-auto p-6 space-y-6 max-w-5xl">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-2">Superadmin Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage users and view system-wide data
-        </p>
+    <main className="container mx-auto p-6 space-y-6 max-w-7xl">
+      {/* Top Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-5">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              <ShieldCheck className="h-4 w-4" />
+            </span>
+            <h1 className="text-2xl font-bold tracking-tight">Platform Operations Center</h1>
+            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs">
+              Superadmin Mode
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Configure platform master API keys, stock telephony numbers, grant customer credits, and monitor system operations.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Link href="/superadmin/runs">
+            <Button variant="outline" size="sm" className="h-9 gap-2">
+              <List className="h-4 w-4" />
+              Global Run Logs
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Provider User ID</CardTitle>
-            <CardDescription>
-              Impersonate with the Stack provider user ID
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleProviderImpersonate} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="providerUserId">Provider User ID</Label>
-                <Input
-                  id="providerUserId"
-                  value={providerUserId}
-                  onChange={(e) => setProviderUserId(e.target.value)}
-                  placeholder="Provider user ID"
-                  required
-                />
-              </div>
+      {/* Main Tabbed Operations Dashboard */}
+      <Tabs defaultValue="keys" className="space-y-6">
+        <TabsList className="bg-muted/50 p-1 border h-11 w-full sm:w-auto flex-wrap justify-start">
+          <TabsTrigger value="keys" className="gap-2 text-xs sm:text-sm">
+            <Key className="h-4 w-4 text-emerald-500" />
+            Master API Keys &amp; Pricing
+          </TabsTrigger>
+          <TabsTrigger value="telephony" className="gap-2 text-xs sm:text-sm">
+            <Phone className="h-4 w-4 text-blue-500" />
+            Telephony Inventory
+          </TabsTrigger>
+          <TabsTrigger value="wallets" className="gap-2 text-xs sm:text-sm">
+            <DollarSign className="h-4 w-4 text-amber-500" />
+            Customer Wallets &amp; Credits
+          </TabsTrigger>
+          <TabsTrigger value="showcase" className="gap-2 text-xs sm:text-sm">
+            <Sparkles className="h-4 w-4 text-purple-500" />
+            Public Showcase Agents
+          </TabsTrigger>
+          <TabsTrigger value="ops" className="gap-2 text-xs sm:text-sm">
+            <Users className="h-4 w-4 text-indigo-500" />
+            Account Impersonation
+          </TabsTrigger>
+        </TabsList>
 
-              {error?.target === "provider" && (
-                <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg text-sm">
-                  {error.message}
-                </div>
-              )}
+        {/* Tab 1: Master Keys */}
+        <TabsContent value="keys" className="space-y-4">
+          <SuperadminMasterKeysManager />
+        </TabsContent>
 
-              <Button
-                type="submit"
-                disabled={loadingTarget !== null}
-                className="w-full"
-              >
-                {loadingTarget === "provider" ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Impersonate by Provider ID"
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        {/* Tab 2: Telephony Inventory */}
+        <TabsContent value="telephony" className="space-y-4">
+          <SuperadminTelephonyInventoryManager />
+        </TabsContent>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Email</CardTitle>
-            <CardDescription>
-              Impersonate with a primary email address
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleEmailImpersonate} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="user@example.com"
-                  required
-                />
-              </div>
+        {/* Tab 3: Customer Wallets & Credit Grants */}
+        <TabsContent value="wallets" className="space-y-4">
+          <SuperadminWalletManager />
+        </TabsContent>
 
-              {error?.target === "email" && (
-                <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg text-sm">
-                  {error.message}
-                </div>
-              )}
+        {/* Tab 4: Showcase Agents */}
+        <TabsContent value="showcase" className="space-y-4">
+          <SuperadminShowcaseManager />
+        </TabsContent>
 
-              <Button
-                type="submit"
-                disabled={loadingTarget !== null}
-                className="w-full"
-              >
-                {loadingTarget === "email" ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Impersonate by Email"
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        {/* Tab 5: Account Impersonation & Tools */}
+        <TabsContent value="ops" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Provider User ID</CardTitle>
+                <CardDescription>
+                  Impersonate with the Stack provider user ID
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleProviderImpersonate} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="providerUserId">Provider User ID</Label>
+                    <Input
+                      id="providerUserId"
+                      value={providerUserId}
+                      onChange={(e) => setProviderUserId(e.target.value)}
+                      placeholder="Provider user ID"
+                      required
+                    />
+                  </div>
 
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Workflow Runs</CardTitle>
-            <CardDescription>
-              View and manage all workflow runs across organizations
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/superadmin/runs">
-              <Button className="w-full md:w-auto">
-                <List className="mr-2 h-4 w-4" />
-                View All Runs
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
+                  {error?.target === "provider" && (
+                    <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg text-sm">
+                      {error.message}
+                    </div>
+                  )}
 
-      {/* Dynamic Public Showcase Agents Manager */}
-      <SuperadminShowcaseManager />
+                  <Button
+                    type="submit"
+                    disabled={loadingTarget !== null}
+                    className="w-full"
+                  >
+                    {loadingTarget === "provider" ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      "Impersonate by Provider ID"
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Email Address</CardTitle>
+                <CardDescription>
+                  Impersonate with a primary email address
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleEmailImpersonate} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="user@example.com"
+                      required
+                    />
+                  </div>
+
+                  {error?.target === "email" && (
+                    <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg text-sm">
+                      {error.message}
+                    </div>
+                  )}
+
+                  <Button
+                    type="submit"
+                    disabled={loadingTarget !== null}
+                    className="w-full"
+                  >
+                    {loadingTarget === "email" ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      "Impersonate by Email"
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </main>
   );
 }

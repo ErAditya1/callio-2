@@ -378,7 +378,7 @@ export const PhoneCallDialog = ({
                 <DialogHeader>
                     <DialogTitle>Connect phone service</DialogTitle>
                     <DialogDescription>
-                        Dograh doesn&apos;t sell phone numbers or minutes. Choose how
+                        CallioAI doesn&apos;t sell phone numbers or minutes. Choose how
                         this agent should place and receive calls.
                     </DialogDescription>
                 </DialogHeader>
@@ -412,7 +412,7 @@ export const PhoneCallDialog = ({
                         <div className="space-y-1">
                             <h3 className="text-sm font-medium">Bring your own SIP</h3>
                             <p className="text-sm text-muted-foreground">
-                                Already have a SIP trunk or a PBX? Point it at Dograh and
+                                Already have a SIP trunk or a PBX? Point it at CallioAI and
                                 keep your existing carrier and numbers.
                                 {sipConfig
                                     ? ` “${sipConfig.name}” is provisioned and waiting for your carrier details.`
@@ -464,15 +464,23 @@ export const PhoneCallDialog = ({
                             <SelectValue placeholder="Select a configuration" />
                         </SelectTrigger>
                         <SelectContent>
-                            {telephonyConfigs.map((config) => (
-                                <SelectItem key={config.id} value={String(config.id)}>
-                                    {config.name} ({config.provider})
-                                    {config.is_default_outbound ? " - default" : ""}
-                                    {!isCallable(config) ? " - setup incomplete" : ""}
-                                </SelectItem>
-                            ))}
+                            {telephonyConfigs.map((config) => {
+                                const isShared = Boolean(config.is_shared_trial || config.name?.startsWith("Platform - "));
+                                return (
+                                    <SelectItem key={config.id} value={String(config.id)}>
+                                        {config.name} ({config.provider})
+                                        {isShared ? " [Shared Test Number]" : config.is_default_outbound ? " - default" : ""}
+                                        {!isCallable(config) ? " - setup incomplete" : ""}
+                                    </SelectItem>
+                                );
+                            })}
                         </SelectContent>
                     </Select>
+                    {selectedConfig && (selectedConfig.is_shared_trial || selectedConfig.name?.startsWith("Platform - ")) && (
+                        <div className="p-2 rounded-md bg-blue-500/10 border border-blue-500/20 text-xs text-blue-600 dark:text-blue-400">
+                            Shared test number provided by platform for testing agent calls.
+                        </div>
+                    )}
                     {selectedConfigBlocked && (
                         <p className="text-xs text-amber-600 dark:text-amber-500">
                             {selectedConfig?.inactive

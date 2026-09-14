@@ -8,18 +8,27 @@ import {
     ExternalLink,
     Info,
     RefreshCw,
+    Wallet,
+    PhoneCall,
+    Clock,
+    CheckCircle2,
+    AlertCircle,
+    ArrowUpRight,
+    Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { createMpsCreditPurchaseUrlApiV1OrganizationsUsageMpsCreditsPurchaseUrlPost, getBillingCreditsApiV1OrganizationsBillingCreditsGet } from "@/client/sdk.gen";
-import type { MpsBillingCreditsResponse, MpsCreditLedgerEntryResponse } from "@/client/types.gen";
+import {
+    createMpsCreditPurchaseUrlApiV1OrganizationsUsageMpsCreditsPurchaseUrlPost,
+    getUsageHistoryApiV1OrganizationsUsageRunsGet,
+} from "@/client/sdk.gen";
+import type { UsageHistoryResponse, WorkflowRunUsageResponse } from "@/client/types.gen";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
     Table,
@@ -30,71 +39,20 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useAppConfig } from "@/context/AppConfigContext";
+import { useOrgConfig } from "@/context/OrgConfigContext";
 import { useOrganizationTimezone } from "@/hooks/useOrganizationTimezone";
 import { useAuth } from "@/lib/auth";
 import { formatDateTime } from "@/lib/dateTime";
 import { trackMetaInitiateCheckout } from "@/lib/metaPixel";
 
-const LEDGER_PAGE_SIZE = 50;
+const PAGE_SIZE = 25;
 
-const formatCredits = (value: number | null | undefined) => (
-    (value ?? 0).toLocaleString(undefined, {
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 0,
-    })
-);
-
-const formatAmount = (amountMinor?: number | null, currency?: string | null) => {
-    if (amountMinor == null) {
-        return "-";
-    }
-
-    return new Intl.NumberFormat(undefined, {
-        style: "currency",
-        currency: currency || "USD",
-    }).format(amountMinor / 100);
-};
-
-const metricLabels: Record<string, string> = {
-    voice_minutes: "Voice usage",
-    platform_usage: "Platform usage",
-};
-
-const formatTitleCase = (value: string | null | undefined) => (
-    value ? value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()) : "-"
-);
-
-const getLedgerEntryLabel = (entry: MpsCreditLedgerEntryResponse) => {
-    if (entry.metric_code) {
-        return metricLabels[entry.metric_code] ?? formatTitleCase(entry.metric_code);
-    }
-
-    if (entry.entry_type === "grant") {
-        return "Credit grant";
-    }
-
-    if (entry.entry_type === "purchase") {
-        return "Credit purchase";
-    }
-
-    return formatTitleCase(entry.entry_type);
-};
-
-const formatBillableQuantity = (entry: MpsCreditLedgerEntryResponse) => {
-    if (entry.billable_quantity == null || !entry.quantity_unit) {
-        return null;
-    }
-
-    const unit = entry.quantity_unit === "minute" ? "min" : entry.quantity_unit;
-    return `${formatCredits(entry.billable_quantity)} ${unit}`;
-};
-
-const getRunHref = (entry: MpsCreditLedgerEntryResponse) => {
-    if (!entry.workflow_id || !entry.workflow_run_id) {
-        return null;
-    }
-
-    return `/workflow/${entry.workflow_id}/run/${entry.workflow_run_id}`;
+const formatDuration = (seconds?: number | null) => {
+    if (seconds == null || Number.isNaN(seconds)) return "-";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.round(seconds % 60);
+    if (mins === 0) return `${secs}s`;
+    return `${mins}m ${secs}s`;
 };
 
 const getPageFromSearchParams = (
@@ -111,37 +69,23 @@ export default function BillingPage() {
     const auth = useAuth();
     const { config, loading: configLoading } = useAppConfig();
     const organizationTimezone = useOrganizationTimezone();
-    const [credits, setCredits] = useState<MpsBillingCreditsResponse | null>(null);
+    const { orgContext, refreshConfig } = useOrgConfig();
+
+    const platformWalletUsd: number = (orgContext as any)?.wallet_balance_usd ?? 0.0;
+    const [usageData, setUsageData] = useState<UsageHistoryResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [purchasing, setPurchasing] = useState(false);
-    const [currentPage, setCurrentPage] = useState(
-        () => getPageFromSearchParams(searchParams),
-    );
+    const [currentPage, setCurrentPage] = useState(() => getPageFromSearchParams(searchParams));
 
-    const hasAppConfig = !configLoading && config !== null;
-    const isOssMode = hasAppConfig && config.deploymentMode === "oss";
-    const canPurchaseCredits = hasAppConfig && config.deploymentMode !== "oss";
-    const totalQuota = credits?.total_quota ?? 0;
-    const remainingCredits = credits?.remaining_credits ?? 0;
-    const usedCredits = credits?.total_credits_used ?? 0;
-    const usagePercent = totalQuota > 0 ? Math.min(100, Math.round((usedCredits / totalQuota) * 100)) : 0;
+    const canPurchaseCredits = !configLoading && config !== null && config.deploymentMode !== "oss";
 
-    const ledgerEntries = useMemo(() => credits?.ledger_entries ?? [], [credits?.ledger_entries]);
-    const ledgerPage = credits?.page ?? currentPage;
-    const ledgerTotalCount = credits?.total_count ?? ledgerEntries.length;
-    const ledgerTotalPages = credits?.total_pages ?? 0;
-
-    const fetchCredits = useCallback(async (
+    const fetchUsageHistory = useCallback(async (
         page: number,
         { silent = false }: { silent?: boolean } = {},
     ) => {
-        if (auth.loading) {
-            return;
-        }
-
-        if (!auth.isAuthenticated) {
-            setLoading(false);
+        if (auth.loading || !auth.isAuthenticated) {
+            if (!auth.loading) setLoading(false);
             return;
         }
 
@@ -152,37 +96,37 @@ export default function BillingPage() {
         }
 
         try {
-            const response = await getBillingCreditsApiV1OrganizationsBillingCreditsGet({
-                query: { page, limit: LEDGER_PAGE_SIZE },
-            });
+            const [usageRes] = await Promise.all([
+                getUsageHistoryApiV1OrganizationsUsageRunsGet({
+                    query: { page, limit: PAGE_SIZE },
+                }),
+                refreshConfig().catch(() => {}),
+            ]);
 
-            if (response.error) {
-                throw new Error("Failed to fetch billing credits");
+            if (usageRes.data) {
+                setUsageData(usageRes.data);
             }
-
-            setCredits(response.data ?? null);
         } catch (error) {
-            console.error("Failed to fetch billing credits:", error);
-            toast.error("Failed to fetch billing credits");
+            console.error("Failed to fetch usage history:", error);
+            toast.error("Failed to load call usage history");
         } finally {
             setLoading(false);
             setRefreshing(false);
         }
-    }, [auth.isAuthenticated, auth.loading]);
+    }, [auth.isAuthenticated, auth.loading, refreshConfig]);
 
     useEffect(() => {
         const nextPage = getPageFromSearchParams(searchParams);
-        setCurrentPage((previousPage) => (
-            previousPage === nextPage ? previousPage : nextPage
-        ));
+        setCurrentPage((prev) => (prev === nextPage ? prev : nextPage));
     }, [searchParams]);
 
     useEffect(() => {
-        fetchCredits(currentPage);
-    }, [currentPage, fetchCredits]);
+        fetchUsageHistory(currentPage);
+    }, [currentPage, fetchUsageHistory]);
 
-    const handleRefresh = () => {
-        fetchCredits(currentPage, { silent: true });
+    const handleRefresh = async () => {
+        await fetchUsageHistory(currentPage, { silent: true });
+        toast.success("Wallet balance & usage updated");
     };
 
     const updateUrlPage = useCallback((page: number) => {
@@ -192,7 +136,6 @@ export default function BillingPage() {
         } else {
             newParams.delete("page");
         }
-
         const queryString = newParams.toString();
         router.push(queryString ? `/billing?${queryString}` : "/billing");
     }, [router, searchParams]);
@@ -204,12 +147,8 @@ export default function BillingPage() {
     };
 
     const handlePurchaseCredits = async () => {
-        if (!canPurchaseCredits) {
-            return;
-        }
+        if (!canPurchaseCredits) return;
 
-        // Fire on checkout intent (the click). The purchase-URL round-trip below
-        // gives the pixel beacon time to flush before the full-page redirect.
         trackMetaInitiateCheckout();
         setPurchasing(true);
         try {
@@ -220,11 +159,18 @@ export default function BillingPage() {
             }
             window.location.href = checkoutUrl;
         } catch (error) {
-            console.error("Failed to create credit purchase URL:", error);
+            console.error("Failed to create purchase URL:", error);
             toast.error("Failed to open checkout");
             setPurchasing(false);
         }
     };
+
+    const totalRuns = usageData?.total_count ?? 0;
+    const totalDurationSeconds = usageData?.total_duration_seconds ?? 0;
+    const totalDurationMinutes = Math.round(totalDurationSeconds / 60);
+    const estimatedMinutesRemaining = platformWalletUsd > 0 ? Math.floor(platformWalletUsd / 0.06) : 0;
+    const runsList: WorkflowRunUsageResponse[] = usageData?.runs ?? [];
+    const totalPages = usageData?.total_pages ?? 1;
 
     if (loading || configLoading) {
         return (
@@ -233,22 +179,24 @@ export default function BillingPage() {
                     <Skeleton className="h-9 w-40" />
                     <Skeleton className="h-5 w-96 max-w-full" />
                 </div>
-                <div className="grid gap-4 md:grid-cols-2">
-                    <Skeleton className="h-36 rounded-lg" />
-                    <Skeleton className="h-36 rounded-lg" />
+                <div className="grid gap-4 md:grid-cols-3">
+                    <Skeleton className="h-32 rounded-xl" />
+                    <Skeleton className="h-32 rounded-xl" />
+                    <Skeleton className="h-32 rounded-xl" />
                 </div>
-                <Skeleton className="h-80 rounded-lg" />
+                <Skeleton className="h-80 rounded-xl" />
             </div>
         );
     }
 
     return (
         <div className="container mx-auto p-6 space-y-6">
+            {/* Header */}
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold mb-2">Billing</h1>
-                    <p className="text-muted-foreground">
-                        Credits, balance, and account usage for your organization.
+                    <h1 className="text-3xl font-bold tracking-tight">Billing & Calling Wallet</h1>
+                    <p className="text-muted-foreground mt-1">
+                        Real-time wallet balance, transparent model rates, and per-conversation usage deductions.
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -257,181 +205,260 @@ export default function BillingPage() {
                         Refresh
                     </Button>
                     {canPurchaseCredits && (
-                        <Button onClick={handlePurchaseCredits} disabled={purchasing}>
+                        <Button onClick={handlePurchaseCredits} disabled={purchasing} className="bg-primary hover:bg-primary/90">
                             <CreditCard className="h-4 w-4 mr-2" />
-                            {purchasing ? "Opening..." : "Add Credits"}
+                            {purchasing ? "Opening Checkout..." : "Recharge Wallet"}
                         </Button>
                     )}
                 </div>
             </div>
 
-            {isOssMode && (
-                <div className="flex gap-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-                    <Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                    <div className="text-sm text-foreground">
-                        <p className="font-medium">Direct Carrier & Telephony Billing</p>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                            Credits and telephony minutes are managed through your configured carrier trunks and telephony providers. Manage keys and routing in{" "}
-                            <Link
-                                href="/model-configurations"
-                                className="font-medium text-primary underline underline-offset-2"
-                            >
-                                Model Configurations
-                            </Link>
-                            {" "}and Telephony Configurations.
-                        </p>
+            {/* Calling Wallet Hero Banner */}
+            <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-emerald-500/10 via-sky-500/10 to-indigo-500/10 p-6 shadow-sm">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+                    <div className="flex items-start gap-4">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shrink-0">
+                            <Wallet className="h-7 w-7" />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2.5">
+                                <h2 className="text-2xl font-bold tracking-tight">Platform Calling Wallet</h2>
+                                <Badge
+                                    variant="outline"
+                                    className={
+                                        platformWalletUsd > 1.0
+                                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs px-2.5 py-0.5"
+                                            : platformWalletUsd > 0
+                                            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 text-xs px-2.5 py-0.5"
+                                            : "bg-destructive/15 text-destructive border-destructive/30 text-xs px-2.5 py-0.5"
+                                    }
+                                >
+                                    {platformWalletUsd > 1.0 ? "Active & Ready" : platformWalletUsd > 0 ? "Low Balance" : "Needs Recharge"}
+                                </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1 max-w-xl">
+                                Funds are deducted automatically per second for speech synthesis, AI cognition, transcription, and carrier trunking.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col md:items-end">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Available Balance
+                        </span>
+                        <div className="flex items-baseline gap-1.5 mt-0.5">
+                            <span className="text-4xl font-extrabold font-mono tracking-tight text-foreground">
+                                ${platformWalletUsd.toFixed(2)}
+                            </span>
+                            <span className="text-sm font-bold uppercase text-muted-foreground">USD</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground mt-1">
+                            ~{estimatedMinutesRemaining} minutes of talk time remaining
+                        </span>
                     </div>
                 </div>
-            )}
 
-            <div className="grid gap-4 md:grid-cols-2">
+                {/* Rate Card Breakdown */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-border/60">
+                    <div className="p-3 rounded-xl bg-background/70 border border-border/50 backdrop-blur-sm">
+                        <div className="text-muted-foreground text-xs font-medium">STT (Deepgram Nova-2)</div>
+                        <div className="font-mono font-bold text-sm mt-1">$0.005 / min</div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5">Realtime Speech-to-Text</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-background/70 border border-border/50 backdrop-blur-sm">
+                        <div className="text-muted-foreground text-xs font-medium">LLM (GPT-4o-mini)</div>
+                        <div className="font-mono font-bold text-sm mt-1">$0.015 / min</div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5">Intelligence & Logic</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-background/70 border border-border/50 backdrop-blur-sm">
+                        <div className="text-muted-foreground text-xs font-medium">TTS (Cartesia Sonic)</div>
+                        <div className="font-mono font-bold text-sm mt-1">$0.020 / min</div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5">Ultra-low Latency Voice</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-background/70 border border-border/50 backdrop-blur-sm">
+                        <div className="text-muted-foreground text-xs font-medium">Carrier Trunking</div>
+                        <div className="font-mono font-bold text-sm mt-1">$0.020 / min</div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5">Inbound & Outbound VoIP</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Quick Overview Stat Cards */}
+            <div className="grid gap-4 md:grid-cols-3">
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardDescription>{isOssMode ? "Credits remaining" : "Credit balance"}</CardDescription>
-                        <CardTitle className="flex items-center gap-2 text-3xl">
-                            <CircleDollarSign className="h-6 w-6 text-muted-foreground" />
-                            {formatCredits(remainingCredits)}
+                        <CardDescription className="text-xs font-semibold uppercase tracking-wider">Wallet Balance</CardDescription>
+                        <CardTitle className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                            ${platformWalletUsd.toFixed(2)} USD
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-sm text-muted-foreground">1 credit = 1 cent</p>
+                        <p className="text-xs text-muted-foreground">
+                            {platformWalletUsd > 0 ? "Ready for inbound & outbound calls" : "Please top up to start calling"}
+                        </p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardDescription>Credits used</CardDescription>
-                        <CardTitle className="text-3xl">{formatCredits(usedCredits)}</CardTitle>
+                        <CardDescription className="text-xs font-semibold uppercase tracking-wider">Total Calls Recorded</CardDescription>
+                        <CardTitle className="text-2xl font-bold">{totalRuns}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                            {isOssMode ? "Current allocation usage" : "Total ledger debits"}
+                        <p className="text-xs text-muted-foreground">
+                            {totalDurationMinutes > 0 ? `${totalDurationMinutes} min total talk duration` : "No calls recorded yet"}
+                        </p>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardDescription className="text-xs font-semibold uppercase tracking-wider">Effective Rate</CardDescription>
+                        <CardTitle className="text-2xl font-bold font-mono">$0.06 / min</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-xs text-muted-foreground">
+                            All-inclusive: STT + LLM + TTS + Telephony
                         </p>
                     </CardContent>
                 </Card>
             </div>
 
-            {!isOssMode ? (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Credit Ledger</CardTitle>
-                        <CardDescription>Recent grants, purchases, and usage debits.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {ledgerEntries.length > 0 ? (
-                            <div className="bg-card border rounded-lg overflow-x-auto shadow-sm">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow className="bg-muted/50">
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Activity</TableHead>
-                                            <TableHead>Origin</TableHead>
-                                            <TableHead>Run</TableHead>
-                                            <TableHead className="text-right">Delta</TableHead>
-                                            <TableHead className="text-right">Balance</TableHead>
-                                            <TableHead className="text-right">Amount</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {ledgerEntries.map((entry) => {
-                                            const delta = entry.credits_delta ?? 0;
-                                            const runHref = getRunHref(entry);
-                                            const billableQuantity = formatBillableQuantity(entry);
-                                            return (
-                                                <TableRow key={entry.id}>
-                                                    <TableCell>
-                                                        {formatDateTime(entry.created_at, organizationTimezone)}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className="flex flex-col gap-1">
-                                                            <span className="font-medium">{getLedgerEntryLabel(entry)}</span>
-                                                            {billableQuantity && (
-                                                                <span className="text-xs text-muted-foreground">{billableQuantity}</span>
-                                                            )}
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {entry.origin ? (
-                                                            <Badge variant="secondary">{formatTitleCase(entry.origin)}</Badge>
-                                                        ) : (
-                                                            "-"
-                                                        )}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {entry.workflow_run_id ? (
-                                                            runHref ? (
-                                                                <Link className="font-medium text-primary hover:underline" href={runHref}>
-                                                                    #{entry.workflow_run_id}
-                                                                </Link>
-                                                            ) : (
-                                                                <span>#{entry.workflow_run_id}</span>
-                                                            )
-                                                        ) : (
-                                                            "-"
-                                                        )}
-                                                    </TableCell>
-                                                    <TableCell className={`text-right font-medium ${delta >= 0 ? "text-green-600" : "text-destructive"}`}>
-                                                        {delta >= 0 ? "+" : ""}
-                                                        {formatCredits(delta)}
-                                                    </TableCell>
-                                                    <TableCell className="text-right">{formatCredits(entry.balance_after)}</TableCell>
-                                                    <TableCell className="text-right">
-                                                        {formatAmount(entry.amount_minor, entry.amount_currency)}
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        ) : (
-                            <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-                                No ledger entries yet
-                            </div>
-                        )}
-                        {ledgerTotalPages > 1 && (
-                            <div className="flex items-center justify-between mt-6">
-                                <p className="text-sm text-muted-foreground">
-                                    Page {ledgerPage} of {ledgerTotalPages} ({ledgerTotalCount} total entries)
-                                </p>
-                                <div className="flex gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => handlePageChange(ledgerPage - 1)}
-                                        disabled={ledgerPage <= 1 || loading || refreshing}
-                                    >
-                                        <ChevronLeft className="h-4 w-4" />
-                                        Previous
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => handlePageChange(ledgerPage + 1)}
-                                        disabled={ledgerPage >= ledgerTotalPages || loading || refreshing}
-                                    >
-                                        Next
-                                        <ChevronRight className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            ) : (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Credit Usage</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <Progress value={usagePercent} />
-                        <div className="flex justify-between text-sm text-muted-foreground">
-                            <span>{usagePercent}% used</span>
-                            <span>{formatCredits(remainingCredits)} of {formatCredits(totalQuota)} remaining</span>
+            {/* Call Usage & Deductions Table */}
+            <Card>
+                <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                        <CardTitle className="text-xl font-bold">Recent Call Usage & Wallet Deductions</CardTitle>
+                        <CardDescription className="text-xs text-muted-foreground mt-0.5">
+                            Real-time breakdown of per-conversation duration and amount deducted from your wallet.
+                        </CardDescription>
+                    </div>
+                    {totalRuns > 0 && (
+                        <Badge variant="outline" className="w-fit text-xs font-mono">
+                            {totalRuns} Total Conversations
+                        </Badge>
+                    )}
+                </CardHeader>
+                <CardContent>
+                    {runsList.length > 0 ? (
+                        <div className="rounded-lg border overflow-x-auto shadow-sm">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow className="bg-muted/50">
+                                        <TableHead className="font-semibold">Date & Time</TableHead>
+                                        <TableHead className="font-semibold">Agent / Workflow</TableHead>
+                                        <TableHead className="font-semibold">Run ID</TableHead>
+                                        <TableHead className="font-semibold">Type</TableHead>
+                                        <TableHead className="font-semibold">Duration</TableHead>
+                                        <TableHead className="font-semibold">Cost Deducted</TableHead>
+                                        <TableHead className="font-semibold">Disposition</TableHead>
+                                        <TableHead className="font-semibold text-right">Action</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {runsList.map((run) => {
+                                        const cost = typeof run.charge_usd === 'number'
+                                            ? run.charge_usd
+                                            : run.call_duration_seconds > 0
+                                            ? (run.call_duration_seconds / 60) * 0.06
+                                            : 0;
+
+                                        return (
+                                            <TableRow key={run.id} className="hover:bg-muted/40">
+                                                <TableCell className="text-sm whitespace-nowrap">
+                                                    {formatDateTime(run.created_at, organizationTimezone)}
+                                                </TableCell>
+                                                <TableCell className="font-medium text-sm">
+                                                    {run.workflow_name || run.name || `Workflow #${run.workflow_id}`}
+                                                </TableCell>
+                                                <TableCell className="font-mono text-sm">
+                                                    #{run.id}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Badge variant="secondary" className="text-[11px] capitalize">
+                                                        {run.call_type || run.mode || "call"}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="text-sm whitespace-nowrap font-mono">
+                                                    {formatDuration(run.call_duration_seconds)}
+                                                </TableCell>
+                                                <TableCell className="text-sm font-mono font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                                                    {cost > 0 ? `$${cost.toFixed(4)}` : "-"}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {run.disposition ? (
+                                                        <Badge variant="outline" className="text-[11px]">
+                                                            {run.disposition}
+                                                        </Badge>
+                                                    ) : (
+                                                        <span className="text-xs text-muted-foreground">-</span>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        asChild
+                                                        className="h-8 gap-1 text-xs"
+                                                    >
+                                                        <Link
+                                                            href={`/workflow/${run.workflow_id}/run/${run.id}`}
+                                                            target="_blank"
+                                                        >
+                                                            View Run
+                                                            <ExternalLink className="h-3.5 w-3.5" />
+                                                        </Link>
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
                         </div>
-                    </CardContent>
-                </Card>
-            )}
+                    ) : (
+                        <div className="rounded-xl border border-dashed p-10 text-center">
+                            <PhoneCall className="mx-auto h-10 w-10 text-muted-foreground/50 mb-3" />
+                            <h3 className="font-semibold text-base">No Call Usage Recorded Yet</h3>
+                            <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
+                                Once you test an agent via phone call or web call, per-second usage and wallet deductions will appear here automatically.
+                            </p>
+                            <Button asChild className="mt-4" size="sm">
+                                <Link href="/workflows">Go to Agents</Link>
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-6">
+                            <p className="text-xs text-muted-foreground">
+                                Page {currentPage} of {totalPages} ({totalRuns} total calls)
+                            </p>
+                            <div className="flex gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage <= 1 || loading || refreshing}
+                                >
+                                    <ChevronLeft className="h-4 w-4 mr-1" />
+                                    Previous
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage >= totalPages || loading || refreshing}
+                                >
+                                    Next
+                                    <ChevronRight className="h-4 w-4 ml-1" />
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 }

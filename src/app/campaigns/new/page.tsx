@@ -129,9 +129,12 @@ export default function NewCampaignPage() {
             if (response.data) {
                 const configs = response.data.configurations ?? [];
                 setTelephonyConfigs(configs);
-                const defaultConfig = configs.find((c) => c.is_default_outbound) ?? configs[0];
+                const dedicatedConfigs = configs.filter((c) => !c.is_shared_trial && !c.name?.startsWith("Platform - "));
+                const defaultConfig = dedicatedConfigs.find((c) => c.is_default_outbound) ?? dedicatedConfigs[0];
                 if (defaultConfig) {
                     setSelectedTelephonyConfigId(String(defaultConfig.id));
+                } else {
+                    setSelectedTelephonyConfigId('');
                 }
             }
         } catch (error) {
@@ -241,6 +244,12 @@ export default function NewCampaignPage() {
 
         if (!campaignName || !selectedWorkflowId || !sourceId || !selectedTelephonyConfigId) {
             toast.error('Please fill in all fields');
+            return;
+        }
+
+        const selectedConfig = telephonyConfigs.find((c) => c.id.toString() === selectedTelephonyConfigId);
+        if (selectedConfig && (selectedConfig.is_shared_trial || selectedConfig.name?.startsWith("Platform - "))) {
+            toast.error('Platform test numbers are for workflow testing only and cannot be used for bulk campaigns. Please connect your own telephony provider.');
             return;
         }
 
@@ -435,32 +444,49 @@ export default function NewCampaignPage() {
                                         to create a campaign.
                                     </div>
                                 ) : (
-                                    <Select
-                                        value={selectedTelephonyConfigId}
-                                        onValueChange={setSelectedTelephonyConfigId}
-                                        required
-                                    >
-                                        <SelectTrigger id="telephony-config">
-                                            <SelectValue placeholder="Select a telephony configuration" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {isLoadingTelephonyConfigs ? (
-                                                <SelectItem value="loading" disabled>
-                                                    Loading configurations...
-                                                </SelectItem>
-                                            ) : (
-                                                telephonyConfigs.map((config) => (
-                                                    <SelectItem
-                                                        key={config.id}
-                                                        value={config.id.toString()}
-                                                    >
-                                                        {config.name} ({config.provider})
-                                                        {config.is_default_outbound ? ' - default' : ''}
+                                    <>
+                                        <Select
+                                            value={selectedTelephonyConfigId}
+                                            onValueChange={setSelectedTelephonyConfigId}
+                                            required
+                                        >
+                                            <SelectTrigger id="telephony-config">
+                                                <SelectValue placeholder="Select a telephony configuration" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {isLoadingTelephonyConfigs ? (
+                                                    <SelectItem value="loading" disabled>
+                                                        Loading configurations...
                                                     </SelectItem>
-                                                ))
-                                            )}
-                                        </SelectContent>
-                                    </Select>
+                                                ) : (
+                                                    telephonyConfigs.map((config) => {
+                                                        const isTrial = Boolean(config.is_shared_trial || config.name?.startsWith("Platform - "));
+                                                        return (
+                                                            <SelectItem
+                                                                key={config.id}
+                                                                value={config.id.toString()}
+                                                                disabled={isTrial}
+                                                            >
+                                                                {config.name} ({config.provider})
+                                                                {isTrial ? ' - (Testing only, cannot run campaigns)' : config.is_default_outbound ? ' - default' : ''}
+                                                            </SelectItem>
+                                                        );
+                                                    })
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                        {!isLoadingTelephonyConfigs && !telephonyConfigs.some((c) => !c.is_shared_trial && !c.name?.startsWith("Platform - ")) && (
+                                            <div className="rounded-md bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-600 dark:text-amber-400">
+                                                <p className="font-semibold">Dedicated telephony required for campaigns</p>
+                                                <p className="mt-0.5">
+                                                    Platform test numbers are strictly for testing agents in the workflow editor. To launch bulk outbound campaigns, please{' '}
+                                                    <Link href="/telephony-configurations" className="underline font-bold">
+                                                        connect your own telephony provider
+                                                    </Link>.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                                 <p className="text-sm text-muted-foreground">
                                     Outbound calls for this campaign will use this configuration&apos;s caller IDs

@@ -1,17 +1,4 @@
-import {
-  ArrowRight,
-  BarChart3,
-  Calendar,
-  CheckCircle2,
-  Clock,
-  Filter,
-  PhoneForwarded,
-  Repeat,
-  Sparkles,
-  TrendingUp,
-  Voicemail,
-  Zap,
-} from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';

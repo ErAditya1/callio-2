@@ -1,6 +1,17 @@
 "use client";
 
-import { Info, KeyRound, Save } from "lucide-react";
+import {
+    AlertCircle,
+    AudioWaveform,
+    Bot,
+    Check,
+    ExternalLink,
+    Info,
+    KeyRound,
+    Mic,
+    Save,
+    Sparkles,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import type {
@@ -14,8 +25,9 @@ import {
     ServiceConfigurationForm,
     type ServiceSegment,
 } from "@/components/ServiceConfigurationForm";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -26,8 +38,37 @@ import { formatRoundingPolicy } from "@/lib/billingDisplay";
 
 type ModelMode = "realtime" | "dograh" | "byok";
 
-// Sentinel language value for "Multilingual (Auto-detect)".
-const MULTILINGUAL_LANGUAGE_CODE = "multi";
+const PROVIDER_DISPLAY_NAMES: Record<string, string> = {
+    openai: "OpenAI",
+    groq: "Groq",
+    anthropic: "Anthropic",
+    google: "Google AI",
+    azure: "Azure OpenAI",
+    deepgram: "Deepgram",
+    cartesia: "Cartesia",
+    elevenlabs: "ElevenLabs",
+    sarvam: "Sarvam AI",
+    assemblyai: "AssemblyAI",
+    speechmatics: "Speechmatics",
+    gladia: "Gladia",
+    rime: "Rime Labs",
+    minimax: "MiniMax",
+    smallest: "Smallest AI",
+    camb: "Camb AI",
+    aws_bedrock: "AWS Bedrock",
+    openrouter: "OpenRouter",
+    huggingface: "HuggingFace",
+    speaches: "Speaches",
+    inworld: "Inworld",
+    lmnt: "LMNT",
+    xai: "xAI",
+    rumik: "Rumik",
+    azure_speech: "Azure Speech",
+};
+
+function formatProviderName(provider: string): string {
+    return PROVIDER_DISPLAY_NAMES[provider.toLowerCase()] || provider.charAt(0).toUpperCase() + provider.slice(1);
+}
 
 interface DograhDefaults {
     voices: string[];
@@ -39,7 +80,6 @@ interface DograhDefaults {
         step?: number;
     };
     languages: string[];
-    // Languages covered by the "multi" (Multilingual / Auto-detect) option.
     multilingual_languages?: string[];
     defaults: {
         voice: string;
@@ -59,13 +99,20 @@ export interface ModelConfigurationDefaultsV2 {
             default_providers: ServiceConfigurationDefaults["default_providers"];
         };
     };
+    platform_master_keys?: Record<string, Record<string, { is_default?: boolean; default_model?: string; models_pricing?: Record<string, any> }>>;
 }
 
-interface DograhFormState {
-    api_key: string;
-    voice: string;
-    speed: number;
-    language: string;
+interface MasterKeysFormState {
+    llmProvider: string;
+    llmModel: string;
+    ttsProvider: string;
+    ttsModel: string;
+    ttsVoice: string;
+    ttsSpeed: number;
+    ttsLanguage: string;
+    sttProvider: string;
+    sttModel: string;
+    sttLanguage: string;
 }
 
 interface AIModelConfigurationV2EditorProps {
@@ -75,11 +122,6 @@ interface AIModelConfigurationV2EditorProps {
     pricing?: ModelConfigurationPricingResponse | null;
     onSave: (configuration: OrganizationAiModelConfigurationV2) => Promise<void>;
     submitLabel?: string;
-}
-
-function firstApiKey(value: unknown): string {
-    if (Array.isArray(value)) return String(value[0] || "");
-    return typeof value === "string" ? value : "";
 }
 
 function numberOrDefault(value: unknown, fallback: number): number {
@@ -155,10 +197,6 @@ function emptyByokInitialConfig(isRealtime: boolean): Record<string, unknown> {
     };
 }
 
-// The v2 editor surfaces realtime ("Speech to Speech") and pipeline (BYOK) as
-// separate tabs, so each tab gets its own initial config. A tab is pre-filled
-// only when the saved (or effective) configuration matches that tab's mode;
-// otherwise it starts empty so the other tab's data does not leak across.
 function getByokInitialConfig(
     configuration: Record<string, unknown> | null,
     effectiveConfiguration: Record<string, unknown> | null,
@@ -180,61 +218,59 @@ function getByokInitialConfig(
     return matchesTab(effective) ? (effective as Record<string, unknown>) : emptyByokInitialConfig(wantRealtime);
 }
 
-function buildDograhState(
-    defaults: ModelConfigurationDefaultsV2,
-    configuration: Record<string, unknown> | null,
-    effectiveConfiguration: Record<string, unknown> | null,
-): DograhFormState {
-    const fallback = defaults.dograh.defaults;
-    const configuredDograh = configuration?.mode === "dograh" ? asRecord(configuration.dograh) : null;
-    if (configuredDograh) {
-        return {
-            api_key: String(configuredDograh.api_key || ""),
-            voice: String(configuredDograh.voice || fallback.voice),
-            speed: numberOrDefault(configuredDograh.speed, fallback.speed),
-            language: String(configuredDograh.language || fallback.language),
-        };
-    }
-
-    if (isDograhEffectiveConfig(effectiveConfiguration)) {
-        const llm = asRecord(effectiveConfiguration?.llm);
-        const tts = asRecord(effectiveConfiguration?.tts);
-        const stt = asRecord(effectiveConfiguration?.stt);
-        return {
-            api_key: firstApiKey(llm?.api_key || tts?.api_key || stt?.api_key),
-            voice: String(tts?.voice || fallback.voice),
-            speed: numberOrDefault(tts?.speed, fallback.speed),
-            language: String(stt?.language || fallback.language),
-        };
-    }
-
-    return {
-        api_key: "",
-        voice: fallback.voice,
-        speed: fallback.speed,
-        language: fallback.language,
-    };
-}
-
 function preferredMode(
     configuration: Record<string, unknown> | null,
     effectiveConfiguration: Record<string, unknown> | null,
+    platformMasterKeys?: Record<string, Record<string, any>>,
 ): ModelMode {
     if (configuration?.mode === "dograh") return "dograh";
     if (configuration?.mode === "byok") {
-        return asRecord(configuration.byok)?.mode === "realtime" ? "realtime" : "byok";
+        const byok = asRecord(configuration.byok);
+        if (byok?.mode === "realtime") return "realtime";
+
+        const pipeline = asRecord(byok?.pipeline);
+        if (pipeline) {
+            const llm = asRecord(pipeline.llm);
+            const tts = asRecord(pipeline.tts);
+            const stt = asRecord(pipeline.stt);
+            const hasPersonalKeys = Boolean(
+                (typeof llm?.api_key === "string" && llm.api_key.trim()) ||
+                (typeof tts?.api_key === "string" && tts.api_key.trim()) ||
+                (typeof stt?.api_key === "string" && stt.api_key.trim())
+            );
+            if (!hasPersonalKeys) {
+                return "dograh"; // This tab represents Platform Master Keys
+            }
+        }
+        return "byok";
     }
     if (isDograhEffectiveConfig(effectiveConfiguration)) return "dograh";
-    return Boolean(effectiveConfiguration?.is_realtime) ? "realtime" : "byok";
+    if (Boolean(effectiveConfiguration?.is_realtime)) return "realtime";
+
+    const hasMasterKeys = Boolean(
+        platformMasterKeys && (
+            Object.keys(platformMasterKeys.llm || {}).length > 0 ||
+            Object.keys(platformMasterKeys.tts || {}).length > 0 ||
+            Object.keys(platformMasterKeys.stt || {}).length > 0
+        )
+    );
+    return hasMasterKeys ? "dograh" : "byok";
 }
 
 function hasRequiredApiKey(
     service: ServiceSegment,
     serviceConfiguration: Record<string, unknown>,
     defaults: ServiceConfigurationDefaults,
+    platformMasterKeys?: Record<string, Record<string, any>>,
 ): boolean {
     const provider = serviceConfiguration.provider as string | undefined;
     if (!provider) return false;
+
+    // If provider is configured with a platform master key, personal key is not required
+    if (platformMasterKeys?.[service]?.[provider.toLowerCase()]) {
+        return true;
+    }
+
     const providerSchema = service === "realtime"
         ? defaults.realtime?.[provider]
         : defaults[service as "llm" | "tts" | "stt" | "embeddings"]?.[provider];
@@ -252,13 +288,14 @@ function requireByokService(
     config: Record<string, unknown>,
     service: ServiceSegment,
     defaults: ServiceConfigurationDefaults,
+    platformMasterKeys?: Record<string, Record<string, any>>,
 ): Record<string, unknown> {
     const serviceConfiguration = asRecord(config[service]);
     if (
         !serviceConfiguration
         || !serviceConfiguration.provider
         || serviceConfiguration.provider === "dograh"
-        || !hasRequiredApiKey(service, serviceConfiguration, defaults)
+        || !hasRequiredApiKey(service, serviceConfiguration, defaults, platformMasterKeys)
     ) {
         throw new Error(`${service} configuration is required`);
     }
@@ -337,7 +374,7 @@ function PricingSummary({
                     <MetricPrice label="Platform usage" price={platformPrice} />
                 )}
                 {dograhModelPrice && (
-                    <MetricPrice label="Callio AI model usage" price={dograhModelPrice} />
+                    <MetricPrice label="Platform master model usage" price={dograhModelPrice} />
                 )}
                 {thirdPartyModels && (
                     <p className="text-muted-foreground">
@@ -347,6 +384,157 @@ function PricingSummary({
             </CardContent>
         </Card>
     );
+}
+
+function getProviderModels(
+    service: "llm" | "tts" | "stt",
+    provider: string,
+    defaults: ModelConfigurationDefaultsV2,
+): string[] {
+    if (!provider) return [];
+    const fromPricing = Object.keys(defaults.platform_master_keys?.[service]?.[provider]?.models_pricing || {});
+    const defaultMod = defaults.platform_master_keys?.[service]?.[provider]?.default_model;
+    const schemaProps = (defaults.byok.pipeline[service]?.[provider]?.properties?.model as any);
+    const fromSchema = Array.isArray(schemaProps?.enum)
+        ? schemaProps.enum
+        : Array.isArray(schemaProps?.examples)
+            ? schemaProps.examples
+            : [];
+    const set = new Set<string>();
+    if (defaultMod) set.add(defaultMod);
+    fromPricing.forEach((m) => set.add(m));
+    fromSchema.forEach((m: string) => set.add(m));
+    return Array.from(set);
+}
+
+function getProviderLanguages(
+    service: "tts" | "stt",
+    provider: string,
+    model: string,
+    defaults: ModelConfigurationDefaultsV2,
+): string[] {
+    let result: string[] = [];
+    if (provider) {
+        const providerSchema = defaults.byok?.pipeline?.[service]?.[provider];
+        if (providerSchema) {
+            const schema = providerSchema.properties?.language as any;
+            if (schema) {
+                const actualSchema = schema.$ref && providerSchema.$defs
+                    ? (providerSchema.$defs[schema.$ref.split("/").pop() || ""] as any)
+                    : schema;
+                if (actualSchema) {
+                    if (actualSchema.model_options && model && actualSchema.model_options[model]) {
+                        result = actualSchema.model_options[model];
+                    } else if (Array.isArray(actualSchema.enum) && actualSchema.enum.length > 0) {
+                        result = actualSchema.enum;
+                    } else if (Array.isArray(actualSchema.examples) && actualSchema.examples.length > 0) {
+                        result = actualSchema.examples;
+                    }
+                }
+            }
+        }
+    }
+
+    if (result.length === 0) {
+        if (service === "tts") {
+            if (provider.toLowerCase() === "cartesia") {
+                result = ["en", "hi", "es", "fr", "de", "ja", "pt", "zh", "it", "ko", "nl", "pl", "ru", "sv", "tr"];
+            } else {
+                result = (defaults.dograh?.languages || ["en"]).filter((l) => l !== "multi");
+            }
+        } else {
+            result = defaults.dograh?.languages || ["multi", "en"];
+        }
+    }
+
+    if (service === "tts") {
+        return result.filter((l) => l !== "multi");
+    }
+    return result;
+}
+
+function getModelPricingDisplay(
+    provider: string,
+    model: string,
+    defaults: ModelConfigurationDefaultsV2,
+): string | null {
+    const pricing = defaults.platform_master_keys?.llm?.[provider]?.models_pricing?.[model];
+    if (!pricing) return null;
+    if (typeof pricing === "object") {
+        if (pricing.input !== undefined && pricing.output !== undefined) {
+            return `$${pricing.input}/1M in · $${pricing.output}/1M out`;
+        }
+        if (pricing.price !== undefined) {
+            return `$${pricing.price}/1M`;
+        }
+    }
+    if (typeof pricing === "number") {
+        return `$${pricing}/1M`;
+    }
+    return null;
+}
+
+function buildMasterFormState(
+    defaults: ModelConfigurationDefaultsV2,
+    rawConfiguration: Record<string, unknown> | null,
+    rawEffectiveConfiguration: Record<string, unknown> | null,
+): MasterKeysFormState {
+    const llmMap = defaults.platform_master_keys?.llm || {};
+    const ttsMap = defaults.platform_master_keys?.tts || {};
+    const sttMap = defaults.platform_master_keys?.stt || {};
+
+    const defaultLlm = Object.entries(llmMap).find(([_, d]) => d.is_default)?.[0] || Object.keys(llmMap)[0] || "";
+    const defaultTts = Object.entries(ttsMap).find(([_, d]) => d.is_default)?.[0] || Object.keys(ttsMap)[0] || "";
+    const defaultStt = Object.entries(sttMap).find(([_, d]) => d.is_default)?.[0] || Object.keys(sttMap)[0] || "";
+
+    const byokPipeline = asRecord(asRecord(rawConfiguration?.byok)?.pipeline);
+    const existingLlm = asRecord(byokPipeline?.llm || rawEffectiveConfiguration?.llm);
+    const existingTts = asRecord(byokPipeline?.tts || rawEffectiveConfiguration?.tts);
+    const existingStt = asRecord(byokPipeline?.stt || rawEffectiveConfiguration?.stt);
+    const rawDograh = asRecord(rawConfiguration?.dograh);
+
+    const existingLlmProvider = (existingLlm?.provider as string) || "";
+    const llmProvider = existingLlmProvider && llmMap[existingLlmProvider]
+        ? existingLlmProvider
+        : defaultLlm;
+    const llmModel = (existingLlm?.model as string) || llmMap[llmProvider]?.default_model || "gpt-4o-mini";
+
+    const existingTtsProvider = (existingTts?.provider as string) || "";
+    const ttsProvider = existingTtsProvider && ttsMap[existingTtsProvider]
+        ? existingTtsProvider
+        : defaultTts;
+    const ttsModel = (existingTts?.model as string) || ttsMap[ttsProvider]?.default_model || "sonic-english";
+    const ttsVoice = (existingTts?.voice as string) || (rawDograh?.voice as string) || defaults.dograh?.defaults?.voice || "default";
+    const ttsSpeed = numberOrDefault(existingTts?.speed || rawDograh?.speed, 1.0);
+    const initialTtsLangs = getProviderLanguages("tts", ttsProvider, ttsModel, defaults);
+    let ttsLanguage = (existingTts?.language as string) || (rawDograh?.language as string) || (defaults.byok?.pipeline?.tts?.[ttsProvider]?.properties?.language as any)?.default || "en";
+    if (ttsLanguage === "multi" || (initialTtsLangs.length > 0 && !initialTtsLangs.includes(ttsLanguage))) {
+        ttsLanguage = initialTtsLangs[0] || "en";
+    }
+
+    const existingSttProvider = (existingStt?.provider as string) || "";
+    const sttProvider = existingSttProvider && sttMap[existingSttProvider]
+        ? existingSttProvider
+        : defaultStt;
+    const sttModel = (existingStt?.model as string) || sttMap[sttProvider]?.default_model || "nova-3";
+    const initialSttLangs = getProviderLanguages("stt", sttProvider, sttModel, defaults);
+    let sttLanguage = (existingStt?.language as string) || (defaults.byok?.pipeline?.stt?.[sttProvider]?.properties?.language as any)?.default || (initialSttLangs.includes("multi") ? "multi" : "en");
+    if (initialSttLangs.length > 0 && !initialSttLangs.includes(sttLanguage)) {
+        sttLanguage = initialSttLangs.includes("multi") ? "multi" : initialSttLangs[0];
+    }
+
+    return {
+        llmProvider,
+        llmModel,
+        ttsProvider,
+        ttsModel,
+        ttsVoice,
+        ttsSpeed,
+        ttsLanguage,
+        sttProvider,
+        sttModel,
+        sttLanguage,
+    };
 }
 
 export function AIModelConfigurationV2Editor({
@@ -359,69 +547,181 @@ export function AIModelConfigurationV2Editor({
 }: AIModelConfigurationV2EditorProps) {
     const defaultsForByok = useMemo(() => byokDefaults(defaults), [defaults]);
     const [mode, setMode] = useState<ModelMode>("dograh");
-    const [dograh, setDograh] = useState<DograhFormState>(() => ({
-        api_key: "",
-        voice: defaults.dograh.defaults.voice,
-        speed: defaults.dograh.defaults.speed,
-        language: defaults.dograh.defaults.language,
-    }));
+
+    const [masterForm, setMasterForm] = useState<MasterKeysFormState>(() =>
+        buildMasterFormState(defaults, asRecord(configuration), asRecord(effectiveConfiguration))
+    );
+
     const [realtimeInitialConfig, setRealtimeInitialConfig] = useState<Record<string, unknown> | null>(null);
     const [pipelineInitialConfig, setPipelineInitialConfig] = useState<Record<string, unknown> | null>(null);
-    const [isSavingDograh, setIsSavingDograh] = useState(false);
+    const [isSavingMaster, setIsSavingMaster] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const allowCustomVoice = defaults.dograh.allow_custom_input ?? false;
     const dograhSpeedRange = defaults.dograh.speed_range ?? { min: 0.5, max: 2.0, step: 0.1 };
-    const multilingualLanguageNames = useMemo(() => {
-        const codes = defaults.dograh.multilingual_languages ?? [];
-        if (codes.length === 0) return null;
-        return codes.map((code) => LANGUAGE_DISPLAY_NAMES[code] || code).join(", ");
-    }, [defaults.dograh.multilingual_languages]);
+
+    const masterLlmProviders = useMemo(() => {
+        return Object.keys(defaults.platform_master_keys?.llm || {});
+    }, [defaults.platform_master_keys]);
+
+    const masterTtsProviders = useMemo(() => {
+        return Object.keys(defaults.platform_master_keys?.tts || {});
+    }, [defaults.platform_master_keys]);
+
+    const masterSttProviders = useMemo(() => {
+        return Object.keys(defaults.platform_master_keys?.stt || {});
+    }, [defaults.platform_master_keys]);
+
+    const hasNoMasterKeys = masterLlmProviders.length === 0 && masterTtsProviders.length === 0 && masterSttProviders.length === 0;
 
     useEffect(() => {
         const rawConfiguration = asRecord(configuration);
         const rawEffectiveConfiguration = asRecord(effectiveConfiguration);
-        setMode(preferredMode(rawConfiguration, rawEffectiveConfiguration));
-        const nextDograh = buildDograhState(defaults, rawConfiguration, rawEffectiveConfiguration);
-        setDograh(nextDograh);
+        setMode(preferredMode(rawConfiguration, rawEffectiveConfiguration, defaults.platform_master_keys));
+        const nextMasterForm = buildMasterFormState(defaults, rawConfiguration, rawEffectiveConfiguration);
+        setMasterForm(nextMasterForm);
         setRealtimeInitialConfig(getByokInitialConfig(rawConfiguration, rawEffectiveConfiguration, true));
         setPipelineInitialConfig(getByokInitialConfig(rawConfiguration, rawEffectiveConfiguration, false));
-    }, [configuration, defaults, effectiveConfiguration, allowCustomVoice]);
+    }, [configuration, defaults, effectiveConfiguration]);
 
-    const saveDograhConfiguration = async () => {
-        setIsSavingDograh(true);
+    const llmModelOptions = useMemo(() => {
+        const models = getProviderModels("llm", masterForm.llmProvider, defaults);
+        if (masterForm.llmModel && !models.includes(masterForm.llmModel)) {
+            models.unshift(masterForm.llmModel);
+        }
+        return models;
+    }, [masterForm.llmProvider, masterForm.llmModel, defaults]);
+
+    const ttsModelOptions = useMemo(() => {
+        const models = getProviderModels("tts", masterForm.ttsProvider, defaults);
+        if (masterForm.ttsModel && !models.includes(masterForm.ttsModel)) {
+            models.unshift(masterForm.ttsModel);
+        }
+        return models;
+    }, [masterForm.ttsProvider, masterForm.ttsModel, defaults]);
+
+    const sttModelOptions = useMemo(() => {
+        const models = getProviderModels("stt", masterForm.sttProvider, defaults);
+        if (masterForm.sttModel && !models.includes(masterForm.sttModel)) {
+            models.unshift(masterForm.sttModel);
+        }
+        return models;
+    }, [masterForm.sttProvider, masterForm.sttModel, defaults]);
+
+    const ttsLanguageOptions = useMemo(() => {
+        return getProviderLanguages("tts", masterForm.ttsProvider, masterForm.ttsModel, defaults);
+    }, [masterForm.ttsProvider, masterForm.ttsModel, defaults]);
+
+    const sttLanguageOptions = useMemo(() => {
+        return getProviderLanguages("stt", masterForm.sttProvider, masterForm.sttModel, defaults);
+    }, [masterForm.sttProvider, masterForm.sttModel, defaults]);
+
+    const selectedLlmPricing = useMemo(() => {
+        return getModelPricingDisplay(masterForm.llmProvider, masterForm.llmModel, defaults);
+    }, [masterForm.llmProvider, masterForm.llmModel, defaults]);
+
+    const handleMasterLlmProviderChange = (provider: string) => {
+        const models = getProviderModels("llm", provider, defaults);
+        const defModel = defaults.platform_master_keys?.llm?.[provider]?.default_model || models[0] || "gpt-4o-mini";
+        setMasterForm((p) => ({
+            ...p,
+            llmProvider: provider,
+            llmModel: defModel,
+        }));
+    };
+
+    const handleMasterTtsProviderChange = (provider: string) => {
+        const models = getProviderModels("tts", provider, defaults);
+        const defModel = defaults.platform_master_keys?.tts?.[provider]?.default_model || models[0] || "sonic-english";
+        const langs = getProviderLanguages("tts", provider, defModel, defaults);
+        const defLang = (defaults.byok.pipeline.tts?.[provider]?.properties?.language as any)?.default || langs[0] || "en";
+        setMasterForm((p) => ({
+            ...p,
+            ttsProvider: provider,
+            ttsModel: defModel,
+            ttsVoice: "default",
+            ttsLanguage: langs.includes(p.ttsLanguage) ? p.ttsLanguage : defLang,
+        }));
+    };
+
+    const handleMasterTtsModelChange = (model: string) => {
+        const langs = getProviderLanguages("tts", masterForm.ttsProvider, model, defaults);
+        setMasterForm((p) => ({
+            ...p,
+            ttsModel: model,
+            ttsLanguage: langs.includes(p.ttsLanguage) ? p.ttsLanguage : (langs[0] || p.ttsLanguage),
+        }));
+    };
+
+    const handleMasterSttProviderChange = (provider: string) => {
+        const models = getProviderModels("stt", provider, defaults);
+        const defModel = defaults.platform_master_keys?.stt?.[provider]?.default_model || models[0] || "nova-3";
+        const langs = getProviderLanguages("stt", provider, defModel, defaults);
+        const defLang = (defaults.byok.pipeline.stt?.[provider]?.properties?.language as any)?.default || (langs.includes("multi") ? "multi" : langs[0]) || "en";
+        setMasterForm((p) => ({
+            ...p,
+            sttProvider: provider,
+            sttModel: defModel,
+            sttLanguage: langs.includes(p.sttLanguage) ? p.sttLanguage : defLang,
+        }));
+    };
+
+    const handleMasterSttModelChange = (model: string) => {
+        const langs = getProviderLanguages("stt", masterForm.sttProvider, model, defaults);
+        setMasterForm((p) => ({
+            ...p,
+            sttModel: model,
+            sttLanguage: langs.includes(p.sttLanguage) ? p.sttLanguage : (langs.includes("multi") ? "multi" : langs[0] || p.sttLanguage),
+        }));
+    };
+
+    const saveMasterConfiguration = async () => {
+        setIsSavingMaster(true);
         setError(null);
         try {
-            if (
-                !Number.isFinite(dograh.speed)
-                || dograh.speed < dograhSpeedRange.min
-                || dograh.speed > dograhSpeedRange.max
-            ) {
-                throw new Error(
-                    `Dograh speed must be between ${dograhSpeedRange.min} and ${dograhSpeedRange.max}.`,
-                );
-            }
+            if (!masterForm.llmProvider) throw new Error("Please select an LLM provider.");
+            if (!masterForm.ttsProvider) throw new Error("Please select a Voice (TTS) provider.");
+            if (!masterForm.sttProvider) throw new Error("Please select a Transcriber (STT) provider.");
+
             await onSave({
                 version: 2,
-                mode: "dograh",
-                dograh: {
-                    api_key: dograh.api_key.trim(),
-                    voice: dograh.voice,
-                    speed: dograh.speed,
-                    language: dograh.language,
+                mode: "byok",
+                byok: {
+                    mode: "pipeline",
+                    pipeline: {
+                        llm: {
+                            provider: masterForm.llmProvider as any,
+                            model: masterForm.llmModel || defaults.platform_master_keys?.llm?.[masterForm.llmProvider]?.default_model || "gpt-4o-mini",
+                            api_key: "",
+                        },
+                        tts: {
+                            provider: masterForm.ttsProvider as any,
+                            model: masterForm.ttsModel || defaults.platform_master_keys?.tts?.[masterForm.ttsProvider]?.default_model || "default",
+                            voice: masterForm.ttsVoice || "default",
+                            speed: masterForm.ttsSpeed || 1.0,
+                            language: (masterForm.ttsLanguage && masterForm.ttsLanguage !== "multi") ? masterForm.ttsLanguage : "en",
+                            api_key: "",
+                        },
+                        stt: {
+                            provider: masterForm.sttProvider as any,
+                            model: masterForm.sttModel || defaults.platform_master_keys?.stt?.[masterForm.sttProvider]?.default_model || "default",
+                            language: masterForm.sttLanguage || "en",
+                            api_key: "",
+                        },
+                    },
                 },
             });
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to save configuration");
         } finally {
-            setIsSavingDograh(false);
+            setIsSavingMaster(false);
         }
     };
 
     const saveByokConfiguration = async (config: Record<string, unknown>) => {
         setError(null);
         const isRealtime = Boolean(config.is_realtime);
-        const llm = requireByokService(config, "llm", defaultsForByok);
+        const llm = requireByokService(config, "llm", defaultsForByok, defaults.platform_master_keys);
         const embeddings = optionalByokService(config, "embeddings");
         const body: OrganizationAiModelConfigurationV2 = {
             version: 2,
@@ -430,7 +730,7 @@ export function AIModelConfigurationV2Editor({
                 ? {
                     mode: "realtime",
                     realtime: {
-                        realtime: requireByokService(config, "realtime", defaultsForByok) as never,
+                        realtime: requireByokService(config, "realtime", defaultsForByok, defaults.platform_master_keys) as never,
                         llm: llm as never,
                         ...(embeddings ? { embeddings: embeddings as never } : {}),
                     },
@@ -439,8 +739,8 @@ export function AIModelConfigurationV2Editor({
                     mode: "pipeline",
                     pipeline: {
                         llm: llm as never,
-                        tts: requireByokService(config, "tts", defaultsForByok) as never,
-                        stt: requireByokService(config, "stt", defaultsForByok) as never,
+                        tts: requireByokService(config, "tts", defaultsForByok, defaults.platform_master_keys) as never,
+                        stt: requireByokService(config, "stt", defaultsForByok, defaults.platform_master_keys) as never,
                         ...(embeddings ? { embeddings: embeddings as never } : {}),
                     },
                 },
@@ -459,9 +759,15 @@ export function AIModelConfigurationV2Editor({
 
             <Tabs value={mode} onValueChange={(value) => setMode(value as ModelMode)} className="space-y-6">
                 <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="realtime">Speech to Speech</TabsTrigger>
-                    <TabsTrigger value="dograh">Dograh</TabsTrigger>
-                    <TabsTrigger value="byok">BYOK</TabsTrigger>
+                    <TabsTrigger value="realtime" className="flex items-center justify-center gap-1.5">
+                        Speech to Speech
+                    </TabsTrigger>
+                    <TabsTrigger value="dograh" className="flex items-center justify-center gap-1.5">
+                        <Sparkles className="h-4 w-4 text-emerald-500" /> Platform Master Keys
+                    </TabsTrigger>
+                    <TabsTrigger value="byok" className="flex items-center justify-center gap-1.5">
+                        <KeyRound className="h-4 w-4" /> BYOK (Own Keys)
+                    </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="realtime" className="mt-0">
@@ -475,101 +781,65 @@ export function AIModelConfigurationV2Editor({
                         forceRealtime
                         configurationDefaults={defaultsForByok}
                         initialConfig={realtimeInitialConfig}
+                        platformMasterKeys={defaults.platform_master_keys}
                         submitLabel={submitLabel}
                         onSave={saveByokConfiguration}
                     />
                     <ThirdPartyProviderNotice />
                 </TabsContent>
 
-                <TabsContent value="dograh" className="mt-0">
-                    <p className="mb-4 text-sm text-muted-foreground">
-                        Dograh provides a managed transcriber, LLM, and voice pipeline. Select a voice and language while Dograh manages the underlying model providers.{" "}
-                        We offer custom pricing and a 15-second pulse with a monthly commitment.{" "}
-                        <a
-                            href="https://www.dograh.com/contact"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline"
-                        >
-                            Contact us
-                        </a>
-                        .
-                    </p>
-                    <PricingSummary pricing={pricing} includeDograhModel />
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="grid gap-4 sm:grid-cols-2">
-                                <div className="space-y-2 sm:col-span-2">
-                                    <Label>Voice</Label>
-                                    <VoiceSelectorModal
-                                        provider="dograh"
-                                        value={dograh.voice}
-                                        onChange={(voice) => setDograh({ ...dograh, voice })}
-                                        allowManualInput={allowCustomVoice}
-                                    />
-                                </div>
-
-                                <div className="space-y-2 sm:col-span-2">
-                                    <Label>Language</Label>
-                                    <Select value={dograh.language} onValueChange={(language) => setDograh({ ...dograh, language })}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select language" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {defaults.dograh.languages.map((language) => (
-                                                <SelectItem key={language} value={language}>
-                                                    {LANGUAGE_DISPLAY_NAMES[language] || language}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {dograh.language === MULTILINGUAL_LANGUAGE_CODE && multilingualLanguageNames && (
-                                        <p className="text-xs text-muted-foreground">
-                                            Auto-detects {multilingualLanguageNames}.
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="dograh-speed">Speed</Label>
-                                    <Input
-                                        id="dograh-speed"
-                                        type="number"
-                                        min={dograhSpeedRange.min}
-                                        max={dograhSpeedRange.max}
-                                        step={dograhSpeedRange.step ?? 0.1}
-                                        value={dograh.speed}
-                                        onChange={(event) => {
-                                            const speed = event.currentTarget.valueAsNumber;
-                                            setDograh({
-                                                ...dograh,
-                                                speed: Number.isFinite(speed) ? speed : defaults.dograh.defaults.speed,
-                                            });
-                                        }}
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="dograh-api-key">API Key</Label>
-                                    <div className="relative">
-                                        <KeyRound className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                        <Input
-                                            id="dograh-api-key"
-                                            className="pl-9"
-                                            value={dograh.api_key}
-                                            onChange={(event) => setDograh({ ...dograh, api_key: event.target.value })}
-                                            placeholder="Enter API key"
-                                        />
-                                    </div>
-                                </div>
+                <TabsContent value="dograh" className="mt-0 space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-950 dark:text-emerald-200">
+                        <div className="flex items-start gap-3">
+                            <Sparkles className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                            <div>
+                                <h4 className="font-semibold text-sm">Platform Master Credentials Active</h4>
+                                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                                    Calls are powered by platform-configured master API keys for LLM, Voice, and Transcriber. You do not need to provide personal API credentials.
+                                </p>
                             </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2 shrink-0">
+                            <Badge variant="outline" className="text-xs bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30">
+                                {masterLlmProviders.length} LLMs
+                            </Badge>
+                            <Badge variant="outline" className="text-xs bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30">
+                                {masterTtsProviders.length} Voices
+                            </Badge>
+                            <Badge variant="outline" className="text-xs bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30">
+                                {masterSttProviders.length} STTs
+                            </Badge>
+                        </div>
+                    </div>
 
-                            <Button type="button" className="mt-6 w-full" onClick={saveDograhConfiguration} disabled={isSavingDograh}>
-                                <Save className="mr-2 h-4 w-4" />
-                                {isSavingDograh ? "Saving..." : submitLabel}
-                            </Button>
-                        </CardContent>
-                    </Card>
+                    {hasNoMasterKeys ? (
+                        <Card className="border-dashed border-amber-500/40 bg-amber-500/5">
+                            <CardContent className="pt-6 pb-6 text-center space-y-3">
+                                <AlertCircle className="h-8 w-8 text-amber-500 mx-auto" />
+                                <h4 className="font-semibold text-foreground">No Platform Master Keys Configured Yet</h4>
+                                <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                                    No platform master keys are currently configured in the platform. You can configure them in the Superadmin dashboard, or use the BYOK tab to configure your own credentials.
+                                </p>
+                                <div className="flex justify-center gap-3 pt-2">
+                                    <Button variant="outline" size="sm" onClick={() => setMode("byok")}>
+                                        Use BYOK (Own Keys) Instead
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <ServiceConfigurationForm
+                            key={`master-${JSON.stringify(pipelineInitialConfig)}`}
+                            mode="global"
+                            forceRealtime={false}
+                            configurationDefaults={defaultsForByok}
+                            initialConfig={pipelineInitialConfig}
+                            platformMasterKeys={defaults.platform_master_keys}
+                            masterMode={true}
+                            submitLabel="Save Platform Master Configuration"
+                            onSave={saveByokConfiguration}
+                        />
+                    )}
                 </TabsContent>
 
                 <TabsContent value="byok" className="mt-0">
@@ -583,6 +853,7 @@ export function AIModelConfigurationV2Editor({
                         forceRealtime={false}
                         configurationDefaults={defaultsForByok}
                         initialConfig={pipelineInitialConfig}
+                        platformMasterKeys={defaults.platform_master_keys}
                         submitLabel={submitLabel}
                         onSave={saveByokConfiguration}
                     />

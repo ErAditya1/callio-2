@@ -603,9 +603,7 @@ export default function UsagePage() {
                                                         )}
                                                     </div>
                                                 </TableHead>
-                                                {organizationPricing?.price_per_second_usd && (
-                                                    <TableHead className="font-semibold text-right">Cost (USD)</TableHead>
-                                                )}
+                                                <TableHead className="font-semibold text-right">Cost (USD)</TableHead>
                                                 <TableHead className="font-semibold">Actions</TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -642,14 +640,12 @@ export default function UsagePage() {
                                                     <TableCell className="text-right">
                                                         {formatDuration(run.call_duration_seconds)}
                                                     </TableCell>
-                                                    {organizationPricing?.price_per_second_usd && (
-                                                        <TableCell className="text-right font-medium">
-                                                            {run.charge_usd !== undefined && run.charge_usd !== null
-                                                                ? `$${run.charge_usd.toFixed(2)}`
-                                                                : '-'
-                                                            }
-                                                        </TableCell>
-                                                    )}
+                                                    <TableCell className="text-right font-medium">
+                                                        {run.charge_usd !== undefined && run.charge_usd !== null
+                                                            ? `$${run.charge_usd.toFixed(4)}`
+                                                            : '-'
+                                                        }
+                                                    </TableCell>
                                                     <TableCell>
                                                         <MediaPreviewButton
                                                             recordingUrl={run.recording_url}
@@ -669,7 +665,7 @@ export default function UsagePage() {
                                     <div className="mt-4 p-3 bg-muted rounded-md">
                                         <p className="text-sm text-muted-foreground">
                                             Total for filtered period: <span className="font-semibold text-foreground">
-                                                {usageHistory.total_dograh_tokens.toLocaleString()} Dograh Tokens
+                                                {usageHistory.total_dograh_tokens.toLocaleString()} CallioAI Tokens
                                             </span>
                                             {' • '}
                                             <span className="font-semibold text-foreground">

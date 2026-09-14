@@ -224,13 +224,20 @@ export function MarketingNavbar() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <span>Voice Agents</span>
             </Link>
+
+            {/* Pricing */}
+            <Link
+              href="/pricing"
+              className="px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            >
+              Pricing
+            </Link>
           </div>
 
           {/* Right Action CTAs */}
           <div className="hidden sm:flex items-center gap-3">
             {!loading && isAuthenticated ? (
               <>
-
                 <Button
                   size="sm"
                   asChild
@@ -251,8 +258,8 @@ export function MarketingNavbar() {
                   asChild
                   className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/25 rounded-xl font-medium px-4 h-9"
                 >
-                  <Link href="/ai-voice-agents">
-                    Try Demo
+                  <Link href="/workflow">
+                    Start Free Trial
                   </Link>
                 </Button>
               </>
@@ -298,6 +305,13 @@ export function MarketingNavbar() {
             >
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Voice Agents (Live Demos)</span>
+            </Link>
+            <Link
+              href="/pricing"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-lg text-sm font-medium hover:bg-muted"
+            >
+              Pricing & Plans
             </Link>
             {!loading && isAuthenticated && (
               <Link

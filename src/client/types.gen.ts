@@ -6080,6 +6080,10 @@ export type TelephonyConfigurationListItem = {
      */
     outbound_blocked_reason?: string | null;
     /**
+     * Is Shared Trial
+     */
+    is_shared_trial?: boolean;
+    /**
      * Created At
      */
     created_at: string;

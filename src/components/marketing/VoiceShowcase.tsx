@@ -5,8 +5,6 @@ import {
   Headphones,
   Pause,
   Play,
-  Sparkles,
-  Volume2
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -14,7 +12,45 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MOCK_VOICES } from '@/lib/services/mockData';
-import { Voice } from '@/lib/services/types';
+
+/** Inline SVG initials avatar — no external image, no 500 errors */
+function VoiceAvatar({ name, gender }: { name: string; gender: string }) {
+  const initials = name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
+  const palette =
+    gender === 'Female'
+      ? { bg: '#6d28d9', text: '#e9d5ff' }
+      : { bg: '#1d4ed8', text: '#bfdbfe' };
+
+  return (
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 48 48"
+      xmlns="http://www.w3.org/2000/svg"
+      className="rounded-full ring-2 ring-indigo-500/20 shrink-0"
+      aria-label={name}
+    >
+      <rect width="48" height="48" rx="24" fill={palette.bg} />
+      <text
+        x="24"
+        y="30"
+        textAnchor="middle"
+        fontSize="16"
+        fontWeight="700"
+        fontFamily="system-ui, sans-serif"
+        fill={palette.text}
+      >
+        {initials}
+      </text>
+    </svg>
+  );
+}
 
 export function VoiceShowcase() {
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
@@ -33,7 +69,7 @@ export function VoiceShowcase() {
               Studio-Grade Voices
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-              Find the right voice for your business.
+              Premium AI voices, built for natural conversation.
             </h2>
             <p className="mt-3 text-base text-muted-foreground max-w-xl">
               Natural intonation, ultra-low latency, and perfect accents in over 40 languages. Listen to real voice samples below.
@@ -63,12 +99,7 @@ export function VoiceShowcase() {
               >
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex items-center gap-3">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={voice.avatar}
-                      alt={voice.name}
-                      className="w-12 h-12 rounded-full object-cover ring-2 ring-indigo-500/20"
-                    />
+                    <VoiceAvatar name={voice.name} gender={voice.gender} />
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-foreground text-base">{voice.name}</span>

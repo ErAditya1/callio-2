@@ -2,15 +2,10 @@
 
 import {
   ArrowRight,
-  Check,
-  Filter,
   Headphones,
   Pause,
   Play,
   Search,
-  SlidersHorizontal,
-  Sparkles,
-  Volume2
 } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
@@ -19,7 +14,43 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { MOCK_VOICES } from '@/lib/services/mockData';
-import { Voice } from '@/lib/services/types';
+
+/** Inline SVG initials avatar — zero external image requests, no 500 errors */
+function VoiceAvatar({ name, gender }: { name: string; gender: string }) {
+  const initials = name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+  const palette =
+    gender === 'Female'
+      ? { bg: '#6d28d9', text: '#e9d5ff' }
+      : { bg: '#1d4ed8', text: '#bfdbfe' };
+  return (
+    <svg
+      width="56"
+      height="56"
+      viewBox="0 0 56 56"
+      xmlns="http://www.w3.org/2000/svg"
+      className="rounded-2xl ring-2 ring-indigo-500/20 shrink-0"
+      aria-label={name}
+    >
+      <rect width="56" height="56" rx="14" fill={palette.bg} />
+      <text
+        x="28"
+        y="35"
+        textAnchor="middle"
+        fontSize="18"
+        fontWeight="700"
+        fontFamily="system-ui, sans-serif"
+        fill={palette.text}
+      >
+        {initials}
+      </text>
+    </svg>
+  );
+}
 
 export default function VoicesPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -56,7 +87,7 @@ export default function VoicesPage() {
           Ultra-Realistic AI Voices
         </Badge>
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">
-          Find the right voice for your business.
+          Premium AI voices for every conversation.
         </h1>
         <p className="mt-4 text-base sm:text-lg text-muted-foreground">
           Explore studio-quality conversational voices with natural breathing, cadence, and empathy.
@@ -137,12 +168,7 @@ export default function VoicesPage() {
                 {/* Avatar & Title Header */}
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex items-center gap-3.5">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={voice.avatar}
-                      alt={voice.name}
-                      className="w-14 h-14 rounded-2xl object-cover ring-2 ring-indigo-500/20"
-                    />
+                    <VoiceAvatar name={voice.name} gender={voice.gender} />
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-foreground text-lg">{voice.name}</span>

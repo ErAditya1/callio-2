@@ -1,10 +1,11 @@
 "use client";
 
-import { ExternalLink, Plus, X } from "lucide-react";
+import { AlertCircle, ExternalLink, Key, Plus, Sparkles, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { getDefaultConfigurationsApiV1UserConfigurationsDefaultsGet } from '@/client/sdk.gen';
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -111,6 +112,8 @@ export interface ServiceConfigurationFormProps {
      * Leave undefined to keep the user-controllable toggle (legacy + overrides).
      */
     forceRealtime?: boolean;
+    platformMasterKeys?: Record<string, Record<string, { is_default?: boolean; models_pricing?: Record<string, any> }>>;
+    masterMode?: boolean;
 }
 
 function getProviderDisplayName(
@@ -127,9 +130,10 @@ function getGlobalSummary(
 ): string {
     if (!config) return "Not configured";
     const provider = config.provider as string | undefined;
-    const model = config.model as string | undefined;
     if (!provider) return "Not configured";
+
     const providerLabel = getProviderDisplayName(provider, providerSchema);
+    const model = config.model as string | undefined;
     return model ? `${providerLabel} / ${model}` : providerLabel || provider;
 }
 
@@ -159,6 +163,8 @@ export function ServiceConfigurationForm({
     configurationDefaults,
     initialConfig,
     forceRealtime,
+    platformMasterKeys,
+    masterMode = false,
 }: ServiceConfigurationFormProps) {
     const [apiError, setApiError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -243,6 +249,12 @@ export function ServiceConfigurationForm({
                 service: ServiceSegment,
                 schemaMap: Record<string, ProviderSchema>,
             ) => {
+                if (platformMasterKeys?.[service]) {
+                    const masterEntry = Object.entries(platformMasterKeys[service]).find(([_, v]) => v.is_default);
+                    if (masterEntry && schemaMap[masterEntry[0]]) return masterEntry[0];
+                    const anyMaster = Object.keys(platformMasterKeys[service]).find(p => schemaMap[p]);
+                    if (anyMaster) return anyMaster;
+                }
                 const preferred = defaultsData.default_providers?.[service];
                 if (preferred && schemaMap[preferred]) return preferred;
                 return Object.keys(schemaMap)[0] || "";
@@ -466,11 +478,17 @@ export function ServiceConfigurationForm({
         const keys = apiKeys[service].map(k => k.trim()).filter(k => k.length > 0);
         if (keys.length > 0) {
             config.api_key = mode === 'override' ? keys[0] : keys;
+        } else {
+            config.api_key = "";
         }
         Object.entries(data).forEach(([property, value]) => {
             if (!property.startsWith(`${service}_`)) return;
             const field = property.slice(service.length + 1);
             if (field === "api_key" || field === "provider") return;
+            if (service === "tts" && field === "language" && value === "multi") {
+                config[field] = "en";
+                return;
+            }
             config[field] = value as string | number;
         });
         return config;
@@ -540,7 +558,18 @@ export function ServiceConfigurationForm({
         const currentProvider = serviceProviders[service];
         const providerSchema = schemas?.[service]?.[currentProvider];
         const availableProviders = schemas?.[service] ? Object.keys(schemas[service]) : [];
+        const sortedProviders = [...availableProviders].sort((a, b) => {
+            if (masterMode) {
+                const aHas = Boolean(platformMasterKeys?.[service]?.[a.toLowerCase()]);
+                const bHas = Boolean(platformMasterKeys?.[service]?.[b.toLowerCase()]);
+                if (aHas && !bHas) return -1;
+                if (!aHas && bHas) return 1;
+            }
+            return a.localeCompare(b);
+        });
         const configFields = getConfigFields(service);
+        const masterKeyInfo = currentProvider ? platformMasterKeys?.[service]?.[currentProvider.toLowerCase()] : undefined;
+        const isMasterKeyActive = Boolean(masterKeyInfo);
 
         return (
             <div className="space-y-6">
@@ -557,11 +586,25 @@ export function ServiceConfigurationForm({
                                 <SelectValue placeholder="Select provider" />
                             </SelectTrigger>
                             <SelectContent>
-                                {availableProviders.map((provider) => (
-                                    <SelectItem key={provider} value={provider}>
-                                        {getProviderDisplayName(provider, schemas?.[service]?.[provider])}
-                                    </SelectItem>
-                                ))}
+                                {sortedProviders.map((provider) => {
+                                    const hasMaster = Boolean(platformMasterKeys?.[service]?.[provider.toLowerCase()]);
+                                    return (
+                                        <SelectItem key={provider} value={provider}>
+                                            <div className="flex items-center justify-between gap-3 w-full">
+                                                <span>{getProviderDisplayName(provider, schemas?.[service]?.[provider])}</span>
+                                                {hasMaster ? (
+                                                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium shrink-0">
+                                                        <Sparkles className="h-3 w-3" /> Platform Key
+                                                    </span>
+                                                ) : masterMode ? (
+                                                    <span className="text-[10px] text-muted-foreground shrink-0">
+                                                        (BYOK only)
+                                                    </span>
+                                                ) : null}
+                                            </div>
+                                        </SelectItem>
+                                    );
+                                })}
                             </SelectContent>
                         </Select>
                         {(providerSchema?.description || providerSchema?.provider_docs_url) && (
@@ -609,52 +652,100 @@ export function ServiceConfigurationForm({
 
                 {currentProvider && providerSchema && providerSchema.properties.api_key && (
                     <div className="space-y-2">
-                        <Label>{mode === 'override' ? 'API Key (leave empty to use global)' : 'API Key(s)'}</Label>
-                        {renderFieldDescription("api_key", providerSchema)}
-                        {apiKeys[service].map((key, index) => (
-                            <div key={index} className="flex gap-2">
-                                <Input
-                                    type="text"
-                                    placeholder="Enter API key"
-                                    value={key}
-                                    onChange={(e) => {
-                                        const newKeys = [...apiKeys[service]];
-                                        newKeys[index] = e.target.value;
-                                        setApiKeys(prev => ({ ...prev, [service]: newKeys }));
-                                    }}
-                                />
-                                {apiKeys[service].length > 1 && (
+                        {isMasterKeyActive && (
+                            <div className="flex items-start gap-2.5 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs mb-2">
+                                <Sparkles className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                                <div className="space-y-0.5">
+                                    <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                                        Platform Master Key Active
+                                    </span>
+                                    <p className="text-muted-foreground text-[11px] leading-relaxed">
+                                        A platform master key is active for {getProviderDisplayName(currentProvider, providerSchema)}. You do not need to enter personal API credentials. Calls will be deducted directly from your platform credit balance.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                        {masterMode && !isMasterKeyActive && (
+                            <div className="flex items-start gap-2.5 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs mb-2">
+                                <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                                <div className="space-y-0.5">
+                                    <span className="font-semibold text-amber-700 dark:text-amber-300">
+                                        No Platform Master Key Configured
+                                    </span>
+                                    <p className="text-muted-foreground text-[11px] leading-relaxed">
+                                        No platform master key is currently active for {getProviderDisplayName(currentProvider, providerSchema)}. You can enter your personal API key below, or use the BYOK tab.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                        {masterMode && isMasterKeyActive ? (
+                            <div className="p-3 rounded-lg border bg-muted/40 text-xs text-muted-foreground flex items-center justify-between">
+                                <span className="flex items-center gap-1.5 font-medium text-foreground">
+                                    <Sparkles className="h-3.5 w-3.5 text-emerald-500" /> Platform Master Key Auto-Assigned
+                                </span>
+                                <Badge variant="outline" className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/30">
+                                    No Personal Key Required
+                                </Badge>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="flex items-center justify-between">
+                                    <Label className="flex items-center gap-2">
+                                        <span>{mode === 'override' ? 'API Key (leave empty to use global)' : 'API Key(s)'}</span>
+                                        {isMasterKeyActive && (
+                                            <Badge variant="outline" className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/30">
+                                                Optional — Platform Master Key Active
+                                            </Badge>
+                                        )}
+                                    </Label>
+                                </div>
+                                {renderFieldDescription("api_key", providerSchema)}
+                                {apiKeys[service].map((key, index) => (
+                                    <div key={index} className="flex gap-2">
+                                        <Input
+                                            type="text"
+                                            placeholder={isMasterKeyActive ? "Using platform master key (leave blank)" : "Enter API key"}
+                                            value={key}
+                                            onChange={(e) => {
+                                                const newKeys = [...apiKeys[service]];
+                                                newKeys[index] = e.target.value;
+                                                setApiKeys(prev => ({ ...prev, [service]: newKeys }));
+                                            }}
+                                        />
+                                        {apiKeys[service].length > 1 && (
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="shrink-0"
+                                                onClick={() => {
+                                                    setApiKeys(prev => ({
+                                                        ...prev,
+                                                        [service]: prev[service].filter((_, i) => i !== index),
+                                                    }));
+                                                }}
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                ))}
+                                {!masterMode && mode !== 'override' && (
                                     <Button
                                         type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                        className="shrink-0"
+                                        variant="outline"
+                                        size="sm"
                                         onClick={() => {
                                             setApiKeys(prev => ({
                                                 ...prev,
-                                                [service]: prev[service].filter((_, i) => i !== index),
+                                                [service]: [...prev[service], ""],
                                             }));
                                         }}
                                     >
-                                        <X className="h-4 w-4" />
+                                        <Plus className="h-4 w-4 mr-1" /> Add API Key
                                     </Button>
                                 )}
-                            </div>
-                        ))}
-                        {mode !== 'override' && (
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                    setApiKeys(prev => ({
-                                        ...prev,
-                                        [service]: [...prev[service], ""],
-                                    }));
-                                }}
-                            >
-                                <Plus className="h-4 w-4 mr-1" /> Add API Key
-                            </Button>
+                            </>
                         )}
                     </div>
                 )}

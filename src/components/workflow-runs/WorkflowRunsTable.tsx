@@ -172,12 +172,22 @@ export function WorkflowRunsTable({
                                                 )}
                                             </div>
                                         </TableHead>
+                                        <TableHead className="font-semibold">Cost / Usage</TableHead>
                                         <TableHead className="font-semibold">Disposition</TableHead>
                                         <TableHead className="font-semibold">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {runs.map((run) => (
+                                    {runs.map((run) => {
+                                        const cost = typeof (run.cost_info as any)?.charge_usd === 'number'
+                                            ? (run.cost_info as any).charge_usd
+                                            : typeof (run.cost_info as any)?.total_cost_usd === 'number'
+                                            ? (run.cost_info as any).total_cost_usd
+                                            : run.is_completed && typeof run.cost_info?.call_duration_seconds === 'number' && run.cost_info.call_duration_seconds > 0
+                                            ? (run.cost_info.call_duration_seconds / 60) * 0.06
+                                            : null;
+
+                                        return (
                                         <TableRow
                                             key={run.id}
                                             className={`cursor-pointer hover:bg-muted/50 ${selectedRowId === run.id ? "bg-primary/20 ring-1 ring-primary/50" : ""}`}
@@ -199,6 +209,9 @@ export function WorkflowRunsTable({
                                                 {typeof run.cost_info?.call_duration_seconds === 'number'
                                                     ? `${run.cost_info.call_duration_seconds.toFixed(1)}s`
                                                     : "-"}
+                                            </TableCell>
+                                            <TableCell className="text-sm font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                                                {cost !== null ? `$${cost.toFixed(4)}` : "-"}
                                             </TableCell>
                                             <TableCell>
                                                 {run.gathered_context?.mapped_call_disposition ? (
@@ -228,7 +241,8 @@ export function WorkflowRunsTable({
                                                 </div>
                                             </TableCell>
                                         </TableRow>
-                                    ))}
+                                    );
+                                })}
                                 </TableBody>
                             </Table>
                         </div>
