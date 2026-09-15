@@ -15,14 +15,18 @@ import {
     AlertCircle,
     ArrowUpRight,
     Sparkles,
+    Copy,
+    Check,
+    Receipt,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { RechargeWalletModal } from "@/components/billing/RechargeWalletModal";
+
 
 import {
-    createMpsCreditPurchaseUrlApiV1OrganizationsUsageMpsCreditsPurchaseUrlPost,
     getUsageHistoryApiV1OrganizationsUsageRunsGet,
 } from "@/client/sdk.gen";
 import type { UsageHistoryResponse, WorkflowRunUsageResponse } from "@/client/types.gen";
@@ -75,10 +79,44 @@ export default function BillingPage() {
     const [usageData, setUsageData] = useState<UsageHistoryResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const [purchasing, setPurchasing] = useState(false);
+    const [rechargeModalOpen, setRechargeModalOpen] = useState(false);
+    const [transactions, setTransactions] = useState<any[]>([]);
+    const [loadingTransactions, setLoadingTransactions] = useState(false);
+    const [copiedReceipt, setCopiedReceipt] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(() => getPageFromSearchParams(searchParams));
 
-    const canPurchaseCredits = !configLoading && config !== null && config.deploymentMode !== "oss";
+    const fetchTransactions = useCallback(async () => {
+        if (auth.loading || !auth.isAuthenticated) return;
+        setLoadingTransactions(true);
+        try {
+            const token = await auth.getAccessToken();
+            const res = await fetch("/api/v1/payments/transactions?limit=20", {
+                headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setTransactions(data);
+            }
+        } catch (err) {
+            console.error("Failed to fetch payment transactions:", err);
+        } finally {
+            setLoadingTransactions(false);
+        }
+    }, [auth.isAuthenticated, auth.loading, auth.getAccessToken]);
+
+
+    useEffect(() => {
+        fetchTransactions();
+    }, [fetchTransactions]);
+
+    const handleCopyReceipt = (receipt: string) => {
+        navigator.clipboard.writeText(receipt);
+        setCopiedReceipt(receipt);
+        toast.success("Receipt ID copied!", {
+            description: "Paste in Razorpay Dashboard to filter this transaction.",
+        });
+        setTimeout(() => setCopiedReceipt(null), 2500);
+    };
 
     const fetchUsageHistory = useCallback(async (
         page: number,
@@ -125,9 +163,13 @@ export default function BillingPage() {
     }, [currentPage, fetchUsageHistory]);
 
     const handleRefresh = async () => {
-        await fetchUsageHistory(currentPage, { silent: true });
+        await Promise.all([
+            fetchUsageHistory(currentPage, { silent: true }),
+            fetchTransactions(),
+        ]);
         toast.success("Wallet balance & usage updated");
     };
+
 
     const updateUrlPage = useCallback((page: number) => {
         const newParams = new URLSearchParams(searchParams.toString());
@@ -146,24 +188,6 @@ export default function BillingPage() {
         updateUrlPage(nextPage);
     };
 
-    const handlePurchaseCredits = async () => {
-        if (!canPurchaseCredits) return;
-
-        trackMetaInitiateCheckout();
-        setPurchasing(true);
-        try {
-            const response = await createMpsCreditPurchaseUrlApiV1OrganizationsUsageMpsCreditsPurchaseUrlPost();
-            const checkoutUrl = response.data?.checkout_url;
-            if (!checkoutUrl) {
-                throw new Error("Missing checkout URL");
-            }
-            window.location.href = checkoutUrl;
-        } catch (error) {
-            console.error("Failed to create purchase URL:", error);
-            toast.error("Failed to open checkout");
-            setPurchasing(false);
-        }
-    };
 
     const totalRuns = usageData?.total_count ?? 0;
     const totalDurationSeconds = usageData?.total_duration_seconds ?? 0;
@@ -204,13 +228,15 @@ export default function BillingPage() {
                         <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
                         Refresh
                     </Button>
-                    {canPurchaseCredits && (
-                        <Button onClick={handlePurchaseCredits} disabled={purchasing} className="bg-primary hover:bg-primary/90">
-                            <CreditCard className="h-4 w-4 mr-2" />
-                            {purchasing ? "Opening Checkout..." : "Recharge Wallet"}
-                        </Button>
-                    )}
+                    <Button
+                        onClick={() => setRechargeModalOpen(true)}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-xs"
+                    >
+                        <CreditCard className="h-4 w-4 mr-2" />
+                        Recharge Wallet
+                    </Button>
                 </div>
+
             </div>
 
             {/* Calling Wallet Hero Banner */}
@@ -459,6 +485,136 @@ export default function BillingPage() {
                     )}
                 </CardContent>
             </Card>
+
+            {/* Wallet Recharge History & Receipts */}
+
+            <Card>
+                <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                        <div className="flex items-center gap-2">
+                            <Receipt className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                            <CardTitle className="text-xl font-bold">Wallet Recharges & Receipts</CardTitle>
+                        </div>
+                        <CardDescription className="text-xs text-muted-foreground mt-0.5">
+                            Order receipts with custom identification. Search or filter by Receipt ID in your Razorpay Dashboard.
+                        </CardDescription>
+                    </div>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setRechargeModalOpen(true)}
+                        className="gap-1.5 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                    >
+                        <CreditCard className="h-3.5 w-3.5" />
+                        Top Up Balance
+                    </Button>
+                </CardHeader>
+                <CardContent>
+                    {loadingTransactions ? (
+                        <div className="space-y-2 py-4">
+                            <Skeleton className="h-10 w-full" />
+                            <Skeleton className="h-10 w-full" />
+                        </div>
+                    ) : transactions.length > 0 ? (
+                        <div className="rounded-lg border overflow-x-auto shadow-sm">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow className="bg-muted/50">
+                                        <TableHead className="font-semibold">Date & Time</TableHead>
+                                        <TableHead className="font-semibold">Receipt ID (RZP Dashboard)</TableHead>
+                                        <TableHead className="font-semibold">Credits & Amount Paid</TableHead>
+                                        <TableHead className="font-semibold">Payment / Order ID</TableHead>
+                                        <TableHead className="font-semibold">Status</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {transactions.map((tx) => {
+                                        const isPaid = tx.status === "paid";
+                                        const isFailed = tx.status === "failed";
+                                        const isCopied = copiedReceipt === tx.receipt;
+
+                                        return (
+                                            <TableRow key={tx.id} className="hover:bg-muted/40">
+                                                <TableCell className="text-sm whitespace-nowrap">
+                                                    {tx.created_at
+                                                        ? formatDateTime(tx.created_at, organizationTimezone)
+                                                        : "-"}
+                                                </TableCell>
+                                                <TableCell className="text-sm font-mono whitespace-nowrap">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="font-semibold text-foreground">
+                                                            {tx.receipt}
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleCopyReceipt(tx.receipt)}
+                                                            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded hover:bg-muted"
+                                                            title="Copy Receipt ID for Razorpay Dashboard"
+                                                        >
+                                                            {isCopied ? (
+                                                                <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                                            ) : (
+                                                                <Copy className="h-3.5 w-3.5" />
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="text-sm font-mono whitespace-nowrap">
+                                                    <div className="flex flex-col">
+                                                        <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                                                            +${Number(tx.amount_usd).toFixed(2)} USD
+                                                        </span>
+                                                        {tx.amount_inr > 0 && (
+                                                            <span className="text-[11px] text-muted-foreground font-normal">
+                                                                ₹{Number(tx.amount_inr).toFixed(2)} INR (incl. GST)
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="text-xs font-mono text-muted-foreground whitespace-nowrap">
+                                                    {tx.razorpay_payment_id || tx.razorpay_order_id}
+                                                </TableCell>
+
+                                                <TableCell>
+                                                    <Badge
+                                                        variant="outline"
+                                                        className={
+                                                            isPaid
+                                                                ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs px-2 py-0.5"
+                                                                : isFailed
+                                                                ? "bg-destructive/15 text-destructive border-destructive/30 text-xs px-2 py-0.5"
+                                                                : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 text-xs px-2 py-0.5"
+                                                        }
+                                                    >
+                                                        {isPaid ? "Paid & Credited" : isFailed ? "Failed" : "Pending"}
+                                                    </Badge>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    ) : (
+                        <div className="rounded-xl border border-dashed p-8 text-center">
+                            <Receipt className="mx-auto h-9 w-9 text-muted-foreground/40 mb-2.5" />
+                            <h3 className="font-semibold text-sm">No Recharge Transactions Yet</h3>
+                            <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+                                Once you recharge your organization wallet via Razorpay, transaction receipts and payment references will be logged here.
+                            </p>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
+            {/* Recharge Wallet Modal */}
+            <RechargeWalletModal
+                open={rechargeModalOpen}
+                onOpenChange={setRechargeModalOpen}
+                currentBalanceUsd={platformWalletUsd}
+                onSuccess={handleRefresh}
+            />
         </div>
     );
 }
+

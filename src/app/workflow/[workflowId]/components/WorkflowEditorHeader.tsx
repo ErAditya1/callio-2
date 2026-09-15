@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactFlowInstance } from "@xyflow/react";
-import { AlertCircle, ArrowLeft, Bot, Clipboard, Copy, Download, Eye, History, LoaderCircle, Menu, MoreVertical, Pencil, Phone, Rocket } from "lucide-react";
+import { AlertCircle, ArrowLeft, Bot, Clipboard, Copy, Download, Eye, History, LoaderCircle, Menu, MoreVertical, Pencil, Phone, Rocket, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -46,6 +46,8 @@ interface WorkflowEditorHeaderProps {
     hasDraft: boolean;
     onPublished: () => void;
     renameWorkflow: (newName: string) => Promise<void>;
+    onCopilotClick?: () => void;
+    isCopilotOpen?: boolean;
 }
 
 export const WorkflowEditorHeader = ({
@@ -64,7 +66,10 @@ export const WorkflowEditorHeader = ({
     onPublished,
     workflowId,
     workflowUuid,
+    user,
     renameWorkflow,
+    onCopilotClick,
+    isCopilotOpen,
 }: WorkflowEditorHeaderProps) => {
     const router = useRouter();
     const { toggleSidebar } = useSidebar();
@@ -417,6 +422,21 @@ export const WorkflowEditorHeader = ({
                     >
                         <Phone className="w-4 h-4" />
                         Phone Call
+                    </Button>
+                )}
+
+                {onCopilotClick && (
+                    <Button
+                        variant="outline"
+                        className={`flex items-center gap-2 border-border hover:bg-muted ${
+                            isCopilotOpen
+                                ? "bg-primary/10 border-primary text-primary font-medium"
+                                : "text-foreground"
+                        }`}
+                        onClick={onCopilotClick}
+                    >
+                        <Sparkles className={`w-4 h-4 ${isCopilotOpen ? "text-primary" : "text-blue-500"}`} />
+                        AI Copilot
                     </Button>
                 )}
 

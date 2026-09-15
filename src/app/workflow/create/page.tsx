@@ -1,224 +1,843 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {
+    ArrowLeft,
+    ArrowRight,
+    Bot,
+    Check,
+    CheckCircle2,
+    Copy,
+    MessageSquare,
+    PhoneIncoming,
+    PhoneOutgoing,
+    Play,
+    RefreshCw,
+    Send,
+    Sparkles,
+    User,
+    Workflow,
+} from 'lucide-react';
 
-import { createWorkflowFromTemplateApiV1WorkflowCreateTemplatePost } from '@/client/sdk.gen';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/lib/auth';
+import { resolveBrowserBackendUrl } from '@/lib/apiClient';
 import logger from '@/lib/logger';
+
+interface ChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+    quickReplies?: string[];
+}
+
+interface WorkflowDraft {
+    name: string;
+    call_type: 'inbound' | 'outbound';
+    language: string;
+    first_message: string;
+    system_prompt: string;
+    questions_to_ask: string[];
+    workflow_definition?: Record<string, any>;
+}
 
 export default function CreateWorkflowPage() {
     const router = useRouter();
     const { user, getAccessToken } = useAuth();
+
+    // Mode Toggle: 'classic' (default fast entry form) vs 'copilot' (interactive Q&A)
+    const [builderMode, setBuilderMode] = useState<'copilot' | 'classic'>('classic');
+
+    // Chat State
+    const [messages, setMessages] = useState<ChatMessage[]>([
+        {
+            role: 'assistant',
+            content:
+                "Namaste! Main aapka **Voice AI Agent Architect** hoon 🎙️✨\n\nAap kaisa voice calling agent banana chahte hain? (Jaise Real Estate Lead Qualification, Clinic Appointment Booking, ya Customer Support?)",
+            quickReplies: [
+                '🏢 Real Estate Lead Qualification',
+                '🩺 Clinic Appointment Booking',
+                '🎧 Inbound Customer Support',
+                '🚀 Outbound Sales Follow-up',
+            ],
+        },
+    ]);
+
+    const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [workflowId, setWorkflowId] = useState<string | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [copiedPrompt, setCopiedPrompt] = useState(false);
+    const [showFullPrompt, setShowFullPrompt] = useState(false);
 
-    const [callType, setCallType] = useState<'inbound' | 'outbound'>('inbound');
-    const [useCase, setUseCase] = useState('');
-    const [activityDescription, setActivityDescription] = useState('');
+    // Live Draft State
+    const [workflowDraft, setWorkflowDraft] = useState<WorkflowDraft | null>(null);
+    const [workflowId, setWorkflowId] = useState<number | null>(null);
+    const [isReadyToTest, setIsReadyToTest] = useState(false);
 
-    const handleCreateWorkflow = async () => {
-        if (!useCase || !activityDescription) {
-            setError('Please fill in all fields');
-            return;
+    // Classic Form State
+    const [classicCallType, setClassicCallType] = useState<'inbound' | 'outbound'>('inbound');
+    const [classicUseCase, setClassicUseCase] = useState('');
+    const [classicActivityDescription, setClassicActivityDescription] = useState('');
+    const [classicError, setClassicError] = useState<string | null>(null);
+
+    const chatContainerRef = useRef<HTMLDivElement>(null);
+
+    // Auto-scroll only the chat message container to bottom without scrolling parent page
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTo({
+                top: chatContainerRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
         }
+    }, [messages, isLoading]);
 
-        if (!user) {
-            setError('You must be logged in to create a workflow');
-            return;
-        }
+    // Send a message to the Copilot API
+    const handleSendMessage = async (textToSend?: string) => {
+        const query = (textToSend || inputMessage).trim();
+        if (!query || isLoading) return;
 
+        setInputMessage('');
+
+        const newHistory: ChatMessage[] = [
+            ...messages,
+            { role: 'user', content: query },
+        ];
+        setMessages(newHistory);
         setIsLoading(true);
-        setError(null);
 
         try {
-            const accessToken = await getAccessToken();
+            const token = await getAccessToken();
+            const baseUrl = resolveBrowserBackendUrl();
 
-            // Call the API to create workflow from template
-            const response = await createWorkflowFromTemplateApiV1WorkflowCreateTemplatePost({
-                body: {
-                    call_type: callType,
-                    use_case: useCase,
-                    activity_description: activityDescription,
-                },
+            const res = await fetch(`${baseUrl}/api/v1/workflow/copilot/chat`, {
+                method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
+                body: JSON.stringify({
+                    messages: newHistory.map((m) => ({
+                        role: m.role,
+                        content: m.content,
+                    })),
+                    current_workflow_id: workflowId,
+                    current_workflow_draft: workflowDraft,
+                    save_draft: true,
+                }),
             });
 
-            if (response.data?.id) {
-                setWorkflowId(String(response.data.id));
-                setShowSuccessModal(true);
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(`Server returned ${res.status}: ${errText}`);
             }
-        } catch (err) {
-            setError('Failed to create workflow. Please try again.');
-            logger.error(`Error creating workflow: ${err}`);
+
+            const data = await res.json();
+
+            setMessages((prev) => [
+                ...prev,
+                {
+                    role: 'assistant',
+                    content: data.reply_message,
+                    quickReplies: data.suggested_quick_replies || [],
+                },
+            ]);
+
+            if (data.workflow_draft) {
+                setWorkflowDraft(data.workflow_draft);
+            }
+            if (data.workflow_id) {
+                setWorkflowId(data.workflow_id);
+            }
+            if (data.is_ready_to_test) {
+                setIsReadyToTest(true);
+            }
+        } catch (err: any) {
+            logger.error(`Copilot error: ${err}`);
+            const errorMsg = err?.message || String(err);
+            setMessages((prev) => [
+                ...prev,
+                {
+                    role: 'assistant',
+                    content: `Maaf kijiye, response process karne me issue aaya (${errorMsg.slice(0, 150)}). Kripya dobara koshish karein ya seedha Studio open karein.`,
+                    quickReplies: ['Dobara koshish karein', 'Open in Studio'],
+                },
+            ]);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleModalContinue = () => {
-        if (!workflowId) return;
-        router.push(`/workflow/${workflowId}?onboarding=web_call`);
+    // Quick Reply Pill click handler
+    const handleQuickReply = (reply: string) => {
+        const lower = reply.toLowerCase();
+        if (
+            lower.includes('run test') ||
+            lower.includes('start test') ||
+            lower.includes('open in studio')
+        ) {
+            handleOpenInStudio();
+            return;
+        }
+
+        if (lower.includes('export json') || lower.includes('export config')) {
+            if (workflowDraft) {
+                const blob = new Blob(
+                    [JSON.stringify(workflowDraft, null, 2)],
+                    { type: 'application/json' }
+                );
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${(workflowDraft.name || 'agent').replace(/\s+/g, '_')}_workflow.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                return;
+            }
+        }
+
+        handleSendMessage(reply);
+    };
+
+    // Save and redirect to workflow studio canvas
+    const handleOpenInStudio = async () => {
+        if (workflowId) {
+            router.push(`/workflow/${workflowId}`);
+            return;
+        }
+
+        if (!workflowDraft) return;
+
+        setIsSaving(true);
+        try {
+            const token = await getAccessToken();
+            const baseUrl = resolveBrowserBackendUrl();
+
+            const res = await fetch(`${baseUrl}/api/v1/workflow/copilot/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+                body: JSON.stringify({
+                    messages: messages.map((m) => ({
+                        role: m.role,
+                        content: m.content,
+                    })),
+                    current_workflow_id: workflowId,
+                    current_workflow_draft: workflowDraft,
+                    save_draft: true,
+                }),
+            });
+
+            const data = await res.json();
+            if (data.workflow_id) {
+                router.push(`/workflow/${data.workflow_id}`);
+            }
+        } catch (err) {
+            logger.error(`Error finalizing workflow: ${err}`);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    // Classic Submit Handler
+    const handleClassicSubmit = async () => {
+        if (!classicUseCase || !classicActivityDescription) {
+            setClassicError('Please fill in all fields');
+            return;
+        }
+
+        setIsLoading(true);
+        setClassicError(null);
+
+        try {
+            const token = await getAccessToken();
+            const baseUrl = resolveBrowserBackendUrl();
+
+            const res = await fetch(`${baseUrl}/api/v1/workflow/create/template`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+                body: JSON.stringify({
+                    call_type: classicCallType,
+                    use_case: classicUseCase,
+                    activity_description: classicActivityDescription,
+                }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to create workflow');
+            }
+
+            const data = await res.json();
+            if (data.id) {
+                router.push(`/workflow/${data.id}?copilot=open`);
+            }
+        } catch (err: any) {
+            setClassicError(err?.message || 'Failed to create workflow');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
-        <div className="min-h-screen">
-            <div className="container mx-auto px-4 py-8 max-w-2xl">
-                <div className="mb-6">
-                    <h1 className="text-3xl font-bold mb-2">Create Voice Agent</h1>
-                    <p className="text-muted-foreground">
-                        Tell us about your use case and we&apos;ll create a customized voice agent for you
-                    </p>
+        <div
+            className={`bg-background text-foreground flex flex-col ${
+                builderMode === 'copilot'
+                    ? 'h-screen overflow-hidden'
+                    : 'min-h-screen overflow-y-auto'
+            }`}
+        >
+            {/* Top Navigation Bar */}
+            <header className="border-b bg-card/60 backdrop-blur-md sticky top-0 z-20 px-4 lg:px-8 py-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/workflow"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back
+                    </Link>
+                    <div className="h-4 w-px bg-border mx-1" />
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+                            <Sparkles className="w-4 h-4" />
+                        </div>
+                        <div>
+                            <h1 className="text-base font-semibold leading-tight">
+                                AI Agent Architect
+                            </h1>
+                            <p className="text-xs text-muted-foreground">
+                                Interactive Conversational Agent Builder
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Agent Details</CardTitle>
-                        <CardDescription>
-                            Configure your voice agent settings
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="space-y-2">
-                            <Label htmlFor="call-type">Call Type</Label>
-                            <Select value={callType} onValueChange={(value) => setCallType(value as 'inbound' | 'outbound')}>
-                                <SelectTrigger id="call-type">
-                                    <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="inbound">
-                                        Inbound (Users call AI)
-                                    </SelectItem>
-                                    <SelectItem value="outbound">
-                                        Outbound (AI calls users)
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <p className="text-sm text-muted-foreground">
-                                Choose whether users will call your AI or your AI will call users
-                            </p>
+                <div className="flex items-center gap-3">
+                    <div className="flex bg-muted/70 p-0.5 rounded-lg border text-xs font-medium">
+                        <button
+                            type="button"
+                            onClick={() => setBuilderMode('copilot')}
+                            className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
+                                builderMode === 'copilot'
+                                    ? 'bg-background text-foreground shadow-sm'
+                                    : 'text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            <Bot className="w-3.5 h-3.5 text-primary" />
+                            AI Copilot
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setBuilderMode('classic')}
+                            className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
+                                builderMode === 'classic'
+                                    ? 'bg-background text-foreground shadow-sm'
+                                    : 'text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            Classic Form
+                        </button>
+                    </div>
+
+                    {workflowDraft && (
+                        <Button
+                            size="sm"
+                            onClick={handleOpenInStudio}
+                            disabled={isSaving}
+                            className="gap-2 shadow-sm font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                        >
+                            {isSaving ? (
+                                <>
+                                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    Open in Studio
+                                    <ArrowRight className="w-3.5 h-3.5" />
+                                </>
+                            )}
+                        </Button>
+                    )}
+                </div>
+            </header>
+
+            {/* Classic Form Fallback */}
+            {builderMode === 'classic' ? (
+                <div className="container mx-auto px-4 py-8 max-w-2xl flex-1 flex flex-col justify-center">
+                    <div className="w-full my-auto py-2">
+                        <Card className="shadow-md border-border/80">
+                            <CardHeader>
+                                <CardTitle className="text-xl">Create Voice Agent (Classic)</CardTitle>
+                                <CardDescription>
+                                    Enter your agent details or paste your full system prompt to generate your voice workflow.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-5">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="call-type">Call Direction</Label>
+                                    <Select
+                                        value={classicCallType}
+                                        onValueChange={(val) =>
+                                            setClassicCallType(val as 'inbound' | 'outbound')
+                                        }
+                                    >
+                                        <SelectTrigger id="call-type">
+                                            <SelectValue placeholder="Select type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="inbound">
+                                                Inbound (Customers call your AI)
+                                            </SelectItem>
+                                            <SelectItem value="outbound">
+                                                Outbound (AI calls customers)
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="use-case">Use Case Name</Label>
+                                    <Input
+                                        id="use-case"
+                                        placeholder="e.g., CampusAssist, Clinic Receptionist"
+                                        value={classicUseCase}
+                                        onChange={(e) => setClassicUseCase(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                        <Label htmlFor="activity-description">
+                                            Activity & Agent Description / System Prompt
+                                        </Label>
+                                        <span className="text-[11px] text-muted-foreground">
+                                            {classicActivityDescription.length > 0 && `${classicActivityDescription.length} characters`}
+                                        </span>
+                                    </div>
+                                    <Textarea
+                                        id="activity-description"
+                                        placeholder="Describe what the agent should say, its rules, and departments..."
+                                        value={classicActivityDescription}
+                                        onChange={(e) =>
+                                            setClassicActivityDescription(e.target.value)
+                                        }
+                                        rows={8}
+                                        className="font-mono text-xs leading-relaxed resize-y"
+                                    />
+                                </div>
+
+                                {classicError && (
+                                    <p className="text-sm text-red-500 font-medium">
+                                        {classicError}
+                                    </p>
+                                )}
+
+                                <Button
+                                    onClick={handleClassicSubmit}
+                                    disabled={isLoading}
+                                    className="w-full gap-2 py-5 font-medium shadow-sm"
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <RefreshCw className="w-4 h-4 animate-spin" />
+                                            Generating Agent...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Sparkles className="w-4 h-4" />
+                                            Generate & Open Canvas
+                                        </>
+                                    )}
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            ) : (
+                /* Interactive Split Screen Copilot Layout */
+                <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden h-[calc(100vh-61px)]">
+                    {/* Left Pane: Interactive Chat Conversation */}
+                    <div className="lg:col-span-6 xl:col-span-7 flex flex-col border-r h-full bg-background/50 overflow-hidden">
+                        {/* Messages Feed */}
+                        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-6">
+                            {messages.map((msg, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`flex gap-3.5 ${
+                                        msg.role === 'user' ? 'justify-end' : 'justify-start'
+                                    }`}
+                                >
+                                    {msg.role === 'assistant' && (
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                                            <Bot className="w-4 h-4" />
+                                        </div>
+                                    )}
+
+                                    <div
+                                        className={`max-w-[85%] space-y-3 ${
+                                            msg.role === 'user'
+                                                ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm'
+                                                : 'bg-card border text-card-foreground rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm'
+                                        }`}
+                                    >
+                                        <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                                            {msg.content}
+                                        </div>
+
+                                        {/* Suggested Quick Reply Pills */}
+                                        {msg.quickReplies && msg.quickReplies.length > 0 && (
+                                            <div className="pt-2 flex flex-wrap gap-2 border-t border-border/50">
+                                                {msg.quickReplies.map((pill, pIdx) => (
+                                                    <button
+                                                        key={pIdx}
+                                                        type="button"
+                                                        onClick={() => handleQuickReply(pill)}
+                                                        disabled={isLoading}
+                                                        className="text-xs bg-muted/80 hover:bg-primary/10 hover:text-primary hover:border-primary/40 border text-foreground/80 px-2.5 py-1.5 rounded-full transition-all text-left font-medium"
+                                                    >
+                                                        {pill}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {msg.role === 'user' && (
+                                        <div className="w-8 h-8 rounded-full bg-muted border text-muted-foreground flex items-center justify-center shrink-0 mt-0.5">
+                                            <User className="w-4 h-4" />
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+
+                            {/* Typing Indicator */}
+                            {isLoading && (
+                                <div className="flex gap-3.5 items-center">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                        <Bot className="w-4 h-4" />
+                                    </div>
+                                    <div className="bg-card border rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm flex items-center gap-1.5">
+                                        <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce" />
+                                        <div
+                                            className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"
+                                            style={{ animationDelay: '0.2s' }}
+                                        />
+                                        <div
+                                            className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"
+                                            style={{ animationDelay: '0.4s' }}
+                                        />
+                                        <span className="text-xs text-muted-foreground ml-2">
+                                            Architect is thinking & updating blueprint...
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="use-case">Use Case</Label>
-                            <Input
-                                id="use-case"
-                                placeholder="e.g., Lead Qualification, HR Screening, Customer Support"
-                                value={useCase}
-                                onChange={(e) => setUseCase(e.target.value)}
-                            />
-                            <p className="text-sm text-muted-foreground">
-                                Describe the primary purpose of your voice agent
-                            </p>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="activity-description">Activity Description</Label>
-                            <Textarea
-                                id="activity-description"
-                                placeholder="Describe briefly what your voice agent will do (e.g., Qualify leads for real estate, Screen candidates for roles, Handle customer support). This will be a prompt to an LLM."
-                                value={activityDescription}
-                                onChange={(e) => setActivityDescription(e.target.value)}
-                                className="min-h-[100px]"
-                            />
-                            <p className="text-sm text-muted-foreground">
-                                This description will be used to generate the AI prompt for your voice agent
-                            </p>
-                        </div>
-
-                        {error && (
-                            <p className="text-sm text-red-500">{error}</p>
-                        )}
-
-                        <div className="pt-4">
-                            <Button
-                                onClick={handleCreateWorkflow}
-                                disabled={isLoading || !useCase || !activityDescription}
-                                className="w-full"
+                        {/* Chat Input Bar */}
+                        <div className="p-4 border-t bg-card/40 backdrop-blur-sm">
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    handleSendMessage();
+                                }}
+                                className="relative flex items-center"
                             >
-                                {isLoading ? 'Creating...' : 'Create Agent'}
-                            </Button>
+                                <Input
+                                    value={inputMessage}
+                                    onChange={(e) => setInputMessage(e.target.value)}
+                                    placeholder="Type your answer or instructions... (e.g. 'Sneha naam rakho, Hindi-English mix bole')"
+                                    disabled={isLoading}
+                                    className="pr-24 py-6 text-sm bg-background/80 shadow-inner rounded-xl border-border/80 focus-visible:ring-primary/40"
+                                />
+                                <div className="absolute right-2 flex items-center gap-1">
+                                    <Button
+                                        type="submit"
+                                        size="sm"
+                                        disabled={!inputMessage.trim() || isLoading}
+                                        className="rounded-lg h-9 px-3 gap-1.5 bg-primary text-primary-foreground shadow-sm"
+                                    >
+                                        <Send className="w-3.5 h-3.5" />
+                                        Send
+                                    </Button>
+                                </div>
+                            </form>
+                            <p className="text-[11px] text-muted-foreground mt-2 px-1 text-center">
+                                Tip: You can reply in Hindi, Hinglish, or English. Copilot will design the agent accordingly.
+                            </p>
                         </div>
-                    </CardContent>
-                </Card>
-            </div>
+                    </div>
 
-            {/* Loading Overlay */}
-            {isLoading && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                    <Card className="w-full max-w-md p-8">
-                        <div className="flex flex-col items-center space-y-6">
-                            {/* Animated spinner */}
-                            <div className="relative">
-                                <div className="w-16 h-16 border-4 border-muted rounded-full"></div>
-                                <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-primary rounded-full animate-spin"></div>
-                            </div>
-
-                            <div className="text-center space-y-2">
-                                <h3 className="text-lg font-semibold">
-                                    Creating Your Workflow
-                                </h3>
-                                <p className="text-sm text-muted-foreground max-w-xs">
-                                    We&apos;re setting up your voice agent with your specifications. This will just take a moment...
+                    {/* Right Pane: Live Agent Blueprint (Artifacts Card) */}
+                    <div className="lg:col-span-6 xl:col-span-5 flex flex-col h-full bg-muted/20 overflow-y-auto p-4 lg:p-6 space-y-5">
+                        {/* Blueprint Card Header */}
+                        <div className="flex items-center justify-between pb-3 border-b">
+                            <div>
+                                <h2 className="text-base font-semibold flex items-center gap-2">
+                                    <Workflow className="w-4 h-4 text-primary" />
+                                    Live Agent Blueprint
+                                </h2>
+                                <p className="text-xs text-muted-foreground">
+                                    Updates in real-time as you chat with the Copilot
                                 </p>
                             </div>
+
+                            {workflowDraft ? (
+                                <Badge
+                                    variant="outline"
+                                    className={`text-xs gap-1.5 py-1 px-2.5 ${
+                                        isReadyToTest
+                                            ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30 font-semibold'
+                                            : 'bg-amber-500/10 text-amber-600 border-amber-500/30'
+                                    }`}
+                                >
+                                    <span
+                                        className={`w-2 h-2 rounded-full ${
+                                            isReadyToTest
+                                                ? 'bg-emerald-500 animate-pulse'
+                                                : 'bg-amber-500'
+                                        }`}
+                                    />
+                                    {isReadyToTest ? 'Ready to Deploy' : 'Drafting...'}
+                                </Badge>
+                            ) : (
+                                <Badge variant="secondary" className="text-xs">
+                                    Waiting for input
+                                </Badge>
+                            )}
                         </div>
-                    </Card>
+
+                        {/* Blueprint Body */}
+                        {workflowDraft ? (
+                            <div className="space-y-4">
+                                {/* Agent Identity Box */}
+                                <Card className="border-border/80 shadow-sm bg-card/90">
+                                    <CardContent className="p-4 space-y-3">
+                                        <div className="flex items-start justify-between">
+                                            <div>
+                                                <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                                                    Agent Name
+                                                </span>
+                                                <h3 className="text-lg font-bold text-foreground">
+                                                    {workflowDraft.name}
+                                                </h3>
+                                            </div>
+                                            <div className="flex gap-1.5">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="gap-1 capitalize text-xs"
+                                                >
+                                                    {workflowDraft.call_type === 'inbound' ? (
+                                                        <PhoneIncoming className="w-3 h-3 text-blue-500" />
+                                                    ) : (
+                                                        <PhoneOutgoing className="w-3 h-3 text-amber-500" />
+                                                    )}
+                                                    {workflowDraft.call_type}
+                                                </Badge>
+                                                <Badge variant="outline" className="text-xs uppercase">
+                                                    {workflowDraft.language || 'EN'}
+                                                </Badge>
+                                            </div>
+                                        </div>
+
+                                        {/* Opening Line / First Message */}
+                                        <div className="space-y-1.5 pt-2 border-t">
+                                            <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1">
+                                                <MessageSquare className="w-3 h-3" />
+                                                Opening Greeting (Spoken First)
+                                            </span>
+                                            <div className="p-3 bg-muted/60 rounded-lg text-sm border font-normal italic text-foreground/90 leading-relaxed">
+                                                &ldquo;{workflowDraft.first_message}&rdquo;
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Questions / Extraction Checklist */}
+                                {workflowDraft.questions_to_ask &&
+                                    workflowDraft.questions_to_ask.length > 0 && (
+                                        <Card className="border-border/80 shadow-sm bg-card/90">
+                                            <CardContent className="p-4 space-y-2.5">
+                                                <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                                    Information to Gather
+                                                </span>
+                                                <div className="grid grid-cols-1 gap-1.5">
+                                                    {workflowDraft.questions_to_ask.map(
+                                                        (q, qIdx) => (
+                                                            <div
+                                                                key={qIdx}
+                                                                className="flex items-center gap-2 text-xs bg-muted/40 p-2 rounded-md border text-foreground/90 font-medium"
+                                                            >
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                                                {q}
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    )}
+
+                                {/* System Prompt Preview */}
+                                <Card className="border-border/80 shadow-sm bg-card/90">
+                                    <CardContent className="p-4 space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                                                Persona & Rules (System Prompt)
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(
+                                                        workflowDraft.system_prompt
+                                                    );
+                                                    setCopiedPrompt(true);
+                                                    setTimeout(() => setCopiedPrompt(false), 2000);
+                                                }}
+                                                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                                            >
+                                                {copiedPrompt ? (
+                                                    <Check className="w-3 h-3 text-emerald-500" />
+                                                ) : (
+                                                    <Copy className="w-3 h-3" />
+                                                )}
+                                                {copiedPrompt ? 'Copied' : 'Copy'}
+                                            </button>
+                                        </div>
+
+                                        <div
+                                            className={`p-3 bg-muted/50 rounded-lg text-xs font-mono text-muted-foreground whitespace-pre-wrap leading-relaxed border ${
+                                                !showFullPrompt ? 'max-h-36 overflow-hidden' : ''
+                                            }`}
+                                        >
+                                            {workflowDraft.system_prompt}
+                                        </div>
+
+                                        {workflowDraft.system_prompt.length > 200 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowFullPrompt(!showFullPrompt)}
+                                                className="text-xs text-primary font-medium hover:underline pt-1"
+                                            >
+                                                {showFullPrompt ? 'Show Less' : 'Show Full Prompt'}
+                                            </button>
+                                        )}
+                                    </CardContent>
+                                </Card>
+
+                                {/* Flow Graph Visual Steps */}
+                                <Card className="border-border/80 shadow-sm bg-card/90">
+                                    <CardContent className="p-4 space-y-2.5">
+                                        <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                                            Generated Canvas Flow Nodes
+                                        </span>
+                                        <div className="flex items-center justify-between p-3 bg-muted/40 rounded-lg border text-xs font-medium">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-6 h-6 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold text-[10px]">
+                                                    1
+                                                </div>
+                                                <span>Start Call</span>
+                                            </div>
+                                            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-6 h-6 rounded-full bg-indigo-500/10 text-indigo-600 flex items-center justify-center font-bold text-[10px]">
+                                                    2
+                                                </div>
+                                                <span>Agent ({workflowDraft.name})</span>
+                                            </div>
+                                            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-[10px]">
+                                                    3
+                                                </div>
+                                                <span>End Call</span>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Action Buttons */}
+                                <div className="pt-2">
+                                    <Button
+                                        onClick={handleOpenInStudio}
+                                        disabled={isSaving}
+                                        className="w-full py-6 text-sm font-semibold gap-2 shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                                    >
+                                        {isSaving ? (
+                                            <>
+                                                <RefreshCw className="w-4 h-4 animate-spin" />
+                                                Finalizing & Saving Agent...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Sparkles className="w-4 h-4" />
+                                                Open in Canvas Studio & Test Voice Call
+                                                <ArrowRight className="w-4 h-4 ml-1" />
+                                            </>
+                                        )}
+                                    </Button>
+                                    <p className="text-[11px] text-muted-foreground text-center mt-2">
+                                        You can test speaking with this agent via your microphone inside the Studio!
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
+                            /* Empty State when no conversation yet */
+                            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-2xl border-border/60">
+                                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+                                    <Bot className="w-6 h-6" />
+                                </div>
+                                <h3 className="font-semibold text-sm mb-1">
+                                    Agent Blueprint will appear here
+                                </h3>
+                                <p className="text-xs text-muted-foreground max-w-xs mb-4">
+                                    Reply to the Copilot on the left or tap a suggestion pill to start creating your agent.
+                                </p>
+                                <div className="flex flex-wrap gap-2 justify-center max-w-sm">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                            handleSendMessage(
+                                                'Mujhe real estate lead qualification agent banana hai'
+                                            )
+                                        }
+                                        className="text-xs"
+                                    >
+                                        🏢 Try Real Estate Agent
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                            handleSendMessage(
+                                                'Clinic ke liye doctor appointment booking agent banayein'
+                                            )
+                                        }
+                                        className="text-xs"
+                                    >
+                                        🩺 Try Clinic Booking
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
-
-            {/* Success Modal */}
-            <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-                <DialogContent className="sm:max-w-lg">
-                    <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
-                            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Workflow Created Successfully!
-                        </DialogTitle>
-                        <DialogDescription asChild>
-                            <div className="mt-4 space-y-3">
-                                <p>
-                                    A voice agent workflow has been generated for your use case, with some artificial data and sample actions.
-                                </p>
-                                <p>
-                                    The voice bot is pre-set to communicate in English with an American accent.
-                                </p>
-                                <p>
-                                    Next steps would be to test the voice bot in the editor, and then modify it to suit your use case.
-                                </p>
-                            </div>
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter className="mt-6">
-                        <Button
-                            onClick={handleModalContinue}
-                            className="w-full"
-                        >
-                            Open and Test Agent
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
         </div>
     );
 }

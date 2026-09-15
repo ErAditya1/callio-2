@@ -36,7 +36,15 @@ function createRequestHeaders(request: NextRequest) {
   headers.delete("content-length");
   headers.delete("host");
 
+  if (!headers.has("authorization")) {
+    const ossToken = request.cookies.get("dograh_auth_token")?.value;
+    if (ossToken) {
+      headers.set("authorization", `Bearer ${ossToken}`);
+    }
+  }
+
   return headers;
+
 }
 
 function createResponseHeaders(response: Response) {

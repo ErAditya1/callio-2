@@ -7,7 +7,7 @@ import {
     ReactFlow,
 } from "@xyflow/react";
 import { BrushCleaning, Maximize2, Minus, Plus, Settings } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -31,6 +31,7 @@ import { VersionHistoryPanel } from './components/VersionHistoryPanel';
 import type { WorkflowRuntimeNodeTransition } from './components/workflow-tester/types';
 import { WorkflowEditorHeader } from "./components/WorkflowEditorHeader";
 import { WorkflowTesterPanel } from './components/WorkflowTesterPanel';
+import { WorkflowCopilotPanel } from './components/WorkflowCopilotPanel';
 import { WorkflowVersionDiffDialog } from './components/WorkflowVersionDiffDialog';
 import { WorkflowProvider } from "./contexts/WorkflowContext";
 import { useWorkflowState } from "./hooks/useWorkflowState";
@@ -80,11 +81,20 @@ function RenderWorkflow({
     const router = useRouter();
     const { specs } = useNodeSpecs();
     const { hasCompletedAction } = useOnboarding();
+    const searchParams = useSearchParams();
     const [isPhoneCallDialogOpen, setIsPhoneCallDialogOpen] = useState(false);
     const [isVersionPanelOpen, setIsVersionPanelOpen] = useState(false);
     const [isTesterRailOpen, setIsTesterRailOpen] = useState(true);
     const [isTesterSheetOpen, setIsTesterSheetOpen] = useState(false);
+    const [isCopilotRailOpen, setIsCopilotRailOpen] = useState(false);
     const [isDesktopViewport, setIsDesktopViewport] = useState(false);
+
+    useEffect(() => {
+        if (searchParams?.get("copilot") === "open") {
+            setIsCopilotRailOpen(true);
+            setIsTesterRailOpen(false);
+        }
+    }, [searchParams]);
     const [versions, setVersions] = useState<WorkflowVersionResponse[]>([]);
     const [versionsLoading, setVersionsLoading] = useState(false);
     const [versionsLoadingMore, setVersionsLoadingMore] = useState(false);
@@ -591,6 +601,14 @@ function RenderWorkflow({
                     hasDraft={hasDraft}
                     onPublished={handlePublished}
                     renameWorkflow={renameWorkflow}
+                    onCopilotClick={() => {
+                        setIsCopilotRailOpen((prev) => {
+                            const next = !prev;
+                            if (next) setIsTesterRailOpen(false);
+                            return next;
+                        });
+                    }}
+                    isCopilotOpen={isCopilotRailOpen}
                 />
 
                 {/* Workflow Canvas */}
@@ -747,6 +765,26 @@ function RenderWorkflow({
                             </div>
                         </div>
 
+                        {isCopilotRailOpen && (
+                            <aside className="hidden h-full w-[400px] shrink-0 border-l border-border xl:block">
+                                <WorkflowCopilotPanel
+                                    workflowId={workflowId}
+                                    nodes={nodes}
+                                    edges={edges}
+                                    onApplyChanges={(newNodes, newEdges) => {
+                                        setNodes(newNodes);
+                                        setEdges(newEdges);
+                                        setIsDirty(true);
+                                    }}
+                                    onTriggerTestCall={() => {
+                                        setIsCopilotRailOpen(false);
+                                        setIsTesterRailOpen(true);
+                                    }}
+                                    onClose={() => setIsCopilotRailOpen(false)}
+                                />
+                            </aside>
+                        )}
+
                         {isTesterRailOpen && (
                             <aside className="hidden h-full w-[400px] shrink-0 border-l border-border xl:block">
                                 <WorkflowTesterPanel
@@ -762,6 +800,26 @@ function RenderWorkflow({
                             </aside>
                         )}
                     </div>
+
+                    <Sheet open={isCopilotRailOpen && !isDesktopViewport} onOpenChange={setIsCopilotRailOpen}>
+                        <SheetContent side="right" className="w-full max-w-none p-0 sm:max-w-xl xl:hidden">
+                            <WorkflowCopilotPanel
+                                workflowId={workflowId}
+                                nodes={nodes}
+                                edges={edges}
+                                onApplyChanges={(newNodes, newEdges) => {
+                                    setNodes(newNodes);
+                                    setEdges(newEdges);
+                                    setIsDirty(true);
+                                }}
+                                onTriggerTestCall={() => {
+                                    setIsCopilotRailOpen(false);
+                                    setIsTesterSheetOpen(true);
+                                }}
+                                onClose={() => setIsCopilotRailOpen(false)}
+                            />
+                        </SheetContent>
+                    </Sheet>
 
                     <Sheet open={isTesterSheetOpen} onOpenChange={setIsTesterSheetOpen}>
                         <SheetContent side="right" className="w-full max-w-none p-0 sm:max-w-xl xl:hidden">
