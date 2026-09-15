@@ -46,7 +46,7 @@ describe("headless chat embed example", () => {
         expect(onChatStateChange).not.toHaveBeenCalled();
         expect(onMessage).not.toHaveBeenCalled();
 
-        (window as WidgetWindow).DograhWidget = widget;
+        (window as any).DograhWidget = widget;
         document.getElementById("dograh-widget")?.dispatchEvent(new Event("load"));
 
         expect(onChatStateChange).toHaveBeenCalledOnce();

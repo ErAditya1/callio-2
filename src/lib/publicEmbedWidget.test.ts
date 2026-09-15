@@ -192,7 +192,7 @@ describe('public embed widget chat lifecycle', () => {
             String(url).endsWith('/api/v1/public/embed/chat/emb_session_TEST/end'),
         );
         expect(endCalls).toHaveLength(1);
-        expect(widget.getState().chat.status).toBe('ended');
+        expect((widget.getState() as any).chat.status).toBe('ended');
         expect(document.querySelector('.dograh-chat-banner')?.textContent).toContain('Conversation ended.');
         expect(document.querySelector<HTMLButtonElement>('.dograh-chat-send')?.disabled).toBe(true);
     });
