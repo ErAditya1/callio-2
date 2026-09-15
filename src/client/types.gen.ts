@@ -4367,6 +4367,7 @@ export type OrganizationAiModelConfigurationV2 = {
     mode: 'dograh' | 'byok';
     dograh?: DograhManagedAiModelConfiguration | null;
     byok?: ByokaiModelConfiguration | null;
+    use_platform_credentials?: boolean;
 };
 
 /**

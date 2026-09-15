@@ -31,6 +31,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VoiceSelectorModal } from "@/components/VoiceSelectorModal";
 import { LANGUAGE_DISPLAY_NAMES } from "@/constants/languages";
@@ -223,6 +224,14 @@ function preferredMode(
     effectiveConfiguration: Record<string, unknown> | null,
     platformMasterKeys?: Record<string, Record<string, any>>,
 ): ModelMode {
+    if (configuration?.use_platform_credentials === true || effectiveConfiguration?.use_platform_credentials === true) {
+        return "dograh";
+    }
+    if (configuration?.use_platform_credentials === false && configuration?.mode === "byok") {
+        const byok = asRecord(configuration.byok);
+        if (byok?.mode === "realtime") return "realtime";
+        return "byok";
+    }
     if (configuration?.mode === "dograh") return "dograh";
     if (configuration?.mode === "byok") {
         const byok = asRecord(configuration.byok);
@@ -547,6 +556,13 @@ export function AIModelConfigurationV2Editor({
 }: AIModelConfigurationV2EditorProps) {
     const defaultsForByok = useMemo(() => byokDefaults(defaults), [defaults]);
     const [mode, setMode] = useState<ModelMode>("dograh");
+    const [usePlatformCredentials, setUsePlatformCredentials] = useState<boolean>(() => {
+        return Boolean(
+            asRecord(configuration)?.use_platform_credentials ??
+            asRecord(effectiveConfiguration)?.use_platform_credentials ??
+            false
+        );
+    });
 
     const [masterForm, setMasterForm] = useState<MasterKeysFormState>(() =>
         buildMasterFormState(defaults, asRecord(configuration), asRecord(effectiveConfiguration))
@@ -577,6 +593,12 @@ export function AIModelConfigurationV2Editor({
     useEffect(() => {
         const rawConfiguration = asRecord(configuration);
         const rawEffectiveConfiguration = asRecord(effectiveConfiguration);
+        const isMaster = Boolean(
+            rawConfiguration?.use_platform_credentials ??
+            rawEffectiveConfiguration?.use_platform_credentials ??
+            false
+        );
+        setUsePlatformCredentials(isMaster);
         setMode(preferredMode(rawConfiguration, rawEffectiveConfiguration, defaults.platform_master_keys));
         const nextMasterForm = buildMasterFormState(defaults, rawConfiguration, rawEffectiveConfiguration);
         setMasterForm(nextMasterForm);
@@ -683,16 +705,24 @@ export function AIModelConfigurationV2Editor({
             if (!masterForm.ttsProvider) throw new Error("Please select a Voice (TTS) provider.");
             if (!masterForm.sttProvider) throw new Error("Please select a Transcriber (STT) provider.");
 
+            // Preserve existing BYOK keys from configuration so user never loses personal credentials
+            const rawConfig = asRecord(configuration);
+            const existingPipeline = asRecord(asRecord(rawConfig?.byok)?.pipeline);
+            const existingLlmKey = (asRecord(existingPipeline?.llm)?.api_key as string) || "";
+            const existingTtsKey = (asRecord(existingPipeline?.tts)?.api_key as string) || "";
+            const existingSttKey = (asRecord(existingPipeline?.stt)?.api_key as string) || "";
+
             await onSave({
                 version: 2,
                 mode: "byok",
+                use_platform_credentials: true,
                 byok: {
                     mode: "pipeline",
                     pipeline: {
                         llm: {
                             provider: masterForm.llmProvider as any,
                             model: masterForm.llmModel || defaults.platform_master_keys?.llm?.[masterForm.llmProvider]?.default_model || "gpt-4o-mini",
-                            api_key: "",
+                            api_key: existingLlmKey,
                         },
                         tts: {
                             provider: masterForm.ttsProvider as any,
@@ -700,17 +730,18 @@ export function AIModelConfigurationV2Editor({
                             voice: masterForm.ttsVoice || "default",
                             speed: masterForm.ttsSpeed || 1.0,
                             language: (masterForm.ttsLanguage && masterForm.ttsLanguage !== "multi") ? masterForm.ttsLanguage : "en",
-                            api_key: "",
+                            api_key: existingTtsKey,
                         },
                         stt: {
                             provider: masterForm.sttProvider as any,
                             model: masterForm.sttModel || defaults.platform_master_keys?.stt?.[masterForm.sttProvider]?.default_model || "default",
                             language: masterForm.sttLanguage || "en",
-                            api_key: "",
+                            api_key: existingSttKey,
                         },
                     },
                 },
             });
+            setUsePlatformCredentials(true);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to save configuration");
         } finally {
@@ -726,6 +757,7 @@ export function AIModelConfigurationV2Editor({
         const body: OrganizationAiModelConfigurationV2 = {
             version: 2,
             mode: "byok",
+            use_platform_credentials: false,
             byok: isRealtime
                 ? {
                     mode: "realtime",
@@ -747,6 +779,29 @@ export function AIModelConfigurationV2Editor({
         };
 
         await onSave(body);
+        setUsePlatformCredentials(false);
+    };
+
+    const handleTogglePlatformCredentials = async (checked: boolean) => {
+        setUsePlatformCredentials(checked);
+        if (checked) {
+            setMode("dograh");
+        } else {
+            setMode("byok");
+        }
+        const rawConfig = asRecord(configuration);
+        if (rawConfig && rawConfig.mode === "byok" && rawConfig.byok) {
+            try {
+                await onSave({
+                    ...(rawConfig as any),
+                    version: 2,
+                    mode: "byok",
+                    use_platform_credentials: checked,
+                });
+            } catch (err) {
+                console.warn("Could not persist credential toggle:", err);
+            }
+        }
     };
 
     return (
@@ -757,6 +812,39 @@ export function AIModelConfigurationV2Editor({
                 </div>
             )}
 
+            {/* Platform Master Keys Active Banner & Quick Toggle */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border bg-card/70 shadow-xs">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-emerald-500" />
+                        <Label htmlFor="master-key-toggle" className="text-sm font-semibold cursor-pointer">
+                            Use Platform Master Keys
+                        </Label>
+                        {usePlatformCredentials ? (
+                            <Badge variant="outline" className="text-[11px] bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30">
+                                Active in Calling
+                            </Badge>
+                        ) : (
+                            <Badge variant="outline" className="text-[11px] bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30">
+                                BYOK Active
+                            </Badge>
+                        )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                        {usePlatformCredentials
+                            ? "Calls are powered by Platform Master Keys. Your configured BYOK keys remain safely preserved in the database."
+                            : "Calls are using your own BYOK keys. Turn this on to use platform master keys without erasing your personal keys."}
+                    </p>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                    <Switch
+                        id="master-key-toggle"
+                        checked={usePlatformCredentials}
+                        onCheckedChange={handleTogglePlatformCredentials}
+                    />
+                </div>
+            </div>
+
             <Tabs value={mode} onValueChange={(value) => setMode(value as ModelMode)} className="space-y-6">
                 <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="realtime" className="flex items-center justify-center gap-1.5">
@@ -764,9 +852,15 @@ export function AIModelConfigurationV2Editor({
                     </TabsTrigger>
                     <TabsTrigger value="dograh" className="flex items-center justify-center gap-1.5">
                         <Sparkles className="h-4 w-4 text-emerald-500" /> Platform Master Keys
+                        {usePlatformCredentials && (
+                            <span className="ml-1 h-2 w-2 rounded-full bg-emerald-500" />
+                        )}
                     </TabsTrigger>
                     <TabsTrigger value="byok" className="flex items-center justify-center gap-1.5">
                         <KeyRound className="h-4 w-4" /> BYOK (Own Keys)
+                        {!usePlatformCredentials && (
+                            <span className="ml-1 h-2 w-2 rounded-full bg-blue-500" />
+                        )}
                     </TabsTrigger>
                 </TabsList>
 
