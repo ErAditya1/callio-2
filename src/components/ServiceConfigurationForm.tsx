@@ -31,6 +31,8 @@ interface SchemaProperty {
     enum?: string[];
     examples?: string[];
     model_options?: Record<string, string[]>;
+    visible_for_models?: string[];
+    hidden_for_models?: string[];
     allow_custom_input?: boolean;
     $ref?: string;
     description?: string;
@@ -153,6 +155,11 @@ function getSchemaDropdownOptions(
 function getNumberSchema(schema: SchemaProperty | undefined): SchemaProperty | undefined {
     if (schema?.type === "number") return schema;
     return schema?.anyOf?.find(option => option.type === "number");
+}
+
+function isVisibleForModel(schema: SchemaProperty | undefined, model?: string): boolean {
+    if (schema?.visible_for_models && !schema.visible_for_models.includes(model || "")) return false;
+    return !schema?.hidden_for_models?.includes(model || "");
 }
 
 export function ServiceConfigurationForm({
@@ -485,6 +492,8 @@ export function ServiceConfigurationForm({
             if (!property.startsWith(`${service}_`)) return;
             const field = property.slice(service.length + 1);
             if (field === "api_key" || field === "provider") return;
+            const fieldSchema = schemas?.[service]?.[serviceProviders[service]]?.properties[field];
+            if (!isVisibleForModel(fieldSchema, data[`${service}_model`] as string)) return;
             if (service === "tts" && field === "language" && value === "multi") {
                 config[field] = "en";
                 return;
@@ -549,8 +558,10 @@ export function ServiceConfigurationForm({
         const currentProvider = serviceProviders[service];
         const providerSchema = schemas?.[service]?.[currentProvider];
         if (!providerSchema) return [];
+        const model = watch(`${service}_model`) as string;
         return Object.keys(providerSchema.properties).filter(
             field => field !== "provider" && field !== "api_key"
+                && isVisibleForModel(providerSchema.properties[field], model)
         );
     };
 

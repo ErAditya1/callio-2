@@ -58,6 +58,7 @@ export default function NewCampaignPage() {
     const [orgConcurrentLimit, setOrgConcurrentLimit] = useState<number>(2);
     const [fromNumbersCount, setFromNumbersCount] = useState<number>(0);
     const [maxConcurrency, setMaxConcurrency] = useState<string>('');
+    const [rateLimitPerSecond, setRateLimitPerSecond] = useState('1');
     // Retry config state
     const [retryEnabled, setRetryEnabled] = useState(true);
     const [maxRetries, setMaxRetries] = useState<string>('2');
@@ -129,7 +130,7 @@ export default function NewCampaignPage() {
             if (response.data) {
                 const configs = response.data.configurations ?? [];
                 setTelephonyConfigs(configs);
-                const dedicatedConfigs = configs.filter((c) => !c.is_shared_trial && !c.name?.startsWith("Platform - "));
+                const dedicatedConfigs = configs.filter((c) => !(c as unknown as { is_shared_trial?: boolean }).is_shared_trial && !c.name?.startsWith("Platform - "));
                 const defaultConfig = dedicatedConfigs.find((c) => c.is_default_outbound) ?? dedicatedConfigs[0];
                 if (defaultConfig) {
                     setSelectedTelephonyConfigId(String(defaultConfig.id));
@@ -248,7 +249,7 @@ export default function NewCampaignPage() {
         }
 
         const selectedConfig = telephonyConfigs.find((c) => c.id.toString() === selectedTelephonyConfigId);
-        if (selectedConfig && (selectedConfig.is_shared_trial || selectedConfig.name?.startsWith("Platform - "))) {
+        if (selectedConfig && ((selectedConfig as unknown as { is_shared_trial?: boolean }).is_shared_trial || selectedConfig.name?.startsWith("Platform - "))) {
             toast.error('Platform test numbers are for workflow testing only and cannot be used for bulk campaigns. Please connect your own telephony provider.');
             return;
         }
@@ -266,8 +267,13 @@ export default function NewCampaignPage() {
                 } else {
                     toast.error(`Max concurrent calls cannot exceed organization limit (${effectiveLimit})`);
                 }
-                return;
             }
+        }
+
+        const dialRate = Number(rateLimitPerSecond);
+        if (!Number.isInteger(dialRate) || dialRate < 1 || dialRate > orgConcurrentLimit) {
+            toast.error(`Calls started per second must be between 1 and ${orgConcurrentLimit}`);
+            return;
         }
 
         setIsSubmitting(true);
@@ -312,6 +318,7 @@ export default function NewCampaignPage() {
                     telephony_configuration_id: parseInt(selectedTelephonyConfigId),
                     retry_config: retryConfig,
                     max_concurrency: maxConcurrencyValue,
+                    rate_limit_per_second: dialRate,
                     schedule_config: scheduleConfig,
                     circuit_breaker: circuitBreakerConfig,
                 },
@@ -330,6 +337,11 @@ export default function NewCampaignPage() {
             }
 
             if (response.data) {
+                if (response.data.warnings?.length) {
+                    for (const warning of response.data.warnings) {
+                        toast.warning(warning, { duration: 6000 });
+                    }
+                }
                 toast.success('Campaign created successfully');
                 router.push(`/campaigns/${response.data.id}`);
             }
@@ -460,7 +472,7 @@ export default function NewCampaignPage() {
                                                     </SelectItem>
                                                 ) : (
                                                     telephonyConfigs.map((config) => {
-                                                        const isTrial = Boolean(config.is_shared_trial || config.name?.startsWith("Platform - "));
+                                                        const isTrial = Boolean((config as unknown as { is_shared_trial?: boolean }).is_shared_trial || config.name?.startsWith("Platform - "));
                                                         return (
                                                             <SelectItem
                                                                 key={config.id}
@@ -475,7 +487,7 @@ export default function NewCampaignPage() {
                                                 )}
                                             </SelectContent>
                                         </Select>
-                                        {!isLoadingTelephonyConfigs && !telephonyConfigs.some((c) => !c.is_shared_trial && !c.name?.startsWith("Platform - ")) && (
+                                        {!isLoadingTelephonyConfigs && !telephonyConfigs.some((c) => !(c as unknown as { is_shared_trial?: boolean }).is_shared_trial && !c.name?.startsWith("Platform - ")) && (
                                             <div className="rounded-md bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-600 dark:text-amber-400">
                                                 <p className="font-semibold">Dedicated telephony required for campaigns</p>
                                                 <p className="mt-0.5">
@@ -541,7 +553,10 @@ export default function NewCampaignPage() {
                                         onMaxConcurrencyChange={setMaxConcurrency}
                                         effectiveLimit={effectiveLimit}
                                         orgConcurrentLimit={orgConcurrentLimit}
-                                        fromNumbersCount={fromNumbersCount}
+                                        fromNumbersCount={availableFromNumbersCount}
+                                        rateLimitPerSecond={rateLimitPerSecond}
+                                        onRateLimitPerSecondChange={setRateLimitPerSecond}
+                                        outboundBlockedReason={selectedTelephonyConfig?.outbound_blocked_reason}
                                         retryEnabled={retryEnabled}
                                         onRetryEnabledChange={setRetryEnabled}
                                         maxRetries={maxRetries}
