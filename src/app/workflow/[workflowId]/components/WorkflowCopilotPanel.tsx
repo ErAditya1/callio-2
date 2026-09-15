@@ -53,8 +53,8 @@ export function WorkflowCopilotPanel({
     const [isLoading, setIsLoading] = useState(false);
     const [quickReplies, setQuickReplies] = useState<string[]>([
         "Update start greeting",
-        "Add a verification node",
-        "Make tone more empathetic",
+        "Attach a tool to agent",
+        "Add a qualification node",
         "Run Test Call",
     ]);
 
