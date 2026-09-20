@@ -1,17 +1,18 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  List,
-  Loader2,
-  ShieldAlert,
-  Key,
-  Phone,
-  DollarSign,
-  Sparkles,
-  Users,
-  ShieldCheck,
-} from "lucide-react";
+  ArrowRight01Icon,
+  Dollar01Icon,
+  Key01Icon,
+  ListIcon,
+  Loading02Icon,
+  PhoneIcon,
+  ShieldAlertIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  UsersIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -126,9 +127,9 @@ export default function SuperadminPage() {
 
   if (checkingSuperuser) {
     return (
-      <div className="container mx-auto p-6 flex items-center justify-center min-h-[400px]">
-        <div className="flex items-center space-x-2 text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin" />
+      <div className="app-page flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center space-x-2 text-[#737373]">
+          <HugeiconsIcon icon={Loading02Icon} className="h-6 w-6 animate-spin" />
           <span>Verifying administrator credentials...</span>
         </div>
       </div>
@@ -138,28 +139,28 @@ export default function SuperadminPage() {
   if (!isSuperuser) {
     return (
       <div className="flex min-h-[75vh] w-full items-center justify-center p-4">
-        <Card className="max-w-md border-border/80 shadow-2xl bg-card">
+        <Card className="max-w-md border-[#E5E5E5] shadow-2xl bg-[#FFFFFF]">
           <CardHeader className="text-center pb-3">
             <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive border border-destructive/20">
-              <ShieldAlert className="h-7 w-7" />
+              <HugeiconsIcon icon={ShieldAlertIcon} className="h-7 w-7" />
             </div>
             <CardTitle className="text-xl font-bold tracking-tight">
               Access Restricted
             </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground pt-1">
+            <CardDescription className="text-sm text-[#737373] pt-1">
               Superadmin privileges are required to view the administrative portal.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center text-xs text-muted-foreground leading-relaxed px-6 pb-6">
+          <CardContent className="text-center text-xs text-[#737373] leading-relaxed px-6 pb-6">
             Your account does not have superuser privileges. Please return to
             your workspace overview.
           </CardContent>
           <div className="p-6 pt-0 flex flex-col gap-2">
             <Button
               asChild
-              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white"
+              className="w-full bg-neutral-950 hover:bg-neutral-800 text-white"
             >
-              <Link href="/overview">Return to Workspace Overview</Link>
+              <Link href="/dashboard/overview">Return to Workspace Overview</Link>
             </Button>
           </div>
         </Card>
@@ -168,20 +169,20 @@ export default function SuperadminPage() {
   }
 
   return (
-    <main className="container mx-auto p-6 space-y-6 max-w-7xl">
+    <main className="app-page space-y-6">
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              <ShieldCheck className="h-4 w-4" />
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F0F3F9] text-[#7186AD] border border-[#DCE3EF]">
+              <HugeiconsIcon icon={ShieldCheckIcon} className="h-4 w-4" />
             </span>
             <h1 className="text-2xl font-bold tracking-tight">Platform Operations Center</h1>
-            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs">
+            <Badge variant="outline" className="bg-[#F0F3F9] text-[#7186AD] dark:text-[#7186AD] border-[#DCE3EF] text-xs">
               Superadmin Mode
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[#737373]">
             Configure platform master API keys, stock telephony numbers, grant customer credits, and monitor system operations.
           </p>
         </div>
@@ -189,9 +190,9 @@ export default function SuperadminPage() {
         <div className="flex items-center gap-3">
           <Link href="/superadmin/runs">
             <Button variant="outline" size="sm" className="h-9 gap-2">
-              <List className="h-4 w-4" />
+              <HugeiconsIcon icon={ListIcon} className="h-4 w-4" />
               Global Run Logs
-              <ArrowRight className="h-3.5 w-3.5" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="h-3.5 w-3.5" />
             </Button>
           </Link>
         </div>
@@ -199,25 +200,25 @@ export default function SuperadminPage() {
 
       {/* Main Tabbed Operations Dashboard */}
       <Tabs defaultValue="keys" className="space-y-6">
-        <TabsList className="bg-muted/50 p-1 border h-11 w-full sm:w-auto flex-wrap justify-start">
+        <TabsList className="bg-[#F7F7F7] p-1 border h-11 w-full sm:w-auto flex-wrap justify-start">
           <TabsTrigger value="keys" className="gap-2 text-xs sm:text-sm">
-            <Key className="h-4 w-4 text-emerald-500" />
+            <HugeiconsIcon icon={Key01Icon} className="h-4 w-4 text-[#7186AD]" />
             Master API Keys &amp; Pricing
           </TabsTrigger>
           <TabsTrigger value="telephony" className="gap-2 text-xs sm:text-sm">
-            <Phone className="h-4 w-4 text-blue-500" />
+            <HugeiconsIcon icon={PhoneIcon} className="h-4 w-4 text-[#7186AD]" />
             Telephony Inventory
           </TabsTrigger>
           <TabsTrigger value="wallets" className="gap-2 text-xs sm:text-sm">
-            <DollarSign className="h-4 w-4 text-amber-500" />
+            <HugeiconsIcon icon={Dollar01Icon} className="h-4 w-4 text-amber-500" />
             Customer Wallets &amp; Credits
           </TabsTrigger>
           <TabsTrigger value="showcase" className="gap-2 text-xs sm:text-sm">
-            <Sparkles className="h-4 w-4 text-purple-500" />
+            <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-[#7186AD]" />
             Public Showcase Agents
           </TabsTrigger>
           <TabsTrigger value="ops" className="gap-2 text-xs sm:text-sm">
-            <Users className="h-4 w-4 text-indigo-500" />
+            <HugeiconsIcon icon={UsersIcon} className="h-4 w-4 text-[#7186AD]" />
             Account Impersonation
           </TabsTrigger>
         </TabsList>
@@ -278,7 +279,7 @@ export default function SuperadminPage() {
                   >
                     {loadingTarget === "provider" ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-4 w-4 animate-spin" />
                         Processing...
                       </>
                     ) : (
@@ -323,7 +324,7 @@ export default function SuperadminPage() {
                   >
                     {loadingTarget === "email" ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-4 w-4 animate-spin" />
                         Processing...
                       </>
                     ) : (

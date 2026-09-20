@@ -1,6 +1,12 @@
 "use client";
 
-import { Pencil, Plus, Star, Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  PencilIcon,
+  PlusIcon,
+  StarIcon,
+} from "@hugeicons/core-free-icons";;
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -180,12 +186,12 @@ export function TrunkCard({
             </CardDescription>
           </div>
           <Button size="sm" onClick={openCreate} disabled={submitting}>
-            <Plus className="h-4 w-4 mr-2" /> Add trunk
+            <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-2" /> Add trunk
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
           {trunks.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-[#737373]">
               No trunks yet. Add one pointing at your SIP carrier or PBX to place
               outbound calls on this configuration.
             </p>
@@ -199,7 +205,7 @@ export function TrunkCard({
               );
               return (
                 <section key={trunk.id} className="overflow-hidden rounded-md border">
-                  <div className="flex flex-wrap items-start justify-between gap-3 border-b bg-muted/20 p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-3 border-b bg-[#F7F7F7] p-3">
                     <div className="min-w-0 space-y-0.5">
                       <p className="flex items-center gap-2 text-sm font-medium">
                         <span className="truncate font-mono">{trunk.name}</span>
@@ -210,7 +216,7 @@ export function TrunkCard({
                         )}
                       </p>
                       {summary && (
-                        <p className="truncate text-xs text-muted-foreground">
+                        <p className="truncate text-xs text-[#737373]">
                           {summary}
                         </p>
                       )}
@@ -222,7 +228,7 @@ export function TrunkCard({
                         disabled={submitting}
                         onClick={() => onAddPhoneNumber(trunk)}
                       >
-                        <Plus className="h-4 w-4 mr-2" /> Add number
+                        <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-2" /> Add number
                       </Button>
                       <Button
                         variant="ghost"
@@ -232,7 +238,7 @@ export function TrunkCard({
                         aria-label={`Edit trunk ${trunk.name}`}
                         title="Edit trunk"
                       >
-                        <Pencil className="h-4 w-4" />
+                        <HugeiconsIcon icon={PencilIcon} className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -242,13 +248,13 @@ export function TrunkCard({
                         aria-label={`Delete trunk ${trunk.name}`}
                         title="Delete trunk"
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>
                   </div>
 
                   {assigned.length === 0 ? (
-                    <p className="p-3 text-sm text-muted-foreground">
+                    <p className="p-3 text-sm text-[#737373]">
                       No numbers on this trunk yet.
                     </p>
                   ) : (
@@ -263,7 +269,7 @@ export function TrunkCard({
                               {number.address}
                             </span>
                             {number.label && (
-                              <span className="truncate text-xs text-muted-foreground">
+                              <span className="truncate text-xs text-[#737373]">
                                 {number.label}
                               </span>
                             )}
@@ -272,7 +278,7 @@ export function TrunkCard({
                             )}
                             {number.is_default_caller_id && (
                               <Badge className="gap-1">
-                                <Star className="h-3 w-3 fill-current" /> Default
+                                <HugeiconsIcon icon={StarIcon} className="h-3 w-3 fill-current" /> Default
                                 caller
                               </Badge>
                             )}
@@ -284,7 +290,7 @@ export function TrunkCard({
                             aria-label={`Edit ${number.address}`}
                             title="Edit phone number"
                           >
-                            <Pencil className="h-4 w-4" />
+                            <HugeiconsIcon icon={PencilIcon} className="h-4 w-4" />
                           </Button>
                         </li>
                       ))}
@@ -333,7 +339,7 @@ export function TrunkCard({
             <div className="flex items-center justify-between rounded-md border p-3">
               <div className="space-y-0.5">
                 <Label htmlFor="trunk-enabled">Enabled</Label>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-[#737373]">
                   Calls are never routed over a disabled trunk.
                 </p>
               </div>

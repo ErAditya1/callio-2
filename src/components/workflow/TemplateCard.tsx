@@ -1,6 +1,9 @@
 'use client';
 
-import { Copy } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Copy01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -73,7 +76,7 @@ export function DuplicateWorkflowTemplate({ id, title, description, serverAccess
                     onClick={handleDuplicate}
                     disabled={isLoading}
                 >
-                    <Copy className="w-4 h-4 mr-2" />
+                    <HugeiconsIcon icon={Copy01Icon} className="w-4 h-4 mr-2" />
                     {isLoading ? 'Creating...' : 'Duplicate Workflow Template'}
                 </Button>
             </div>

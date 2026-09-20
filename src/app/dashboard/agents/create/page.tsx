@@ -1,28 +1,29 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowLeft,
-  ArrowRight,
-  Briefcase,
-  Calendar,
-  CheckCircle2,
-  Globe,
-  Headphones,
-  Home,
-  Layers,
-  Megaphone,
-  Mic,
-  Pause,
-  Phone,
-  Play,
-  Radio,
-  RotateCcw,
-  Sparkles,
-  Stethoscope,
-  Volume2,
-  Wand2,
-  Zap
-} from 'lucide-react';
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Briefcase01Icon,
+  Calendar01Icon,
+  CheckmarkCircle02Icon,
+  GlobeIcon,
+  HeadphonesIcon,
+  Home01Icon,
+  Layers01Icon,
+  MagicWand01Icon,
+  Megaphone01Icon,
+  Mic01Icon,
+  PauseIcon,
+  PhoneIcon,
+  PlayIcon,
+  RadioIcon,
+  RotateCcwIcon,
+  SparklesIcon,
+  StethoscopeIcon,
+  VolumeHighIcon,
+  ZapIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
@@ -67,7 +68,7 @@ export default function CreateAgentWizardPage() {
       id: 'receptionist',
       title: 'Virtual Receptionist',
       desc: 'Answer incoming calls, answer FAQs, and route urgent calls to staff.',
-      icon: Headphones,
+      icon: HeadphonesIcon,
       defaultName: 'Front Desk Receptionist',
       defaultFirst: 'Hi! Thank you for calling. My name is Sarah. How can I assist you today?'
     },
@@ -75,7 +76,7 @@ export default function CreateAgentWizardPage() {
       id: 'appointment_setter',
       title: 'Appointment Setter',
       desc: 'Check calendar availability and schedule consultations directly.',
-      icon: Calendar,
+      icon: Calendar01Icon,
       defaultName: 'Appointment Scheduler',
       defaultFirst: 'Hello! I can help you schedule your appointment in under 2 minutes. What day works best?'
     },
@@ -83,7 +84,7 @@ export default function CreateAgentWizardPage() {
       id: 'sales',
       title: 'Outbound Sales & SDR',
       desc: 'Call web form leads in 30 seconds, qualify budget & timeline, and book demos.',
-      icon: Zap,
+      icon: ZapIcon,
       defaultName: 'Speed-to-Lead Qualifier',
       defaultFirst: 'Hi there! Calling from CallioAI regarding your recent inquiry. Did you have two minutes?'
     },
@@ -91,7 +92,7 @@ export default function CreateAgentWizardPage() {
       id: 'customer_support',
       title: 'Customer Support Care',
       desc: 'Resolve order queries, account lookups, and returns automatically.',
-      icon: Sparkles,
+      icon: SparklesIcon,
       defaultName: 'Customer Support Specialist',
       defaultFirst: 'Hello! Thanks for reaching out to support. What can I help resolve for you today?'
     },
@@ -99,7 +100,7 @@ export default function CreateAgentWizardPage() {
       id: 'real_estate',
       title: 'Real Estate Qualifier',
       desc: 'Pre-screen property buyers, verify budget, and schedule home tours.',
-      icon: Home,
+      icon: Home01Icon,
       defaultName: 'Property Tour Dispatcher',
       defaultFirst: 'Hello! Thank you for inquiring about our active listings. Are you looking to tour this weekend?'
     }
@@ -145,23 +146,23 @@ export default function CreateAgentWizardPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-16">
+    <div className="app-page space-y-8 pb-16 max-w-4xl">
       {/* Wizard Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E5E5E5]">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Link
               href="/dashboard/agents"
-              className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+              className="text-xs text-[#737373] hover:text-foreground inline-flex items-center gap-1"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5" />
               Cancel & Exit
             </Link>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">
             Create Your Voice Agent
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+          <p className="text-xs sm:text-sm text-[#737373] mt-0.5">
             Step {currentStep} of 5 — No coding required
           </p>
         </div>
@@ -169,7 +170,7 @@ export default function CreateAgentWizardPage() {
         {/* Link to Advanced Graph Flow */}
         <Button variant="outline" size="sm" asChild className="rounded-xl text-xs">
           <Link href="/workflow/create">
-            <Layers className="w-3.5 h-3.5 mr-1.5 text-indigo-400" />
+            <HugeiconsIcon icon={Layers01Icon} className="w-3.5 h-3.5 mr-1.5 text-[#7186AD]" />
             Switch to Advanced Graph
           </Link>
         </Button>
@@ -192,10 +193,10 @@ export default function CreateAgentWizardPage() {
               onClick={() => s.num < currentStep && setCurrentStep(s.num)}
               className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
                 isCurrent
-                  ? 'border-indigo-500 bg-indigo-500/10 text-indigo-400'
+                  ? 'border-[#DCE3EF] bg-[#F0F3F9] text-[#7186AD]'
                   : isDone
-                  ? 'border-emerald-500/40 bg-emerald-500/5 text-emerald-400'
-                  : 'border-border/60 text-muted-foreground opacity-60'
+                  ? 'border-[#DCE3EF] bg-[#F0F3F9] text-[#7186AD]'
+                  : 'border-[#E5E5E5] text-[#737373] opacity-60'
               }`}
             >
               <div className="font-mono text-[10px] mb-0.5">STEP {s.num}</div>
@@ -210,7 +211,7 @@ export default function CreateAgentWizardPage() {
         <div className="space-y-6 animate-in fade-in duration-300">
           <div>
             <h2 className="text-xl font-bold text-foreground">What should your agent do?</h2>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-[#737373] mt-1">
               Select a pre-trained role to start with optimal prompt instructions and conversational flow.
             </p>
           </div>
@@ -225,16 +226,16 @@ export default function CreateAgentWizardPage() {
                   onClick={() => handleSelectCategory(cat)}
                   className={`p-5 rounded-2xl border cursor-pointer transition-all flex items-start gap-4 ${
                     isSelected
-                      ? 'border-indigo-500 bg-indigo-500/10 shadow-lg shadow-indigo-500/10 ring-2 ring-indigo-500/40'
-                      : 'border-border/70 bg-card/60 hover:bg-card hover:border-border'
+                      ? 'border-[#DCE3EF] bg-[#F0F3F9] shadow-lg shadow-sm ring-2 ring-[#DCE3EF]'
+                      : 'border-[#E5E5E5] bg-[#FFFFFF] hover:bg-[#FFFFFF] hover:border-[#E5E5E5]'
                   }`}
                 >
-                  <div className={`p-3 rounded-xl ${isSelected ? 'bg-indigo-600 text-white' : 'bg-muted text-muted-foreground'}`}>
-                    <Icon className="w-5 h-5" />
+                  <div className={`p-3 rounded-xl ${isSelected ? 'bg-neutral-950 text-white' : 'bg-[#F7F7F7] text-[#737373]'}`}>
+                    <HugeiconsIcon icon={Icon} className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-bold text-foreground text-sm">{cat.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{cat.desc}</p>
+                    <p className="text-xs text-[#737373] mt-1 leading-relaxed">{cat.desc}</p>
                   </div>
                 </div>
               );
@@ -242,7 +243,7 @@ export default function CreateAgentWizardPage() {
           </div>
 
           <div className="pt-6 flex justify-end">
-            <Button onClick={() => setCurrentStep(2)} className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-6">
+            <Button onClick={() => setCurrentStep(2)} className="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl px-6">
               Next: Define Goal & Instructions →
             </Button>
           </div>
@@ -254,7 +255,7 @@ export default function CreateAgentWizardPage() {
         <div className="space-y-6 animate-in fade-in duration-300">
           <div>
             <h2 className="text-xl font-bold text-foreground">Give your agent a goal</h2>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-[#737373] mt-1">
               Provide instructions in normal plain English. CallioAI automatically structures it for optimal voice latency.
             </p>
           </div>
@@ -266,7 +267,7 @@ export default function CreateAgentWizardPage() {
                 value={agentName}
                 onChange={(e) => setAgentName(e.target.value)}
                 placeholder="e.g. Acme Receptionist"
-                className="rounded-xl bg-card"
+                className="rounded-xl bg-[#FFFFFF]"
               />
             </div>
 
@@ -276,9 +277,9 @@ export default function CreateAgentWizardPage() {
                 value={firstMessage}
                 onChange={(e) => setFirstMessage(e.target.value)}
                 placeholder="e.g. Hi! Thanks for calling Acme Health..."
-                className="rounded-xl bg-card"
+                className="rounded-xl bg-[#FFFFFF]"
               />
-              <p className="text-[11px] text-muted-foreground">The exact phrase your agent says immediately when answering the call.</p>
+              <p className="text-[11px] text-[#737373]">The exact phrase your agent says immediately when answering the call.</p>
             </div>
 
             <div className="space-y-1.5">
@@ -292,9 +293,9 @@ export default function CreateAgentWizardPage() {
                         '\n- If caller asks about pricing, state that standard cleanings start at $120.\n- If emergency, transfer to Dr. Bennett at ext 102.'
                     )
                   }
-                  className="text-indigo-400 text-xs hover:underline inline-flex items-center gap-1"
+                  className="text-[#7186AD] text-xs hover:underline inline-flex items-center gap-1"
                 >
-                  <Wand2 className="w-3 h-3" /> Insert Sample Rules
+                  <HugeiconsIcon icon={MagicWand01Icon} className="w-3 h-3" /> Insert Sample Rules
                 </button>
               </div>
               <Textarea
@@ -302,7 +303,7 @@ export default function CreateAgentWizardPage() {
                 value={agentGoal}
                 onChange={(e) => setAgentGoal(e.target.value)}
                 placeholder="Describe business hours, how to handle booking, cancellation rules, and what information to collect from callers."
-                className="rounded-xl bg-card text-xs leading-relaxed"
+                className="rounded-xl bg-[#FFFFFF] text-xs leading-relaxed"
               />
             </div>
           </div>
@@ -311,7 +312,7 @@ export default function CreateAgentWizardPage() {
             <Button variant="ghost" onClick={() => setCurrentStep(1)}>
               ← Back
             </Button>
-            <Button onClick={() => setCurrentStep(3)} className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-6">
+            <Button onClick={() => setCurrentStep(3)} className="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl px-6">
               Next: Select Studio Voice →
             </Button>
           </div>
@@ -323,7 +324,7 @@ export default function CreateAgentWizardPage() {
         <div className="space-y-6 animate-in fade-in duration-300">
           <div>
             <h2 className="text-xl font-bold text-foreground">Choose a voice persona</h2>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-[#737373] mt-1">
               Select the voice that best represents your brand. You can change this at any time.
             </p>
           </div>
@@ -337,8 +338,8 @@ export default function CreateAgentWizardPage() {
                   onClick={() => setSelectedVoiceId(voice.id)}
                   className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between gap-4 ${
                     isSelected
-                      ? 'border-indigo-500 bg-indigo-500/10 shadow-md ring-2 ring-indigo-500/30'
-                      : 'border-border/70 bg-card/60 hover:bg-card'
+                      ? 'border-[#DCE3EF] bg-[#F0F3F9] shadow-md ring-2 ring-[#DCE3EF]'
+                      : 'border-[#E5E5E5] bg-[#FFFFFF] hover:bg-[#FFFFFF]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -346,10 +347,10 @@ export default function CreateAgentWizardPage() {
                     <img src={voice.avatar} alt={voice.name} className="w-12 h-12 rounded-xl object-cover" />
                     <div>
                       <div className="font-bold text-foreground text-sm">{voice.name}</div>
-                      <div className="text-xs text-muted-foreground">{voice.accent}</div>
+                      <div className="text-xs text-[#737373]">{voice.accent}</div>
                       <div className="flex items-center gap-1 mt-1">
                         {voice.style.slice(0, 2).map((s, i) => (
-                          <span key={i} className="text-[10px] bg-muted/60 px-1.5 py-0.5 rounded text-muted-foreground">
+                          <span key={i} className="text-[10px] bg-[#F7F7F7] px-1.5 py-0.5 rounded text-[#737373]">
                             {s}
                           </span>
                         ))}
@@ -358,8 +359,8 @@ export default function CreateAgentWizardPage() {
                   </div>
 
                   {isSelected && (
-                    <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-4 h-4" />
+                    <div className="w-6 h-6 rounded-full bg-neutral-950 text-white flex items-center justify-center shrink-0">
+                      <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4" />
                     </div>
                   )}
                 </div>
@@ -371,7 +372,7 @@ export default function CreateAgentWizardPage() {
             <Button variant="ghost" onClick={() => setCurrentStep(2)}>
               ← Back
             </Button>
-            <Button onClick={() => setCurrentStep(4)} className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-6">
+            <Button onClick={() => setCurrentStep(4)} className="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl px-6">
               Next: Contact Channels →
             </Button>
           </div>
@@ -383,7 +384,7 @@ export default function CreateAgentWizardPage() {
         <div className="space-y-6 animate-in fade-in duration-300">
           <div>
             <h2 className="text-xl font-bold text-foreground">How should customers reach this agent?</h2>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-[#737373] mt-1">
               Enable inbound phone lines, website calling widgets, or outbound campaigns.
             </p>
           </div>
@@ -392,19 +393,19 @@ export default function CreateAgentWizardPage() {
             {[
               {
                 id: 'phone',
-                icon: Phone,
+                icon: PhoneIcon,
                 title: 'Inbound Phone Number',
                 desc: 'Assign a dedicated local or toll-free US/UK number or forward your existing office lines.'
               },
               {
                 id: 'web',
-                icon: Globe,
+                icon: GlobeIcon,
                 title: 'Website Calling Button',
                 desc: 'Visitors can talk with your agent directly in their desktop or mobile browser with zero phone dialing.'
               },
               {
                 id: 'campaign',
-                icon: Megaphone,
+                icon: Megaphone01Icon,
                 title: 'Outbound Calling Campaigns',
                 desc: 'Allow this agent to dial contact lists for speed-to-lead follow-ups and recall surveys.'
               }
@@ -423,12 +424,12 @@ export default function CreateAgentWizardPage() {
                   }}
                   className={`p-5 rounded-2xl border cursor-pointer transition-all flex items-start gap-4 ${
                     isChecked
-                      ? 'border-indigo-500 bg-indigo-500/10'
-                      : 'border-border/70 bg-card/60 hover:bg-card'
+                      ? 'border-[#DCE3EF] bg-[#F0F3F9]'
+                      : 'border-[#E5E5E5] bg-[#FFFFFF] hover:bg-[#FFFFFF]'
                   }`}
                 >
-                  <div className={`p-3 rounded-xl ${isChecked ? 'bg-indigo-600 text-white' : 'bg-muted text-muted-foreground'}`}>
-                    <Icon className="w-5 h-5" />
+                  <div className={`p-3 rounded-xl ${isChecked ? 'bg-neutral-950 text-white' : 'bg-[#F7F7F7] text-[#737373]'}`}>
+                    <HugeiconsIcon icon={Icon} className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
@@ -437,10 +438,10 @@ export default function CreateAgentWizardPage() {
                         type="checkbox"
                         checked={isChecked}
                         readOnly
-                        className="rounded accent-indigo-600 h-4 w-4"
+                        className="rounded accent-[#7186AD] h-4 w-4"
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{ch.desc}</p>
+                    <p className="text-xs text-[#737373] mt-1 leading-relaxed">{ch.desc}</p>
                   </div>
                 </div>
               );
@@ -451,7 +452,7 @@ export default function CreateAgentWizardPage() {
             <Button variant="ghost" onClick={() => setCurrentStep(3)}>
               ← Back
             </Button>
-            <Button onClick={() => setCurrentStep(5)} className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-6">
+            <Button onClick={() => setCurrentStep(5)} className="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl px-6">
               Next: Test Simulator & Launch →
             </Button>
           </div>
@@ -463,35 +464,35 @@ export default function CreateAgentWizardPage() {
         <div className="space-y-6 animate-in fade-in duration-300">
           <div>
             <h2 className="text-xl font-bold text-foreground">Review & Test your Agent</h2>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-[#737373] mt-1">
               Test your configuration in the live browser simulator before pushing to production.
             </p>
           </div>
 
           {/* Configuration Summary Card */}
-          <div className="p-5 rounded-2xl bg-card border border-border/80 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+          <div className="p-5 rounded-2xl bg-[#FFFFFF] border border-[#E5E5E5] grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
             <div>
-              <span className="text-muted-foreground">Name:</span>
+              <span className="text-[#737373]">Name:</span>
               <div className="font-bold text-foreground mt-0.5">{agentName}</div>
             </div>
             <div>
-              <span className="text-muted-foreground">Voice:</span>
+              <span className="text-[#737373]">Voice:</span>
               <div className="font-bold text-foreground mt-0.5">
                 {MOCK_VOICES.find((v) => v.id === selectedVoiceId)?.name || 'Sarah'}
               </div>
             </div>
             <div>
-              <span className="text-muted-foreground">Role:</span>
+              <span className="text-[#737373]">Role:</span>
               <div className="font-bold text-foreground mt-0.5 capitalize">{selectedCategory.replace('_', ' ')}</div>
             </div>
             <div>
-              <span className="text-muted-foreground">Channels:</span>
+              <span className="text-[#737373]">Channels:</span>
               <div className="font-bold text-foreground mt-0.5">{selectedChannels.join(', ')}</div>
             </div>
           </div>
 
           {/* Test Call Box */}
-          <div className="p-6 rounded-3xl border border-indigo-500/40 bg-card shadow-lg text-center space-y-4">
+          <div className="p-6 rounded-3xl border border-[#DCE3EF] bg-[#FFFFFF] shadow-lg text-center space-y-4">
             <h3 className="font-bold text-foreground text-sm">Interactive Voice Test</h3>
 
             {isTestCalling ? (
@@ -500,16 +501,16 @@ export default function CreateAgentWizardPage() {
                   {[20, 60, 90, 40, 80, 100, 70, 90, 50].map((h, i) => (
                     <div
                       key={i}
-                      className="w-1.5 bg-indigo-500 rounded-full animate-pulse"
+                      className="w-1.5 bg-[#7186AD] rounded-full animate-pulse"
                       style={{ height: `${h}%`, animationDelay: `${i * 80}ms` }}
                     />
                   ))}
                 </div>
 
-                <div className="space-y-2 max-w-md mx-auto text-left text-xs bg-muted/40 p-4 rounded-2xl border border-border/50">
+                <div className="space-y-2 max-w-md mx-auto text-left text-xs bg-[#F7F7F7] p-4 rounded-2xl border border-[#E5E5E5]">
                   {testTranscript.map((t, i) => (
                     <div key={i} className="leading-relaxed">
-                      <strong className={t.speaker === 'ai' ? 'text-indigo-400' : 'text-emerald-400'}>
+                      <strong className={t.speaker === 'ai' ? 'text-[#7186AD]' : 'text-[#7186AD]'}>
                         {t.speaker === 'ai' ? 'Agent: ' : 'You: '}
                       </strong>
                       <span className="text-foreground">{t.text}</span>
@@ -523,11 +524,11 @@ export default function CreateAgentWizardPage() {
               </div>
             ) : (
               <div>
-                <p className="text-xs text-muted-foreground max-w-sm mx-auto mb-4">
+                <p className="text-xs text-[#737373] max-w-sm mx-auto mb-4">
                   Click below to simulate a live voice call using your configured first message and goal.
                 </p>
-                <Button size="sm" onClick={startTestCall} className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs px-5">
-                  <Play className="w-3.5 h-3.5 mr-1.5" /> Start Test Call
+                <Button size="sm" onClick={startTestCall} className="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl text-xs px-5">
+                  <HugeiconsIcon icon={PlayIcon} className="w-3.5 h-3.5 mr-1.5" /> Start Test Call
                 </Button>
               </div>
             )}
@@ -540,7 +541,7 @@ export default function CreateAgentWizardPage() {
             <Button
               onClick={handlePublish}
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white rounded-xl px-8 h-11 font-bold text-sm shadow-xl shadow-emerald-600/20"
+              className="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl px-8 h-11 font-bold text-sm shadow-xl shadow-sm"
             >
               {isSubmitting ? 'Launching Agent...' : '🚀 Launch Agent Live'}
             </Button>

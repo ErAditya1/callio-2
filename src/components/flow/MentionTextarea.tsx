@@ -171,7 +171,7 @@ export function MentionTextarea({
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
                 className={cn(
-                    "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+                    "border-input placeholder:text-[#737373] focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
                     className
                 )}
             />
@@ -196,7 +196,7 @@ export function MentionTextarea({
                             onMouseEnter={() => setSelectedIndex(index)}
                         >
                             <div className="flex items-center gap-2">
-                                <code className="text-xs bg-muted px-1 py-0.5 rounded font-mono">
+                                <code className="text-xs bg-[#F7F7F7] px-1 py-0.5 rounded font-mono">
                                     {item.filename}
                                 </code>
                                 <span className="font-medium truncate">{item.name}</span>
@@ -206,7 +206,7 @@ export function MentionTextarea({
                 </div>
             )}
             {showDropdown && filtered.length === 0 && items.length === 0 && (
-                <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md p-3 text-sm text-muted-foreground">
+                <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md p-3 text-sm text-[#737373]">
                     No recordings found. Upload recordings via the Recordings panel.
                 </div>
             )}

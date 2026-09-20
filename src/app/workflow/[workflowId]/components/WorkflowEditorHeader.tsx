@@ -1,7 +1,24 @@
 "use client";
 
 import { ReactFlowInstance } from "@xyflow/react";
-import { AlertCircle, ArrowLeft, Bot, Clipboard, Copy, Download, Eye, History, LoaderCircle, Menu, MoreVertical, Pencil, Phone, Rocket, Sparkles } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  ArrowLeft01Icon,
+  BotIcon,
+  ClipboardIcon,
+  Copy01Icon,
+  Download01Icon,
+  EyeIcon,
+  HistoryIcon,
+  Loading02Icon,
+  Menu01Icon,
+  MoreVerticalIcon,
+  PencilIcon,
+  PhoneIcon,
+  Rocket01Icon,
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -236,22 +253,22 @@ export const WorkflowEditorHeader = ({
     };
 
     return (
-        <div className="flex items-center justify-between w-full h-14 px-4 bg-background border-b border-border text-foreground">
+        <div className="flex items-center justify-between w-full h-14 px-4 bg-background border-b border-[#E5E5E5] text-foreground">
             {/* Left section: Mobile menu + Back button + Workflow name */}
             <div className="flex items-center gap-3 mr-4">
                 <button
                     onClick={toggleSidebar}
-                    className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors md:hidden"
+                    className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[#F7F7F7] text-[#737373] hover:text-foreground transition-colors md:hidden"
                     aria-label="Toggle sidebar"
                     title="Toggle sidebar"
                 >
-                    <Menu className="w-5 h-5" />
+                    <HugeiconsIcon icon={Menu01Icon} className="w-5 h-5" />
                 </button>
                 <button
                     onClick={handleBack}
-                    className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                    className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[#F7F7F7] text-[#737373] hover:text-foreground transition-colors"
                 >
-                    <ArrowLeft className="w-5 h-5" />
+                    <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5" />
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -294,9 +311,9 @@ export const WorkflowEditorHeader = ({
                                     type="button"
                                     onClick={enterEditMode}
                                     aria-label="Rename workflow"
-                                    className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                                    className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[#F7F7F7] text-[#737373] hover:text-foreground transition-colors"
                                 >
-                                    <Pencil className="w-4 h-4" />
+                                    <HugeiconsIcon icon={PencilIcon} className="w-4 h-4" />
                                 </button>
                             )}
                         </>
@@ -308,9 +325,9 @@ export const WorkflowEditorHeader = ({
             <div className="flex items-center gap-3">
                 {/* Read-only banner when viewing a historical version */}
                 {isViewingHistoricalVersion && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-blue-500/30 bg-blue-500/10">
-                        <Eye className="w-4 h-4 text-blue-500" />
-                        <span className="text-sm text-blue-500 font-medium">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-[#DCE3EF] bg-[#F0F3F9]">
+                        <HugeiconsIcon icon={EyeIcon} className="w-4 h-4 text-[#7186AD]" />
+                        <span className="text-sm text-[#7186AD] font-medium">
                             Viewing {activeVersionLabel} - Read only
                         </span>
                     </div>
@@ -320,7 +337,7 @@ export const WorkflowEditorHeader = ({
                 {isViewingHistoricalVersion && (
                     <Button
                         onClick={onBackToDraft}
-                        className="bg-indigo-600 hover:bg-indigo-500 text-white px-4"
+                        className="bg-neutral-950 hover:bg-neutral-800 text-white px-4"
                     >
                         Back to Draft
                     </Button>
@@ -329,9 +346,9 @@ export const WorkflowEditorHeader = ({
                 {/* Version history button */}
                 <button
                     onClick={onHistoryClick}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer text-sm"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-[#E5E5E5] hover:bg-[#F7F7F7] text-[#737373] hover:text-foreground transition-colors cursor-pointer text-sm"
                 >
-                    <History className="w-4 h-4" />
+                    <HugeiconsIcon icon={HistoryIcon} className="w-4 h-4" />
                     {activeVersionLabel && !isViewingHistoricalVersion && (
                         <span className="text-sm text-foreground">{activeVersionLabel}</span>
                     )}
@@ -339,8 +356,8 @@ export const WorkflowEditorHeader = ({
 
                 {/* Unsaved changes indicator (hidden when viewing history) */}
                 {isDirty && !isViewingHistoricalVersion && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-amber-500/30 bg-amber-500/10">
-                        <div className="w-2 h-2 rounded-full bg-amber-500" />
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-amber-500/30 bg-[#E5E5E5]/10">
+                        <div className="w-2 h-2 rounded-full bg-[#E5E5E5]" />
                         <span className="text-sm text-amber-600 dark:text-amber-400 font-medium">Unsaved changes</span>
                     </div>
                 )}
@@ -351,7 +368,7 @@ export const WorkflowEditorHeader = ({
                         <PopoverTrigger asChild>
                             <button className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 transition-colors cursor-pointer">
                                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                                <AlertCircle className="w-4 h-4 text-red-500" />
+                                <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4 text-red-500" />
                                 <span className="text-sm text-red-500 font-medium">
                                     {workflowValidationErrors.length} {workflowValidationErrors.length === 1 ? "error" : "errors"}
                                 </span>
@@ -359,22 +376,22 @@ export const WorkflowEditorHeader = ({
                         </PopoverTrigger>
                         <PopoverContent
                             align="end"
-                            className="w-80 bg-popover border-border text-popover-foreground p-0 shadow-xl"
+                            className="w-80 bg-popover border-[#E5E5E5] text-popover-foreground p-0 shadow-xl"
                         >
-                            <div className="px-4 py-3 border-b border-border">
+                            <div className="px-4 py-3 border-b border-[#E5E5E5]">
                                 <h3 className="text-sm font-medium text-foreground">Validation Errors</h3>
                             </div>
                             <div className="max-h-64 overflow-y-auto">
                                 {workflowValidationErrors.map((error, index) => (
                                     <div
                                         key={index}
-                                        className="px-4 py-3 border-b border-border/50 last:border-b-0"
+                                        className="px-4 py-3 border-b border-[#E5E5E5] last:border-b-0"
                                     >
                                         <div className="flex items-start gap-2">
-                                            <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                                            <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
                                             <div className="flex-1 min-w-0">
                                                 {(error.kind === "node" || error.kind === "edge") && error.id && (
-                                                    <p className="text-xs text-muted-foreground mb-1">
+                                                    <p className="text-xs text-[#737373] mb-1">
                                                         {error.kind === "node" ? "Node" : "Edge"}: {error.id}
                                                         {error.field && <span> • {error.field}</span>}
                                                     </p>
@@ -397,16 +414,16 @@ export const WorkflowEditorHeader = ({
                         onClick={handlePublish}
                         disabled={isDirty || publishing || hasValidationErrors}
                         variant="outline"
-                        className="border-border hover:bg-muted text-foreground px-4"
+                        className="border-[#E5E5E5] hover:bg-[#F7F7F7] text-foreground px-4"
                     >
                         {publishing ? (
                             <>
-                                <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />
+                                <HugeiconsIcon icon={Loading02Icon} className="w-4 h-4 mr-2 animate-spin" />
                                 Publishing...
                             </>
                         ) : (
                             <>
-                                <Rocket className="w-4 h-4 mr-2" />
+                                <HugeiconsIcon icon={Rocket01Icon} className="w-4 h-4 mr-2" />
                                 Publish
                             </>
                         )}
@@ -416,11 +433,11 @@ export const WorkflowEditorHeader = ({
                 {!isViewingHistoricalVersion && (
                     <Button
                         variant="outline"
-                        className="flex items-center gap-2 border-border hover:bg-muted text-foreground"
+                        className="flex items-center gap-2 border-[#E5E5E5] hover:bg-[#F7F7F7] text-foreground"
                         disabled={isCallDisabled}
                         onClick={onPhoneCallClick}
                     >
-                        <Phone className="w-4 h-4" />
+                        <HugeiconsIcon icon={PhoneIcon} className="w-4 h-4" />
                         Phone Call
                     </Button>
                 )}
@@ -428,24 +445,24 @@ export const WorkflowEditorHeader = ({
                 {onCopilotClick && (
                     <Button
                         variant="outline"
-                        className={`flex items-center gap-2 border-border hover:bg-muted ${
+                        className={`flex items-center gap-2 border-[#E5E5E5] hover:bg-[#F7F7F7] ${
                             isCopilotOpen
                                 ? "bg-primary/10 border-primary text-primary font-medium"
                                 : "text-foreground"
                         }`}
                         onClick={onCopilotClick}
                     >
-                        <Sparkles className={`w-4 h-4 ${isCopilotOpen ? "text-primary" : "text-blue-500"}`} />
+                        <HugeiconsIcon icon={SparklesIcon} className={`w-4 h-4 ${isCopilotOpen ? "text-primary" : "text-[#7186AD]"}`} />
                         AI Copilot
                     </Button>
                 )}
 
                 <Button
                     variant="outline"
-                    className="flex items-center gap-2 border-border hover:bg-muted text-foreground"
+                    className="flex items-center gap-2 border-[#E5E5E5] hover:bg-[#F7F7F7] text-foreground"
                     onClick={onTestAgentClick}
                 >
-                    <Bot className="w-4 h-4" />
+                    <HugeiconsIcon icon={BotIcon} className="w-4 h-4" />
                     Test Agent
                 </Button>
 
@@ -454,11 +471,11 @@ export const WorkflowEditorHeader = ({
                     <Button
                         onClick={handleSave}
                         disabled={!isDirty || savingWorkflow}
-                        className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 shadow-sm"
+                        className="bg-neutral-950 hover:bg-neutral-800 text-white px-4 shadow-sm"
                     >
                         {savingWorkflow ? (
                             <>
-                                <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />
+                                <HugeiconsIcon icon={Loading02Icon} className="w-4 h-4 mr-2 animate-spin" />
                                 Saving...
                             </>
                         ) : (
@@ -473,52 +490,52 @@ export const WorkflowEditorHeader = ({
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="text-muted-foreground hover:text-foreground hover:bg-muted"
+                            className="text-[#737373] hover:text-foreground hover:bg-[#F7F7F7]"
                         >
-                            <MoreVertical className="w-5 h-5" />
+                            <HugeiconsIcon icon={MoreVerticalIcon} className="w-5 h-5" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-popover border-border text-popover-foreground shadow-xl">
+                    <DropdownMenuContent align="end" className="bg-popover border-[#E5E5E5] text-popover-foreground shadow-xl">
                         <DropdownMenuItem
                             onClick={() => router.push(`/workflow/${workflowId}/runs`)}
-                            className="cursor-pointer hover:bg-muted"
+                            className="cursor-pointer hover:bg-[#F7F7F7]"
                         >
-                            <History className="w-4 h-4 mr-2" />
+                            <HugeiconsIcon icon={HistoryIcon} className="w-4 h-4 mr-2" />
                             View Runs
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={handleDuplicate}
                             disabled={duplicating}
-                            className="cursor-pointer hover:bg-muted"
+                            className="cursor-pointer hover:bg-[#F7F7F7]"
                         >
                             {duplicating ? (
-                                <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />
+                                <HugeiconsIcon icon={Loading02Icon} className="w-4 h-4 mr-2 animate-spin" />
                             ) : (
-                                <Copy className="w-4 h-4 mr-2" />
+                                <HugeiconsIcon icon={Copy01Icon} className="w-4 h-4 mr-2" />
                             )}
                             {duplicating ? "Duplicating..." : "Duplicate Workflow"}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={handleDownloadWorkflow}
-                            className="cursor-pointer hover:bg-muted"
+                            className="cursor-pointer hover:bg-[#F7F7F7]"
                         >
-                            <Download className="w-4 h-4 mr-2" />
+                            <HugeiconsIcon icon={Download01Icon} className="w-4 h-4 mr-2" />
                             Download Workflow
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={handleCopyAgentUuid}
                             disabled={!workflowUuid}
-                            className="cursor-pointer hover:bg-muted"
+                            className="cursor-pointer hover:bg-[#F7F7F7]"
                         >
-                            <Clipboard className="w-4 h-4 mr-2" />
+                            <HugeiconsIcon icon={ClipboardIcon} className="w-4 h-4 mr-2" />
                             Copy Agent UUID
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
 
                 {/* Callio Studio Status indicator */}
-                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-muted/40 text-xs font-medium text-foreground">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#E5E5E5] bg-[#F7F7F7] text-xs font-medium text-foreground">
+                    <span className="w-2 h-2 rounded-full bg-[#171717] animate-pulse" />
                     <span>Callio Studio</span>
                 </div>
             </div>

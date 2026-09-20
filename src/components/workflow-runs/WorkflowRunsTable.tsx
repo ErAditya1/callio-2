@@ -1,6 +1,15 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, ExternalLink, RefreshCw } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowDown01Icon,
+  ArrowUp01Icon,
+  ArrowUpDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ExternalLinkIcon,
+  RefreshCwIcon,
+} from "@hugeicons/core-free-icons";;
 import { useState } from "react";
 
 import { WorkflowRunResponseSchema } from "@/client/types.gen";
@@ -145,7 +154,7 @@ export function WorkflowRunsTable({
                                     disabled={loading}
                                     title="Reload"
                                 >
-                                    <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                                    <HugeiconsIcon icon={RefreshCwIcon} className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                                 </Button>
                             )}
                         </div>
@@ -166,9 +175,9 @@ export function WorkflowRunsTable({
                                             <div className="flex items-center gap-1">
                                                 Duration
                                                 {sortBy === 'duration' ? (
-                                                    sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                                                    sortOrder === 'asc' ? <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" /> : <HugeiconsIcon icon={ArrowDown01Icon} className="h-4 w-4" />
                                                 ) : (
-                                                    <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                                                    <HugeiconsIcon icon={ArrowUpDownIcon} className="h-4 w-4 text-muted-foreground" />
                                                 )}
                                             </div>
                                         </TableHead>
@@ -236,7 +245,7 @@ export function WorkflowRunsTable({
                                                         size="icon"
                                                         onClick={() => window.open(`/workflow/${workflowId}/run/${run.id}`, '_blank')}
                                                     >
-                                                        <ExternalLink className="h-4 w-4" />
+                                                        <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4" />
                                                     </Button>
                                                 </div>
                                             </TableCell>
@@ -260,7 +269,7 @@ export function WorkflowRunsTable({
                                         onClick={() => onPageChange(currentPage - 1)}
                                         disabled={currentPage === 1}
                                     >
-                                        <ChevronLeft className="h-4 w-4" />
+                                        <HugeiconsIcon icon={ChevronLeftIcon} className="h-4 w-4" />
                                         Previous
                                     </Button>
                                     <Button
@@ -270,7 +279,7 @@ export function WorkflowRunsTable({
                                         disabled={currentPage === totalPages}
                                     >
                                         Next
-                                        <ChevronRight className="h-4 w-4" />
+                                        <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4" />
                                     </Button>
                                 </div>
                             </div>

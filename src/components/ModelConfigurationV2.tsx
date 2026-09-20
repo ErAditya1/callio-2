@@ -1,6 +1,9 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ExternalLinkIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useRef, useState } from "react";
 
 import {
@@ -113,7 +116,7 @@ export default function ModelConfigurationV2({ docsUrl }: { docsUrl?: string }) 
                         Organization-scoped model settings.{" "}
                         {docsUrl && (
                             <a href={docsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">
-                                Learn more <ExternalLink className="h-3 w-3" />
+                                Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                             </a>
                         )}
                     </p>

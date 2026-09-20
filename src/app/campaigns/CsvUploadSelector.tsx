@@ -113,12 +113,12 @@ export default function CsvUploadSelector({ onFileUploaded, selectedFileName }: 
         </Button>
         {selectedFileName && !uploading && (
           <div className="flex-1 text-sm">
-            <span className="text-muted-foreground">Selected: </span>
+            <span className="text-[#737373]">Selected: </span>
             <span className="text-primary">{selectedFileName}</span>
           </div>
         )}
       </div>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm text-[#737373]">
         Upload a CSV file with contact data. Must include phone_number column.
         The columns can be accessed as initial_context in the workflow nodes. <br/>
         Max 10MB.

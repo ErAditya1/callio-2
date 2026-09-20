@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  PhoneCall,
-  Loader2,
-  CheckCircle2,
-  ShieldCheck,
-  ChevronDown,
-  Volume2,
-} from 'lucide-react';
+  CheckmarkCircle02Icon,
+  ChevronDownIcon,
+  Loading02Icon,
+  PhoneCallIcon,
+  ShieldCheckIcon,
+  VolumeHighIcon,
+} from "@hugeicons/core-free-icons";;
 import { Button } from '@/components/ui/button';
 import {
   PUBLIC_AGENTS,
@@ -196,7 +197,7 @@ export function DirectPhoneTestCall() {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground absolute right-3 top-3.5 pointer-events-none" />
+                <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-muted-foreground absolute right-3 top-3.5 pointer-events-none" />
               </div>
             </div>
 
@@ -241,8 +242,8 @@ export function DirectPhoneTestCall() {
                   : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
               }`}
             >
-              {status === 'calling' && <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />}
-              {status === 'success' && <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />}
+              {status === 'calling' && <HugeiconsIcon icon={Loading02Icon} className="w-3.5 h-3.5 animate-spin shrink-0" />}
+              {status === 'success' && <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 shrink-0" />}
               <div className="flex-1 min-w-0">
                 <span className="font-medium">{statusMessage}</span>
                 {status === 'success' && countdown > 0 && (
@@ -257,7 +258,7 @@ export function DirectPhoneTestCall() {
           {/* Submit Action */}
           <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/80 order-2 sm:order-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <HugeiconsIcon icon={ShieldCheckIcon} className="w-3.5 h-3.5 text-muted-foreground/60" />
               <span>One-time live test. Your number is never stored or shared.</span>
             </div>
 
@@ -268,12 +269,12 @@ export function DirectPhoneTestCall() {
             >
               {status === 'calling' ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <HugeiconsIcon icon={Loading02Icon} className="w-3.5 h-3.5 animate-spin" />
                   Connecting Call...
                 </>
               ) : (
                 <>
-                  <PhoneCall className="w-3.5 h-3.5" />
+                  <HugeiconsIcon icon={PhoneCallIcon} className="w-3.5 h-3.5" />
                   Call My Phone Now
                 </>
               )}

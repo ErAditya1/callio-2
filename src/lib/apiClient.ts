@@ -49,8 +49,9 @@ export const createClientConfig: CreateClientConfig = (config) => {
     }
 
     return {
+        throwOnError: false,
         ...config,
-        baseUrl,
+        baseUrl: (config as any).baseUrl ?? baseUrl,
     };
 };
 
@@ -75,5 +76,19 @@ export function setupAuthInterceptor(apiClient: Client, getAccessToken: () => Pr
             // If token retrieval fails, let the request proceed without auth
         }
         return request;
+    });
+
+    // Demo / offline: turn hard network failures (backend not running) into a
+    // soft error payload instead of an unhandled thrown TypeError.
+    // Pages check { data, error } via detailFromError, so returning { error }
+    // renders a friendly empty/error state instead of a 500 with call stack.
+    apiClient.interceptors.error.use((error) => {
+        const msg = error instanceof Error ? error.message : String(error ?? '');
+        if (msg.includes('Failed to fetch') || msg.includes('fetch failed') || msg.includes('NetworkError')) {
+            return {
+                detail: 'Backend not reachable — running in demo mode with no backend. Start the backend or stay on mocked data.',
+            } as unknown as Error;
+        }
+        return error;
     });
 }

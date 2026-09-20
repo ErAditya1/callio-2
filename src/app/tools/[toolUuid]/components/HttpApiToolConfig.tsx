@@ -1,6 +1,9 @@
 "use client";
 
-import { Info } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  InfoIcon,
+} from "@hugeicons/core-free-icons";;
 
 import type { RecordingResponseSchema } from "@/client/types.gen";
 import { StaticTextWarning, TextOrAudioInput } from "@/components/flow/TextOrAudioInput";
@@ -113,7 +116,7 @@ export function HttpApiToolConfig({
                     <TabsContent value="settings" className="space-y-4 mt-4">
                         <div className="grid gap-2">
                             <Label>Tool Name</Label>
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Use a descriptive name, like &quot;Get Weather using API&quot; for a tool that fetches weather
                             </Label>
                             <Input
@@ -125,7 +128,7 @@ export function HttpApiToolConfig({
 
                         <div className="grid gap-2">
                             <Label>Description</Label>
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Provide a description which makes it easy for LLM to understand what this tool does
                             </Label>
                             <Textarea
@@ -167,16 +170,16 @@ export function HttpApiToolConfig({
                                 showValidation
                             />
                             {urlHostnameParameters.length > 0 && (
-                                <div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-3 text-sm text-blue-600 flex gap-2 items-start mt-2">
-                                    <Info className="h-4 w-4 mt-0.5 shrink-0" />
+                                <div className="rounded-lg border border-[#DCE3EF] bg-[#F0F3F9] p-3 text-sm text-[#7186AD] flex gap-2 items-start mt-2">
+                                    <HugeiconsIcon icon={InfoIcon} className="h-4 w-4 mt-0.5 shrink-0" />
                                     <span>
                                         Hostname parameters detected: {urlHostnameParameters.join(", ")}. Values resolve from tool call arguments or workflow context at runtime.
                                     </span>
                                 </div>
                             )}
                             {urlPathParameters.length > 0 && (
-                                <div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-3 text-sm text-blue-600 flex gap-2 items-start mt-2">
-                                    <Info className="h-4 w-4 mt-0.5 shrink-0" />
+                                <div className="rounded-lg border border-[#DCE3EF] bg-[#F0F3F9] p-3 text-sm text-[#7186AD] flex gap-2 items-start mt-2">
+                                    <HugeiconsIcon icon={InfoIcon} className="h-4 w-4 mt-0.5 shrink-0" />
                                     <span>
                                         Path parameters detected: {urlPathParameters.join(", ")}. Values resolve from tool call arguments or workflow context at runtime.
                                     </span>
@@ -186,7 +189,7 @@ export function HttpApiToolConfig({
 
                         <div className="grid gap-2 pt-4 border-t">
                             <Label>Custom Message</Label>
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Optional message the AI will speak or play before executing this tool.
                             </Label>
                             <TextOrAudioInput
@@ -219,7 +222,7 @@ export function HttpApiToolConfig({
                     <TabsContent value="parameters" className="space-y-4 mt-4">
                         <div className="grid gap-2">
                             <Label>LLM Parameters</Label>
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Define the parameters that the LLM will provide when calling this tool.
                                 These will be sent as JSON body for POST/PUT/PATCH or as URL query params for GET/DELETE.
                             </Label>
@@ -231,7 +234,7 @@ export function HttpApiToolConfig({
 
                         <div className="grid gap-2 pt-4 border-t">
                             <Label>Preset Parameters</Label>
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Add values that CallioAI should inject at runtime. These are not exposed to the LLM and can use
                                 workflow templates like {`{{initial_context.phone_number}}`} or fixed literals.
                             </Label>
@@ -248,7 +251,7 @@ export function HttpApiToolConfig({
                                         <Label htmlFor="body-template-enabled">
                                             Tool Body Template
                                         </Label>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-xs text-[#737373]">
                                             Enable a custom JSON request body.
                                         </p>
                                     </div>
@@ -270,7 +273,7 @@ export function HttpApiToolConfig({
 
                         <div className="grid gap-2 pt-4 border-t">
                             <Label>Custom Headers</Label>
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Add custom headers to include in the request (optional)
                             </Label>
                             <KeyValueEditor

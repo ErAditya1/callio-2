@@ -1,13 +1,14 @@
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  BarChart3,
-  CheckCircle2,
-  PhoneCall,
-  PhoneForwarded,
-  PhoneIncoming,
-  Repeat,
-  ShieldCheck,
-} from 'lucide-react';
+  ArrowRight01Icon,
+  ChartColumnIcon,
+  CheckmarkCircle02Icon,
+  PhoneCallIcon,
+  PhoneForwardedIcon,
+  PhoneIncomingIcon,
+  RepeatIcon,
+  ShieldCheckIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 
 import { ArchitecturePipeline } from '@/components/marketing/ArchitecturePipeline';
@@ -26,7 +27,7 @@ export default function AICallingPage() {
       {/* Hero Section */}
       <div className="text-center max-w-4xl mx-auto mb-16 sm:mb-20">
         <Badge variant="outline" className="mb-4 border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3.5 py-1 text-xs">
-          <PhoneCall className="w-3.5 h-3.5 mr-1.5 inline" />
+          <HugeiconsIcon icon={PhoneCallIcon} className="w-3.5 h-3.5 mr-1.5 inline" />
           Enterprise Telephony Engine
         </Badge>
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.1]">
@@ -46,7 +47,7 @@ export default function AICallingPage() {
           >
             <Link href="/dashboard/agents/create">
               Get Started with AI Calling
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-2" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="rounded-xl px-7 h-12 text-sm font-medium border-border/80">
@@ -62,7 +63,7 @@ export default function AICallingPage() {
         {/* Inbound Solution */}
         <div className="p-8 sm:p-10 rounded-3xl border border-border/80 bg-card/70 space-y-6 shadow-xl marketing-glow-card">
           <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
-            <PhoneIncoming className="w-6 h-6" />
+            <HugeiconsIcon icon={PhoneIncomingIcon} className="w-6 h-6" />
           </div>
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Inbound Calling Solutions</h2>
@@ -72,15 +73,15 @@ export default function AICallingPage() {
           </div>
           <ul className="space-y-3 text-xs sm:text-sm text-muted-foreground">
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>Instant pickup on ring #1 across 100+ concurrent calls</span>
             </li>
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>Direct calendar booking (Google Calendar, Outlook & Cal.com)</span>
             </li>
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>Intelligent warm handoff with spoken spoken context briefing</span>
             </li>
           </ul>
@@ -96,7 +97,7 @@ export default function AICallingPage() {
         {/* Outbound Campaigns */}
         <div className="p-8 sm:p-10 rounded-3xl border border-border/80 bg-card/70 space-y-6 shadow-xl marketing-glow-card">
           <div className="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20">
-            <PhoneForwarded className="w-6 h-6" />
+            <HugeiconsIcon icon={PhoneForwardedIcon} className="w-6 h-6" />
           </div>
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Outbound Calling Campaigns</h2>
@@ -106,15 +107,15 @@ export default function AICallingPage() {
           </div>
           <ul className="space-y-3 text-xs sm:text-sm text-muted-foreground">
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>Upload CSV contacts or trigger automatically via Webhooks</span>
             </li>
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>Advanced voicemail detection with personalized voice drops</span>
             </li>
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>Live 2-way syncing to HubSpot, Salesforce, or webhooks</span>
             </li>
           </ul>
@@ -136,7 +137,7 @@ export default function AICallingPage() {
       {/* Operational Features Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
         <div className="p-6 sm:p-7 rounded-2xl border border-border/70 bg-card/60 space-y-3 marketing-glow-card">
-          <Repeat className="w-6 h-6 text-indigo-400" />
+          <HugeiconsIcon icon={RepeatIcon} className="w-6 h-6 text-indigo-400" />
           <h3 className="font-bold text-foreground text-base sm:text-lg">Smart Retry Engine</h3>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
             Never lose a prospect to an unanswered call. Configure automatic retry rules respecting local time zones and TCPA compliance.
@@ -144,7 +145,7 @@ export default function AICallingPage() {
         </div>
 
         <div className="p-6 sm:p-7 rounded-2xl border border-border/70 bg-card/60 space-y-3 marketing-glow-card">
-          <BarChart3 className="w-6 h-6 text-emerald-400" />
+          <HugeiconsIcon icon={ChartColumnIcon} className="w-6 h-6 text-emerald-400" />
           <h3 className="font-bold text-foreground text-base sm:text-lg">Conversation Analytics</h3>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
             Inspect call durations, resolution rates, buyer sentiment, intent trends, and full searchable transcripts in one unified dashboard.
@@ -152,7 +153,7 @@ export default function AICallingPage() {
         </div>
 
         <div className="p-6 sm:p-7 rounded-2xl border border-border/70 bg-card/60 space-y-3 marketing-glow-card">
-          <ShieldCheck className="w-6 h-6 text-blue-400" />
+          <HugeiconsIcon icon={ShieldCheckIcon} className="w-6 h-6 text-blue-400" />
           <h3 className="font-bold text-foreground text-base sm:text-lg">Bring Your Own Carrier (BYOC)</h3>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
             Use CallioAI's ready-to-dial numbers or connect your existing Twilio, Smartflo, or SIP trunk with zero downtime.
@@ -172,7 +173,7 @@ export default function AICallingPage() {
           <Button asChild size="lg" className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl px-8 shadow-lg shadow-indigo-600/25">
             <Link href="/dashboard/agents/create">
               Build Your Agent Free
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-2" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="rounded-xl">

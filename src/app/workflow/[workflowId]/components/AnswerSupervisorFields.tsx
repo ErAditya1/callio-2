@@ -108,22 +108,22 @@ export function AnswerSupervisorFields({ value, onChange }: {
         {value.voicemail_action === "leave_message" && <>
             <MessageField label="Voicemail message" value={value.voicemail_message} recordings={recordings}
                 onChange={message => onChange({ ...value, voicemail_message: message })} />
-            <p className="text-xs text-muted-foreground">The agent plays this message, then disconnects the call.</p>
+            <p className="text-xs text-[#737373]">The agent plays this message, then disconnects the call.</p>
             {isVoicemailMessageMissing(value) && <p role="alert" className="text-sm text-destructive">Enter a voicemail message or select a recording.</p>}
         </>}
         <MessageField label="Screening message" value={value.screening_message} recordings={recordings}
             onChange={message => onChange({ ...value, screening_message: message })} />
-        <p className="text-xs text-muted-foreground">State your name and reason for calling. After this message, the agent waits silently for the person to answer. Leave blank to end screened calls.</p>
+        <p className="text-xs text-[#737373]">State your name and reason for calling. After this message, the agent waits silently for the person to answer. Leave blank to end screened calls.</p>
         {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
         <details className="rounded-md border p-3">
             <summary className="cursor-pointer text-sm font-medium">Timing</summary>
             <div className="mt-3 space-y-2">
-                <p className="text-xs text-muted-foreground">Use the Start node’s Delayed Start setting to configure how long the agent listens before greeting a silent answer. The default is 1.2 seconds. A brief human greeting can end the wait sooner.</p>
+                <p className="text-xs text-[#737373]">Use the Start node’s Delayed Start setting to configure how long the agent listens before greeting a silent answer. The default is 1.2 seconds. A brief human greeting can end the wait sooner.</p>
                 <Label htmlFor={`${id}-screening`}>Screening wait (seconds)</Label>
                 <Input id={`${id}-screening`} type="number" min="1" max="60" step="1"
                     value={(value.screening_wait_ms ?? 30000) / 1000}
                     onChange={e => onChange({ ...value, screening_wait_ms: Math.round(Math.min(60, Math.max(1, Number(e.target.value) || 30)) * 1000) })} />
-                <p className="text-xs text-muted-foreground">How long to wait for the person after the screening message finishes.</p>
+                <p className="text-xs text-[#737373]">How long to wait for the person after the screening message finishes.</p>
             </div>
         </details>
     </div>;

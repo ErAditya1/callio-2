@@ -1,7 +1,13 @@
 'use client';
 
 import { addDays, format, subDays } from 'date-fns';
-import { Calendar, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Calendar01Icon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Download01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from 'react';
 
 import {
@@ -198,7 +204,7 @@ export default function ReportsPage() {
   const isToday = format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="app-page space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="space-y-2">
@@ -229,13 +235,13 @@ export default function ReportsPage() {
               size="icon"
               onClick={handlePreviousDay}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <HugeiconsIcon icon={ChevronLeftIcon} className="h-4 w-4" />
             </Button>
 
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-[200px]">
-                  <Calendar className="mr-2 h-4 w-4" />
+                  <HugeiconsIcon icon={Calendar01Icon} className="mr-2 h-4 w-4" />
                   {format(selectedDate, 'MMM dd, yyyy')}
                 </Button>
               </PopoverTrigger>
@@ -255,7 +261,7 @@ export default function ReportsPage() {
               onClick={handleNextDay}
               disabled={isToday}
             >
-              <ChevronRight className="h-4 w-4" />
+              <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -263,7 +269,7 @@ export default function ReportsPage() {
 
       {/* Timezone Display and Download Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-[#737373]">
           Showing data for {timezone} timezone
           {selectedWorkflow !== 'all' && (
             <span> • Filtered by: {workflows.find(w => w.id.toString() === selectedWorkflow)?.name}</span>
@@ -278,7 +284,7 @@ export default function ReportsPage() {
             onClick={handleDownloadCSV}
             className="flex items-center gap-2"
           >
-            <Download className="h-4 w-4" />
+            <HugeiconsIcon icon={Download01Icon} className="h-4 w-4" />
             Download CSV
           </Button>
         )}
@@ -320,7 +326,7 @@ export default function ReportsPage() {
           {/* No Data Message */}
           {report.metrics.total_runs === 0 && (
             <Card className="p-6">
-              <p className="text-center text-muted-foreground">
+              <p className="text-center text-[#737373]">
                 No workflow runs found for {format(selectedDate, 'MMMM dd, yyyy')}
                 {selectedWorkflow !== 'all' && ' for the selected workflow'}
               </p>

@@ -1,22 +1,23 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowLeft,
-  ArrowRight,
-  Award,
-  CheckCircle2,
-  Clock,
-  Mic,
-  MicOff,
-  Phone,
-  PhoneOff,
-  Radio,
-  RotateCcw,
-  Sparkles,
-  Star,
-  Volume2,
-  VolumeX
-} from 'lucide-react';
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Award01Icon,
+  CheckmarkCircle02Icon,
+  Clock01Icon,
+  Mic01Icon,
+  MicOff01Icon,
+  PhoneIcon,
+  PhoneOff01Icon,
+  RadioIcon,
+  RotateCcwIcon,
+  SparklesIcon,
+  StarIcon,
+  VolumeHighIcon,
+  VolumeXIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -105,7 +106,7 @@ export default function LiveCallDemoPage() {
           href="/demo"
           className="text-xs font-semibold text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5" />
           Back to Demo Agents
         </Link>
         <Badge variant="outline" className="text-xs border-indigo-500/30 text-indigo-400 bg-indigo-500/10">
@@ -158,7 +159,7 @@ export default function LiveCallDemoPage() {
               className="text-muted-foreground hover:text-foreground"
               title="Restart Simulation"
             >
-              <RotateCcw className="w-4 h-4" />
+              <HugeiconsIcon icon={RotateCcwIcon} className="w-4 h-4" />
             </Button>
           </div>
 
@@ -209,7 +210,7 @@ export default function LiveCallDemoPage() {
               className="rounded-full w-12 h-12 p-0 shadow-md"
               title={isMuted ? 'Unmute Mic' : 'Mute Mic'}
             >
-              {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              {isMuted ? <HugeiconsIcon icon={MicOff01Icon} className="w-5 h-5" /> : <HugeiconsIcon icon={Mic01Icon} className="w-5 h-5" />}
             </Button>
 
             <Button
@@ -224,12 +225,12 @@ export default function LiveCallDemoPage() {
             >
               {callActive ? (
                 <>
-                  <PhoneOff className="w-5 h-5" />
+                  <HugeiconsIcon icon={PhoneOff01Icon} className="w-5 h-5" />
                   End Call
                 </>
               ) : (
                 <>
-                  <Phone className="w-5 h-5" />
+                  <HugeiconsIcon icon={PhoneIcon} className="w-5 h-5" />
                   Restart Call
                 </>
               )}
@@ -242,7 +243,7 @@ export default function LiveCallDemoPage() {
               className="rounded-full w-12 h-12 p-0 shadow-md"
               title={speakerMuted ? 'Unmute Speaker' : 'Mute Speaker'}
             >
-              {speakerMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              {speakerMuted ? <HugeiconsIcon icon={VolumeXIcon} className="w-5 h-5" /> : <HugeiconsIcon icon={VolumeHighIcon} className="w-5 h-5" />}
             </Button>
           </div>
         </div>
@@ -294,7 +295,7 @@ export default function LiveCallDemoPage() {
               </div>
               <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
                 <div className="font-semibold flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
                   Outcome: Slot Offered (Thursday 2:30 PM)
                 </div>
               </div>
@@ -317,7 +318,7 @@ export default function LiveCallDemoPage() {
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-card border border-border/80 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl shadow-black/50 text-center space-y-5 animate-in fade-in zoom-in-95">
             <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mx-auto">
-              <Sparkles className="w-7 h-7" />
+              <HugeiconsIcon icon={SparklesIcon} className="w-7 h-7" />
             </div>
 
             <div>
@@ -337,7 +338,7 @@ export default function LiveCallDemoPage() {
                     star <= starRating ? 'text-amber-400 fill-amber-400' : 'text-gray-600'
                   }`}
                 >
-                  <Star className={`w-7 h-7 ${star <= starRating ? 'fill-current' : ''}`} />
+                  <HugeiconsIcon icon={StarIcon} className={`w-7 h-7 ${star <= starRating ? 'fill-current' : ''}`} />
                 </button>
               ))}
             </div>
@@ -349,7 +350,7 @@ export default function LiveCallDemoPage() {
               >
                 <Link href="/dashboard/agents/create">
                   Build Your Own Agent Now
-                  <ArrowRight className="w-4 h-4 ml-1.5" />
+                  <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1.5" />
                 </Link>
               </Button>
               <Button

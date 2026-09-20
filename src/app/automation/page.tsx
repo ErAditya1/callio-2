@@ -1,12 +1,15 @@
 "use client";
 
-import { Zap } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ZapIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AutomationPage() {
     return (
-        <div className="container mx-auto p-6 space-y-6">
+        <div className="app-page space-y-6">
             <div>
                 <h1 className="text-3xl font-bold mb-2">Automation</h1>
                 <p>Automate your workflows and processes</p>
@@ -21,7 +24,7 @@ export default function AutomationPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="text-center py-12">
-                        <Zap className="w-16 h-16 mx-auto mb-6" />
+                        <HugeiconsIcon icon={ZapIcon} className="w-16 h-16 mx-auto mb-6" />
                         <p className="text-lg mb-4">
                             We&apos;re working on powerful automation features to help you streamline your workflows.
                         </p>

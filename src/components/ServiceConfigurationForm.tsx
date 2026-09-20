@@ -1,6 +1,14 @@
 "use client";
 
-import { AlertCircle, ExternalLink, Key, Plus, Sparkles, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  ExternalLinkIcon,
+  Key01Icon,
+  PlusIcon,
+  SparklesIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -605,7 +613,7 @@ export function ServiceConfigurationForm({
                                                 <span>{getProviderDisplayName(provider, schemas?.[service]?.[provider])}</span>
                                                 {hasMaster ? (
                                                     <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium shrink-0">
-                                                        <Sparkles className="h-3 w-3" /> Platform Key
+                                                        <HugeiconsIcon icon={SparklesIcon} className="h-3 w-3" /> Platform Key
                                                     </span>
                                                 ) : masterMode ? (
                                                     <span className="text-[10px] text-muted-foreground shrink-0">
@@ -628,7 +636,7 @@ export function ServiceConfigurationForm({
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-0.5 underline"
                                     >
-                                        Learn more <ExternalLink className="h-3 w-3" />
+                                        Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                                     </a>
                                 )}
                             </p>
@@ -665,7 +673,7 @@ export function ServiceConfigurationForm({
                     <div className="space-y-2">
                         {isMasterKeyActive && (
                             <div className="flex items-start gap-2.5 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs mb-2">
-                                <Sparkles className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                                <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                                 <div className="space-y-0.5">
                                     <span className="font-semibold text-emerald-700 dark:text-emerald-300">
                                         Platform Master Key Active
@@ -678,7 +686,7 @@ export function ServiceConfigurationForm({
                         )}
                         {masterMode && !isMasterKeyActive && (
                             <div className="flex items-start gap-2.5 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs mb-2">
-                                <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                                <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                                 <div className="space-y-0.5">
                                     <span className="font-semibold text-amber-700 dark:text-amber-300">
                                         No Platform Master Key Configured
@@ -692,7 +700,7 @@ export function ServiceConfigurationForm({
                         {masterMode && isMasterKeyActive ? (
                             <div className="p-3 rounded-lg border bg-muted/40 text-xs text-muted-foreground flex items-center justify-between">
                                 <span className="flex items-center gap-1.5 font-medium text-foreground">
-                                    <Sparkles className="h-3.5 w-3.5 text-emerald-500" /> Platform Master Key Auto-Assigned
+                                    <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5 text-emerald-500" /> Platform Master Key Auto-Assigned
                                 </span>
                                 <Badge variant="outline" className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/30">
                                     No Personal Key Required
@@ -736,7 +744,7 @@ export function ServiceConfigurationForm({
                                                     }));
                                                 }}
                                             >
-                                                <X className="h-4 w-4" />
+                                                <HugeiconsIcon icon={XIcon} className="h-4 w-4" />
                                             </Button>
                                         )}
                                     </div>
@@ -753,7 +761,7 @@ export function ServiceConfigurationForm({
                                             }));
                                         }}
                                     >
-                                        <Plus className="h-4 w-4 mr-1" /> Add API Key
+                                        <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-1" /> Add API Key
                                     </Button>
                                 )}
                             </>
@@ -781,7 +789,7 @@ export function ServiceConfigurationForm({
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-0.5 underline"
                     >
-                        Supported languages <ExternalLink className="h-3 w-3" />
+                        Supported languages <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                     </a>
                 )}
             </p>

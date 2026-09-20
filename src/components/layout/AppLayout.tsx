@@ -1,20 +1,23 @@
 "use client";
 
-import { AlertTriangle, Menu, RefreshCw } from "lucide-react";
-import Link from "next/link";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Menu01Icon,
+  RefreshCwIcon,
+  TriangleAlertIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";
 import { usePathname } from "next/navigation";
-import posthog from "posthog-js";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button";
-import { SidebarInset, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
-import { PostHogEvent } from "@/constants/posthog-events";
-import { useAppConfig } from "@/context/AppConfigContext";
-import { LeadFormsProvider } from "@/context/LeadFormsContext";
 import { MarketingFooter } from "@/components/marketing/MarketingFooter";
 import { MarketingNavbar } from "@/components/marketing/MarketingNavbar";
+import { Button } from "@/components/ui/button";
+import { SidebarInset, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAppConfig } from "@/context/AppConfigContext";
+import { LeadFormsProvider } from "@/context/LeadFormsContext";
 
-import { BrandLogo } from "@/components/BrandLogo";
 import { AppSidebar } from "./AppSidebar";
 import { WalletBalanceBadge } from "./WalletBalanceBadge";
 
@@ -22,7 +25,7 @@ function AppHeader() {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border/60 bg-background/80 px-4 backdrop-blur-md">
+    <header className="sticky top-0 z-40 flex h-14 items-center justify-between bg-background/80 px-4 backdrop-blur-md">
       <div className="flex items-center gap-3">
         <Button
           variant="ghost"
@@ -32,25 +35,12 @@ function AppHeader() {
           title="Toggle sidebar"
           className="h-8 w-8 hover:bg-accent rounded-lg text-muted-foreground hover:text-foreground flex items-center justify-center shrink-0 md:hidden"
         >
-          <Menu className="h-4.5 w-4.5" />
+          <HugeiconsIcon icon={Menu01Icon} className="h-4.5 w-4.5" />
         </Button>
-        <Link href="/overview" className="flex items-center gap-2.5">
-          <BrandLogo mark className="h-6" />
-          <span className="font-semibold text-sm tracking-tight hidden sm:inline text-foreground">Callio AI</span>
-          <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Console</span>
-        </Link>
+        {/* Brand removed per user request — sidebar CALLIO wordmark is the only brand. */}
       </div>
       <div className="flex items-center gap-2.5 sm:gap-3">
         <WalletBalanceBadge />
-        <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground border border-border/50 rounded-full px-3 py-1 bg-muted/20">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Core: Online</span>
-        </div>
-        <Button size="sm" asChild className="h-8 text-xs font-medium bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg">
-          <Link href="/workflow">
-            + Agent Studio
-          </Link>
-        </Button>
       </div>
     </header>
   );
@@ -58,8 +48,14 @@ function AppHeader() {
 
 function BackendStatusBanner() {
   const { config, loading, refresh } = useAppConfig();
+  const [dismissed, setDismissed] = useState(false);
 
-  if (!config || config.backendStatus === "reachable") {
+  // Reset dismissal when backend status changes so a fresh outage re-surfaces.
+  useEffect(() => {
+    setDismissed(false);
+  }, [config?.backendStatus]);
+
+  if (!config || config.backendStatus === "reachable" || dismissed) {
     return null;
   }
 
@@ -71,27 +67,33 @@ function BackendStatusBanner() {
   return (
     <div
       role="alert"
-      className="border-b border-amber-300 bg-amber-50 px-4 py-3 text-amber-950 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-100"
+      className="relative border-b border-amber-300 bg-amber-50 px-4 py-2.5 text-amber-950"
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 items-start gap-3">
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
-          <div className="min-w-0">
-            <p className="text-sm font-semibold">Backend connection failed</p>
-            <p className="break-words text-sm">{message}</p>
-          </div>
-        </div>
+      <div className="flex items-center justify-center gap-3 pr-10">
+        <HugeiconsIcon icon={TriangleAlertIcon} className="h-4 w-4 shrink-0" />
+        <p className="truncate text-center text-[13px]">
+          <span className="font-semibold">Backend connection failed — </span>
+          <span>{message}</span>
+        </p>
         <Button
           variant="outline"
           size="sm"
           onClick={() => void refresh()}
           disabled={loading}
-          className="h-8 shrink-0 border-amber-400 bg-transparent text-amber-950 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-100 dark:hover:bg-amber-900/40"
+          className="h-7 shrink-0 border-amber-400 bg-transparent px-2.5 text-xs text-amber-950 hover:bg-amber-100"
         >
-          <RefreshCw className="h-4 w-4" />
+          <HugeiconsIcon icon={RefreshCwIcon} className="h-3.5 w-3.5" />
           Retry
         </Button>
       </div>
+      <button
+        type="button"
+        onClick={() => setDismissed(true)}
+        aria-label="Dismiss backend notification"
+        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-amber-900/70 hover:bg-amber-100 hover:text-amber-950"
+      >
+        <HugeiconsIcon icon={XIcon} className="h-4 w-4" />
+      </button>
     </div>
   );
 }
@@ -135,9 +137,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   if (isMarketingPage) {
     return (
-      <div className="min-h-screen flex flex-col bg-background text-foreground selection:bg-indigo-500/20 selection:text-indigo-400">
+      <div className="site-light min-h-screen flex flex-col bg-background text-foreground selection:bg-neutral-900 selection:text-white">
         <MarketingNavbar />
-        <main className="flex-1 pt-16 sm:pt-20">
+        <main className="flex-1 bg-white pt-16 sm:pt-[72px]">
           {children}
         </main>
         <MarketingFooter />
@@ -145,6 +147,19 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     );
   }
 
+
+  // Standalone pages render with zero console chrome — just the page itself.
+  // (auth + handler were already shell-free; create-agent joins them so the
+  // demo flow shows only the form, no sidebar/header/banners.)
+  if (
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/handler") ||
+    pathname.startsWith("/create-agent") ||
+    pathname.startsWith("/payment") ||
+    pathname.startsWith("/activation")
+  ) {
+    return <>{children}</>;
+  }
 
   // Check if current route should have sidebar
   // Hide sidebar for /handler routes (Stack Auth routes) and /auth routes
@@ -155,13 +170,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Always render SidebarProvider to keep the component tree shape consistent
   // across route changes (avoids React hooks ordering violations during navigation).
+  // TooltipProvider must wrap any sidebar menu item that passes a `tooltip` prop.
   return (
-    <SidebarProvider defaultOpen>
+    <TooltipProvider>
+      <SidebarProvider defaultOpen>
       {shouldShowSidebar ? (
         <LeadFormsProvider>
-          <div className="flex min-h-screen w-full">
+          <div className="flex min-h-screen w-full bg-sidebar">
             <AppSidebar />
-            <SidebarInset className="flex-1">
+            <SidebarInset className="flex-1 overflow-clip rounded-l-[16px] bg-background">
               <BackendStatusBanner />
               {!isWorkflowEditor && <AppHeader />}
               {/* Optional header area for specific pages */}
@@ -199,7 +216,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           {children}
         </div>
       )}
-    </SidebarProvider>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 };
 

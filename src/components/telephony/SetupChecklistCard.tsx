@@ -1,6 +1,12 @@
 "use client";
 
-import { AlertTriangle, Check, Circle, ExternalLink } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CheckIcon,
+  CircleIcon,
+  ExternalLinkIcon,
+  TriangleAlertIcon,
+} from "@hugeicons/core-free-icons";;
 
 import type {
   ProviderSetupChecklist,
@@ -50,7 +56,7 @@ export function SetupChecklistCard({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-sm underline"
             >
-              Setup guide <ExternalLink className="h-3 w-3" />
+              Setup guide <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
             </a>
           )}
         </div>
@@ -63,7 +69,7 @@ export function SetupChecklistCard({
       <CardContent className="space-y-4">
         {!checklist.ready_for_outbound && (
           <div className="flex items-start gap-3 rounded-md border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
-            <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
+            <HugeiconsIcon icon={TriangleAlertIcon} className="h-5 w-5 shrink-0 mt-0.5" />
             <div className="space-y-1 text-sm">
               <p className="font-medium">Outbound calls will not work yet</p>
               <p>{checklist.outbound_blocked_reason}</p>
@@ -83,24 +89,24 @@ export function SetupChecklistCard({
                       ? "border-green-600 bg-green-600 text-white"
                       : blocking
                         ? "border-amber-500 text-amber-600"
-                        : "border-muted-foreground/40 text-muted-foreground"
+                        : "border-[#E5E5E5] text-[#737373]"
                   }`}
                 >
                   {step.complete ? (
-                    <Check className="h-3 w-3" />
+                    <HugeiconsIcon icon={CheckIcon} className="h-3 w-3" />
                   ) : (
-                    <Circle className="h-2 w-2 fill-current" />
+                    <HugeiconsIcon icon={CircleIcon} className="h-2 w-2 fill-current" />
                   )}
                 </span>
                 <div className="space-y-0.5">
                   <p
                     className={`text-sm font-medium ${
-                      step.complete ? "text-muted-foreground" : ""
+                      step.complete ? "text-[#737373]" : ""
                     }`}
                   >
                     {step.title}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-[#737373]">
                     {step.description}
                   </p>
                 </div>

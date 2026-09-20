@@ -1,6 +1,10 @@
 "use client";
 
-import { ExternalLink, Upload } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ExternalLinkIcon,
+  Upload01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -37,7 +41,7 @@ export default function FilesPage() {
 
     if (loading || !user) {
         return (
-            <div className="container mx-auto px-4 py-8">
+            <div className="app-page">
                 <div className="space-y-4">
                     <Skeleton className="h-12 w-64" />
                     <Skeleton className="h-64 w-full" />
@@ -47,13 +51,13 @@ export default function FilesPage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="app-page">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold mb-2">Knowledge Base Files</h1>
-                <p className="text-muted-foreground">
+                <p className="text-[#737373]">
                     Upload and manage documents for your voice agents to reference.{" "}
                     <a href="https://docs.dograh.com/voice-agent/knowledge-base" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">
-                        Learn more <ExternalLink className="h-3 w-3" />
+                        Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                     </a>
                 </p>
             </div>
@@ -68,7 +72,7 @@ export default function FilesPage() {
                             </CardDescription>
                         </div>
                         <Button onClick={() => setIsUploadOpen(true)}>
-                            <Upload className="w-4 h-4 mr-2" />
+                            <HugeiconsIcon icon={Upload01Icon} className="w-4 h-4 mr-2" />
                             Upload Document
                         </Button>
                     </div>

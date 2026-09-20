@@ -2,7 +2,10 @@
 
 import 'react-international-phone/style.css';
 
-import { Loader2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { PhoneInput } from 'react-international-phone';
@@ -351,7 +354,7 @@ export const PhoneCallDialog = ({
                 <DialogTitle>Phone Call</DialogTitle>
             </DialogHeader>
             <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                <HugeiconsIcon icon={Loading02Icon} className="h-6 w-6 animate-spin text-[#737373]" />
             </div>
         </>
     );
@@ -394,7 +397,7 @@ export const PhoneCallDialog = ({
                                     Recommended
                                 </span>
                             </div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-[#737373]">
                                 Open an account with {joinNames(apiProviderNames)}, paste
                                 the credentials here, and call using their numbers.
                                 Quickest way to get started.
@@ -411,7 +414,7 @@ export const PhoneCallDialog = ({
                     <div className="rounded-lg border p-4 space-y-3">
                         <div className="space-y-1">
                             <h3 className="text-sm font-medium">Bring your own SIP</h3>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-[#737373]">
                                 Already have a SIP trunk or a PBX? Point it at CallioAI and
                                 keep your existing carrier and numbers.
                                 {sipConfig
@@ -477,7 +480,7 @@ export const PhoneCallDialog = ({
                         </SelectContent>
                     </Select>
                     {selectedConfig && (selectedConfig.is_shared_trial || selectedConfig.name?.startsWith("Platform - ")) && (
-                        <div className="p-2 rounded-md bg-blue-500/10 border border-blue-500/20 text-xs text-blue-600 dark:text-blue-400">
+                        <div className="p-2 rounded-md bg-[#F0F3F9] border border-[#DCE3EF] text-xs text-[#7186AD] dark:text-[#7186AD]">
                             Shared test number provided by platform for testing agent calls.
                         </div>
                     )}
@@ -504,8 +507,8 @@ export const PhoneCallDialog = ({
                 <div className="flex flex-col gap-1.5">
                     <Label htmlFor="from-phone-number">Caller ID (from)</Label>
                     {loadingPhoneNumbers ? (
-                        <div className="flex items-center text-sm text-muted-foreground">
-                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        <div className="flex items-center text-sm text-[#737373]">
+                            <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin mr-2" />
                             Loading phone numbers...
                         </div>
                     ) : fromPhoneNumbers.length > 0 ? (
@@ -532,7 +535,7 @@ export const PhoneCallDialog = ({
                             No phone numbers in this configuration.
                         </div>
                     ) : (
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-xs text-[#737373]">
                             No phone numbers in this configuration. The provider will pick one automatically.
                         </div>
                     )}
@@ -553,7 +556,7 @@ export const PhoneCallDialog = ({
             )}
             <button
                 type="button"
-                className="text-xs text-muted-foreground hover:text-foreground underline"
+                className="text-xs text-[#737373] hover:text-foreground underline"
                 onClick={() => { setSipMode(!sipMode); setPhoneNumber(""); setPhoneChanged(true); }}
             >
                 {sipMode ? "Use phone number instead" : "Use SIP endpoint instead"}

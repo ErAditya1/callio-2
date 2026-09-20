@@ -1,6 +1,9 @@
 'use client';
 
-import { Upload } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Upload01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
@@ -89,7 +92,7 @@ export function UploadWorkflowButton() {
                 onClick={() => setIsOpen(true)}
                 variant="outline"
             >
-                <Upload className="w-4 h-4 mr-2" />
+                <HugeiconsIcon icon={Upload01Icon} className="w-4 h-4 mr-2" />
                 Upload Agent Definition
             </Button>
 
@@ -105,7 +108,7 @@ export function UploadWorkflowButton() {
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                     >
-                        <Upload className="w-8 h-8 mx-auto mb-4 text-gray-400" />
+                        <HugeiconsIcon icon={Upload01Icon} className="w-8 h-8 mx-auto mb-4 text-gray-400" />
                         <p className="text-sm text-gray-600 mb-4">
                             Drag and drop your Workflow JSON File here, or Click to Select
                         </p>

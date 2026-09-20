@@ -1,12 +1,22 @@
 import { NodeProps, NodeToolbar, Position } from "@xyflow/react";
-import * as LucideIcons from "lucide-react";
-import { Check, Circle, Copy, Edit, type LucideIcon, Trash2Icon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CheckIcon,
+  CircleIcon,
+  Copy01Icon,
+  Delete02Icon,
+  Edit01Icon,
+  FileTextIcon,
+  Wrench01Icon,
+} from "@hugeicons/core-free-icons";
+import type { IconSvgElement } from "@hugeicons/react";
 import Link from "next/link";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { useWorkflow } from "@/app/workflow/[workflowId]/contexts/WorkflowContext";
 import type { NodeSpec } from "@/client/types.gen";
+import { resolveHugeIcon } from "@/lib/hugeicons";
 import { DocumentBadges } from "@/components/flow/DocumentBadges";
 import { NodeEditForm, useNodeSpecs } from "@/components/flow/renderer";
 import { ToolBadges } from "@/components/flow/ToolBadges";
@@ -71,9 +81,8 @@ const DOC_URL_BY_SPEC: Record<string, string | undefined> = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
-function resolveIcon(name: string): LucideIcon {
-    const icons = LucideIcons as unknown as Record<string, LucideIcon>;
-    return icons[name] ?? Circle;
+function resolveIcon(name: string): IconSvgElement {
+    return resolveHugeIcon(name);
 }
 
 function seedValues(
@@ -158,17 +167,17 @@ function getBadgeForSpec(
 
     switch (variant) {
         case "start":
-            return { label: "Start Node", className: "bg-emerald-500 text-white" };
+            return { label: "Start Node", className: "bg-[#171717] text-white" };
         case "agent":
-            return { label: "Agent Node", className: "bg-blue-500 text-white" };
+            return { label: "Agent Node", className: "bg-[#7186AD] text-white" };
         case "end":
             return { label: "End Node", className: "bg-rose-500 text-white" };
         case "global":
-            return { label: "Global Node", className: "bg-amber-500 text-white" };
+            return { label: "Global Node", className: "bg-[#E5E5E5] text-white" };
         case "trigger":
-            return { label: "API Trigger", className: "bg-purple-500 text-white" };
+            return { label: "API Trigger", className: "bg-[#7186AD] text-white" };
         case "webhook":
-            return { label: "Webhook", className: "bg-indigo-500 text-white" };
+            return { label: "Webhook", className: "bg-[#7186AD] text-white" };
         case "qa":
             return { label: "QA Analysis", className: "bg-teal-500 text-white" };
         case "integration":
@@ -201,9 +210,9 @@ function CanvasPreview({
         ).production;
         return (
             <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">API Endpoint:</p>
+                <p className="text-xs text-[#737373]">API Endpoint:</p>
                 <div className="flex items-center gap-1">
-                    <code className="text-xs break-all bg-muted px-1 py-0.5 rounded flex-1">
+                    <code className="text-xs break-all bg-[#F7F7F7] px-1 py-0.5 rounded flex-1">
                         {endpoint || "Generating..."}
                     </code>
                     <Button
@@ -216,9 +225,9 @@ function CanvasPreview({
                         }}
                     >
                         {triggerCopied ? (
-                            <Check className="h-3 w-3" />
+                            <HugeiconsIcon icon={CheckIcon} className="h-3 w-3" />
                         ) : (
-                            <Copy className="h-3 w-3" />
+                            <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3" />
                         )}
                     </Button>
                 </div>
@@ -238,10 +247,10 @@ function CanvasPreview({
         return (
             <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded">
+                    <span className="text-xs font-mono bg-[#F7F7F7] px-1.5 py-0.5 rounded">
                         {method}
                     </span>
-                    <span className="text-xs text-muted-foreground truncate flex-1">
+                    <span className="text-xs text-[#737373] truncate flex-1">
                         {truncated}
                     </span>
                 </div>
@@ -259,7 +268,7 @@ function CanvasPreview({
         return (
             <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded">
+                    <span className="text-xs font-mono bg-[#F7F7F7] px-1.5 py-0.5 rounded">
                         {llmSource}
                     </span>
                 </div>
@@ -274,7 +283,7 @@ function CanvasPreview({
         return (
             <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded">
+                    <span className="text-xs font-mono bg-[#F7F7F7] px-1.5 py-0.5 rounded">
                         {destination}
                     </span>
                 </div>
@@ -288,13 +297,13 @@ function CanvasPreview({
     const hasDocRefs = spec.properties.some((p) => p.type === "document_refs");
     return (
         <>
-            <p className="text-sm text-muted-foreground line-clamp-5 leading-relaxed">
+            <p className="text-sm text-[#737373] line-clamp-5 leading-relaxed">
                 {data.prompt || "No prompt configured"}
             </p>
             {hasToolRefs && data.tool_uuids && data.tool_uuids.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-border/50">
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
-                        <LucideIcons.Wrench className="h-3 w-3" />
+                <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
+                    <div className="flex items-center gap-1.5 text-xs text-[#737373] mb-2">
+                        <HugeiconsIcon icon={Wrench01Icon} className="h-3 w-3" />
                         <span>Tools:</span>
                     </div>
                     <ToolBadges
@@ -305,9 +314,9 @@ function CanvasPreview({
                 </div>
             )}
             {hasDocRefs && data.document_uuids && data.document_uuids.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-border/50">
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
-                        <LucideIcons.FileText className="h-3 w-3" />
+                <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
+                    <div className="flex items-center gap-1.5 text-xs text-[#737373] mb-2">
+                        <HugeiconsIcon icon={FileTextIcon} className="h-3 w-3" />
                         <span>Documents:</span>
                     </div>
                     <DocumentBadges
@@ -323,14 +332,14 @@ function CanvasPreview({
 function StatusDot({ enabled }: { enabled: boolean }) {
     return (
         <div className="flex items-center gap-1.5">
-            <Circle
+            <HugeiconsIcon icon={CircleIcon}
                 className={`h-2 w-2 ${
                     enabled
                         ? "fill-green-500 text-green-500"
                         : "fill-gray-400 text-gray-400"
                 }`}
             />
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-[#737373]">
                 {enabled ? "Enabled" : "Disabled"}
             </span>
         </div>
@@ -404,25 +413,25 @@ function UrlPanel({
     return (
         <div className="grid gap-2 pt-2">
             <div className="flex items-center gap-2">
-                <span className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded shrink-0">
+                <span className="text-xs font-mono bg-[#F7F7F7] px-1.5 py-0.5 rounded shrink-0">
                     POST
                 </span>
                 <ClickToCopy
                     value={endpoint}
                     title="Click to copy URL"
-                    className="flex-1 bg-muted rounded px-2 py-1"
+                    className="flex-1 bg-[#F7F7F7] rounded px-2 py-1"
                 >
                     <code className="text-xs break-all">
                         {endpoint || "Generating..."}
                     </code>
                 </ClickToCopy>
             </div>
-            <p className="text-xs text-muted-foreground">{helperText}</p>
+            <p className="text-xs text-[#737373]">{helperText}</p>
             <p className="text-sm font-medium pt-2">Example Request</p>
             <ClickToCopy
                 value={curl}
                 title="Click to copy curl"
-                className="block w-full bg-muted rounded"
+                className="block w-full bg-[#F7F7F7] rounded"
             >
                 <pre className="text-xs px-3 py-2 overflow-x-auto whitespace-pre-wrap">
                     {curl || "Generating..."}
@@ -436,7 +445,7 @@ function TriggerWebhookUrls({ endpoints }: { endpoints: TriggerEndpoints }) {
     return (
         <div className="grid gap-2">
             <p className="text-sm font-medium">Webhook URLs</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[#737373]">
                 Test mode runs the latest draft so you can verify changes before
                 publishing. Production runs the published agent. Both require an
                 API key in the X-API-Key header.{" "}
@@ -615,7 +624,7 @@ export const GenericNode = memo(({ data, selected, id, type }: GenericNodeProps)
             ? { source: false, target: false }
             : { source: true, target: true });
     const badge = getBadgeForSpec(spec, styleVariant);
-    const Icon = spec ? resolveIcon(spec.icon) : Circle;
+    const Icon = spec ? resolveIcon(spec.icon) : CircleIcon;
     const docUrl = spec?.docs_url ?? DOC_URL_BY_SPEC[type];
     const contentLabel = spec?.properties.some((p) => p.name === "prompt")
         ? "Prompt"
@@ -635,7 +644,7 @@ export const GenericNode = memo(({ data, selected, id, type }: GenericNodeProps)
                 hovered_through_edge={data.hovered_through_edge}
                 runtimeActive={data.runtime_active}
                 title={data.name || fallbackTitle}
-                icon={<Icon />}
+                icon={<HugeiconsIcon icon={Icon} />}
                 badgeLabel={badge.label}
                 badgeClassName={badge.className}
                 contentLabel={contentLabel}
@@ -659,7 +668,7 @@ export const GenericNode = memo(({ data, selected, id, type }: GenericNodeProps)
             <NodeToolbar isVisible={selected} position={Position.Right}>
                 <div className="flex flex-col gap-1">
                     <Button onClick={() => setOpen(true)} variant="outline" size="icon">
-                        <Edit />
+                        <HugeiconsIcon icon={Edit01Icon} />
                     </Button>
                     {/* Start nodes can't be deleted (workflow always needs one). */}
                     {type !== "startCall" && (
@@ -668,7 +677,7 @@ export const GenericNode = memo(({ data, selected, id, type }: GenericNodeProps)
                             variant="outline"
                             size="icon"
                         >
-                            <Trash2Icon />
+                            <HugeiconsIcon icon={Delete02Icon} />
                         </Button>
                     )}
                 </div>

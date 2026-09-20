@@ -1,16 +1,17 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowLeft,
-  ArrowRight,
-  Briefcase,
-  CheckCircle2,
-  Clock,
-  Radio,
-  Sparkles,
-  TrendingUp,
-  XCircle
-} from 'lucide-react';
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Briefcase01Icon,
+  CancelCircleIcon,
+  ChartIncreaseIcon,
+  CheckmarkCircle02Icon,
+  Clock01Icon,
+  RadioIcon,
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 
@@ -35,7 +36,7 @@ export default function IndustryUseCasePage() {
           href="/"
           className="text-xs font-semibold text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5" />
           Back to Solutions
         </Link>
       </div>
@@ -56,12 +57,12 @@ export default function IndustryUseCasePage() {
           <Button asChild size="lg" className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/25">
             <Link href={`/dashboard/agents/create?category=${useCase.recommendedAgentCategory}`}>
               Build {useCase.industry} Agent
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-2" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="rounded-xl">
             <Link href="/demo">
-              <Radio className="w-4 h-4 mr-2 text-rose-500 animate-pulse" />
+              <HugeiconsIcon icon={RadioIcon} className="w-4 h-4 mr-2 text-rose-500 animate-pulse" />
               Try Live Demo
             </Link>
           </Button>
@@ -84,7 +85,7 @@ export default function IndustryUseCasePage() {
         {/* Pain points */}
         <div className="p-8 rounded-3xl border border-rose-500/30 bg-rose-500/5 space-y-5">
           <div className="flex items-center gap-2 text-rose-400 font-bold text-lg">
-            <XCircle className="w-5 h-5" />
+            <HugeiconsIcon icon={CancelCircleIcon} className="w-5 h-5" />
             Traditional Industry Challenges
           </div>
           <ul className="space-y-4 text-sm text-muted-foreground">
@@ -100,13 +101,13 @@ export default function IndustryUseCasePage() {
         {/* AI Solutions */}
         <div className="p-8 rounded-3xl border border-emerald-500/30 bg-emerald-500/5 space-y-5">
           <div className="flex items-center gap-2 text-emerald-400 font-bold text-lg">
-            <CheckCircle2 className="w-5 h-5" />
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-5 h-5" />
             The CallioAI Autonomous Solution
           </div>
           <ul className="space-y-4 text-sm text-muted-foreground">
             {useCase.aiSolutions.map((sol, i) => (
               <li key={i} className="flex items-start gap-3">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
                 <span className="text-foreground font-medium">{sol}</span>
               </li>
             ))}

@@ -1,6 +1,9 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ExternalLinkIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { MCPSection } from "@/components/MCPSection";
 import { OrganizationPreferencesSection } from "@/components/OrganizationPreferencesSection";
@@ -15,11 +18,11 @@ import {
 
 export default function SettingsPage() {
   return (
-    <div className="flex justify-center py-12 px-4">
+    <div className="app-page flex justify-center">
       <div className="w-full max-w-2xl space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Platform Settings</h1>
-          <p className="text-muted-foreground">
+          <p className="text-[#737373]">
             Manage your platform configuration and integrations.
           </p>
         </div>
@@ -49,7 +52,7 @@ export default function SettingsPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-0.5 underline"
               >
-                Learn more <ExternalLink className="h-3 w-3" />
+                Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
               </a>
             </CardDescription>
           </CardHeader>
@@ -69,7 +72,7 @@ export default function SettingsPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-0.5 underline"
               >
-                Learn more <ExternalLink className="h-3 w-3" />
+                Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
               </a>
             </CardDescription>
           </CardHeader>

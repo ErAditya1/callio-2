@@ -1,5 +1,10 @@
-import * as LucideIcons from 'lucide-react';
-import { Circle, ExternalLink, type LucideIcon, X } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ExternalLinkIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";
+import type { IconSvgElement } from "@hugeicons/react";
+import { resolveHugeIcon } from "@/lib/hugeicons";
 import { useEffect, useMemo } from 'react';
 
 import type { NodeSpec } from '@/client/types.gen';
@@ -30,9 +35,8 @@ const SECTIONS: Array<{ title: string; matches: (spec: NodeSpec) => boolean }> =
     },
 ];
 
-function resolveIcon(name: string): LucideIcon {
-    const icons = LucideIcons as unknown as Record<string, LucideIcon>;
-    return icons[name] ?? Circle;
+function resolveIcon(name: string): IconSvgElement {
+    return resolveHugeIcon(name);
 }
 
 function NodeSection({
@@ -49,7 +53,7 @@ function NodeSection({
     if (specs.length === 0) return null;
     return (
         <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#737373]">
                 {title}
             </h3>
             <div className="space-y-2">
@@ -74,14 +78,14 @@ function NodeSection({
                             }
                         >
                             <div className="flex items-center">
-                                <div className="bg-muted p-2 rounded-lg mr-3 border border-border">
-                                    <Icon className="h-5 w-5" />
+                                <div className="bg-[#F7F7F7] p-2 rounded-lg mr-3 border border-[#E5E5E5]">
+                                    <HugeiconsIcon icon={Icon} className="h-5 w-5" />
                                 </div>
                                 <div className="flex flex-col items-start text-left min-w-0">
                                     <span className="font-medium text-sm">
                                         {spec.display_name}
                                     </span>
-                                    <span className="text-xs text-muted-foreground whitespace-normal">
+                                    <span className="text-xs text-[#737373] whitespace-normal">
                                         {spec.description}
                                     </span>
                                 </div>
@@ -137,14 +141,14 @@ export default function AddNodePanel({ isOpen, onNodeSelect, onClose, nodes }: A
                             href="https://docs.dograh.com/voice-agent/introduction"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
+                            className="text-xs text-[#737373] hover:text-primary flex items-center gap-1 transition-colors"
                         >
-                            <ExternalLink className="w-3 h-3" />
+                            <HugeiconsIcon icon={ExternalLinkIcon} className="w-3 h-3" />
                             View Nodes Documentation
                         </a>
                     </div>
                     <Button variant="ghost" size="icon" onClick={onClose}>
-                        <X className="w-5 h-5" />
+                        <HugeiconsIcon icon={XIcon} className="w-5 h-5" />
                     </Button>
                 </div>
 

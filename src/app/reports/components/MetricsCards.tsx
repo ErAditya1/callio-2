@@ -1,4 +1,8 @@
-import { Phone,PhoneForwarded } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  PhoneForwardedIcon,
+  PhoneIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -15,11 +19,11 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Workflow Runs</CardTitle>
-          <Phone className="h-4 w-4 text-muted-foreground" />
+          <HugeiconsIcon icon={PhoneIcon} className="h-4 w-4 text-[#737373]" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{metrics.total_runs.toLocaleString()}</div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-[#737373]">
             Total calls processed today
           </p>
         </CardContent>
@@ -28,11 +32,11 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Transfer Dispositions</CardTitle>
-          <PhoneForwarded className="h-4 w-4 text-muted-foreground" />
+          <HugeiconsIcon icon={PhoneForwardedIcon} className="h-4 w-4 text-[#737373]" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{metrics.xfer_count.toLocaleString()}</div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-[#737373]">
             Calls transferred (XFER)
           </p>
         </CardContent>

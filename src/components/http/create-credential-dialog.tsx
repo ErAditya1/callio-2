@@ -1,6 +1,10 @@
 "use client";
 
-import { AlertCircle, Loader2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  Loading02Icon,
+} from "@hugeicons/core-free-icons";;
 import { useState } from "react";
 
 import { createCredentialApiV1CredentialsPost } from "@/client";
@@ -148,7 +152,7 @@ export function CreateCredentialDialog({
 
                 {error && (
                     <div className="flex items-start gap-2 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                        <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <span>{error}</span>
                     </div>
                 )}
@@ -228,7 +232,7 @@ export function CreateCredentialDialog({
                     >
                         {isCreating ? (
                             <>
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 mr-2 animate-spin" />
                                 Creating...
                             </>
                         ) : (

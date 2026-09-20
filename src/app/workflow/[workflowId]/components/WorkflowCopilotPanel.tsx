@@ -1,20 +1,21 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    Sparkles,
-    Send,
-    Bot,
-    User,
-    RefreshCw,
-    X,
-    PhoneCall,
-    CheckCircle2,
-    Sliders,
-    Network,
-    PlusCircle,
-    ArrowRight
-} from "lucide-react";
+  ArrowRight01Icon,
+  BotIcon,
+  CheckmarkCircle02Icon,
+  CirclePlusIcon,
+  NetworkIcon,
+  PhoneCallIcon,
+  RefreshCwIcon,
+  SendIcon,
+  SlidersHorizontalIcon,
+  SparklesIcon,
+  UserIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
@@ -149,12 +150,12 @@ export function WorkflowCopilotPanel({
     };
 
     return (
-        <div className="flex flex-col h-full bg-card/95 backdrop-blur-md border-l border-border select-text">
+        <div className="flex flex-col h-full bg-[#FFFFFF] backdrop-blur-md border-l border-[#E5E5E5] select-text">
             {/* Panel Header */}
-            <div className="px-4 py-3.5 border-b border-border flex items-center justify-between bg-muted/30">
+            <div className="px-4 py-3.5 border-b border-[#E5E5E5] flex items-center justify-between bg-[#F7F7F7]">
                 <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-sm">
-                        <Sparkles className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-lg bg-neutral-950 text-white flex items-center justify-center shadow-sm">
+                        <HugeiconsIcon icon={SparklesIcon} className="w-4 h-4" />
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
@@ -163,7 +164,7 @@ export function WorkflowCopilotPanel({
                                 Live MCP
                             </Badge>
                         </div>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                        <p className="text-[11px] text-[#737373] mt-0.5">
                             Real-time AI node & prompt control
                         </p>
                     </div>
@@ -172,9 +173,9 @@ export function WorkflowCopilotPanel({
                     variant="ghost"
                     size="icon"
                     onClick={onClose}
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    className="h-8 w-8 text-[#737373] hover:text-foreground"
                 >
-                    <X className="w-4 h-4" />
+                    <HugeiconsIcon icon={XIcon} className="w-4 h-4" />
                 </Button>
             </div>
 
@@ -194,26 +195,26 @@ export function WorkflowCopilotPanel({
                                 className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
                                     isUser
                                         ? "bg-primary text-primary-foreground"
-                                        : "bg-muted border border-border text-foreground"
+                                        : "bg-[#F7F7F7] border border-[#E5E5E5] text-foreground"
                                 }`}
                             >
-                                {isUser ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5 text-primary" />}
+                                {isUser ? <HugeiconsIcon icon={UserIcon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={BotIcon} className="w-3.5 h-3.5 text-primary" />}
                             </div>
 
                             <div
                                 className={`max-w-[85%] rounded-xl px-3.5 py-2.5 shadow-sm leading-relaxed ${
                                     isUser
                                         ? "bg-primary text-primary-foreground rounded-tr-none"
-                                        : "bg-muted/70 text-foreground border border-border/80 rounded-tl-none"
+                                        : "bg-[#F7F7F7] text-foreground border border-[#E5E5E5] rounded-tl-none"
                                 }`}
                             >
                                 <p className="whitespace-pre-wrap">{m.content}</p>
 
                                 {/* Badges if nodes were modified */}
                                 {m.modifiedNodeIds && m.modifiedNodeIds.length > 0 && (
-                                    <div className="mt-2 pt-2 border-t border-border/50 flex flex-wrap gap-1.5 items-center">
-                                        <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
-                                            <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                                    <div className="mt-2 pt-2 border-t border-[#E5E5E5] flex flex-wrap gap-1.5 items-center">
+                                        <span className="text-[10px] text-[#737373] flex items-center gap-1 font-medium">
+                                            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3 h-3 text-[#7186AD]" />
                                             Canvas updated:
                                         </span>
                                         {m.modifiedNodeIds.map((nid) => (
@@ -234,11 +235,11 @@ export function WorkflowCopilotPanel({
 
                 {isLoading && (
                     <div className="flex gap-2.5 items-center">
-                        <div className="w-7 h-7 rounded-full bg-muted border border-border flex items-center justify-center shrink-0">
-                            <Bot className="w-3.5 h-3.5 text-primary" />
+                        <div className="w-7 h-7 rounded-full bg-[#F7F7F7] border border-[#E5E5E5] flex items-center justify-center shrink-0">
+                            <HugeiconsIcon icon={BotIcon} className="w-3.5 h-3.5 text-primary" />
                         </div>
-                        <div className="bg-muted/50 border border-border rounded-xl px-3.5 py-2 flex items-center gap-2 text-muted-foreground text-xs">
-                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-primary" />
+                        <div className="bg-[#F7F7F7] border border-[#E5E5E5] rounded-xl px-3.5 py-2 flex items-center gap-2 text-[#737373] text-xs">
+                            <HugeiconsIcon icon={RefreshCwIcon} className="w-3.5 h-3.5 animate-spin text-primary" />
                             Executing canvas actions...
                         </div>
                     </div>
@@ -246,18 +247,18 @@ export function WorkflowCopilotPanel({
             </div>
 
             {/* Quick Action Chips */}
-            <div className="px-3 py-2 border-t border-border/60 bg-muted/20">
+            <div className="px-3 py-2 border-t border-[#E5E5E5] bg-[#F7F7F7]">
                 <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                     {quickReplies.map((chip, idx) => (
                         <button
                             key={idx}
                             onClick={() => handleSendMessage(chip)}
                             disabled={isLoading}
-                            className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-all shrink-0 flex items-center gap-1 shadow-xs"
+                            className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-[#E5E5E5] bg-background hover:bg-accent text-[#737373] hover:text-foreground transition-all shrink-0 flex items-center gap-1 shadow-xs"
                         >
-                            {chip.includes("Test") && <PhoneCall className="w-3 h-3 text-blue-500" />}
-                            {chip.includes("Add") && <PlusCircle className="w-3 h-3 text-emerald-500" />}
-                            {chip.includes("Update") && <Sliders className="w-3 h-3 text-amber-500" />}
+                            {chip.includes("Test") && <HugeiconsIcon icon={PhoneCallIcon} className="w-3 h-3 text-[#7186AD]" />}
+                            {chip.includes("Add") && <HugeiconsIcon icon={CirclePlusIcon} className="w-3 h-3 text-[#7186AD]" />}
+                            {chip.includes("Update") && <HugeiconsIcon icon={SlidersHorizontalIcon} className="w-3 h-3 text-amber-500" />}
                             {chip}
                         </button>
                     ))}
@@ -265,7 +266,7 @@ export function WorkflowCopilotPanel({
             </div>
 
             {/* Input Bar */}
-            <div className="p-3 border-t border-border bg-background">
+            <div className="p-3 border-t border-[#E5E5E5] bg-background">
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
@@ -279,7 +280,7 @@ export function WorkflowCopilotPanel({
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Instruct Copilot (e.g. Update greeting, add node)..."
                         disabled={isLoading}
-                        className="flex-1 text-xs bg-muted/40 border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground"
+                        className="flex-1 text-xs bg-[#F7F7F7] border border-[#E5E5E5] rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-[#737373]"
                     />
                     <Button
                         type="submit"
@@ -287,7 +288,7 @@ export function WorkflowCopilotPanel({
                         disabled={!input.trim() || isLoading}
                         className="h-8 w-8 shrink-0 bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
                     >
-                        <Send className="w-3.5 h-3.5" />
+                        <HugeiconsIcon icon={SendIcon} className="w-3.5 h-3.5" />
                     </Button>
                 </form>
             </div>

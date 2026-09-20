@@ -1,6 +1,9 @@
 "use client";
 
-import { Brain } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  BrainIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { cn } from "@/lib/utils";
 
@@ -28,8 +31,8 @@ export function MessageBubble({
         <div className={cn("flex", isUser ? "justify-end" : "justify-start", containerClassName)}>
             <div className="flex max-w-[85%] flex-col gap-1">
                 {!isUser && reasoningDurationMs !== undefined ? (
-                    <div className="flex items-center gap-1.5 px-1 text-xs text-muted-foreground">
-                        <Brain className="h-3 w-3" />
+                    <div className="flex items-center gap-1.5 px-1 text-xs text-[#737373]">
+                        <HugeiconsIcon icon={BrainIcon} className="h-3 w-3" />
                         <span className="font-medium">Reasoning Delay:</span>
                         <span>{Math.round(reasoningDurationMs)}ms</span>
                     </div>
@@ -40,8 +43,8 @@ export function MessageBubble({
                         isUser
                             ? "rounded-br-md bg-primary text-primary-foreground"
                             : isMuted
-                                ? "rounded-bl-md border border-dashed border-border bg-background text-muted-foreground"
-                                : "rounded-bl-md border border-slate-200/80 bg-muted text-foreground",
+                                ? "rounded-bl-md border border-dashed border-[#E5E5E5] bg-background text-[#737373]"
+                                : "rounded-bl-md border border-slate-200/80 bg-[#F7F7F7] text-foreground",
                         !final && "opacity-70",
                     )}
                 >
@@ -50,7 +53,7 @@ export function MessageBubble({
                         <div
                             className={cn(
                                 "mt-1 text-[10px] italic",
-                                isUser ? "text-primary-foreground/70" : "text-muted-foreground",
+                                isUser ? "text-primary-foreground/70" : "text-[#737373]",
                             )}
                         >
                             speaking...

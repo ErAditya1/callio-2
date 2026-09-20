@@ -2,7 +2,7 @@ import "./globals.css";
 
 import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import { Suspense } from "react";
 
 import ChatwootWidget from "@/components/ChatwootWidget";
@@ -19,12 +19,14 @@ import { OnboardingProvider } from "@/context/OnboardingContext";
 import { OrgConfigProvider } from "@/context/OrgConfigContext";
 import { TelephonyConfigWarningsProvider } from "@/context/TelephonyConfigWarningsContext";
 import { AuthProvider } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
+
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -32,7 +34,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CallioAI — Autonomous AI Voice Calling for Modern Business",
+  title: "Callio",
   description: "Deploy human-sounding AI phone agents that resolve customer inquiries, book qualified appointments, and execute outbound calling at enterprise scale.",
   icons: {
     icon: [
@@ -66,23 +68,19 @@ export default function RootLayout({
   const reoClientId = process.env.NEXT_PUBLIC_REO_CLIENT_ID?.trim();
 
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className={cn(inter.variable, geistMono.variable)} suppressHydrationWarning>
       <head>
-        {/* Inline script to prevent flash of light theme - runs before React hydrates.
-            Dark is the locked default: only an explicit stored 'light' opts out. */}
+        {/* Light-only lock (2026-09-20): dark mode removed per user request.
+            Always strip .dark so cards/sidebar render white via shadcn light tokens. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 try {
-                  var theme = localStorage.getItem('theme');
-                  if (theme === 'light') {
-                    document.documentElement.classList.remove('dark');
-                  } else {
-                    document.documentElement.classList.add('dark');
-                  }
+                  document.documentElement.classList.remove('dark');
+                  localStorage.setItem('theme', 'light');
                 } catch (e) {
-                  document.documentElement.classList.add('dark');
+                  document.documentElement.classList.remove('dark');
                 }
               })();
             `,
@@ -90,10 +88,10 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        className="antialiased font-sans">
         {gtmId ? <GoogleTagManager gtmId={gtmId} /> : null}
         {metaPixelId ? <MetaPixel pixelId={metaPixelId} /> : null}
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" enableSystem={false} disableTransitionOnChange>
           <SentryErrorBoundary>
             <AuthProvider>
               <AppConfigProvider>

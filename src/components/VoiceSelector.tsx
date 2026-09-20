@@ -1,6 +1,12 @@
 "use client";
 
-import { ChevronDown, Loader2, Search, Volume2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ChevronDownIcon,
+  Loading02Icon,
+  Search01Icon,
+  VolumeHighIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useState } from "react";
 
 import { getVoicesApiV1UserConfigurationsVoicesProviderGet } from "@/client/sdk.gen";
@@ -281,16 +287,16 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
                             {isLoading ? "Loading voices..." : getSelectedVoiceName()}
                         </span>
                         {isLoading ? (
-                            <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin" />
+                            <HugeiconsIcon icon={Loading02Icon} className="ml-2 h-4 w-4 shrink-0 animate-spin" />
                         ) : (
-                            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            <HugeiconsIcon icon={ChevronDownIcon} className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         )}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[400px] p-0" align="start">
                     <div className="p-2 space-y-2">
                         <div className="relative">
-                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <HugeiconsIcon icon={Search01Icon} className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search voices..."
                                 value={searchTerm}
@@ -352,7 +358,7 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
                                 </p>
                             ) : isLoading ? (
                                 <div className="flex items-center justify-center py-4">
-                                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                                    <HugeiconsIcon icon={Loading02Icon} className="h-6 w-6 animate-spin text-muted-foreground" />
                                 </div>
                             ) : filteredVoices.length === 0 ? (
                                 <p className="text-sm text-muted-foreground text-center py-4">
@@ -407,7 +413,7 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
                                                     playPreview(voice.preview_url!, voice.voice_id);
                                                 }}
                                             >
-                                                <Volume2
+                                                <HugeiconsIcon icon={VolumeHighIcon}
                                                     className={cn(
                                                         "h-4 w-4",
                                                         playingPreview === voice.voice_id &&

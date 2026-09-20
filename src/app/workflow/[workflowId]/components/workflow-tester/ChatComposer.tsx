@@ -1,6 +1,10 @@
 "use client";
 
-import { Loader2, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,14 +37,14 @@ export function ChatComposer({
     return (
         <div className="pt-3">
             {editing ? (
-                <div className="mb-2 flex items-center justify-between gap-2 rounded-lg border border-border/70 bg-muted/35 px-3 py-2 text-xs text-muted-foreground">
+                <div className="mb-2 flex items-center justify-between gap-2 rounded-lg border border-[#E5E5E5] bg-[#F7F7F7] px-3 py-2 text-xs text-[#737373]">
                     <span>Edit the selected user message, then press Enter to rerun from that point.</span>
                     <button
                         type="button"
                         onClick={onCancelEditing}
                         className="inline-flex items-center gap-1 rounded text-foreground hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     >
-                        <X className="h-3.5 w-3.5" />
+                        <HugeiconsIcon icon={XIcon} className="h-3.5 w-3.5" />
                         Cancel
                     </button>
                 </div>
@@ -71,7 +75,7 @@ export function ChatComposer({
                 >
                     {sendingMessage ? (
                         <>
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <HugeiconsIcon icon={Loading02Icon} className="h-3.5 w-3.5 animate-spin" />
                             {editing ? "Rerunning" : "Sending"}
                         </>
                     ) : (

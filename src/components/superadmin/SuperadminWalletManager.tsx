@@ -1,17 +1,18 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  CreditCard,
-  Plus,
-  Loader2,
-  DollarSign,
-  Building2,
-  Search,
-  ArrowUpRight,
-  Sparkles,
-  CheckCircle2,
-} from 'lucide-react';
+  ArrowUpRight01Icon,
+  Building02Icon,
+  CheckmarkCircle02Icon,
+  CreditCardIcon,
+  Dollar01Icon,
+  Loading02Icon,
+  PlusIcon,
+  Search01Icon,
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";;
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -133,7 +134,7 @@ export function SuperadminWalletManager() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-              <DollarSign className="h-5 w-5" />
+              <HugeiconsIcon icon={Dollar01Icon} className="h-5 w-5" />
             </span>
             <CardTitle className="text-xl">Organization Wallets &amp; Credit Grants</CardTitle>
           </div>
@@ -152,7 +153,7 @@ export function SuperadminWalletManager() {
         {/* Search */}
         <div className="flex items-center justify-between gap-4">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <HugeiconsIcon icon={Search01Icon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search by Org ID or Provider ID..."
               value={searchQuery}
@@ -167,11 +168,11 @@ export function SuperadminWalletManager() {
 
         {loading ? (
           <div className="flex items-center justify-center p-8 text-muted-foreground text-sm">
-            <Loader2 className="h-5 w-5 animate-spin mr-2" /> Loading organization wallets...
+            <HugeiconsIcon icon={Loading02Icon} className="h-5 w-5 animate-spin mr-2" /> Loading organization wallets...
           </div>
         ) : filteredOrgs.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center bg-muted/20">
-            <Building2 className="h-8 w-8 mx-auto text-muted-foreground/60 mb-2" />
+            <HugeiconsIcon icon={Building02Icon} className="h-8 w-8 mx-auto text-muted-foreground/60 mb-2" />
             <p className="text-sm font-medium">No Organizations Found</p>
           </div>
         ) : (
@@ -223,7 +224,7 @@ export function SuperadminWalletManager() {
                       }}
                       className="text-xs h-8 gap-1.5"
                     >
-                      <Plus className="h-3.5 w-3.5" /> Top-Up Credits
+                      <HugeiconsIcon icon={PlusIcon} className="h-3.5 w-3.5" /> Top-Up Credits
                     </Button>
                   </div>
                 </div>
@@ -240,7 +241,7 @@ export function SuperadminWalletManager() {
             <form onSubmit={handleGrantCredits} className="space-y-4">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-emerald-500" />
+                  <HugeiconsIcon icon={SparklesIcon} className="h-5 w-5 text-emerald-500" />
                   Grant Platform Credits to Org #{selectedOrg.id}
                 </DialogTitle>
                 <DialogDescription>
@@ -296,7 +297,7 @@ export function SuperadminWalletManager() {
                 <Button type="submit" disabled={submitting} className="bg-emerald-600 hover:bg-emerald-500 text-white">
                   {submitting ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Adding...
+                      <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-4 w-4 animate-spin" /> Adding...
                     </>
                   ) : (
                     `Add $${parseFloat(amountUsd || '0').toFixed(2)} Credits`

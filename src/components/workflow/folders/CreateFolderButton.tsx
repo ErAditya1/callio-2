@@ -1,6 +1,9 @@
 'use client';
 
-import { FolderPlus } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  FolderPlusIcon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -31,7 +34,7 @@ export function CreateFolderButton() {
     return (
         <>
             <Button variant="outline" onClick={() => setIsOpen(true)}>
-                <FolderPlus className="w-4 h-4 mr-2" />
+                <HugeiconsIcon icon={FolderPlusIcon} className="w-4 h-4 mr-2" />
                 New Folder
             </Button>
             <FolderFormDialog

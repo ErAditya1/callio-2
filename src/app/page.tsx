@@ -1,24 +1,28 @@
-import {
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  Lock,
-  PhoneCall,
-  PhoneForwarded,
-  PhoneIncoming,
-  ShieldCheck,
-  Zap,
-} from 'lucide-react';
-import Link from 'next/link';
+// PARKED imports — uncomment together with the parked sections below.
+// import {
+//   ArrowRight,
+//   CheckCircle2,
+//   Clock,
+//   Lock,
+//   PhoneCall,
+//   PhoneForwarded,
+//   PhoneIncoming,
+//   ShieldCheck,
+//   Zap,
+// } from 'lucide-react';
+// import Link from 'next/link';
 
-import { ArchitecturePipeline } from '@/components/marketing/ArchitecturePipeline';
-import { DirectPhoneTestCall } from '@/components/marketing/DirectPhoneTestCall';
+import { AboutSection } from '@/components/marketing/AboutSection';
+// import { ArchitecturePipeline } from '@/components/marketing/ArchitecturePipeline';
+// import { DirectPhoneTestCall } from '@/components/marketing/DirectPhoneTestCall';
 import { FaqAccordion } from '@/components/marketing/FaqAccordion';
-import { HeroInteractiveCall } from '@/components/marketing/HeroInteractiveCall';
-import { RoiCalculator } from '@/components/marketing/RoiCalculator';
-import { UseCaseSimulator } from '@/components/marketing/UseCaseSimulator';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { FeaturesSection } from '@/components/marketing/FeaturesSection';
+import { HeroSection } from '@/components/marketing/HeroSection';
+import { PricingSection } from '@/components/marketing/PricingSection';
+// import { RoiCalculator } from '@/components/marketing/RoiCalculator';
+// import { UseCaseSimulator } from '@/components/marketing/UseCaseSimulator';
+// import { Badge } from '@/components/ui/badge';
+// import { Button } from '@/components/ui/button';
 
 export const metadata = {
   title: 'CallioAI — Autonomous AI Voice Calling for Modern Business',
@@ -28,61 +32,24 @@ export const metadata = {
 
 export default function HomePage() {
   return (
-    <div className="relative overflow-hidden bg-background text-foreground selection:bg-indigo-500/20 selection:text-indigo-400">
-      {/* Ambient background mesh glow */}
+    <div className="relative overflow-hidden bg-background text-foreground selection:bg-neutral-900 selection:text-white">
+      {/* PARKED with old sections (uncomment to restore): ambient background mesh glow
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[550px] bg-gradient-to-b from-indigo-500/10 via-violet-500/5 to-transparent blur-3xl pointer-events-none" />
+      */}
 
-      {/* 1. HERO SECTION */}
-      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-24 lg:pt-20 lg:pb-28">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
-          {/* Subtle Live Engine Status Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-semibold mb-6 shadow-sm">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Autonomous Voice Engine 2.0</span>
-            <span className="opacity-40">•</span>
-            <span className="text-foreground/90 font-mono">Sub-350ms Latency</span>
-          </div>
+      {/* 1. HERO SECTION (reusable, matches reference mock) */}
+      <HeroSection />
 
-          {/* High-Impact Headline */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.1]">
-            AI voice agents that{' '}
-            <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-indigo-300 bg-clip-text text-transparent">
-              actually close deals
-            </span>{' '}
-            & answer 24/7.
-          </h1>
+      {/* 2. ABOUT SECTION (editorial eyebrow + statement) */}
+      <AboutSection />
 
-          {/* Subheadline */}
-          <p className="mt-5 text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Eliminate missed calls, dial web leads within 30 seconds, and schedule calendar appointments automatically with human-grade conversational voice intelligence.
-          </p>
+      {/* 3. DETAILED FEATURES (editorial alternating rows) */}
+      <FeaturesSection />
 
-          {/* Hero Voice Agent Interactive Calling Widget */}
-          <div className="mt-10 sm:mt-12">
-            <HeroInteractiveCall />
-          </div>
+      {/* 4. PRICING (tier cards) */}
+      <PricingSection />
 
-          {/* Secondary Quick Links / Value Props */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground font-medium">
-            <span className="flex items-center gap-1.5 text-foreground/80">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              Zero hold times
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1.5 text-foreground/80">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              Calendar & CRM sync
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1.5 text-foreground/80">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              14-day free trial
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. SOCIAL PROOF & LIVE METRICS TICKER */}
+      {/* PARKED (old design) — uncomment to restore: SOCIAL PROOF & LIVE METRICS TICKER
       <section className="py-12 border-y border-border/40 bg-muted/10 relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/70 text-center mb-6">
@@ -97,7 +64,7 @@ export default function HomePage() {
             <span className="hover:text-foreground transition-colors">Beacon Dental</span>
           </div>
 
-          {/* Live Telemetry Numbers */}
+          {// Live Telemetry Numbers}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6 border-t border-border/30 text-center">
             <div className="space-y-1">
               <div className="text-3xl sm:text-4xl font-extrabold text-foreground font-mono">1.2M+</div>
@@ -112,28 +79,29 @@ export default function HomePage() {
               <p className="text-xs text-muted-foreground">First-Call Resolution</p>
             </div>
             <div className="space-y-1">
-              <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 font-mono">99.98%</div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-emerald-600 font-mono">99.98%</div>
               <p className="text-xs text-muted-foreground">Telephony Core Uptime</p>
             </div>
           </div>
         </div>
       </section>
+      */}
 
-      {/* 4. SUB-350MS LATENCY ARCHITECTURE PIPELINE */}
+      {/* PARKED (old design) — uncomment to restore: ARCHITECTURE PIPELINE + USE CASE SIMULATOR
       <section className="py-16 sm:py-24 max-w-6xl mx-auto px-4 sm:px-6">
         <ArchitecturePipeline />
       </section>
 
-      {/* 5. INTERACTIVE USE CASE SIMULATOR */}
       <section className="py-16 sm:py-24 border-t border-border/40 max-w-6xl mx-auto px-4 sm:px-6">
         <UseCaseSimulator />
       </section>
+      */}
 
-      {/* 6. INBOUND VS OUTBOUND DEEP DIVE */}
+      {/* PARKED (old design) — uncomment to restore: INBOUND VS OUTBOUND DEEP DIVE
       <section className="py-16 sm:py-24 border-t border-border/40 bg-muted/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <Badge variant="outline" className="mb-3 border-indigo-500/30 text-indigo-400 bg-indigo-500/10 px-3 py-1 text-xs">
+            <Badge variant="outline" className="mb-3 border-indigo-500/30 text-indigo-600 bg-indigo-500/10 px-3 py-1 text-xs">
               <PhoneCall className="w-3.5 h-3.5 mr-1.5 inline" />
               Two Powerful Modes
             </Badge>
@@ -146,9 +114,9 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Inbound Receptionist Card */}
+            {// Inbound Receptionist Card}
             <div className="p-8 sm:p-10 rounded-3xl border border-border/80 bg-card/70 space-y-5 shadow-xl marketing-glow-card">
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center border border-blue-500/20">
                 <PhoneIncoming className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-bold text-foreground">24/7 Inbound Receptionist</h3>
@@ -157,15 +125,15 @@ export default function HomePage() {
               </p>
               <ul className="space-y-3 text-xs sm:text-sm text-muted-foreground pt-2">
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Always available 24/7/365 with zero busy signals</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Calendar booking with automated SMS confirmation links</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Warm transfer with spoken briefing to team cellphones</span>
                 </li>
               </ul>
@@ -179,9 +147,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Outbound Campaigns Card */}
+            {// Outbound Campaigns Card}
             <div className="p-8 sm:p-10 rounded-3xl border border-border/80 bg-card/70 space-y-5 shadow-xl marketing-glow-card">
-              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20">
+              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center border border-purple-500/20">
                 <PhoneForwarded className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-bold text-foreground">Sub-30s Speed-to-Lead Outbound</h3>
@@ -190,15 +158,15 @@ export default function HomePage() {
               </p>
               <ul className="space-y-3 text-xs sm:text-sm text-muted-foreground pt-2">
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Instant callback upon web form or webhook submission</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Smart retry rules, time zone filtering & voicemail skip</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Live 2-way syncing with HubSpot, Salesforce & CRMs</span>
                 </li>
               </ul>
@@ -214,18 +182,19 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      */}
 
-      {/* 7. LIVE OUTBOUND PHONE TEST SECTION */}
+      {/* PARKED (old design) — uncomment to restore: LIVE OUTBOUND PHONE TEST + ROI CALCULATOR
       <section className="py-16 sm:py-24 max-w-5xl mx-auto px-4 sm:px-6">
         <DirectPhoneTestCall />
       </section>
 
-      {/* 8. INTERACTIVE ROI & COST SAVINGS CALCULATOR */}
       <section className="py-16 sm:py-24 border-t border-border/40 max-w-6xl mx-auto px-4 sm:px-6">
         <RoiCalculator />
       </section>
+      */}
 
-      {/* 9. ENTERPRISE SECURITY & COMPLIANCE */}
+      {/* PARKED (old design) — uncomment to restore: ENTERPRISE SECURITY & COMPLIANCE
       <section className="py-16 border-t border-border/40 bg-muted/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-10">
@@ -239,38 +208,37 @@ export default function HomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-5 rounded-2xl border border-border/70 bg-card/60 text-center space-y-2">
-              <ShieldCheck className="w-6 h-6 text-emerald-400 mx-auto" />
+              <ShieldCheck className="w-6 h-6 text-emerald-600 mx-auto" />
               <div className="font-bold text-xs sm:text-sm text-foreground">SOC2 Type II</div>
               <p className="text-[11px] text-muted-foreground">Audited data handling and access controls</p>
             </div>
 
             <div className="p-5 rounded-2xl border border-border/70 bg-card/60 text-center space-y-2">
-              <Lock className="w-6 h-6 text-emerald-400 mx-auto" />
+              <Lock className="w-6 h-6 text-emerald-600 mx-auto" />
               <div className="font-bold text-xs sm:text-sm text-foreground">HIPAA Compliant</div>
               <p className="text-[11px] text-muted-foreground">BAA execution and PHI audio redaction</p>
             </div>
 
             <div className="p-5 rounded-2xl border border-border/70 bg-card/60 text-center space-y-2">
-              <Zap className="w-6 h-6 text-emerald-400 mx-auto" />
+              <Zap className="w-6 h-6 text-emerald-600 mx-auto" />
               <div className="font-bold text-xs sm:text-sm text-foreground">TCPA Compliant</div>
               <p className="text-[11px] text-muted-foreground">Calling hour checks and DNC filtering</p>
             </div>
 
             <div className="p-5 rounded-2xl border border-border/70 bg-card/60 text-center space-y-2">
-              <Clock className="w-6 h-6 text-emerald-400 mx-auto" />
+              <Clock className="w-6 h-6 text-emerald-600 mx-auto" />
               <div className="font-bold text-xs sm:text-sm text-foreground">99.99% Uptime SLA</div>
               <p className="text-[11px] text-muted-foreground">Multi-region carrier failover redundancy</p>
             </div>
           </div>
         </div>
       </section>
+      */}
 
       {/* 10. COMPREHENSIVE FAQ ACCORDION */}
-      <section className="py-16 sm:py-24 border-t border-border/40">
-        <FaqAccordion />
-      </section>
+      <FaqAccordion />
 
-      {/* 11. HIGH-IMPACT FINAL CALL TO ACTION */}
+      {/* PARKED (old design) — uncomment to restore: HIGH-IMPACT FINAL CALL TO ACTION
       <section className="py-16 sm:py-24 border-t border-border/40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="rounded-3xl border border-indigo-500/40 bg-gradient-to-r from-indigo-950/60 via-card to-card p-10 sm:p-14 text-center space-y-6 shadow-2xl relative overflow-hidden">
@@ -307,6 +275,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      */}
     </div>
   );
 }

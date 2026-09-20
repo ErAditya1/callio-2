@@ -74,12 +74,12 @@ export const NodeContent = ({
             </div>
 
             {/* Header with title */}
-            <div className="px-4 pt-5 pb-2 border-b border-border">
+            <div className="px-4 pt-5 pb-2 border-b border-[#E5E5E5]">
                 <div className="flex items-center justify-between">
                     <h3 className="text-sm font-semibold text-foreground truncate">
                         {title}
                         {nodeId && (
-                            <span className="ml-2 text-xs font-normal text-muted-foreground">
+                            <span className="ml-2 text-xs font-normal text-[#737373]">
                                 #{nodeId}
                             </span>
                         )}
@@ -89,7 +89,7 @@ export const NodeContent = ({
 
             {/* Content area with prompt label */}
             <div className="p-4">
-                <div className="text-xs text-muted-foreground mb-1.5 font-medium">
+                <div className="text-xs text-[#737373] mb-1.5 font-medium">
                     {contentLabel}:
                 </div>
                 {children}

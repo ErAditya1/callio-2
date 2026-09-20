@@ -1,17 +1,18 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Sparkles,
-  Plus,
-  Trash2,
-  Phone,
-  Bot,
-  Loader2,
-  CheckCircle2,
-  Shield,
-  Layers,
-} from 'lucide-react';
+  BotIcon,
+  CheckmarkCircle02Icon,
+  Delete02Icon,
+  Layers01Icon,
+  Loading02Icon,
+  PhoneIcon,
+  PlusIcon,
+  Shield01Icon,
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";;
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -152,7 +153,7 @@ export function SuperadminShowcaseManager() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-border/60">
         <div>
           <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-indigo-500" />
+            <HugeiconsIcon icon={Shield01Icon} className="w-5 h-5 text-indigo-500" />
             <h2 className="text-xl font-bold text-foreground">
               Public Showcase Agents (Landing UI)
             </h2>
@@ -169,14 +170,14 @@ export function SuperadminShowcaseManager() {
         <Dialog open={modalOpen} onOpenChange={setModalOpen}>
           <DialogTrigger asChild>
             <Button className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-sm flex items-center gap-1.5 h-9 text-xs font-semibold">
-              <Plus className="w-4 h-4" />
+              <HugeiconsIcon icon={PlusIcon} className="w-4 h-4" />
               Add Showcase Agent
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-indigo-500" />
+                <HugeiconsIcon icon={BotIcon} className="w-5 h-5 text-indigo-500" />
                 Add New Showcase Agent
               </DialogTitle>
               <DialogDescription>
@@ -301,7 +302,7 @@ export function SuperadminShowcaseManager() {
                 >
                   {submitting ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                      <HugeiconsIcon icon={Loading02Icon} className="w-4 h-4 mr-1.5 animate-spin" />
                       Saving...
                     </>
                   ) : (
@@ -317,7 +318,7 @@ export function SuperadminShowcaseManager() {
       {/* Agents List Table / Cards */}
       {loading ? (
         <div className="py-12 flex flex-col items-center justify-center text-muted-foreground gap-2">
-          <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
+          <HugeiconsIcon icon={Loading02Icon} className="w-6 h-6 animate-spin text-indigo-500" />
           <p className="text-xs">Loading showcase agents...</p>
         </div>
       ) : agents.length === 0 ? (
@@ -354,9 +355,9 @@ export function SuperadminShowcaseManager() {
                       className="text-muted-foreground hover:text-red-400 hover:bg-red-500/10 h-8 w-8 shrink-0"
                     >
                       {isDeleting ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <HugeiconsIcon icon={Loading02Icon} className="w-3.5 h-3.5 animate-spin" />
                       ) : (
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <HugeiconsIcon icon={Delete02Icon} className="w-3.5 h-3.5" />
                       )}
                     </Button>
                   </div>
@@ -367,7 +368,7 @@ export function SuperadminShowcaseManager() {
 
                   <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground pt-1">
                     <span className="flex items-center gap-1">
-                      <Phone className="w-3 h-3 text-indigo-400" />
+                      <HugeiconsIcon icon={PhoneIcon} className="w-3 h-3 text-indigo-400" />
                       {agent.voice_name}
                     </span>
                     <span>•</span>
@@ -376,7 +377,7 @@ export function SuperadminShowcaseManager() {
                     <span className="font-mono text-emerald-400">{agent.latency}</span>
                     <span>•</span>
                     <span className="flex items-center gap-1 font-mono text-[10px] text-muted-foreground">
-                      <Layers className="w-3 h-3 text-amber-400" />
+                      <HugeiconsIcon icon={Layers01Icon} className="w-3 h-3 text-amber-400" />
                       tpl: {agent.template_id}
                     </span>
                   </div>
@@ -385,7 +386,7 @@ export function SuperadminShowcaseManager() {
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-2 border-t border-border/40">
                   <span className="font-mono text-[10px] text-muted-foreground">ID: {agent.id}</span>
                   <span className="inline-flex items-center gap-1 text-emerald-400">
-                    <CheckCircle2 className="w-3 h-3" />
+                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3 h-3" />
                     Live on Landing Page
                   </span>
                 </div>

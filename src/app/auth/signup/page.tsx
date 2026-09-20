@@ -4,9 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { signupApiV1AuthSignupPost } from "@/client/sdk.gen";
-import { AuthEnterpriseCTA } from "@/components/auth/AuthEnterpriseCTA";
-import { AuthShell } from "@/components/auth/AuthShell";
+import { AuthCardShell } from "@/components/auth/AuthCardShell";
+import { OrDivider, SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,9 +14,10 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // DEMO FLOW (frontend-only): no backend call — validated details continue to
+  // the create-agent step.
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password.length < 8) {
@@ -30,67 +30,66 @@ export default function SignupPage() {
       return;
     }
 
-    setLoading(true);
-
     try {
-      const res = await signupApiV1AuthSignupPost({
-        body: { email, password },
-      });
-
-      if (res.error || !res.data) {
-        const detail = (res.error as { detail?: string })?.detail;
-        toast.error(detail || "Signup failed");
-        return;
-      }
-
-      // Set httpOnly cookies via server route
-      await fetch("/api/auth/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: res.data.token, user: res.data.user }),
-      });
-
-      window.location.href = "/after-sign-in";
+      window.localStorage.setItem("demo_user_email", email.trim());
     } catch {
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
+      // Storage unavailable — continue anyway.
     }
+    window.location.href = "/create-agent";
   };
 
   return (
-    <AuthShell enterpriseSlot={<AuthEnterpriseCTA />}>
-      <div className="space-y-1.5 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
-        <p className="text-sm text-muted-foreground">Enter your details to get started</p>
+    <AuthCardShell>
+      <div className="text-center">
+        <h1 className="text-[30px] font-medium leading-[1.08] tracking-[-0.02em] text-[#0b0b0e] sm:text-[34px] sm:whitespace-nowrap">
+          Create your account
+        </h1>
+        <p className="mt-3 text-[16px] leading-[1.6] text-[#5b5c64]">
+          Your calls, your team, your pipeline — all in one place.
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="mt-7">
+        <SocialAuthButtons mode="up" />
+      </div>
+      <div className="mt-5">
+        <OrDivider />
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-5 space-y-3">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="sr-only">
+            Email
+          </Label>
           <Input
             id="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className="h-11 rounded-xl bg-white"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="sr-only">
+            Password
+          </Label>
           <Input
             id="password"
             type="password"
-            placeholder="At least 8 characters"
+            placeholder="Create a password (8+ characters)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={8}
+            className="h-11 rounded-xl bg-white"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm password</Label>
+          <Label htmlFor="confirmPassword" className="sr-only">
+            Confirm password
+          </Label>
           <Input
             id="confirmPassword"
             type="password"
@@ -99,19 +98,26 @@ export default function SignupPage() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
             minLength={8}
+            className="h-11 rounded-xl bg-white"
           />
         </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Creating account..." : "Create account"}
+        <Button
+          type="submit"
+          className="h-11 w-full rounded-full bg-neutral-950 text-sm font-medium text-white hover:bg-neutral-800"
+        >
+          Sign up with email
         </Button>
       </form>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="mt-6 text-center text-xs text-neutral-400">
         Already have an account?{" "}
-        <Link href="/auth/login" className="text-primary underline-offset-4 hover:underline">
-          Sign in
+        <Link
+          href="/auth/login"
+          className="font-medium text-neutral-700 underline underline-offset-4 hover:text-neutral-900"
+        >
+          Sign In
         </Link>
       </p>
-    </AuthShell>
+    </AuthCardShell>
   );
 }

@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { toast } from "sonner";
 
-import { loginApiV1AuthLoginPost } from "@/client/sdk.gen";
-import { AuthEnterpriseCTA } from "@/components/auth/AuthEnterpriseCTA";
-import { AuthShell } from "@/components/auth/AuthShell";
+import { FlowShell } from "@/components/auth/FlowShell";
+import { OrDivider, SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,61 +12,58 @@ import { Label } from "@/components/ui/label";
 export function LoginForm({ signupEnabled }: { signupEnabled: boolean }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // DEMO FLOW (frontend-only): no backend call — any email + password continues
+  // to the create-agent step. This also removes the failure warning toast that
+  // fired while the backend was unreachable.
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
     try {
-      const res = await loginApiV1AuthLoginPost({
-        body: { email, password },
-      });
-
-      if (res.error || !res.data) {
-        const detail = (res.error as { detail?: string })?.detail;
-        toast.error(detail || "Login failed");
-        return;
-      }
-
-      // Set httpOnly cookies via server route
-      await fetch("/api/auth/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: res.data.token, user: res.data.user }),
-      });
-
-      window.location.href = "/after-sign-in";
+      window.localStorage.setItem("demo_user_email", email.trim());
     } catch {
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
+      // Storage unavailable — continue anyway.
     }
+    window.location.href = "/create-agent";
   };
 
   return (
-    <AuthShell enterpriseSlot={<AuthEnterpriseCTA />}>
-      <div className="space-y-1.5 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
-        <p className="text-sm text-muted-foreground">
-          Enter your email and password to continue
+    <FlowShell step={1}>
+      <div className="mx-auto w-full max-w-[340px]">
+        <div className="text-center">
+        <h1 className="text-[36px] font-medium leading-[1.08] tracking-[-0.02em] text-[#0b0b0e] sm:text-[40px]">
+          Welcome back!
+        </h1>
+        <p className="mt-3 text-[16px] leading-[1.6] text-[#5b5c64]">
+          Your calls, your team, your pipeline — all in one place.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="mt-7">
+        <SocialAuthButtons mode="in" />
+      </div>
+      <div className="mt-5">
+        <OrDivider />
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-5 space-y-3">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="sr-only">
+            Email
+          </Label>
           <Input
             id="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className="h-11 rounded-xl bg-white"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="sr-only">
+            Password
+          </Label>
           <Input
             id="password"
             type="password"
@@ -76,21 +71,29 @@ export function LoginForm({ signupEnabled }: { signupEnabled: boolean }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="h-11 rounded-xl bg-white"
           />
         </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Signing in..." : "Sign in"}
+        <Button
+          type="submit"
+          className="h-11 w-full rounded-full bg-neutral-950 text-sm font-medium text-white hover:bg-neutral-800"
+        >
+          Sign in with email
         </Button>
       </form>
 
       {signupEnabled && (
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="mt-6 text-center text-xs text-neutral-400">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/signup" className="text-primary underline-offset-4 hover:underline">
-            Sign up
+          <Link
+            href="/auth/signup"
+            className="font-medium text-neutral-700 underline underline-offset-4 hover:text-neutral-900"
+          >
+            Sign Up
           </Link>
         </p>
       )}
-    </AuthShell>
+      </div>
+    </FlowShell>
   );
 }

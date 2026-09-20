@@ -1,6 +1,10 @@
 "use client";
 
-import { ExternalLink, FileText } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ExternalLinkIcon,
+  FileTextIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from "next/link";
 import { useMemo } from "react";
 
@@ -58,7 +62,7 @@ export const DocumentSelector = ({
                     <>
                         <Label>{label}</Label>
                         {description && (
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                             {description}{" "}
                             <a href={KNOWLEDGE_BASE_DOC_URL} target="_blank" rel="noopener noreferrer" className="underline">Learn more</a>
                         </Label>
@@ -66,13 +70,13 @@ export const DocumentSelector = ({
                     </>
                 )}
                 <div className="border rounded-md p-4 space-y-3">
-                    <div className="text-sm text-muted-foreground text-center">
+                    <div className="text-sm text-[#737373] text-center">
                         No documents available. Upload documents to the knowledge base first.
                     </div>
                     <div className="flex justify-center">
                         <Button variant="outline" size="sm" asChild>
                             <Link href="/files" target="_blank">
-                                <ExternalLink className="h-4 w-4 mr-2" />
+                                <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4 mr-2" />
                                 Upload Documents
                             </Link>
                         </Button>
@@ -88,7 +92,7 @@ export const DocumentSelector = ({
                 <>
                     <Label>{label}</Label>
                     {description && (
-                        <Label className="text-xs text-muted-foreground">
+                        <Label className="text-xs text-[#737373]">
                             {description}{" "}
                             <a href={KNOWLEDGE_BASE_DOC_URL} target="_blank" rel="noopener noreferrer" className="underline">Learn more</a>
                         </Label>
@@ -100,7 +104,7 @@ export const DocumentSelector = ({
                     {completedDocuments.map((doc) => (
                         <div
                             key={doc.document_uuid}
-                            className="flex items-start gap-3 p-3 hover:bg-muted/50 transition-colors"
+                            className="flex items-start gap-3 p-3 hover:bg-[#F7F7F7] transition-colors"
                         >
                             <Checkbox
                                 id={`doc-${doc.document_uuid}`}
@@ -115,14 +119,14 @@ export const DocumentSelector = ({
                                     htmlFor={`doc-${doc.document_uuid}`}
                                     className="flex items-center gap-2 cursor-pointer"
                                 >
-                                    <div className="w-8 h-8 rounded-md bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                                        <FileText className="w-4 h-4 text-blue-500" />
+                                    <div className="w-8 h-8 rounded-md bg-[#F0F3F9] flex items-center justify-center flex-shrink-0">
+                                        <HugeiconsIcon icon={FileTextIcon} className="w-4 h-4 text-[#7186AD]" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="text-sm font-medium truncate">
                                             {doc.filename}
                                         </div>
-                                        <div className="text-xs text-muted-foreground">
+                                        <div className="text-xs text-[#737373]">
                                             {formatFileSize(doc.file_size_bytes)} • {doc.retrieval_mode === 'full_document' ? 'Full Document' : `${doc.total_chunks} chunks`}
                                         </div>
                                     </div>
@@ -131,20 +135,20 @@ export const DocumentSelector = ({
                         </div>
                     ))}
                 </div>
-                <div className="p-2 bg-muted/30">
+                <div className="p-2 bg-[#F7F7F7]">
                     <Link
                         href="/files"
                         target="_blank"
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+                        className="flex items-center gap-2 text-sm text-[#737373] hover:text-foreground"
                     >
-                        <ExternalLink className="h-4 w-4" />
+                        <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4" />
                         Manage Documents
                     </Link>
                 </div>
             </div>
 
             {value.length > 0 && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-[#737373]">
                     {value.length} {value.length === 1 ? "document" : "documents"} selected
                 </p>
             )}

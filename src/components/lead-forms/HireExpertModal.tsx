@@ -1,7 +1,10 @@
 "use client";
 
 import Cal from "@calcom/embed-react";
-import { Sparkles } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -120,7 +123,7 @@ export function HireExpertModal({ open, onOpenChange, source, onOpenEnterprise }
       <LeadModalShell
         open={open}
         onOpenChange={(o) => { if (!o) reset(); onOpenChange(o); }}
-        icon={Sparkles}
+        icon={SparklesIcon}
         eyebrow="Done-for-you"
         title="Grab a time with our team"
         description="Pick a time that works for you."
@@ -142,7 +145,7 @@ export function HireExpertModal({ open, onOpenChange, source, onOpenEnterprise }
     <LeadModalShell
       open={open}
       onOpenChange={(o) => { if (!o) reset(); onOpenChange(o); }}
-      icon={Sparkles}
+      icon={SparklesIcon}
       eyebrow="Done-for-you"
       title="Let us build your voice agent"
       description="Building good voice agents is nuanced. Tell us what you need and we'll take it end-to-end."

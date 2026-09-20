@@ -1,6 +1,10 @@
 "use client";
 
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { WorkflowVersionResponse } from "@/client/types.gen";
@@ -72,11 +76,11 @@ const getChangeHunks = (
 const DiffCellView = ({ cell }: { cell: DiffCell | null }) => (
     <div
         className={cn(
-            "h-full min-w-0 border-b border-border px-4 py-1 font-mono text-xs leading-5",
+            "h-full min-w-0 border-b border-[#E5E5E5] px-4 py-1 font-mono text-xs leading-5",
             cell?.kind === "removed" && "bg-red-500/10 text-red-600 dark:text-red-100",
-            cell?.kind === "added" && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-100",
+            cell?.kind === "added" && "bg-[#F0F3F9] text-[#7186AD] dark:text-[#7186AD]",
             cell?.kind === "unchanged" && "bg-background text-foreground",
-            !cell && "bg-muted/40 text-muted-foreground",
+            !cell && "bg-[#F7F7F7] text-[#737373]",
         )}
     >
         <code className="block min-w-0 whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
@@ -86,9 +90,9 @@ const DiffCellView = ({ cell }: { cell: DiffCell | null }) => (
                         key={`${index}-${segment.kind}`}
                         className={cn(
                             "box-decoration-clone",
-                            segment.kind === "unchanged" && "bg-muted/30 text-foreground",
+                            segment.kind === "unchanged" && "bg-[#F7F7F7] text-foreground",
                             segment.kind === "removed" && "bg-red-500/25 text-red-700 dark:text-red-100",
-                            segment.kind === "added" && "bg-emerald-500/25 text-emerald-700 dark:text-emerald-100",
+                            segment.kind === "added" && "bg-[#F0F3F9] text-[#7186AD] dark:text-[#7186AD]",
                         )}
                     >
                         {segment.text}
@@ -152,8 +156,8 @@ export const WorkflowVersionDiffDialog = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="h-[calc(100vh-2rem)] max-h-[900px] w-[calc(100vw-2rem)] max-w-[1280px] grid-rows-[auto_auto_minmax(0,1fr)] gap-0 overflow-hidden border-border bg-background p-0 sm:max-w-[1280px]">
-                <DialogHeader className="border-b border-border px-5 py-4 pr-14">
+            <DialogContent className="h-[calc(100vh-2rem)] max-h-[900px] w-[calc(100vw-2rem)] max-w-[1280px] grid-rows-[auto_auto_minmax(0,1fr)] gap-0 overflow-hidden border-[#E5E5E5] bg-background p-0 sm:max-w-[1280px]">
+                <DialogHeader className="border-b border-[#E5E5E5] px-5 py-4 pr-14">
                     <div className="flex items-center justify-between gap-4">
                         <DialogTitle className="text-base text-foreground">
                             Changes {versionLabel(previousVersion)} → {versionLabel(selectedVersion)}
@@ -162,7 +166,7 @@ export const WorkflowVersionDiffDialog = ({
                             <div className="flex shrink-0 items-center gap-2">
                                 <span
                                     aria-live="polite"
-                                    className="min-w-14 text-right text-xs tabular-nums text-muted-foreground"
+                                    className="min-w-14 text-right text-xs tabular-nums text-[#737373]"
                                 >
                                     {activeChangeIndex >= 0
                                         ? `${activeChangeIndex + 1} / ${changeHunks.length}`
@@ -175,9 +179,9 @@ export const WorkflowVersionDiffDialog = ({
                                         size="icon"
                                         aria-label="Go to previous change"
                                         onClick={handlePreviousChange}
-                                        className="h-7 w-7 border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                                        className="h-7 w-7 border-[#E5E5E5] bg-transparent text-[#737373] hover:bg-[#F7F7F7] hover:text-foreground"
                                     >
-                                        <ChevronsLeft className="h-3.5 w-3.5" />
+                                        <HugeiconsIcon icon={ChevronsLeftIcon} className="h-3.5 w-3.5" />
                                     </Button>
                                     <Button
                                         type="button"
@@ -185,9 +189,9 @@ export const WorkflowVersionDiffDialog = ({
                                         size="icon"
                                         aria-label="Go to next change"
                                         onClick={handleNextChange}
-                                        className="h-7 w-7 border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                                        className="h-7 w-7 border-[#E5E5E5] bg-transparent text-[#737373] hover:bg-[#F7F7F7] hover:text-foreground"
                                     >
-                                        <ChevronsRight className="h-3.5 w-3.5" />
+                                        <HugeiconsIcon icon={ChevronsRightIcon} className="h-3.5 w-3.5" />
                                     </Button>
                                 </div>
                             </div>
@@ -198,12 +202,12 @@ export const WorkflowVersionDiffDialog = ({
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid grid-cols-2 border-b border-border bg-muted/40 text-sm">
-                    <div className="flex items-center gap-2 border-r border-border px-4 py-2">
+                <div className="grid grid-cols-2 border-b border-[#E5E5E5] bg-[#F7F7F7] text-sm">
+                    <div className="flex items-center gap-2 border-r border-[#E5E5E5] px-4 py-2">
                         <span className="font-medium text-foreground">
                             {versionLabel(previousVersion)}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-[#737373]">
                             {statusLabel[previousVersion.status] ?? previousVersion.status}
                         </span>
                     </div>
@@ -211,7 +215,7 @@ export const WorkflowVersionDiffDialog = ({
                         <span className="font-medium text-foreground">
                             {versionLabel(selectedVersion)}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-[#737373]">
                             {statusLabel[selectedVersion.status] ?? selectedVersion.status}
                         </span>
                     </div>
@@ -236,7 +240,7 @@ export const WorkflowVersionDiffDialog = ({
                                             isActiveHunkRow && "border-l-2 border-l-teal-400/70",
                                         )}
                                     >
-                                        <div className="min-w-0 border-r border-border">
+                                        <div className="min-w-0 border-r border-[#E5E5E5]">
                                             <DiffCellView cell={row.left} />
                                         </div>
                                         <div className="min-w-0">

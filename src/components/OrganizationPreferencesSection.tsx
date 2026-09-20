@@ -1,6 +1,10 @@
 "use client";
 
-import { Save, SlidersHorizontal } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  SaveIcon,
+  SlidersHorizontalIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useId, useRef, useState } from "react";
 import TimezoneSelect, { type ITimezoneOption } from "react-timezone-select";
 import { toast } from "sonner";
@@ -308,7 +312,7 @@ export function OrganizationPreferencesSection() {
               size="sm"
               onClick={() => setMappingDialogOpen(true)}
             >
-              <SlidersHorizontal className="mr-2 h-3.5 w-3.5" />
+              <HugeiconsIcon icon={SlidersHorizontalIcon} className="mr-2 h-3.5 w-3.5" />
               Configure mapping
             </Button>
             <span className="text-xs text-muted-foreground">
@@ -326,7 +330,7 @@ export function OrganizationPreferencesSection() {
         onSave={handleDispositionMappingSave}
       />
       <Button type="submit" disabled={saving}>
-        <Save className="mr-2 h-4 w-4" />
+        <HugeiconsIcon icon={SaveIcon} className="mr-2 h-4 w-4" />
         {saving ? "Saving..." : "Save"}
       </Button>
     </form>

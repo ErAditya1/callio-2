@@ -12,20 +12,22 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { HugeiconsIcon } from "@hugeicons/react";
+import type { IconSvgElement } from "@hugeicons/react";
 import {
-  PhoneCall,
-  Loader2,
-  CheckCircle2,
-  ShieldCheck,
-  ChevronDown,
-  Copy,
-  Sparkles,
-  Zap,
-  Calendar,
-  Headphones,
-  Building2,
-  Volume2,
-} from 'lucide-react';
+  Building02Icon,
+  Calendar01Icon,
+  CheckmarkCircle02Icon,
+  ChevronDownIcon,
+  Copy01Icon,
+  HeadphonesIcon,
+  Loading02Icon,
+  PhoneCallIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  VolumeHighIcon,
+  ZapIcon,
+} from "@hugeicons/core-free-icons";;
 import { toast } from 'sonner';
 import {
   PUBLIC_AGENTS,
@@ -46,24 +48,24 @@ const COUNTRY_CODES = [
   { code: '+49', country: 'Germany', flag: '🇩🇪' },
 ];
 
-const AGENT_ICONS: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
+const AGENT_ICONS: Record<string, { icon: IconSvgElement; color: string; bg: string }> = {
   'sdr-sales': {
-    icon: Zap,
+    icon: ZapIcon,
     color: 'text-amber-400',
     bg: 'bg-amber-500/10 border-amber-500/20',
   },
   'receptionist-booking': {
-    icon: Calendar,
+    icon: Calendar01Icon,
     color: 'text-emerald-400',
     bg: 'bg-emerald-500/10 border-emerald-500/20',
   },
   'tier1-support': {
-    icon: Headphones,
+    icon: HeadphonesIcon,
     color: 'text-blue-400',
     bg: 'bg-blue-500/10 border-blue-500/20',
   },
   'realestate-inquiry': {
-    icon: Building2,
+    icon: Building02Icon,
     color: 'text-purple-400',
     bg: 'bg-purple-500/10 border-purple-500/20',
   },
@@ -209,7 +211,7 @@ export function CallerIdPhoneCallModal({
   };
 
   const iconConfig = AGENT_ICONS[selectedAgent.id] || {
-    icon: Sparkles,
+    icon: SparklesIcon,
     color: 'text-indigo-400',
     bg: 'bg-indigo-500/10 border-indigo-500/20',
   };
@@ -242,7 +244,7 @@ export function CallerIdPhoneCallModal({
                 <div
                   className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border shrink-0 ${iconConfig.bg}`}
                 >
-                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${iconConfig.color}`} />
+                  <HugeiconsIcon icon={Icon} className={`w-4 h-4 sm:w-5 sm:h-5 ${iconConfig.color}`} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="font-bold text-foreground text-sm truncate">
@@ -270,7 +272,7 @@ export function CallerIdPhoneCallModal({
             {/* Bottom Row: Voice Details & Import to Dashboard Button */}
             <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5 border-t border-border/40">
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground truncate max-w-[170px]">
-                <Volume2 className="w-3 h-3 text-indigo-400 shrink-0" />
+                <HugeiconsIcon icon={VolumeHighIcon} className="w-3 h-3 text-indigo-400 shrink-0" />
                 <span className="truncate">{selectedAgent.voice_accent}</span>
               </div>
 
@@ -286,12 +288,12 @@ export function CallerIdPhoneCallModal({
               >
                 {isCloning ? (
                   <>
-                    <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+                    <HugeiconsIcon icon={Loading02Icon} className="w-3 h-3 animate-spin text-indigo-400" />
                     <span>Importing...</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-3 h-3 text-indigo-400" />
+                    <HugeiconsIcon icon={Copy01Icon} className="w-3 h-3 text-indigo-400" />
                     <span>Import to Dashboard</span>
                   </>
                 )}
@@ -322,7 +324,7 @@ export function CallerIdPhoneCallModal({
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground absolute right-3 top-3.5 pointer-events-none" />
+                <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-muted-foreground absolute right-3 top-3.5 pointer-events-none" />
               </div>
             </div>
 
@@ -344,7 +346,7 @@ export function CallerIdPhoneCallModal({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-3 h-3 text-muted-foreground absolute right-2 top-3.5 pointer-events-none" />
+                  <HugeiconsIcon icon={ChevronDownIcon} className="w-3 h-3 text-muted-foreground absolute right-2 top-3.5 pointer-events-none" />
                 </div>
                 <input
                   type="tel"
@@ -369,8 +371,8 @@ export function CallerIdPhoneCallModal({
                     : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                 }`}
               >
-                {status === 'calling' && <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />}
-                {status === 'success' && <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-500" />}
+                {status === 'calling' && <HugeiconsIcon icon={Loading02Icon} className="w-3.5 h-3.5 animate-spin shrink-0" />}
+                {status === 'success' && <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 shrink-0 text-emerald-500" />}
                 <div className="flex-1 min-w-0">
                   <span className="font-medium">{statusMessage}</span>
                   {status === 'success' && countdown > 0 && (
@@ -390,12 +392,12 @@ export function CallerIdPhoneCallModal({
             >
               {status === 'calling' ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <HugeiconsIcon icon={Loading02Icon} className="w-3.5 h-3.5 animate-spin" />
                   Dispatching Call...
                 </>
               ) : (
                 <>
-                  <PhoneCall className="w-3.5 h-3.5" />
+                  <HugeiconsIcon icon={PhoneCallIcon} className="w-3.5 h-3.5" />
                   Call My Phone Now
                 </>
               )}
@@ -403,7 +405,7 @@ export function CallerIdPhoneCallModal({
 
             {/* Privacy Guarantee */}
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground/80 pt-0.5">
-              <ShieldCheck className="w-3 h-3 text-muted-foreground/60 shrink-0" />
+              <HugeiconsIcon icon={ShieldCheckIcon} className="w-3 h-3 text-muted-foreground/60 shrink-0" />
               <span className="text-center">One-time live demo. We never spam or share your number.</span>
             </div>
           </form>

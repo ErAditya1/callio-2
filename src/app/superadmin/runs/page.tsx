@@ -1,6 +1,21 @@
 "use client";
 
-import { AlertTriangle, ArrowDown, ArrowUp, ArrowUpDown, CheckCircle, ChevronLeft, ChevronRight, ExternalLink, FileText, Info, Loader2, RefreshCw, ShieldAlert } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowDown01Icon,
+  ArrowUp01Icon,
+  ArrowUpDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CircleCheckIcon,
+  ExternalLinkIcon,
+  FileTextIcon,
+  InfoIcon,
+  Loading02Icon,
+  RefreshCwIcon,
+  ShieldAlertIcon,
+  TriangleAlertIcon,
+} from "@hugeicons/core-free-icons";;
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -295,9 +310,9 @@ export default function RunsPage() {
 
     if (checkingSuperuser) {
         return (
-            <div className="container mx-auto p-6 flex items-center justify-center min-h-[400px]">
-                <div className="flex items-center space-x-2 text-muted-foreground">
-                    <Loader2 className="h-6 w-6 animate-spin" />
+            <div className="app-page flex items-center justify-center min-h-[400px]">
+                <div className="flex items-center space-x-2 text-[#737373]">
+                    <HugeiconsIcon icon={Loading02Icon} className="h-6 w-6 animate-spin" />
                     <span>Verifying administrator credentials...</span>
                 </div>
             </div>
@@ -307,22 +322,22 @@ export default function RunsPage() {
     if (!isSuperuser) {
         return (
             <div className="flex min-h-[75vh] w-full items-center justify-center p-4">
-                <Card className="max-w-md border-border/80 shadow-2xl bg-card">
+                <Card className="max-w-md border-[#E5E5E5] shadow-2xl bg-[#FFFFFF]">
                     <CardHeader className="text-center pb-3">
                         <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive border border-destructive/20">
-                            <ShieldAlert className="h-7 w-7" />
+                            <HugeiconsIcon icon={ShieldAlertIcon} className="h-7 w-7" />
                         </div>
                         <CardTitle className="text-xl font-bold tracking-tight">Access Restricted</CardTitle>
-                        <CardDescription className="text-sm text-muted-foreground pt-1">
+                        <CardDescription className="text-sm text-[#737373] pt-1">
                             Superadmin privileges are required to view platform workflow runs.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="text-center text-xs text-muted-foreground leading-relaxed px-6 pb-6">
+                    <CardContent className="text-center text-xs text-[#737373] leading-relaxed px-6 pb-6">
                         Your account does not have authorization to view platform-wide runs. Please return to your workspace.
                     </CardContent>
                     <div className="p-6 pt-0 flex flex-col gap-2">
-                        <Button asChild className="w-full bg-indigo-600 hover:bg-indigo-500 text-white">
-                            <Link href="/overview">
+                        <Button asChild className="w-full bg-neutral-950 hover:bg-neutral-800 text-white">
+                            <Link href="/dashboard/overview">
                                 Return to Workspace Overview
                             </Link>
                         </Button>
@@ -334,9 +349,9 @@ export default function RunsPage() {
 
     if (isLoading && runs.length === 0) {
         return (
-            <div className="container mx-auto p-6 flex items-center justify-center min-h-[400px]">
+            <div className="app-page flex items-center justify-center min-h-[400px]">
                 <div className="flex items-center space-x-2">
-                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <HugeiconsIcon icon={Loading02Icon} className="h-6 w-6 animate-spin" />
                     <span>Loading workflow runs...</span>
                 </div>
             </div>
@@ -344,10 +359,10 @@ export default function RunsPage() {
     }
 
     return (
-        <div className="container mx-auto p-6 space-y-6 max-w-full">
+        <div className="app-page space-y-6">
             <div>
                 <h1 className="text-3xl font-bold mb-2">Workflow Runs</h1>
-                <p className="text-muted-foreground">View and manage all workflow runs across organizations</p>
+                <p className="text-[#737373]">View and manage all workflow runs across organizations</p>
             </div>
 
             {error && (
@@ -378,8 +393,8 @@ export default function RunsPage() {
                                 </CardDescription>
                             </div>
                             {isAutoRefreshing && (
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <RefreshCw className="h-4 w-4 animate-spin" />
+                                <div className="flex items-center gap-2 text-sm text-[#737373]">
+                                    <HugeiconsIcon icon={RefreshCwIcon} className="h-4 w-4 animate-spin" />
                                     <span>Refreshing...</span>
                                 </div>
                             )}
@@ -387,44 +402,44 @@ export default function RunsPage() {
                     </CardHeader>
                     <CardContent>
                         {runs.length === 0 ? (
-                            <div className="text-center py-8 text-muted-foreground">
+                            <div className="text-center py-8 text-[#737373]">
                                 No workflow runs found.
                             </div>
                         ) : (
                             <>
-                                <div className="bg-card border rounded-lg overflow-hidden shadow-sm">
+                                <div className="bg-[#FFFFFF] border rounded-lg overflow-hidden shadow-sm">
                                     <Table>
                                         <TableHeader>
-                                            <TableRow className="bg-muted">
+                                            <TableRow className="bg-[#F7F7F7]">
                                                 <TableHead className="font-semibold">ID</TableHead>
                                                 <TableHead className="font-semibold">Workflow</TableHead>
                                                 <TableHead className="font-semibold">Status</TableHead>
                                                 <TableHead className="font-semibold">Disposition</TableHead>
                                                 <TableHead className="font-semibold">Tags</TableHead>
                                                 <TableHead
-                                                    className="font-semibold cursor-pointer hover:bg-muted/50 select-none"
+                                                    className="font-semibold cursor-pointer hover:bg-[#F7F7F7] select-none"
                                                     onClick={() => handleSort('duration')}
                                                 >
                                                     <div className="flex items-center gap-1">
                                                         Duration
                                                         {sortBy === 'duration' ? (
-                                                            sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                                                            sortOrder === 'asc' ? <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" /> : <HugeiconsIcon icon={ArrowDown01Icon} className="h-4 w-4" />
                                                         ) : (
-                                                            <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                                                            <HugeiconsIcon icon={ArrowUpDownIcon} className="h-4 w-4 text-[#737373]" />
                                                         )}
                                                     </div>
                                                 </TableHead>
                                                 <TableHead className="font-semibold">Details</TableHead>
                                                 <TableHead
-                                                    className="font-semibold cursor-pointer hover:bg-muted/50 select-none"
+                                                    className="font-semibold cursor-pointer hover:bg-[#F7F7F7] select-none"
                                                     onClick={() => handleSort('created_at')}
                                                 >
                                                     <div className="flex items-center gap-1">
                                                         Created At
                                                         {sortBy === 'created_at' ? (
-                                                            sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                                                            sortOrder === 'asc' ? <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" /> : <HugeiconsIcon icon={ArrowDown01Icon} className="h-4 w-4" />
                                                         ) : (
-                                                            <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                                                            <HugeiconsIcon icon={ArrowUpDownIcon} className="h-4 w-4 text-[#737373]" />
                                                         )}
                                                     </div>
                                                 </TableHead>
@@ -448,7 +463,7 @@ export default function RunsPage() {
                                                                         : run.workflow_name
                                                                 ) : 'Unknown Workflow'}
                                                             </span>
-                                                            <span className="text-xs text-muted-foreground font-mono">
+                                                            <span className="text-xs text-[#737373] font-mono">
                                                                 ID: {String(run.workflow_id).length > 12
                                                                     ? `${String(run.workflow_id).substring(0, 12)}...`
                                                                     : run.workflow_id}
@@ -457,9 +472,9 @@ export default function RunsPage() {
                                                     </TableCell>
                                                     <TableCell className="text-center">
                                                         {run.is_completed ? (
-                                                            <CheckCircle className="h-5 w-5 text-green-600" />
+                                                            <HugeiconsIcon icon={CircleCheckIcon} className="h-5 w-5 text-green-600" />
                                                         ) : (
-                                                            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                                                            <HugeiconsIcon icon={TriangleAlertIcon} className="h-5 w-5 text-yellow-500" />
                                                         )}
                                                     </TableCell>
                                                     <TableCell>
@@ -468,7 +483,7 @@ export default function RunsPage() {
                                                                 {run.gathered_context.mapped_call_disposition as string}
                                                             </Badge>
                                                         ) : (
-                                                            <span className="text-sm text-muted-foreground">-</span>
+                                                            <span className="text-sm text-[#737373]">-</span>
                                                         )}
                                                     </TableCell>
                                                     <TableCell>
@@ -481,11 +496,11 @@ export default function RunsPage() {
                                                                 ))}
                                                             </div>
                                                         ) : (
-                                                            <span className="text-sm text-muted-foreground">-</span>
+                                                            <span className="text-sm text-[#737373]">-</span>
                                                         )}
                                                     </TableCell>
                                                     <TableCell className="text-sm whitespace-pre-wrap break-words">
-                                                        <span className={!run.is_completed ? "font-semibold text-blue-600" : ""}>
+                                                        <span className={!run.is_completed ? "font-semibold text-[#7186AD]" : ""}>
                                                             {calculateDuration(run.is_completed, run.usage_info)}
                                                         </span>
                                                     </TableCell>
@@ -494,7 +509,7 @@ export default function RunsPage() {
                                                             {run.initial_context && (
                                                                 <Tooltip>
                                                                     <TooltipTrigger asChild>
-                                                                        <Info className="h-4 w-4 text-green-600 cursor-pointer" />
+                                                                        <HugeiconsIcon icon={InfoIcon} className="h-4 w-4 text-green-600 cursor-pointer" />
                                                                     </TooltipTrigger>
                                                                     <TooltipContent sideOffset={4} className="max-w-sm whitespace-pre-wrap break-words">
                                                                         <p className="font-semibold text-xs mb-1">Initial Context</p>
@@ -507,7 +522,7 @@ export default function RunsPage() {
                                                             {run.gathered_context && (
                                                                 <Tooltip>
                                                                     <TooltipTrigger asChild>
-                                                                        <Info className="h-4 w-4 text-blue-500 cursor-pointer" />
+                                                                        <HugeiconsIcon icon={InfoIcon} className="h-4 w-4 text-[#7186AD] cursor-pointer" />
                                                                     </TooltipTrigger>
                                                                     <TooltipContent sideOffset={4} className="max-w-sm whitespace-pre-wrap break-words">
                                                                         <p className="font-semibold text-xs mb-1">Gathered Context</p>
@@ -520,7 +535,7 @@ export default function RunsPage() {
                                                             {run.usage_info && (
                                                                 <Tooltip>
                                                                     <TooltipTrigger asChild>
-                                                                        <Info className="h-4 w-4 text-muted-foreground cursor-pointer" />
+                                                                        <HugeiconsIcon icon={InfoIcon} className="h-4 w-4 text-[#737373] cursor-pointer" />
                                                                     </TooltipTrigger>
                                                                     <TooltipContent sideOffset={4} className="max-w-sm whitespace-pre-wrap break-words">
                                                                         <p className="font-semibold text-xs mb-1">Usage Info</p>
@@ -531,7 +546,7 @@ export default function RunsPage() {
                                                                 </Tooltip>
                                                             )}
                                                             {!run.initial_context && !run.gathered_context && !run.usage_info && (
-                                                                <span className="text-muted-foreground">-</span>
+                                                                <span className="text-[#737373]">-</span>
                                                             )}
                                                         </div>
                                                     </TableCell>
@@ -619,7 +634,7 @@ export default function RunsPage() {
                                                                     );
                                                                 }}
                                                             >
-                                                                <ExternalLink className="h-4 w-4" />
+                                                                <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4" />
                                                             </Button>
 
                                                             <Button
@@ -634,7 +649,7 @@ export default function RunsPage() {
                                                                     );
                                                                 }}
                                                             >
-                                                                <FileText className="h-4 w-4" />
+                                                                <HugeiconsIcon icon={FileTextIcon} className="h-4 w-4" />
                                                             </Button>
 
                                                         </div>
@@ -648,7 +663,7 @@ export default function RunsPage() {
                                 {/* Pagination */}
                                 {totalPages > 1 && (
                                     <div className="flex items-center justify-between mt-6">
-                                        <div className="text-sm text-muted-foreground">
+                                        <div className="text-sm text-[#737373]">
                                             Page {currentPage} of {totalPages} ({totalCount} total runs)
                                         </div>
                                         <div className="flex space-x-2">
@@ -658,7 +673,7 @@ export default function RunsPage() {
                                                 onClick={() => handlePageChange(currentPage - 1)}
                                                 disabled={currentPage === 1 || isLoading}
                                             >
-                                                <ChevronLeft className="h-4 w-4 mr-1" />
+                                                <HugeiconsIcon icon={ChevronLeftIcon} className="h-4 w-4 mr-1" />
                                                 Previous
                                             </Button>
 
@@ -695,7 +710,7 @@ export default function RunsPage() {
                                                 disabled={currentPage === totalPages || isLoading}
                                             >
                                                 Next
-                                                <ChevronRight className="h-4 w-4 ml-1" />
+                                                <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4 ml-1" />
                                             </Button>
                                         </div>
                                     </div>

@@ -5,7 +5,10 @@
 // Generates a fresh sum each time it mounts; calls onVerified once the correct
 // answer is confirmed, onCancel to dismiss back to the form.
 
-import { ShieldCheck } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ShieldCheckIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -49,7 +52,7 @@ export function CaptchaChallenge({
       <div className="lead-form-underline relative space-y-4 p-5">
         <div className="flex items-start gap-3">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-cta/25 bg-cta/10 text-cta">
-            <ShieldCheck className="size-4" />
+            <HugeiconsIcon icon={ShieldCheckIcon} className="size-4" />
           </span>
           <div className="space-y-1">
             <p className="text-sm font-semibold">Quick check</p>

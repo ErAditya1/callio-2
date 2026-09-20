@@ -6,7 +6,14 @@ import {
     Panel,
     ReactFlow,
 } from "@xyflow/react";
-import { BrushCleaning, Maximize2, Minus, Plus, Settings } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  BrushCleaningIcon,
+  Maximize02Icon,
+  MinusIcon,
+  PlusIcon,
+  Settings01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -661,7 +668,7 @@ function RenderWorkflow({
                                                             onClick={() => setIsAddNodePanelOpen(true)}
                                                             className="shadow-md hover:shadow-lg"
                                                         >
-                                                            <Plus className="h-4 w-4" />
+                                                            <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent side="left">
@@ -677,7 +684,7 @@ function RenderWorkflow({
                                                             onClick={() => router.push(`/workflow/${workflowId}/settings`)}
                                                             className="bg-white shadow-sm hover:shadow-md"
                                                         >
-                                                            <Settings className="h-4 w-4" />
+                                                            <HugeiconsIcon icon={Settings01Icon} className="h-4 w-4" />
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent side="left">
@@ -701,7 +708,7 @@ function RenderWorkflow({
                                                 onClick={() => rfInstance.current?.zoomIn()}
                                                 className="bg-white shadow-sm hover:shadow-md h-8 w-8"
                                             >
-                                                <Plus className="h-4 w-4" />
+                                                <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
@@ -717,7 +724,7 @@ function RenderWorkflow({
                                                 onClick={() => rfInstance.current?.zoomOut()}
                                                 className="bg-white shadow-sm hover:shadow-md h-8 w-8"
                                             >
-                                                <Minus className="h-4 w-4" />
+                                                <HugeiconsIcon icon={MinusIcon} className="h-4 w-4" />
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
@@ -733,7 +740,7 @@ function RenderWorkflow({
                                                 onClick={() => rfInstance.current?.fitView()}
                                                 className="bg-white shadow-sm hover:shadow-md h-8 w-8"
                                             >
-                                                <Maximize2 className="h-4 w-4" />
+                                                <HugeiconsIcon icon={Maximize02Icon} className="h-4 w-4" />
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
@@ -753,7 +760,7 @@ function RenderWorkflow({
                                                     }}
                                                     className="bg-white shadow-sm hover:shadow-md h-8 w-8"
                                                 >
-                                                    <BrushCleaning className="h-4 w-4" />
+                                                    <HugeiconsIcon icon={BrushCleaningIcon} className="h-4 w-4" />
                                                 </Button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
@@ -766,7 +773,7 @@ function RenderWorkflow({
                         </div>
 
                         {isCopilotRailOpen && (
-                            <aside className="hidden h-full w-[400px] shrink-0 border-l border-border xl:block">
+                            <aside className="hidden h-full w-[400px] shrink-0 border-l border-[#E5E5E5] xl:block">
                                 <WorkflowCopilotPanel
                                     workflowId={workflowId}
                                     nodes={nodes}
@@ -786,7 +793,7 @@ function RenderWorkflow({
                         )}
 
                         {isTesterRailOpen && (
-                            <aside className="hidden h-full w-[400px] shrink-0 border-l border-border xl:block">
+                            <aside className="hidden h-full w-[400px] shrink-0 border-l border-[#E5E5E5] xl:block">
                                 <WorkflowTesterPanel
                                     workflowId={workflowId}
                                     initialContextVariables={templateContextVariables}

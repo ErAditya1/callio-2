@@ -1,6 +1,16 @@
 "use client";
 
-import { ArrowLeftRight, Calculator, Cog, Globe, type LucideIcon, PhoneForwarded, PhoneOff, Puzzle } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeftRightIcon,
+  Calculator01Icon,
+  CogIcon,
+  GlobeIcon,
+  PhoneForwardedIcon,
+  PhoneOff01Icon,
+  PuzzleIcon,
+} from "@hugeicons/core-free-icons";
+import type { IconSvgElement } from "@hugeicons/react";;
 import { type ReactNode } from "react";
 
 import type {
@@ -83,7 +93,7 @@ export interface ToolCategoryConfig {
     value: ToolCategory;
     label: string;
     description: string;
-    icon: LucideIcon;
+    icon: IconSvgElement;
     iconName: string; // String name for storing in database
     iconColor: string;
     disabled?: boolean;
@@ -98,7 +108,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "http_api",
         label: "External HTTP API",
         description: "Make HTTP requests to external APIs",
-        icon: Globe,
+        icon: GlobeIcon,
         iconName: "globe",
         iconColor: "#3B82F6",
     },
@@ -106,7 +116,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "end_call",
         label: "End Call",
         description: "End the call when conditions are met",
-        icon: PhoneOff,
+        icon: PhoneOff01Icon,
         iconName: "phone-off",
         iconColor: "#EF4444",
         autoFill: {
@@ -118,7 +128,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "transfer_call",
         label: "Transfer Call",
         description: "Transfer the call to another phone number (Twilio, Plivo)",
-        icon: PhoneForwarded,
+        icon: PhoneForwardedIcon,
         iconName: "phone-forwarded",
         iconColor: "#10B981",
         autoFill: {
@@ -130,7 +140,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "transfer_agent",
         label: "Transfer To Agent",
         description: "Hand the live call to another Dograh agent, without dropping the caller",
-        icon: ArrowLeftRight,
+        icon: ArrowLeftRightIcon,
         iconName: "arrow-left-right",
         iconColor: "#0EA5E9",
         autoFill: {
@@ -142,7 +152,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "calculator",
         label: "Calculator",
         description: "Built-in calculator for arithmetic operations",
-        icon: Calculator,
+        icon: Calculator01Icon,
         iconName: "calculator",
         iconColor: "#F59E0B",
         autoFill: {
@@ -154,7 +164,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "mcp",
         label: "MCP Server",
         description: "Connect a customer MCP server; its tools become available to the agent",
-        icon: Puzzle,
+        icon: PuzzleIcon,
         iconName: "puzzle",
         iconColor: "#8B5CF6",
     },
@@ -162,7 +172,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "native",
         label: "Native (Coming Soon)",
         description: "Built-in tools like call transfer, DTMF input",
-        icon: Cog,
+        icon: CogIcon,
         iconName: "cog",
         iconColor: "#6B7280",
         disabled: true,
@@ -171,7 +181,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "integration",
         label: "Integration (Coming Soon)",
         description: "Third-party integrations like Google Calendar",
-        icon: Puzzle,
+        icon: PuzzleIcon,
         iconName: "puzzle",
         iconColor: "#8B5CF6",
         disabled: true,
@@ -182,9 +192,9 @@ export function getCategoryConfig(category: ToolCategory): ToolCategoryConfig | 
     return TOOL_CATEGORIES.find(c => c.value === category);
 }
 
-export function getToolIcon(category: string): LucideIcon {
+export function getToolIcon(category: string): IconSvgElement {
     const config = TOOL_CATEGORIES.find(c => c.value === category);
-    return config?.icon ?? Globe;
+    return config?.icon ?? GlobeIcon;
 }
 
 export function getToolIconColor(category: string, fallbackColor?: string): string {
@@ -194,7 +204,7 @@ export function getToolIconColor(category: string, fallbackColor?: string): stri
 
 export function renderToolIcon(category: string, className: string = "w-5 h-5 text-white"): ReactNode {
     const Icon = getToolIcon(category);
-    return <Icon className={className} />;
+    return <HugeiconsIcon icon={Icon} className={className} />;
 }
 
 export function getToolTypeLabel(category: string): string {

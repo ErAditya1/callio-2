@@ -1,7 +1,10 @@
 "use client";
 
 import Cal from "@calcom/embed-react";
-import { ShieldCheck } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ShieldCheckIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -131,7 +134,7 @@ export function EnterpriseModal({ open, onOpenChange, source, prefill }: Enterpr
       <LeadModalShell
         open={open}
         onOpenChange={(o) => { if (!o) reset(); onOpenChange(o); }}
-        icon={ShieldCheck}
+        icon={ShieldCheckIcon}
         eyebrow="Enterprise"
         title="Book a Strategy Call"
         description="Pick a time that works for you."
@@ -153,7 +156,7 @@ export function EnterpriseModal({ open, onOpenChange, source, prefill }: Enterpr
     <LeadModalShell
       open={open}
       onOpenChange={(o) => { if (!o) reset(); onOpenChange(o); }}
-      icon={ShieldCheck}
+      icon={ShieldCheckIcon}
       eyebrow="Enterprise"
       title="Book a Strategy Call"
       description="SSO, on-prem, data residency, committed volume. Tell us about your environment."

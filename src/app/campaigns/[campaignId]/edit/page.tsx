@@ -1,6 +1,9 @@
 "use client";
 
-import { ArrowLeft } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import type { ITimezoneOption } from 'react-timezone-select';
@@ -285,10 +288,10 @@ export default function EditCampaignPage() {
 
     if (isLoading) {
         return (
-            <div className="container mx-auto p-6 space-y-6 max-w-2xl">
+            <div className="app-page space-y-6 max-w-2xl">
                 <div className="animate-pulse">
-                    <div className="h-8 bg-muted rounded w-1/4 mb-4"></div>
-                    <div className="h-64 bg-muted rounded"></div>
+                    <div className="h-8 bg-[#F7F7F7] rounded w-1/4 mb-4"></div>
+                    <div className="h-64 bg-[#F7F7F7] rounded"></div>
                 </div>
             </div>
         );
@@ -296,25 +299,25 @@ export default function EditCampaignPage() {
 
     if (!campaign) {
         return (
-            <div className="container mx-auto p-6 space-y-6 max-w-2xl">
-                <p className="text-center text-muted-foreground">Campaign not found</p>
+            <div className="app-page space-y-6 max-w-2xl">
+                <p className="text-center text-[#737373]">Campaign not found</p>
             </div>
         );
     }
 
     return (
-        <div className="container mx-auto p-6 pb-12 space-y-6 max-w-2xl">
+        <div className="app-page space-y-6 pb-12 max-w-2xl">
             <div>
                 <Button
                     variant="ghost"
                     onClick={handleBack}
                     className="mb-4"
                 >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4 mr-2" />
                     Back to Campaign
                 </Button>
                 <h1 className="text-3xl font-bold mb-2">Edit Campaign</h1>
-                <p className="text-muted-foreground">Modify campaign settings</p>
+                <p className="text-[#737373]">Modify campaign settings</p>
             </div>
 
             <Card>

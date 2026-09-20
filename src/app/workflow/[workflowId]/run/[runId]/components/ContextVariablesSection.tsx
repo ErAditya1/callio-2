@@ -1,4 +1,7 @@
-import { Trash2Icon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+} from "@hugeicons/core-free-icons";;
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -49,9 +52,9 @@ export const ContextVariablesSection = ({
                     <div className="space-y-2">
                         <Label className="text-sm font-medium">Current Variables</Label>
                         {Object.entries(initialContext).map(([key, value]) => (
-                            <div key={key} className="flex items-center gap-2 p-3 border rounded-md bg-muted">
+                            <div key={key} className="flex items-center gap-2 p-3 border rounded-md bg-[#F7F7F7]">
                                 <div className="flex-1">
-                                    <Label className="text-xs text-muted-foreground">{key}</Label>
+                                    <Label className="text-xs text-[#737373]">{key}</Label>
                                     <Input
                                         value={value}
                                         onChange={(e) => handleUpdateContextVar(key, e.target.value)}
@@ -65,7 +68,7 @@ export const ContextVariablesSection = ({
                                     onClick={() => handleRemoveContextVar(key)}
                                     disabled={disabled}
                                 >
-                                    <Trash2Icon className="w-4 h-4 text-red-500" />
+                                    <HugeiconsIcon icon={Delete02Icon} className="w-4 h-4 text-red-500" />
                                 </Button>
                             </div>
                         ))}

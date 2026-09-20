@@ -1,10 +1,11 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  Calculator,
-  CheckCircle2,
-} from 'lucide-react';
+  ArrowRight01Icon,
+  Calculator01Icon,
+  CheckmarkCircle02Icon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import React, { useState } from 'react';
 
@@ -42,7 +43,7 @@ export function RoiCalculator() {
       <div className="relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <Badge variant="outline" className="mb-3 border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3 py-1">
-            <Calculator className="w-3.5 h-3.5 mr-1.5 inline" />
+            <HugeiconsIcon icon={Calculator01Icon} className="w-3.5 h-3.5 mr-1.5 inline" />
             Interactive ROI Model
           </Badge>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground">
@@ -139,11 +140,11 @@ export function RoiCalculator() {
 
             <div className="pt-2 grid grid-cols-2 gap-3 text-xs text-muted-foreground border-t border-border/50">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>Zero after-hours overtime</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>Instant scale to 100+ concurrent calls</span>
               </div>
             </div>
@@ -197,7 +198,7 @@ export function RoiCalculator() {
               <Button asChild className="w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold h-11 rounded-xl shadow-lg shadow-indigo-500/25">
                 <Link href="/workflow">
                   Start Saving Today
-                  <ArrowRight className="w-4 h-4 ml-1.5" />
+                  <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1.5" />
                 </Link>
               </Button>
             </div>

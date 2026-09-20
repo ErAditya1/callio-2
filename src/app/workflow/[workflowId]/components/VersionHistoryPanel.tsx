@@ -1,7 +1,13 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { FileDiff, FileText, LoaderCircle, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  FileDiffIcon,
+  FileTextIcon,
+  Loading02Icon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect } from "react";
 
 import type { WorkflowVersionResponse } from "@/client/types.gen";
@@ -58,7 +64,7 @@ export const VersionHistoryPanel = ({
 
     return (
         <div
-            className={`fixed z-51 right-0 top-0 h-full w-80 bg-background border-l border-border shadow-lg transform transition-transform duration-300 ease-in-out ${
+            className={`fixed z-51 right-0 top-0 h-full w-80 bg-background border-l border-[#E5E5E5] shadow-lg transform transition-transform duration-300 ease-in-out ${
                 isOpen ? "translate-x-0" : "translate-x-full"
             }`}
         >
@@ -72,18 +78,18 @@ export const VersionHistoryPanel = ({
                         size="icon"
                         aria-label="Close version history"
                         onClick={onClose}
-                        className="text-muted-foreground hover:text-foreground hover:bg-muted"
+                        className="text-[#737373] hover:text-foreground hover:bg-[#F7F7F7]"
                     >
-                        <X className="w-5 h-5" />
+                        <HugeiconsIcon icon={XIcon} className="w-5 h-5" />
                     </Button>
                 </div>
 
                 {loading ? (
                     <div className="flex items-center justify-center py-12">
-                        <LoaderCircle className="w-6 h-6 text-muted-foreground animate-spin" />
+                        <HugeiconsIcon icon={Loading02Icon} className="w-6 h-6 text-[#737373] animate-spin" />
                     </div>
                 ) : versions.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-8">
+                    <p className="text-sm text-[#737373] text-center py-8">
                         No versions found.
                     </p>
                 ) : (
@@ -102,17 +108,17 @@ export const VersionHistoryPanel = ({
                                     className={`flex w-full overflow-hidden rounded-lg border transition-colors ${
                                         isActive
                                             ? "border-teal-500/50 bg-teal-500/10"
-                                            : "border-border bg-card"
+                                            : "border-[#E5E5E5] bg-[#FFFFFF]"
                                     }`}
                                 >
                                     <button
                                         type="button"
                                         onClick={() => onSelectVersion(version)}
-                                        className="min-w-0 flex-1 cursor-pointer p-3 text-left transition-colors hover:bg-muted"
+                                        className="min-w-0 flex-1 cursor-pointer p-3 text-left transition-colors hover:bg-[#F7F7F7]"
                                     >
                                         <div className="mb-1.5 flex items-center justify-between">
                                             <div className="flex items-center gap-2">
-                                                <FileText className="h-4 w-4 text-muted-foreground" />
+                                                <HugeiconsIcon icon={FileTextIcon} className="h-4 w-4 text-[#737373]" />
                                                 <span className="text-sm font-medium text-foreground">
                                                     v{version.version_number}
                                                 </span>
@@ -127,7 +133,7 @@ export const VersionHistoryPanel = ({
                                                 </span>
                                             )}
                                         </div>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-xs text-[#737373]">
                                             {formatDistanceToNow(new Date(date), {
                                                 addSuffix: true,
                                             })}
@@ -142,12 +148,12 @@ export const VersionHistoryPanel = ({
                                             aria-label={compareLabel}
                                             disabled={comparingVersionId !== null}
                                             onClick={() => onCompareVersion(version)}
-                                            className="mr-2 h-7 w-7 shrink-0 self-center rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                                            className="mr-2 h-7 w-7 shrink-0 self-center rounded-md border border-[#E5E5E5] text-[#737373] hover:bg-[#F7F7F7] hover:text-foreground"
                                         >
                                             {comparingVersionId === version.id ? (
-                                                <LoaderCircle className="h-4 w-4 animate-spin" />
+                                                <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin" />
                                             ) : (
-                                                <FileDiff className="h-4 w-4" />
+                                                <HugeiconsIcon icon={FileDiffIcon} className="h-4 w-4" />
                                             )}
                                         </Button>
                                     )}
@@ -159,10 +165,10 @@ export const VersionHistoryPanel = ({
                                 variant="ghost"
                                 onClick={onLoadMore}
                                 disabled={loadingMore}
-                                className="w-full text-sm text-foreground hover:bg-muted"
+                                className="w-full text-sm text-foreground hover:bg-[#F7F7F7]"
                             >
                                 {loadingMore ? (
-                                    <LoaderCircle className="w-4 h-4 animate-spin" />
+                                    <HugeiconsIcon icon={Loading02Icon} className="w-4 h-4 animate-spin" />
                                 ) : (
                                     "Load more"
                                 )}

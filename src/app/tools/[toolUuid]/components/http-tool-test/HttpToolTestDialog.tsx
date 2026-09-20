@@ -1,6 +1,11 @@
 "use client";
 
-import { AlertTriangle, Loader2, Pencil } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+  PencilIcon,
+  TriangleAlertIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from "react";
 
 import { testToolApiV1ToolsToolUuidTestPost } from "@/client/sdk.gen";
@@ -96,7 +101,7 @@ function ParameterFields({
     onEditJson,
 }: ParameterFieldsProps) {
     if (parameters.length === 0) {
-        return <p className="text-sm text-muted-foreground">No parameters configured.</p>;
+        return <p className="text-sm text-[#737373]">No parameters configured.</p>;
     }
 
     return (
@@ -111,16 +116,16 @@ function ParameterFields({
                             <Label htmlFor={inputId} className="text-sm font-mono">
                                 {parameter.name}
                             </Label>
-                            <span className="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
+                            <span className="rounded bg-[#F7F7F7] px-1.5 py-0.5 text-xs text-[#737373]">
                                 {parameter.type}
                             </span>
                             {parameter.required && <span className="text-xs text-destructive">required</span>}
                         </div>
                         {"description" in parameter && parameter.description && (
-                            <p className="text-xs text-muted-foreground">{parameter.description}</p>
+                            <p className="text-xs text-[#737373]">{parameter.description}</p>
                         )}
                         {"valueTemplate" in parameter && parameter.valueTemplate && (
-                            <p className="break-all text-xs text-muted-foreground">
+                            <p className="break-all text-xs text-[#737373]">
                                 Configured preset: <code>{parameter.valueTemplate}</code>
                             </p>
                         )}
@@ -149,7 +154,7 @@ function ParameterFields({
                                     className="h-9 flex-1 truncate rounded-md border border-input bg-background px-3 py-1 text-left font-mono text-sm shadow-sm hover:bg-accent"
                                 >
                                     {!value || value === (parameter.type === "array" ? "[]" : "{}") ? (
-                                        <span className="text-muted-foreground">Empty</span>
+                                        <span className="text-[#737373]">Empty</span>
                                     ) : (
                                         value
                                     )}
@@ -161,7 +166,7 @@ function ParameterFields({
                                     onClick={() => onEditJson(parameter.name)}
                                     aria-label={`Edit ${parameter.name}`}
                                 >
-                                    <Pencil className="h-4 w-4" />
+                                    <HugeiconsIcon icon={PencilIcon} className="h-4 w-4" />
                                 </Button>
                             </div>
                         ) : (
@@ -324,8 +329,8 @@ export function HttpToolTestDialog({
                     </DialogHeader>
 
                     <div className="space-y-6 overflow-y-auto pr-1">
-                        <div className="rounded-lg border bg-muted/40 p-4">
-                            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        <div className="rounded-lg border bg-[#F7F7F7] p-4">
+                            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-[#737373]">
                                 Request
                             </p>
                             <div className="flex items-start gap-3">
@@ -341,7 +346,7 @@ export function HttpToolTestDialog({
                                 role="alert"
                                 className="flex gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
                             >
-                                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+                                <HugeiconsIcon icon={TriangleAlertIcon} className="mt-0.5 h-5 w-5 shrink-0" />
                                 <div className="space-y-1">
                                     <p className="text-sm font-medium">This performs a real external request</p>
                                     <p className="text-sm">
@@ -356,7 +361,7 @@ export function HttpToolTestDialog({
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium">Parameters</p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-[#737373]">
                                         Supply the values that would normally come from the model and configured presets.
                                     </p>
                                 </div>
@@ -376,7 +381,7 @@ export function HttpToolTestDialog({
                         <div className="space-y-3 border-t pt-4">
                             <div>
                                 <p className="text-sm font-medium">LLM Parameters</p>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Values the model would provide at call time.
                                 </p>
                             </div>
@@ -394,7 +399,7 @@ export function HttpToolTestDialog({
                         <div className="space-y-3 border-t pt-4">
                             <div>
                                 <p className="text-sm font-medium">Preset Parameters</p>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Resolved values that Dograh would normally derive from each configured preset.
                                 </p>
                             </div>
@@ -413,7 +418,7 @@ export function HttpToolTestDialog({
                             <Button onClick={handleTestTool} disabled={isTesting}>
                                 {isTesting ? (
                                     <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-4 w-4 animate-spin" />
                                         Testing...
                                     </>
                                 ) : (
@@ -431,7 +436,7 @@ export function HttpToolTestDialog({
                         {result && (
                             <div className="space-y-3 border-t pt-4">
                                 {(result.request_method || result.request_url) && (
-                                    <div className="space-y-1 overflow-auto rounded-lg bg-muted p-3 font-mono text-xs">
+                                    <div className="space-y-1 overflow-auto rounded-lg bg-[#F7F7F7] p-3 font-mono text-xs">
                                         <p className="font-medium text-foreground">
                                             {result.request_method} {result.request_url}
                                         </p>
@@ -467,10 +472,10 @@ export function HttpToolTestDialog({
                                         {resultBadgeLabel}
                                     </span>
                                     {result.status_code != null && (
-                                        <span className="text-sm text-muted-foreground">HTTP {result.status_code}</span>
+                                        <span className="text-sm text-[#737373]">HTTP {result.status_code}</span>
                                     )}
                                     {result.duration_ms !== undefined && (
-                                        <span className="rounded bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">
+                                        <span className="rounded bg-[#F7F7F7] px-2 py-0.5 font-mono text-xs text-[#737373]">
                                             {result.duration_ms}ms
                                         </span>
                                     )}
@@ -486,7 +491,7 @@ export function HttpToolTestDialog({
                                     </div>
                                 )}
                                 {result.data != null && (
-                                    <div className="max-h-80 overflow-auto rounded-lg bg-muted p-4 font-mono text-sm">
+                                    <div className="max-h-80 overflow-auto rounded-lg bg-[#F7F7F7] p-4 font-mono text-sm">
                                         <pre>{JSON.stringify(result.data, null, 2)}</pre>
                                     </div>
                                 )}

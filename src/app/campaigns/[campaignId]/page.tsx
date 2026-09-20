@@ -1,7 +1,23 @@
 "use client";
 
 import { format } from 'date-fns';
-import { AlertCircle, AlertTriangle, ArrowLeft, CalendarIcon, Check, Clock, Download, Info, Pause, Pencil, Phone, Play, RefreshCw, X } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  ArrowLeft01Icon,
+  Calendar01Icon,
+  CheckIcon,
+  Clock01Icon,
+  Download01Icon,
+  InfoIcon,
+  PauseIcon,
+  PencilIcon,
+  PhoneIcon,
+  PlayIcon,
+  RefreshCwIcon,
+  TriangleAlertIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -382,11 +398,11 @@ export default function CampaignDetailPage() {
     const getLogIcon = (level: string) => {
         switch (level) {
             case 'error':
-                return <AlertCircle className="h-4 w-4 text-destructive" />;
+                return <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4 text-destructive" />;
             case 'warning':
-                return <AlertTriangle className="h-4 w-4 text-amber-500" />;
+                return <HugeiconsIcon icon={TriangleAlertIcon} className="h-4 w-4 text-amber-500" />;
             default:
-                return <Info className="h-4 w-4 text-blue-500" />;
+                return <HugeiconsIcon icon={InfoIcon} className="h-4 w-4 text-[#7186AD]" />;
         }
     };
 
@@ -413,7 +429,7 @@ export default function CampaignDetailPage() {
 
         const editButton = canEdit ? (
             <Button variant="outline" onClick={() => router.push(`/campaigns/${campaignId}/edit`)}>
-                <Pencil className="h-4 w-4 mr-2" />
+                <HugeiconsIcon icon={PencilIcon} className="h-4 w-4 mr-2" />
                 Edit Campaign
             </Button>
         ) : null;
@@ -424,7 +440,7 @@ export default function CampaignDetailPage() {
                     <div className="flex items-center gap-2">
                         {editButton}
                         <Button onClick={handleStart} disabled={isExecutingAction}>
-                            <Play className="h-4 w-4 mr-2" />
+                            <HugeiconsIcon icon={PlayIcon} className="h-4 w-4 mr-2" />
                             Start Campaign
                         </Button>
                     </div>
@@ -434,7 +450,7 @@ export default function CampaignDetailPage() {
                     <div className="flex items-center gap-2">
                         {editButton}
                         <Button onClick={handlePause} disabled={isExecutingAction}>
-                            <Pause className="h-4 w-4 mr-2" />
+                            <HugeiconsIcon icon={PauseIcon} className="h-4 w-4 mr-2" />
                             Pause Campaign
                         </Button>
                     </div>
@@ -444,7 +460,7 @@ export default function CampaignDetailPage() {
                     <div className="flex items-center gap-2">
                         {editButton}
                         <Button onClick={handleResume} disabled={isExecutingAction}>
-                            <RefreshCw className="h-4 w-4 mr-2" />
+                            <HugeiconsIcon icon={RefreshCwIcon} className="h-4 w-4 mr-2" />
                             Resume Campaign
                         </Button>
                     </div>
@@ -455,7 +471,7 @@ export default function CampaignDetailPage() {
                 }
                 return (
                     <Button onClick={openRedialDialog}>
-                        <Phone className="h-4 w-4 mr-2" />
+                        <HugeiconsIcon icon={PhoneIcon} className="h-4 w-4 mr-2" />
                         Redial Campaign
                     </Button>
                 );
@@ -466,10 +482,10 @@ export default function CampaignDetailPage() {
 
     if (isLoadingCampaign) {
         return (
-            <div className="container mx-auto p-6 space-y-6">
+            <div className="app-page space-y-6">
                 <div className="animate-pulse">
-                    <div className="h-8 bg-muted rounded w-1/4 mb-4"></div>
-                    <div className="h-64 bg-muted rounded"></div>
+                    <div className="h-8 bg-[#F7F7F7] rounded w-1/4 mb-4"></div>
+                    <div className="h-64 bg-[#F7F7F7] rounded"></div>
                 </div>
             </div>
         );
@@ -477,21 +493,21 @@ export default function CampaignDetailPage() {
 
     if (!campaign) {
         return (
-            <div className="container mx-auto p-6 space-y-6">
-                <p className="text-center text-muted-foreground">Campaign not found</p>
+            <div className="app-page space-y-6">
+                <p className="text-center text-[#737373]">Campaign not found</p>
             </div>
         );
     }
 
     return (
-        <div className="container mx-auto p-6 space-y-6">
+        <div className="app-page space-y-6">
             <div>
                 <Button
                     variant="ghost"
                     onClick={handleBack}
                     className="mb-4"
                 >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4 mr-2" />
                     Back to Campaigns
                 </Button>
                 <div className="flex justify-between items-start">
@@ -501,7 +517,7 @@ export default function CampaignDetailPage() {
                                 <Badge variant={getStateBadgeVariant(campaign.state)}>
                                     {campaign.state}
                                 </Badge>
-                                <span className="text-muted-foreground">
+                                <span className="text-[#737373]">
                                     Created {formatDate(campaign.created_at, organizationTimezone)}
                                 </span>
                             </div>
@@ -510,7 +526,7 @@ export default function CampaignDetailPage() {
                             <Popover open={isReportPopoverOpen} onOpenChange={setIsReportPopoverOpen}>
                                 <PopoverTrigger asChild>
                                     <Button variant="outline" disabled={isDownloadingReport}>
-                                        <Download className="h-4 w-4 mr-2" />
+                                        <HugeiconsIcon icon={Download01Icon} className="h-4 w-4 mr-2" />
                                         Download Report
                                     </Button>
                                 </PopoverTrigger>
@@ -524,7 +540,7 @@ export default function CampaignDetailPage() {
                                                     <Popover>
                                                         <PopoverTrigger asChild>
                                                             <Button variant="outline" size="sm" className="w-[140px] justify-start text-left font-normal">
-                                                                <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                                                                <HugeiconsIcon icon={Calendar01Icon} className="mr-2 h-3.5 w-3.5" />
                                                                 {reportStartDate ? format(reportStartDate, 'MMM dd, yyyy') : 'Start date'}
                                                             </Button>
                                                         </PopoverTrigger>
@@ -551,7 +567,7 @@ export default function CampaignDetailPage() {
                                                     <Popover>
                                                         <PopoverTrigger asChild>
                                                             <Button variant="outline" size="sm" className="w-[140px] justify-start text-left font-normal">
-                                                                <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                                                                <HugeiconsIcon icon={Calendar01Icon} className="mr-2 h-3.5 w-3.5" />
                                                                 {reportEndDate ? format(reportEndDate, 'MMM dd, yyyy') : 'End date'}
                                                             </Button>
                                                         </PopoverTrigger>
@@ -579,7 +595,7 @@ export default function CampaignDetailPage() {
                                                 Clear
                                             </Button>
                                             <Button size="sm" onClick={handleDownloadReport} disabled={isDownloadingReport}>
-                                                <Download className="h-3.5 w-3.5 mr-1.5" />
+                                                <HugeiconsIcon icon={Download01Icon} className="h-3.5 w-3.5 mr-1.5" />
                                                 {reportStartDate || reportEndDate ? 'Download Filtered' : 'Download All'}
                                             </Button>
                                         </div>
@@ -606,7 +622,7 @@ export default function CampaignDetailPage() {
                                 <dd className="mt-1">
                                     <button
                                         onClick={handleWorkflowClick}
-                                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                                        className="text-[#7186AD] hover:text-[#7186AD] hover:underline"
                                     >
                                         {campaign.workflow_name}
                                     </button>
@@ -624,7 +640,7 @@ export default function CampaignDetailPage() {
                                     {campaign.source_type === 'csv' ? (
                                         <button
                                             onClick={handleDownloadCsv}
-                                            className="text-blue-600 hover:text-blue-800 hover:underline text-sm break-all"
+                                            className="text-[#7186AD] hover:text-[#7186AD] hover:underline text-sm break-all"
                                         >
                                             {campaign.source_id.split('/').pop()}
                                         </button>
@@ -633,7 +649,7 @@ export default function CampaignDetailPage() {
                                             href={campaign.source_id}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-blue-600 hover:text-blue-800 hover:underline text-sm break-all"
+                                            className="text-[#7186AD] hover:text-[#7186AD] hover:underline text-sm break-all"
                                         >
                                             {campaign.source_id}
                                         </a>
@@ -646,12 +662,12 @@ export default function CampaignDetailPage() {
                                     {campaign.telephony_configuration_id ? (
                                         <button
                                             onClick={() => router.push(`/telephony-configurations/${campaign.telephony_configuration_id}`)}
-                                            className="text-blue-600 hover:text-blue-800 hover:underline"
+                                            className="text-[#7186AD] hover:text-[#7186AD] hover:underline"
                                         >
                                             {campaign.telephony_configuration_name || `Configuration #${campaign.telephony_configuration_id}`}
                                         </button>
                                     ) : (
-                                        <span className="text-muted-foreground">Not assigned</span>
+                                        <span className="text-[#737373]">Not assigned</span>
                                     )}
                                 </dd>
                             </div>
@@ -671,7 +687,7 @@ export default function CampaignDetailPage() {
                                     <dd className="mt-1">
                                         <button
                                             onClick={() => router.push(`/campaigns/${campaign.parent_campaign_id}`)}
-                                            className="text-blue-600 hover:text-blue-800 hover:underline"
+                                            className="text-[#7186AD] hover:text-[#7186AD] hover:underline"
                                         >
                                             Campaign #{campaign.parent_campaign_id}
                                         </button>
@@ -684,7 +700,7 @@ export default function CampaignDetailPage() {
                                     <dd className="mt-1">
                                         <button
                                             onClick={() => router.push(`/campaigns/${campaign.redialed_campaign_id}`)}
-                                            className="text-blue-600 hover:text-blue-800 hover:underline"
+                                            className="text-[#7186AD] hover:text-[#7186AD] hover:underline"
                                         >
                                             Campaign #{campaign.redialed_campaign_id}
                                         </button>
@@ -727,7 +743,7 @@ export default function CampaignDetailPage() {
                                 {campaign.max_concurrency ? (
                                     <span>{campaign.max_concurrency}</span>
                                 ) : (
-                                    <span className="text-muted-foreground">Using organization default</span>
+                                    <span className="text-[#737373]">Using organization default</span>
                                 )}
                             </dd>
                         </div>
@@ -740,29 +756,29 @@ export default function CampaignDetailPage() {
                                 <span className="text-sm font-medium">Retries Enabled</span>
                                 {campaign.retry_config.enabled ? (
                                     <Badge variant="default" className="flex items-center gap-1">
-                                        <Check className="h-3 w-3" />
+                                        <HugeiconsIcon icon={CheckIcon} className="h-3 w-3" />
                                         Enabled
                                     </Badge>
                                 ) : (
                                     <Badge variant="secondary" className="flex items-center gap-1">
-                                        <X className="h-3 w-3" />
+                                        <HugeiconsIcon icon={XIcon} className="h-3 w-3" />
                                         Disabled
                                     </Badge>
                                 )}
                             </div>
 
                             {campaign.retry_config.enabled && (
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pl-4 border-l-2 border-muted">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pl-4 border-l-2 border-[#E5E5E5]">
                                     <div>
-                                        <dt className="text-sm text-muted-foreground">Max Retries</dt>
+                                        <dt className="text-sm text-[#737373]">Max Retries</dt>
                                         <dd className="mt-1 font-medium">{campaign.retry_config.max_retries}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-muted-foreground">Retry Delay</dt>
+                                        <dt className="text-sm text-[#737373]">Retry Delay</dt>
                                         <dd className="mt-1 font-medium">{campaign.retry_config.retry_delay_seconds}s</dd>
                                     </div>
                                     <div className="col-span-2 md:col-span-1">
-                                        <dt className="text-sm text-muted-foreground">Retry On</dt>
+                                        <dt className="text-sm text-[#737373]">Retry On</dt>
                                         <dd className="mt-1 flex flex-wrap gap-1">
                                             {campaign.retry_config.retry_on_busy && (
                                                 <Badge variant="outline" className="text-xs">Busy</Badge>
@@ -788,12 +804,12 @@ export default function CampaignDetailPage() {
                                 <div className="flex items-center gap-2">
                                     {campaign.schedule_config?.enabled ? (
                                         <Badge variant="default" className="flex items-center gap-1">
-                                            <Clock className="h-3 w-3" />
+                                            <HugeiconsIcon icon={Clock01Icon} className="h-3 w-3" />
                                             Enabled
                                         </Badge>
                                     ) : (
                                         <Badge variant="secondary" className="flex items-center gap-1">
-                                            <X className="h-3 w-3" />
+                                            <HugeiconsIcon icon={XIcon} className="h-3 w-3" />
                                             Not configured
                                         </Badge>
                                     )}
@@ -801,13 +817,13 @@ export default function CampaignDetailPage() {
                             </div>
 
                             {campaign.schedule_config?.enabled && (
-                                <div className="pl-4 border-l-2 border-muted space-y-3">
+                                <div className="pl-4 border-l-2 border-[#E5E5E5] space-y-3">
                                     <div>
-                                        <dt className="text-sm text-muted-foreground">Timezone</dt>
+                                        <dt className="text-sm text-[#737373]">Timezone</dt>
                                         <dd className="mt-1 font-medium">{campaign.schedule_config.timezone.replace(/_/g, ' ')}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-muted-foreground">Time Slots</dt>
+                                        <dt className="text-sm text-[#737373]">Time Slots</dt>
                                         <dd className="mt-1 flex flex-wrap gap-2">
                                             {campaign.schedule_config.slots.map((slot, index) => {
                                                 const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -836,7 +852,7 @@ export default function CampaignDetailPage() {
                     </CardHeader>
                     <CardContent>
                         {sortedLogs.length === 0 ? (
-                            <p className="text-sm text-muted-foreground">No events recorded yet.</p>
+                            <p className="text-sm text-[#737373]">No events recorded yet.</p>
                         ) : (
                             <ul className="space-y-3">
                                 {sortedLogs.map((entry, idx) => (
@@ -850,20 +866,20 @@ export default function CampaignDetailPage() {
                                                 <Badge variant={getLogBadgeVariant(entry.level)} className="text-xs">
                                                     {entry.level}
                                                 </Badge>
-                                                <code className="text-xs text-muted-foreground">
+                                                <code className="text-xs text-[#737373]">
                                                     {entry.event}
                                                 </code>
-                                                <span className="text-xs text-muted-foreground">
+                                                <span className="text-xs text-[#737373]">
                                                     {formatLogTimestamp(entry.ts)}
                                                 </span>
                                             </div>
                                             <p className="text-sm mt-1 break-words">{entry.message}</p>
                                             {entry.details && Object.keys(entry.details).length > 0 && (
                                                 <details className="mt-1.5">
-                                                    <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+                                                    <summary className="text-xs text-[#737373] cursor-pointer hover:text-foreground">
                                                         Details
                                                     </summary>
-                                                    <pre className="mt-1.5 text-xs bg-muted rounded p-2 overflow-x-auto whitespace-pre-wrap break-words">
+                                                    <pre className="mt-1.5 text-xs bg-[#F7F7F7] rounded p-2 overflow-x-auto whitespace-pre-wrap break-words">
                                                         {JSON.stringify(entry.details, null, 2)}
                                                     </pre>
                                                 </details>

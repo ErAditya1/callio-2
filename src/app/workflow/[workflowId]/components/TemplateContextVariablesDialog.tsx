@@ -1,4 +1,7 @@
-import { Trash2Icon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -86,14 +89,14 @@ export const TemplateContextVariablesDialog = ({
                                 <div key={key} className="flex items-center gap-2 p-2 border rounded-md">
                                     <div className="flex-1">
                                         <div className="text-sm font-medium">{key}</div>
-                                        <div className="text-xs text-muted-foreground truncate">{value}</div>
+                                        <div className="text-xs text-[#737373] truncate">{value}</div>
                                     </div>
                                     <Button
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => handleRemoveContextVar(key)}
                                     >
-                                        <Trash2Icon className="w-4 h-4" />
+                                        <HugeiconsIcon icon={Delete02Icon} className="w-4 h-4" />
                                     </Button>
                                 </div>
                             ))}

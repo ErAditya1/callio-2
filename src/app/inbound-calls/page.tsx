@@ -1,4 +1,7 @@
-import { ArrowRight } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowRight01Icon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -28,7 +31,7 @@ export default function InboundCallsPage() {
           <Button asChild className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-5 h-10 text-xs font-semibold">
             <Link href="/workflow">
               Deploy Inbound Agent
-              <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5 ml-1.5" />
             </Link>
           </Button>
           <Button asChild variant="outline" className="rounded-lg px-4 h-10 text-xs font-medium border-border/70">

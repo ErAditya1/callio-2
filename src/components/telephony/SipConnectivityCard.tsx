@@ -1,6 +1,10 @@
 "use client";
 
-import { ChevronDown, Copy } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ChevronDownIcon,
+  Copy01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -88,7 +92,7 @@ export function SipConnectivityCard({
           <CollapsibleTrigger asChild>
             <Button variant="outline" size="sm" className="shrink-0">
               {open ? "Hide details" : "View details"}
-              <ChevronDown
+              <HugeiconsIcon icon={ChevronDownIcon}
                 className={`ml-2 h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
               />
             </Button>
@@ -104,7 +108,7 @@ export function SipConnectivityCard({
                     easy to walk past and read the wrong hostnames from. */}
                 <span aria-hidden className="relative flex h-3 w-3 shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-[#7186AD]" />
                 </span>
               </p>
               <Select value={region.region} onValueChange={setSelectedRegion}>
@@ -122,16 +126,16 @@ export function SipConnectivityCard({
             </div>
 
             <section className="overflow-hidden rounded-md border">
-              <div className="border-b bg-muted/20 p-4">
+              <div className="border-b bg-[#F7F7F7] p-4">
                 <h3 className="font-semibold">Inbound</h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-[#737373]">
                   Route calls to {details.provider_display_name}/Callio AI using this
                   SIP endpoint.
                 </p>
               </div>
               <div className="space-y-3 p-4">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md bg-muted/30 px-3 py-2 text-sm">
-                  <span className="text-muted-foreground">Hostname</span>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md bg-[#F7F7F7] px-3 py-2 text-sm">
+                  <span className="text-[#737373]">Hostname</span>
                   {inboundHostname ? (
                     <button
                       type="button"
@@ -141,12 +145,12 @@ export function SipConnectivityCard({
                       className="inline-flex items-center gap-2 rounded font-mono hover:text-foreground"
                     >
                       {inboundHostname}
-                      <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                      <HugeiconsIcon icon={Copy01Icon} className="h-3.5 w-3.5 text-[#737373]" />
                     </button>
                   ) : null}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-sm">
-                  <span className="text-muted-foreground">Ports</span>
+                  <span className="text-[#737373]">Ports</span>
                   {portGroups.map((group) => (
                     <Badge
                       key={group.port}
@@ -161,16 +165,16 @@ export function SipConnectivityCard({
             </section>
 
             <section className="overflow-hidden rounded-md border">
-              <div className="border-b bg-muted/20 p-4">
+              <div className="border-b bg-[#F7F7F7] p-4">
                 <h3 className="font-semibold">Outbound</h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-[#737373]">
                   Send calls from {details.provider_display_name}/Callio AI to your SIP
                   carrier or PBX.
                 </p>
               </div>
               <div className="space-y-3 p-4">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md bg-muted/30 px-3 py-2 text-sm">
-                  <span className="text-muted-foreground">Origin IP address</span>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md bg-[#F7F7F7] px-3 py-2 text-sm">
+                  <span className="text-[#737373]">Origin IP address</span>
                   <button
                     type="button"
                     onClick={() =>
@@ -181,7 +185,7 @@ export function SipConnectivityCard({
                     className="inline-flex items-center gap-2 rounded font-mono hover:text-foreground"
                   >
                     {region.outbound_origin_ip}
-                    <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                    <HugeiconsIcon icon={Copy01Icon} className="h-3.5 w-3.5 text-[#737373]" />
                   </button>
                 </div>
               </div>

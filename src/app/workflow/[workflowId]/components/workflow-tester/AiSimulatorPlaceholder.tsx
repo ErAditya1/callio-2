@@ -1,6 +1,9 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";;
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -20,7 +23,7 @@ export function AiSimulatorPlaceholder({
     return (
         <div className="flex min-h-0 flex-1 flex-col gap-3">
             {disabledReason ? <DisabledNotice reason={disabledReason} /> : null}
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-[#737373]">
                 Drive multi-turn, agent-vs-agent tests with a persona prompt.
             </p>
             <Textarea
@@ -30,7 +33,7 @@ export function AiSimulatorPlaceholder({
                 className="min-h-32 resize-none text-sm leading-6"
             />
             <Button size="sm" disabled className="self-start">
-                <Sparkles className="h-4 w-4" />
+                <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4" />
                 Coming soon
             </Button>
         </div>

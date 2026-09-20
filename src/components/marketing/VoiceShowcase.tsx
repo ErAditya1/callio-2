@@ -1,11 +1,12 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  Headphones,
-  Pause,
-  Play,
-} from 'lucide-react';
+  ArrowRight01Icon,
+  HeadphonesIcon,
+  PauseIcon,
+  PlayIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -65,7 +66,7 @@ export function VoiceShowcase() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
             <Badge variant="outline" className="mb-3 border-purple-500/30 text-purple-400 bg-purple-500/10 px-3 py-1">
-              <Headphones className="w-3.5 h-3.5 mr-1.5 inline" />
+              <HugeiconsIcon icon={HeadphonesIcon} className="w-3.5 h-3.5 mr-1.5 inline" />
               Studio-Grade Voices
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
@@ -79,7 +80,7 @@ export function VoiceShowcase() {
           <Button asChild variant="outline" className="rounded-xl border-border/80 hover:bg-muted font-medium">
             <Link href="/voices">
               Explore All 50+ Voices
-              <ArrowRight className="w-4 h-4 ml-1.5" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1.5" />
             </Link>
           </Button>
         </div>
@@ -119,7 +120,7 @@ export function VoiceShowcase() {
                         : 'bg-indigo-600 hover:bg-indigo-500 text-white'
                     }`}
                   >
-                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+                    {isPlaying ? <HugeiconsIcon icon={PauseIcon} className="w-4 h-4" /> : <HugeiconsIcon icon={PlayIcon} className="w-4 h-4 ml-0.5" />}
                   </Button>
                 </div>
 

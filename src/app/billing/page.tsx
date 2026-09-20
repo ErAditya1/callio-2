@@ -1,24 +1,25 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    ChevronLeft,
-    ChevronRight,
-    CircleDollarSign,
-    CreditCard,
-    ExternalLink,
-    Info,
-    RefreshCw,
-    Wallet,
-    PhoneCall,
-    Clock,
-    CheckCircle2,
-    AlertCircle,
-    ArrowUpRight,
-    Sparkles,
-    Copy,
-    Check,
-    Receipt,
-} from "lucide-react";
+  AlertCircleIcon,
+  ArrowUpRight01Icon,
+  CheckIcon,
+  CheckmarkCircle02Icon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CircleDollarSignIcon,
+  Clock01Icon,
+  Copy01Icon,
+  CreditCardIcon,
+  ExternalLinkIcon,
+  InfoIcon,
+  PhoneCallIcon,
+  ReceiptIcon,
+  RefreshCwIcon,
+  SparklesIcon,
+  Wallet01Icon,
+} from "@hugeicons/core-free-icons";;
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -198,7 +199,7 @@ export default function BillingPage() {
 
     if (loading || configLoading) {
         return (
-            <div className="container mx-auto p-6 space-y-6">
+            <div className="app-page space-y-6">
                 <div className="space-y-2">
                     <Skeleton className="h-9 w-40" />
                     <Skeleton className="h-5 w-96 max-w-full" />
@@ -214,25 +215,25 @@ export default function BillingPage() {
     }
 
     return (
-        <div className="container mx-auto p-6 space-y-6">
+        <div className="app-page space-y-6">
             {/* Header */}
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Billing & Calling Wallet</h1>
-                    <p className="text-muted-foreground mt-1">
+                    <p className="text-[#737373] mt-1">
                         Real-time wallet balance, transparent model rates, and per-conversation usage deductions.
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
-                        <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
+                        <HugeiconsIcon icon={RefreshCwIcon} className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
                         Refresh
                     </Button>
                     <Button
                         onClick={() => setRechargeModalOpen(true)}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-xs"
+                        className="bg-neutral-950 hover:bg-neutral-800 text-white font-semibold shadow-xs"
                     >
-                        <CreditCard className="h-4 w-4 mr-2" />
+                        <HugeiconsIcon icon={CreditCardIcon} className="h-4 w-4 mr-2" />
                         Recharge Wallet
                     </Button>
                 </div>
@@ -240,11 +241,11 @@ export default function BillingPage() {
             </div>
 
             {/* Calling Wallet Hero Banner */}
-            <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-emerald-500/10 via-sky-500/10 to-indigo-500/10 p-6 shadow-sm">
+            <div className="relative overflow-hidden rounded-2xl border border-[#E5E5E5] bg-[#F7F7F7] p-6 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
                     <div className="flex items-start gap-4">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shrink-0">
-                            <Wallet className="h-7 w-7" />
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F0F3F9] text-[#171717] dark:text-[#7186AD] border border-[#DCE3EF] shrink-0">
+                            <HugeiconsIcon icon={Wallet01Icon} className="h-7 w-7" />
                         </div>
                         <div>
                             <div className="flex items-center gap-2.5">
@@ -253,58 +254,58 @@ export default function BillingPage() {
                                     variant="outline"
                                     className={
                                         platformWalletUsd > 1.0
-                                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs px-2.5 py-0.5"
+                                            ? "bg-[#F0F3F9] text-[#171717] dark:text-[#7186AD] border-[#DCE3EF] text-xs px-2.5 py-0.5"
                                             : platformWalletUsd > 0
-                                            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 text-xs px-2.5 py-0.5"
+                                            ? "bg-[#E5E5E5]/15 text-amber-600 dark:text-amber-400 border-amber-500/30 text-xs px-2.5 py-0.5"
                                             : "bg-destructive/15 text-destructive border-destructive/30 text-xs px-2.5 py-0.5"
                                     }
                                 >
                                     {platformWalletUsd > 1.0 ? "Active & Ready" : platformWalletUsd > 0 ? "Low Balance" : "Needs Recharge"}
                                 </Badge>
                             </div>
-                            <p className="text-sm text-muted-foreground mt-1 max-w-xl">
+                            <p className="text-sm text-[#737373] mt-1 max-w-xl">
                                 Funds are deducted automatically per second for speech synthesis, AI cognition, transcription, and carrier trunking.
                             </p>
                         </div>
                     </div>
 
                     <div className="flex flex-col md:items-end">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-[#737373]">
                             Available Balance
                         </span>
                         <div className="flex items-baseline gap-1.5 mt-0.5">
                             <span className="text-4xl font-extrabold font-mono tracking-tight text-foreground">
                                 ${platformWalletUsd.toFixed(2)}
                             </span>
-                            <span className="text-sm font-bold uppercase text-muted-foreground">USD</span>
+                            <span className="text-sm font-bold uppercase text-[#737373]">USD</span>
                         </div>
-                        <span className="text-xs text-muted-foreground mt-1">
+                        <span className="text-xs text-[#737373] mt-1">
                             ~{estimatedMinutesRemaining} minutes of talk time remaining
                         </span>
                     </div>
                 </div>
 
                 {/* Rate Card Breakdown */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-border/60">
-                    <div className="p-3 rounded-xl bg-background/70 border border-border/50 backdrop-blur-sm">
-                        <div className="text-muted-foreground text-xs font-medium">STT (Deepgram Nova-2)</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-[#E5E5E5]">
+                    <div className="p-3 rounded-xl bg-background/70 border border-[#E5E5E5] backdrop-blur-sm">
+                        <div className="text-[#737373] text-xs font-medium">STT (Deepgram Nova-2)</div>
                         <div className="font-mono font-bold text-sm mt-1">$0.005 / min</div>
-                        <div className="text-[11px] text-muted-foreground mt-0.5">Realtime Speech-to-Text</div>
+                        <div className="text-[11px] text-[#737373] mt-0.5">Realtime Speech-to-Text</div>
                     </div>
-                    <div className="p-3 rounded-xl bg-background/70 border border-border/50 backdrop-blur-sm">
-                        <div className="text-muted-foreground text-xs font-medium">LLM (GPT-4o-mini)</div>
+                    <div className="p-3 rounded-xl bg-background/70 border border-[#E5E5E5] backdrop-blur-sm">
+                        <div className="text-[#737373] text-xs font-medium">LLM (GPT-4o-mini)</div>
                         <div className="font-mono font-bold text-sm mt-1">$0.015 / min</div>
-                        <div className="text-[11px] text-muted-foreground mt-0.5">Intelligence & Logic</div>
+                        <div className="text-[11px] text-[#737373] mt-0.5">Intelligence & Logic</div>
                     </div>
-                    <div className="p-3 rounded-xl bg-background/70 border border-border/50 backdrop-blur-sm">
-                        <div className="text-muted-foreground text-xs font-medium">TTS (Cartesia Sonic)</div>
+                    <div className="p-3 rounded-xl bg-background/70 border border-[#E5E5E5] backdrop-blur-sm">
+                        <div className="text-[#737373] text-xs font-medium">TTS (Cartesia Sonic)</div>
                         <div className="font-mono font-bold text-sm mt-1">$0.020 / min</div>
-                        <div className="text-[11px] text-muted-foreground mt-0.5">Ultra-low Latency Voice</div>
+                        <div className="text-[11px] text-[#737373] mt-0.5">Ultra-low Latency Voice</div>
                     </div>
-                    <div className="p-3 rounded-xl bg-background/70 border border-border/50 backdrop-blur-sm">
-                        <div className="text-muted-foreground text-xs font-medium">Carrier Trunking</div>
+                    <div className="p-3 rounded-xl bg-background/70 border border-[#E5E5E5] backdrop-blur-sm">
+                        <div className="text-[#737373] text-xs font-medium">Carrier Trunking</div>
                         <div className="font-mono font-bold text-sm mt-1">$0.020 / min</div>
-                        <div className="text-[11px] text-muted-foreground mt-0.5">Inbound & Outbound VoIP</div>
+                        <div className="text-[11px] text-[#737373] mt-0.5">Inbound & Outbound VoIP</div>
                     </div>
                 </div>
             </div>
@@ -314,12 +315,12 @@ export default function BillingPage() {
                 <Card>
                     <CardHeader className="pb-2">
                         <CardDescription className="text-xs font-semibold uppercase tracking-wider">Wallet Balance</CardDescription>
-                        <CardTitle className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                        <CardTitle className="text-2xl font-bold font-mono text-[#171717] dark:text-[#7186AD]">
                             ${platformWalletUsd.toFixed(2)} USD
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-[#737373]">
                             {platformWalletUsd > 0 ? "Ready for inbound & outbound calls" : "Please top up to start calling"}
                         </p>
                     </CardContent>
@@ -331,7 +332,7 @@ export default function BillingPage() {
                         <CardTitle className="text-2xl font-bold">{totalRuns}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-[#737373]">
                             {totalDurationMinutes > 0 ? `${totalDurationMinutes} min total talk duration` : "No calls recorded yet"}
                         </p>
                     </CardContent>
@@ -343,7 +344,7 @@ export default function BillingPage() {
                         <CardTitle className="text-2xl font-bold font-mono">$0.06 / min</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-[#737373]">
                             All-inclusive: STT + LLM + TTS + Telephony
                         </p>
                     </CardContent>
@@ -355,7 +356,7 @@ export default function BillingPage() {
                 <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                         <CardTitle className="text-xl font-bold">Recent Call Usage & Wallet Deductions</CardTitle>
-                        <CardDescription className="text-xs text-muted-foreground mt-0.5">
+                        <CardDescription className="text-xs text-[#737373] mt-0.5">
                             Real-time breakdown of per-conversation duration and amount deducted from your wallet.
                         </CardDescription>
                     </div>
@@ -370,7 +371,7 @@ export default function BillingPage() {
                         <div className="rounded-lg border overflow-x-auto shadow-sm">
                             <Table>
                                 <TableHeader>
-                                    <TableRow className="bg-muted/50">
+                                    <TableRow className="bg-[#F7F7F7]">
                                         <TableHead className="font-semibold">Date & Time</TableHead>
                                         <TableHead className="font-semibold">Agent / Workflow</TableHead>
                                         <TableHead className="font-semibold">Run ID</TableHead>
@@ -390,7 +391,7 @@ export default function BillingPage() {
                                             : 0;
 
                                         return (
-                                            <TableRow key={run.id} className="hover:bg-muted/40">
+                                            <TableRow key={run.id} className="hover:bg-[#F7F7F7]">
                                                 <TableCell className="text-sm whitespace-nowrap">
                                                     {formatDateTime(run.created_at, organizationTimezone)}
                                                 </TableCell>
@@ -408,7 +409,7 @@ export default function BillingPage() {
                                                 <TableCell className="text-sm whitespace-nowrap font-mono">
                                                     {formatDuration(run.call_duration_seconds)}
                                                 </TableCell>
-                                                <TableCell className="text-sm font-mono font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                                                <TableCell className="text-sm font-mono font-semibold text-[#171717] dark:text-[#7186AD] whitespace-nowrap">
                                                     {cost > 0 ? `$${cost.toFixed(4)}` : "-"}
                                                 </TableCell>
                                                 <TableCell>
@@ -417,7 +418,7 @@ export default function BillingPage() {
                                                             {run.disposition}
                                                         </Badge>
                                                     ) : (
-                                                        <span className="text-xs text-muted-foreground">-</span>
+                                                        <span className="text-xs text-[#737373]">-</span>
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="text-right">
@@ -432,7 +433,7 @@ export default function BillingPage() {
                                                             target="_blank"
                                                         >
                                                             View Run
-                                                            <ExternalLink className="h-3.5 w-3.5" />
+                                                            <HugeiconsIcon icon={ExternalLinkIcon} className="h-3.5 w-3.5" />
                                                         </Link>
                                                     </Button>
                                                 </TableCell>
@@ -444,9 +445,9 @@ export default function BillingPage() {
                         </div>
                     ) : (
                         <div className="rounded-xl border border-dashed p-10 text-center">
-                            <PhoneCall className="mx-auto h-10 w-10 text-muted-foreground/50 mb-3" />
+                            <HugeiconsIcon icon={PhoneCallIcon} className="mx-auto h-10 w-10 text-[#737373]/50 mb-3" />
                             <h3 className="font-semibold text-base">No Call Usage Recorded Yet</h3>
-                            <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
+                            <p className="text-sm text-[#737373] mt-1 max-w-sm mx-auto">
                                 Once you test an agent via phone call or web call, per-second usage and wallet deductions will appear here automatically.
                             </p>
                             <Button asChild className="mt-4" size="sm">
@@ -458,7 +459,7 @@ export default function BillingPage() {
                     {/* Pagination */}
                     {totalPages > 1 && (
                         <div className="flex items-center justify-between mt-6">
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 Page {currentPage} of {totalPages} ({totalRuns} total calls)
                             </p>
                             <div className="flex gap-2">
@@ -468,7 +469,7 @@ export default function BillingPage() {
                                     onClick={() => handlePageChange(currentPage - 1)}
                                     disabled={currentPage <= 1 || loading || refreshing}
                                 >
-                                    <ChevronLeft className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={ChevronLeftIcon} className="h-4 w-4 mr-1" />
                                     Previous
                                 </Button>
                                 <Button
@@ -478,7 +479,7 @@ export default function BillingPage() {
                                     disabled={currentPage >= totalPages || loading || refreshing}
                                 >
                                     Next
-                                    <ChevronRight className="h-4 w-4 ml-1" />
+                                    <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4 ml-1" />
                                 </Button>
                             </div>
                         </div>
@@ -492,10 +493,10 @@ export default function BillingPage() {
                 <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                         <div className="flex items-center gap-2">
-                            <Receipt className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                            <HugeiconsIcon icon={ReceiptIcon} className="h-5 w-5 text-[#171717] dark:text-[#7186AD]" />
                             <CardTitle className="text-xl font-bold">Wallet Recharges & Receipts</CardTitle>
                         </div>
-                        <CardDescription className="text-xs text-muted-foreground mt-0.5">
+                        <CardDescription className="text-xs text-[#737373] mt-0.5">
                             Order receipts with custom identification. Search or filter by Receipt ID in your Razorpay Dashboard.
                         </CardDescription>
                     </div>
@@ -503,9 +504,9 @@ export default function BillingPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => setRechargeModalOpen(true)}
-                        className="gap-1.5 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                        className="gap-1.5 border-[#DCE3EF] text-[#171717] dark:text-[#7186AD] hover:bg-[#F0F3F9]"
                     >
-                        <CreditCard className="h-3.5 w-3.5" />
+                        <HugeiconsIcon icon={CreditCardIcon} className="h-3.5 w-3.5" />
                         Top Up Balance
                     </Button>
                 </CardHeader>
@@ -519,7 +520,7 @@ export default function BillingPage() {
                         <div className="rounded-lg border overflow-x-auto shadow-sm">
                             <Table>
                                 <TableHeader>
-                                    <TableRow className="bg-muted/50">
+                                    <TableRow className="bg-[#F7F7F7]">
                                         <TableHead className="font-semibold">Date & Time</TableHead>
                                         <TableHead className="font-semibold">Receipt ID (RZP Dashboard)</TableHead>
                                         <TableHead className="font-semibold">Credits & Amount Paid</TableHead>
@@ -534,7 +535,7 @@ export default function BillingPage() {
                                         const isCopied = copiedReceipt === tx.receipt;
 
                                         return (
-                                            <TableRow key={tx.id} className="hover:bg-muted/40">
+                                            <TableRow key={tx.id} className="hover:bg-[#F7F7F7]">
                                                 <TableCell className="text-sm whitespace-nowrap">
                                                     {tx.created_at
                                                         ? formatDateTime(tx.created_at, organizationTimezone)
@@ -548,30 +549,30 @@ export default function BillingPage() {
                                                         <button
                                                             type="button"
                                                             onClick={() => handleCopyReceipt(tx.receipt)}
-                                                            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded hover:bg-muted"
+                                                            className="text-[#737373] hover:text-foreground transition-colors p-1 rounded hover:bg-[#F7F7F7]"
                                                             title="Copy Receipt ID for Razorpay Dashboard"
                                                         >
                                                             {isCopied ? (
-                                                                <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                                                <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-[#7186AD]" />
                                                             ) : (
-                                                                <Copy className="h-3.5 w-3.5" />
+                                                                <HugeiconsIcon icon={Copy01Icon} className="h-3.5 w-3.5" />
                                                             )}
                                                         </button>
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="text-sm font-mono whitespace-nowrap">
                                                     <div className="flex flex-col">
-                                                        <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                                                        <span className="font-bold text-[#171717] dark:text-[#7186AD]">
                                                             +${Number(tx.amount_usd).toFixed(2)} USD
                                                         </span>
                                                         {tx.amount_inr > 0 && (
-                                                            <span className="text-[11px] text-muted-foreground font-normal">
+                                                            <span className="text-[11px] text-[#737373] font-normal">
                                                                 ₹{Number(tx.amount_inr).toFixed(2)} INR (incl. GST)
                                                             </span>
                                                         )}
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="text-xs font-mono text-muted-foreground whitespace-nowrap">
+                                                <TableCell className="text-xs font-mono text-[#737373] whitespace-nowrap">
                                                     {tx.razorpay_payment_id || tx.razorpay_order_id}
                                                 </TableCell>
 
@@ -580,10 +581,10 @@ export default function BillingPage() {
                                                         variant="outline"
                                                         className={
                                                             isPaid
-                                                                ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs px-2 py-0.5"
+                                                                ? "bg-[#F0F3F9] text-[#171717] dark:text-[#7186AD] border-[#DCE3EF] text-xs px-2 py-0.5"
                                                                 : isFailed
                                                                 ? "bg-destructive/15 text-destructive border-destructive/30 text-xs px-2 py-0.5"
-                                                                : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 text-xs px-2 py-0.5"
+                                                                : "bg-[#E5E5E5]/15 text-amber-600 dark:text-amber-400 border-amber-500/30 text-xs px-2 py-0.5"
                                                         }
                                                     >
                                                         {isPaid ? "Paid & Credited" : isFailed ? "Failed" : "Pending"}
@@ -597,9 +598,9 @@ export default function BillingPage() {
                         </div>
                     ) : (
                         <div className="rounded-xl border border-dashed p-8 text-center">
-                            <Receipt className="mx-auto h-9 w-9 text-muted-foreground/40 mb-2.5" />
+                            <HugeiconsIcon icon={ReceiptIcon} className="mx-auto h-9 w-9 text-[#737373]/40 mb-2.5" />
                             <h3 className="font-semibold text-sm">No Recharge Transactions Yet</h3>
-                            <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+                            <p className="text-xs text-[#737373] mt-1 max-w-sm mx-auto">
                                 Once you recharge your organization wallet via Razorpay, transaction receipts and payment references will be logged here.
                             </p>
                         </div>

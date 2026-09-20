@@ -1,4 +1,14 @@
-import { Loader2, Mic, Pause, Play, Square, Trash2Icon, Upload, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  Loading02Icon,
+  Mic01Icon,
+  PauseIcon,
+  PlayIcon,
+  SquareIcon,
+  Upload01Icon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import posthog from "posthog-js";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -376,14 +386,14 @@ export const RecordingsDialog = ({
                     <DialogDescription>
                         Upload or record audio for hybrid prompts. Recordings are
                         scoped to your current TTS configuration. Use{" "}
-                        <code className="text-xs bg-muted px-1 rounded">@</code> in
+                        <code className="text-xs bg-[#F7F7F7] px-1 rounded">@</code> in
                         prompt fields to insert them.
                     </DialogDescription>
                 </DialogHeader>
 
                 {/* Current TTS Config */}
-                <div className="rounded-md border p-3 bg-muted/30 text-sm space-y-1">
-                    <div className="font-medium text-xs text-muted-foreground uppercase tracking-wide">
+                <div className="rounded-md border p-3 bg-[#F7F7F7] text-sm space-y-1">
+                    <div className="font-medium text-xs text-[#737373] uppercase tracking-wide">
                         Current TTS Configuration
                     </div>
                     {ttsProvider ? (
@@ -417,7 +427,7 @@ export const RecordingsDialog = ({
 
                     {/* Audio source: file picker or record */}
                     <div>
-                        <Label className="text-xs text-muted-foreground">
+                        <Label className="text-xs text-[#737373]">
                             Audio Files
                         </Label>
                         <div className="flex gap-2">
@@ -437,8 +447,8 @@ export const RecordingsDialog = ({
                                 onClick={() => fileInputRef.current?.click()}
                                 disabled={isBusy}
                             >
-                                <Upload className="w-4 h-4 mr-2 shrink-0" />
-                                <span className="text-muted-foreground">Choose audio files (max 5MB each)</span>
+                                <HugeiconsIcon icon={Upload01Icon} className="w-4 h-4 mr-2 shrink-0" />
+                                <span className="text-[#737373]">Choose audio files (max 5MB each)</span>
                             </Button>
                             {recordingStep === "idle" && (
                                 <Button
@@ -448,7 +458,7 @@ export const RecordingsDialog = ({
                                     onClick={() => setRecordingStep("naming")}
                                     disabled={uploading || anyTranscribing}
                                 >
-                                    <Mic className="w-4 h-4 mr-1" />
+                                    <HugeiconsIcon icon={Mic01Icon} className="w-4 h-4 mr-1" />
                                     Record
                                 </Button>
                             )}
@@ -457,11 +467,11 @@ export const RecordingsDialog = ({
 
                     {/* Recording: filename + start/stop */}
                     {(recordingStep === "naming" || isRecording) && (
-                        <div className="space-y-2 rounded-md border border-dashed p-3 bg-muted/20">
+                        <div className="space-y-2 rounded-md border border-dashed p-3 bg-[#F7F7F7]">
                             {recordingStep === "naming" && (
                                 <>
                                     <div>
-                                        <Label className="text-xs text-muted-foreground">
+                                        <Label className="text-xs text-[#737373]">
                                             Recording Name
                                         </Label>
                                         <Input
@@ -477,7 +487,7 @@ export const RecordingsDialog = ({
                                             onClick={startRecording}
                                             disabled={!recordingFilename.trim()}
                                         >
-                                            <Mic className="w-4 h-4 mr-1" />
+                                            <HugeiconsIcon icon={Mic01Icon} className="w-4 h-4 mr-1" />
                                             Start Recording
                                         </Button>
                                         <Button
@@ -499,14 +509,14 @@ export const RecordingsDialog = ({
                                     <span className="text-sm font-mono">
                                         {Math.floor(recordingDuration / 60)}:{(recordingDuration % 60).toString().padStart(2, "0")}
                                     </span>
-                                    <span className="text-xs text-muted-foreground">{recordingFilename}</span>
+                                    <span className="text-xs text-[#737373]">{recordingFilename}</span>
                                     <Button
                                         size="sm"
                                         variant="destructive"
                                         onClick={handleStopRecording}
                                         className="ml-auto"
                                     >
-                                        <Square className="w-4 h-4 mr-1" />
+                                        <HugeiconsIcon icon={SquareIcon} className="w-4 h-4 mr-1" />
                                         Stop
                                     </Button>
                                 </div>
@@ -517,17 +527,17 @@ export const RecordingsDialog = ({
                     {/* Pending files list */}
                     {pendingFiles.length > 0 && (
                         <div className="space-y-2">
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Pending ({pendingFiles.length} file{pendingFiles.length !== 1 ? "s" : ""})
                             </Label>
                             {pendingFiles.map((pf) => (
-                                <div key={pf.id} className="rounded-md border p-2 space-y-1.5 bg-muted/10">
+                                <div key={pf.id} className="rounded-md border p-2 space-y-1.5 bg-[#F7F7F7]/10">
                                     <div className="flex items-center gap-2">
-                                        <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono truncate flex-1">
+                                        <code className="text-xs bg-[#F7F7F7] px-1.5 py-0.5 rounded font-mono truncate flex-1">
                                             {pf.file.name} ({(pf.file.size / (1024 * 1024)).toFixed(1)}MB)
                                         </code>
                                         {pf.isTranscribing && (
-                                            <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground shrink-0" />
+                                            <HugeiconsIcon icon={Loading02Icon} className="w-3.5 h-3.5 animate-spin text-[#737373] shrink-0" />
                                         )}
                                         <Button
                                             size="sm"
@@ -536,7 +546,7 @@ export const RecordingsDialog = ({
                                             onClick={() => removePendingFile(pf.id)}
                                             disabled={uploading}
                                         >
-                                            <X className="w-3.5 h-3.5" />
+                                            <HugeiconsIcon icon={XIcon} className="w-3.5 h-3.5" />
                                         </Button>
                                     </div>
                                     {pf.error && (
@@ -557,7 +567,7 @@ export const RecordingsDialog = ({
 
                     {/* Language */}
                     <div>
-                        <Label className="text-xs text-muted-foreground">
+                        <Label className="text-xs text-[#737373]">
                             Language
                         </Label>
                         <Select value={language} onValueChange={setLanguage}>
@@ -580,9 +590,9 @@ export const RecordingsDialog = ({
                         disabled={readyCount === 0 || isBusy}
                     >
                         {uploading ? (
-                            <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                            <HugeiconsIcon icon={Loading02Icon} className="w-4 h-4 mr-1 animate-spin" />
                         ) : (
-                            <Upload className="w-4 h-4 mr-1" />
+                            <HugeiconsIcon icon={Upload01Icon} className="w-4 h-4 mr-1" />
                         )}
                         {uploading
                             ? "Uploading..."
@@ -595,17 +605,17 @@ export const RecordingsDialog = ({
                     <Label className="text-sm font-medium">
                         Recordings{" "}
                         {!loading && (
-                            <span className="text-muted-foreground font-normal">
+                            <span className="text-[#737373] font-normal">
                                 ({recordings.length})
                             </span>
                         )}
                     </Label>
                     {loading ? (
                         <div className="flex items-center justify-center py-4">
-                            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                            <HugeiconsIcon icon={Loading02Icon} className="w-5 h-5 animate-spin text-[#737373]" />
                         </div>
                     ) : recordings.length === 0 ? (
-                        <p className="text-sm text-muted-foreground py-2">
+                        <p className="text-sm text-[#737373] py-2">
                             No recordings yet for this TTS configuration.
                         </p>
                     ) : (
@@ -616,11 +626,11 @@ export const RecordingsDialog = ({
                             >
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
-                                        <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono truncate max-w-[300px]">
+                                        <code className="text-xs bg-[#F7F7F7] px-1.5 py-0.5 rounded font-mono truncate max-w-[300px]">
                                             {(rec.metadata?.original_filename as string) || rec.recording_id}
                                         </code>
                                     </div>
-                                    <p className="text-sm text-muted-foreground mt-1 break-all line-clamp-2">
+                                    <p className="text-sm text-[#737373] mt-1 break-all line-clamp-2">
                                         {rec.transcript}
                                     </p>
                                 </div>
@@ -630,9 +640,9 @@ export const RecordingsDialog = ({
                                     onClick={() => handlePlay(rec)}
                                 >
                                     {playingId === rec.recording_id ? (
-                                        <Pause className="w-4 h-4" />
+                                        <HugeiconsIcon icon={PauseIcon} className="w-4 h-4" />
                                     ) : (
-                                        <Play className="w-4 h-4" />
+                                        <HugeiconsIcon icon={PlayIcon} className="w-4 h-4" />
                                     )}
                                 </Button>
                                 <Button
@@ -640,7 +650,7 @@ export const RecordingsDialog = ({
                                     variant="ghost"
                                     onClick={() => handleDelete(rec.recording_id)}
                                 >
-                                    <Trash2Icon className="w-4 h-4" />
+                                    <HugeiconsIcon icon={Delete02Icon} className="w-4 h-4" />
                                 </Button>
                             </div>
                         ))

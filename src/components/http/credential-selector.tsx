@@ -1,6 +1,10 @@
 "use client";
 
-import { Loader2, PlusIcon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+  PlusIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useState } from "react";
 
 import { listCredentialsApiV1CredentialsGet } from "@/client";
@@ -92,7 +96,7 @@ export function CredentialSelector({
                     <SelectTrigger className="flex-1">
                         {loading ? (
                             <div className="flex items-center gap-2">
-                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin" />
                                 <span>Loading...</span>
                             </div>
                         ) : (
@@ -115,7 +119,7 @@ export function CredentialSelector({
                     title="Add new credential"
                     disabled={disabled}
                 >
-                    <PlusIcon className="h-4 w-4" />
+                    <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />
                 </Button>
             </div>
 

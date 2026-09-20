@@ -1,17 +1,19 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import type { IconSvgElement } from "@hugeicons/react";
 import {
-  ArrowRight,
-  Briefcase,
-  Calendar,
-  CheckCircle,
-  Headphones,
-  PhoneCall,
-  PhoneIncoming,
-  Sparkles,
-  TrendingUp,
-  Truck
-} from 'lucide-react';
+  ArrowRight01Icon,
+  Briefcase01Icon,
+  Calendar01Icon,
+  ChartIncreaseIcon,
+  CircleCheckIcon,
+  HeadphonesIcon,
+  PhoneCallIcon,
+  PhoneIncomingIcon,
+  SparklesIcon,
+  TruckIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -20,7 +22,7 @@ import { Button } from '@/components/ui/button';
 
 interface ExplorerOption {
   id: string;
-  icon: React.ElementType;
+  icon: IconSvgElement;
   title: string;
   subtitle: string;
   recommendedAgent: string;
@@ -33,7 +35,7 @@ interface ExplorerOption {
 const EXPLORER_OPTIONS: ExplorerOption[] = [
   {
     id: 'answer-calls',
-    icon: PhoneIncoming,
+    icon: PhoneIncomingIcon,
     title: 'Answer Every Inbound Call',
     subtitle: 'Zero wait times, 24/7 front desk coverage, and automated FAQ resolution.',
     recommendedAgent: 'Sarah — Front Desk Receptionist',
@@ -49,7 +51,7 @@ const EXPLORER_OPTIONS: ExplorerOption[] = [
   },
   {
     id: 'book-appointments',
-    icon: Calendar,
+    icon: Calendar01Icon,
     title: 'Book & Reschedule Appointments',
     subtitle: 'Real-time calendar synchronization with automated SMS reminders.',
     recommendedAgent: 'Jordan — Automated Booking Specialist',
@@ -65,7 +67,7 @@ const EXPLORER_OPTIONS: ExplorerOption[] = [
   },
   {
     id: 'qualify-leads',
-    icon: Briefcase,
+    icon: Briefcase01Icon,
     title: 'Qualify Inbound Leads in 30 Seconds',
     subtitle: 'Call new website form submissions instantly, check budget, and route buyers.',
     recommendedAgent: 'Alex — Speed-to-Lead Qualifier',
@@ -80,7 +82,7 @@ const EXPLORER_OPTIONS: ExplorerOption[] = [
   },
   {
     id: 'customer-support',
-    icon: Headphones,
+    icon: HeadphonesIcon,
     title: 'Instant Customer Support & FAQs',
     subtitle: 'Resolve common account questions, order tracking, and refund status.',
     recommendedAgent: 'Elena — Customer Care Specialist',
@@ -94,7 +96,7 @@ const EXPLORER_OPTIONS: ExplorerOption[] = [
   },
   {
     id: 'outbound-campaigns',
-    icon: TrendingUp,
+    icon: ChartIncreaseIcon,
     title: 'Run Automated Calling Campaigns',
     subtitle: 'Dial hundreds of contacts with smart retry rules and voicemail detection.',
     recommendedAgent: 'Marcus — Campaign Specialist',
@@ -109,7 +111,7 @@ const EXPLORER_OPTIONS: ExplorerOption[] = [
   },
   {
     id: 'fleet-dispatch',
-    icon: Truck,
+    icon: TruckIcon,
     title: 'Automate Driver & Logistics Check-ins',
     subtitle: 'Eliminate manual check calls and capture real-time ETAs and gate delays.',
     recommendedAgent: 'Liam — Dispatch Agent',
@@ -134,7 +136,7 @@ export function UseCaseExplorer() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <Badge variant="outline" className="mb-3 border-indigo-500/30 text-indigo-400 bg-indigo-500/10 px-3 py-1">
-            <Sparkles className="w-3.5 h-3.5 mr-1.5 inline" />
+            <HugeiconsIcon icon={SparklesIcon} className="w-3.5 h-3.5 mr-1.5 inline" />
             Interactive Solutions Explorer
           </Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
@@ -169,7 +171,7 @@ export function UseCaseExplorer() {
                         : 'bg-muted text-muted-foreground'
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <HugeiconsIcon icon={Icon} className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
@@ -243,7 +245,7 @@ export function UseCaseExplorer() {
             <div className="pt-6 border-t border-border/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-400">
-                  <CheckCircle className="w-4 h-4" />
+                  <HugeiconsIcon icon={CircleCheckIcon} className="w-4 h-4" />
                   <span>{activeOption.outcome}</span>
                 </div>
                 <div className="text-xs text-muted-foreground">
@@ -257,7 +259,7 @@ export function UseCaseExplorer() {
               >
                 <Link href="/dashboard/agents/create">
                   Build this Agent
-                  <ArrowRight className="w-4 h-4 ml-1.5" />
+                  <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1.5" />
                 </Link>
               </Button>
             </div>

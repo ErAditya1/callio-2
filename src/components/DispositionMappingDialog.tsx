@@ -1,6 +1,11 @@
 "use client";
 
-import { Plus, RotateCcw, Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  PlusIcon,
+  RotateCcwIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -210,7 +215,7 @@ export function DispositionMappingDialog({
                         onClick={() => updateRow(index, { target: row.source })}
                         title="Reset to the Dograh disposition"
                       >
-                        <RotateCcw className="h-3.5 w-3.5" />
+                        <HugeiconsIcon icon={RotateCcwIcon} className="h-3.5 w-3.5" />
                         <span className="sr-only">
                           Reset {row.source} to its default
                         </span>
@@ -225,7 +230,7 @@ export function DispositionMappingDialog({
                         onClick={() => removeRow(index)}
                         title="Remove this disposition"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <HugeiconsIcon icon={Delete02Icon} className="h-3.5 w-3.5" />
                         <span className="sr-only">
                           Remove {row.source || "this disposition"}
                         </span>
@@ -244,7 +249,7 @@ export function DispositionMappingDialog({
                 disabled={isSaving}
                 onClick={addRow}
               >
-                <Plus className="mr-2 h-3.5 w-3.5" />
+                <HugeiconsIcon icon={PlusIcon} className="mr-2 h-3.5 w-3.5" />
                 Add disposition
               </Button>
               <p className="text-xs text-muted-foreground">

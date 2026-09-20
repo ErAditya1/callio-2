@@ -1,12 +1,13 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  Headphones,
-  Pause,
-  Play,
-  Search,
-} from 'lucide-react';
+  ArrowRight01Icon,
+  HeadphonesIcon,
+  PauseIcon,
+  PlayIcon,
+  Search01Icon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
@@ -83,7 +84,7 @@ export default function VoicesPage() {
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-12">
         <Badge variant="outline" className="mb-3 border-purple-500/30 text-purple-400 bg-purple-500/10 px-3 py-1">
-          <Headphones className="w-3.5 h-3.5 mr-1.5 inline" />
+          <HugeiconsIcon icon={HeadphonesIcon} className="w-3.5 h-3.5 mr-1.5 inline" />
           Ultra-Realistic AI Voices
         </Badge>
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">
@@ -99,7 +100,7 @@ export default function VoicesPage() {
       <div className="mb-10 p-4 rounded-2xl bg-card border border-border/70 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Search Input */}
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <HugeiconsIcon icon={Search01Icon} className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search by name, accent, style..."
             value={searchQuery}
@@ -189,7 +190,7 @@ export default function VoicesPage() {
                         : 'bg-indigo-600 hover:bg-indigo-500 text-white'
                     }`}
                   >
-                    {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
+                    {isPlaying ? <HugeiconsIcon icon={PauseIcon} className="w-5 h-5" /> : <HugeiconsIcon icon={PlayIcon} className="w-5 h-5 ml-0.5" />}
                   </Button>
                 </div>
 
@@ -237,7 +238,7 @@ export default function VoicesPage() {
                   className="text-xs font-semibold text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
                 >
                   Listen to Scenarios
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5" />
                 </Link>
 
                 <Button

@@ -1,6 +1,15 @@
 "use client";
 
-import { Copy, Eye, EyeOff, Key, Plus, RefreshCw, Trash2 } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Copy01Icon,
+  Delete02Icon,
+  EyeIcon,
+  EyeOffIcon,
+  Key01Icon,
+  PlusIcon,
+  RefreshCwIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -321,11 +330,11 @@ export default function APIKeysPage() {
 
     return (
         <div className="min-h-screen">
-            <div className="container mx-auto px-4 py-8">
+            <div className="app-page">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold mb-2">Developer Portal</h1>
-                        <p className="text-muted-foreground">Manage your API keys to access CallioAI services programmatically</p>
+                        <p className="text-[#737373]">Manage your API keys to access CallioAI services programmatically</p>
                     </div>
 
                     {error && (
@@ -349,14 +358,14 @@ export default function APIKeysPage() {
                                         size="sm"
                                         onClick={() => setShowArchived(!showArchived)}
                                     >
-                                        {showArchived ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
+                                        {showArchived ? <HugeiconsIcon icon={EyeIcon} className="w-4 h-4 mr-2" /> : <HugeiconsIcon icon={EyeOffIcon} className="w-4 h-4 mr-2" />}
                                         {showArchived ? 'Hide' : 'Show'} Archived
                                     </Button>
                                     <Button
                                         onClick={() => setIsCreateDialogOpen(true)}
                                         size="sm"
                                     >
-                                        <Plus className="w-4 h-4 mr-2" />
+                                        <HugeiconsIcon icon={PlusIcon} className="w-4 h-4 mr-2" />
                                         Create New Key
                                     </Button>
                                 </div>
@@ -377,8 +386,8 @@ export default function APIKeysPage() {
                                 </div>
                             ) : apiKeys.length === 0 ? (
                                 <div className="text-center py-12">
-                                    <Key className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                                    <p className="text-muted-foreground mb-4">No API keys found</p>
+                                    <HugeiconsIcon icon={Key01Icon} className="w-12 h-12 text-[#737373] mx-auto mb-4" />
+                                    <p className="text-[#737373] mb-4">No API keys found</p>
                                     <Button onClick={() => setIsCreateDialogOpen(true)}>
                                         Create Your First API Key
                                     </Button>
@@ -389,7 +398,7 @@ export default function APIKeysPage() {
                                         <div
                                             key={key.id}
                                             className={`flex items-center justify-between p-4 border rounded-lg ${
-                                                key.archived_at ? 'bg-muted opacity-60' : 'bg-card'
+                                                key.archived_at ? 'bg-[#F7F7F7] opacity-60' : 'bg-[#FFFFFF]'
                                             }`}
                                         >
                                             <div className="flex-1">
@@ -403,13 +412,13 @@ export default function APIKeysPage() {
                                                         <Badge variant="destructive">Inactive</Badge>
                                                     )}
                                                 </div>
-                                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                    <span className="font-mono bg-muted px-2 py-1 rounded">{key.key_prefix}...</span>
-                                                    <span className="text-xs text-muted-foreground/70">
+                                                <div className="flex items-center gap-2 text-sm text-[#737373]">
+                                                    <span className="font-mono bg-[#F7F7F7] px-2 py-1 rounded">{key.key_prefix}...</span>
+                                                    <span className="text-xs text-[#737373]/70">
                                                         (Full key hidden for security)
                                                     </span>
                                                 </div>
-                                                <div className="mt-2 text-xs text-muted-foreground">
+                                                <div className="mt-2 text-xs text-[#737373]">
                                                     Created: {formatDate(key.created_at)} •
                                                     Last used: {formatDate(key.last_used_at ?? null)}
                                                 </div>
@@ -421,7 +430,7 @@ export default function APIKeysPage() {
                                                         size="sm"
                                                         onClick={() => handleReactivateKey(key.id)}
                                                     >
-                                                        <RefreshCw className="w-4 h-4 mr-1" />
+                                                        <HugeiconsIcon icon={RefreshCwIcon} className="w-4 h-4 mr-1" />
                                                         Reactivate
                                                     </Button>
                                                 ) : (
@@ -431,7 +440,7 @@ export default function APIKeysPage() {
                                                         onClick={() => handleArchiveKey(key.id)}
                                                         className="text-destructive hover:text-destructive/90"
                                                     >
-                                                        <Trash2 className="w-4 h-4" />
+                                                        <HugeiconsIcon icon={Delete02Icon} className="w-4 h-4" />
                                                     </Button>
                                                 )}
                                             </div>
@@ -495,8 +504,8 @@ export default function APIKeysPage() {
                     </DialogHeader>
                     {createdKey && (
                         <div className="space-y-4">
-                            <div className="p-4 bg-muted rounded-lg">
-                                <p className="text-sm text-muted-foreground mb-2">Your API Key:</p>
+                            <div className="p-4 bg-[#F7F7F7] rounded-lg">
+                                <p className="text-sm text-[#737373] mb-2">Your API Key:</p>
                                 <div className="flex items-center gap-2">
                                     <code className="flex-1 p-2 bg-background rounded text-sm font-mono break-all">
                                         {createdKey.api_key}
@@ -506,7 +515,7 @@ export default function APIKeysPage() {
                                         variant="outline"
                                         onClick={() => copyToClipboard(createdKey.api_key)}
                                     >
-                                        <Copy className="w-4 h-4" />
+                                        <HugeiconsIcon icon={Copy01Icon} className="w-4 h-4" />
                                     </Button>
                                 </div>
                             </div>
@@ -570,8 +579,8 @@ export default function APIKeysPage() {
                     </DialogHeader>
                     {createdServiceKey && (
                         <div className="space-y-4">
-                            <div className="p-4 bg-muted rounded-lg">
-                                <p className="text-sm text-muted-foreground mb-2">Your Service Key:</p>
+                            <div className="p-4 bg-[#F7F7F7] rounded-lg">
+                                <p className="text-sm text-[#737373] mb-2">Your Service Key:</p>
                                 <div className="flex items-center gap-2">
                                     <code className="flex-1 p-2 bg-background rounded text-sm font-mono break-all">
                                         {createdServiceKey.service_key}
@@ -581,12 +590,12 @@ export default function APIKeysPage() {
                                         variant="outline"
                                         onClick={() => copyToClipboard(createdServiceKey.service_key)}
                                     >
-                                        <Copy className="w-4 h-4" />
+                                        <HugeiconsIcon icon={Copy01Icon} className="w-4 h-4" />
                                     </Button>
                                 </div>
                             </div>
-                            <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                                <p className="text-sm text-blue-600 dark:text-blue-500">
+                            <div className="p-4 bg-[#F0F3F9] border border-[#DCE3EF] rounded-lg">
+                                <p className="text-sm text-[#7186AD] dark:text-[#7186AD]">
                                     This key provides access to Dograh AI services including LLM, Text-to-Speech, and Speech-to-Text.
                                     {createdServiceKey.expires_at && (
                                         <span className="block mt-1">

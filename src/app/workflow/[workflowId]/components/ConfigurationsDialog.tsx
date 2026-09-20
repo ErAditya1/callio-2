@@ -1,4 +1,8 @@
-import { Plus, Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  PlusIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -127,7 +131,7 @@ export const ConfigurationsDialog = ({
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-sm font-semibold mb-1">Agent Name</h3>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 The name of your agent
                             </p>
                         </div>
@@ -149,7 +153,7 @@ export const ConfigurationsDialog = ({
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-sm font-semibold mb-1">Ambient Noise</h3>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 Add background office ambient noise to make the conversation sound more natural.
                             </p>
                         </div>
@@ -196,7 +200,7 @@ export const ConfigurationsDialog = ({
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-sm font-semibold mb-1">Turn Detection</h3>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 Configure how the agent detects when the user has finished speaking.
                             </p>
                         </div>
@@ -221,7 +225,7 @@ export const ConfigurationsDialog = ({
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 {turnStopStrategy === 'transcription'
                                     ? "Best for short responses (1-2 word statements). Ends turn when transcription indicates completion."
                                     : "Best for longer responses with natural pauses. Uses ML model to detect end of turn."}
@@ -247,7 +251,7 @@ export const ConfigurationsDialog = ({
                                         }
                                     }}
                                 />
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Max silence duration before ending an incomplete turn. Default: 2 seconds
                                 </p>
                             </div>
@@ -258,7 +262,7 @@ export const ConfigurationsDialog = ({
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-sm font-semibold mb-1">Interruption</h3>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 Configure when user speech should interrupt the agent while it is speaking.
                             </p>
                         </div>
@@ -282,7 +286,7 @@ export const ConfigurationsDialog = ({
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 {selectedTurnStartStrategy?.description}
                             </p>
                         </div>
@@ -306,7 +310,7 @@ export const ConfigurationsDialog = ({
                                         }
                                     }}
                                 />
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Number of transcribed words needed to interrupt while the bot is speaking. Default: {DEFAULT_TURN_START_MIN_WORDS}
                                 </p>
                             </div>
@@ -317,7 +321,7 @@ export const ConfigurationsDialog = ({
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-sm font-semibold mb-1">Context Compaction</h3>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 Automatically summarize conversation context when transitioning between nodes. Removes stale tool calls and keeps the context clean for the new node.
                             </p>
                         </div>
@@ -338,7 +342,7 @@ export const ConfigurationsDialog = ({
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-sm font-semibold mb-1">Call Management</h3>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 Configure call duration limits and idle timeout settings.
                             </p>
                         </div>
@@ -361,7 +365,7 @@ export const ConfigurationsDialog = ({
                                         }
                                     }}
                                 />
-                                <p className="text-xs text-muted-foreground">Default: 600 (10 minutes)</p>
+                                <p className="text-xs text-[#737373]">Default: 600 (10 minutes)</p>
                             </div>
 
                             <div className="space-y-2">
@@ -381,7 +385,7 @@ export const ConfigurationsDialog = ({
                                         }
                                     }}
                                 />
-                                <p className="text-xs text-muted-foreground">Default: 10 seconds</p>
+                                <p className="text-xs text-[#737373]">Default: 10 seconds</p>
                             </div>
                         </div>
                     </div>
@@ -390,7 +394,7 @@ export const ConfigurationsDialog = ({
                         <div className="space-y-4 border-t pt-4">
                             <div>
                                 <h3 className="text-sm font-semibold mb-1">External PBX Field Updates</h3>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Optionally copy final gathered-context values into provider-native fields before transfer or hangup.
                                 </p>
                             </div>
@@ -405,7 +409,7 @@ export const ConfigurationsDialog = ({
                                         { context_path: "", destination_field: "" },
                                     ])}
                                 >
-                                    <Plus className="mr-1 h-4 w-4" /> Add mapping
+                                    <HugeiconsIcon icon={PlusIcon} className="mr-1 h-4 w-4" /> Add mapping
                                 </Button>
                             </div>
                             <div className="space-y-2">
@@ -444,12 +448,12 @@ export const ConfigurationsDialog = ({
                                                 current.filter((_, itemIndex) => itemIndex !== index)
                                             )}
                                         >
-                                            <Trash2 className="h-4 w-4" />
+                                            <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 ))}
                                 {externalPbxFieldMappings.length === 0 && (
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-[#737373]">
                                         No external fields will be updated. Context names may be direct extracted-variable names or paths such as extracted_variables.qualified.
                                     </p>
                                 )}

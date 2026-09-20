@@ -1,6 +1,15 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Download, Globe } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowDown01Icon,
+  ArrowUp01Icon,
+  ArrowUpDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Download01Icon,
+  GlobeIcon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import TimezoneSelect, { type ITimezoneOption } from 'react-timezone-select';
@@ -441,15 +450,15 @@ export default function UsagePage() {
     };
 
     return (
-        <div className="container mx-auto p-6 space-y-6">
+        <div className="app-page space-y-6">
             <div>
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className="text-3xl font-bold mb-2">Agent Runs</h1>
-                        <p className="text-muted-foreground">See all your Agent Runs across all Voice Agents. You can use filters to filter out required Agent Runs.</p>
+                        <p className="text-[#737373]">See all your Agent Runs across all Voice Agents. You can use filters to filter out required Agent Runs.</p>
                     </div>
                         <div className="flex items-center gap-2">
-                            <Globe className="h-4 w-4 text-muted-foreground" />
+                            <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4 text-[#737373]" />
                             <div className="w-[300px]">
                                 <TimezoneSelect
                                     instanceId={timezoneSelectId}
@@ -504,7 +513,7 @@ export default function UsagePage() {
                                         }),
                                         placeholder: (base) => ({
                                             ...base,
-                                            color: 'var(--muted-foreground)',
+                                            color: '#737373',
                                         }),
                                         indicatorSeparator: (base) => ({
                                             ...base,
@@ -512,7 +521,7 @@ export default function UsagePage() {
                                         }),
                                         dropdownIndicator: (base) => ({
                                             ...base,
-                                            color: 'var(--muted-foreground)',
+                                            color: '#737373',
                                             '&:hover': {
                                                 color: 'var(--foreground)',
                                             },
@@ -552,7 +561,7 @@ export default function UsagePage() {
                                 onClick={handleDownloadReport}
                                 disabled={isDownloadingReport}
                             >
-                                <Download className="h-4 w-4 mr-2" />
+                                <HugeiconsIcon icon={Download01Icon} className="h-4 w-4 mr-2" />
                                 {isDownloadingReport ? 'Preparing...' : 'Download Filtered Results'}
                             </Button>
                         </div>
@@ -575,15 +584,15 @@ export default function UsagePage() {
                         {isLoadingHistory ? (
                             <div className="animate-pulse space-y-3">
                                 {[...Array(5)].map((_, i) => (
-                                    <div key={i} className="h-12 bg-muted rounded"></div>
+                                    <div key={i} className="h-12 bg-[#F7F7F7] rounded"></div>
                                 ))}
                             </div>
                         ) : usageHistory && usageHistory.runs.length > 0 ? (
                             <>
-                                <div className="bg-card border rounded-lg overflow-hidden shadow-sm">
+                                <div className="bg-[#FFFFFF] border rounded-lg overflow-hidden shadow-sm">
                                     <Table>
                                         <TableHeader>
-                                            <TableRow className="bg-muted/50">
+                                            <TableRow className="bg-[#F7F7F7]">
                                                 <TableHead className="font-semibold">Run ID</TableHead>
                                                 <TableHead className="font-semibold">Agent Name</TableHead>
                                                 <TableHead className="font-semibold">Call Type</TableHead>
@@ -591,15 +600,15 @@ export default function UsagePage() {
                                                 <TableHead className="font-semibold">Disposition</TableHead>
                                                 <TableHead className="font-semibold">Date</TableHead>
                                                 <TableHead
-                                                    className="font-semibold text-right cursor-pointer hover:bg-muted/50 select-none"
+                                                    className="font-semibold text-right cursor-pointer hover:bg-[#F7F7F7] select-none"
                                                     onClick={() => handleSort('duration')}
                                                 >
                                                     <div className="flex items-center justify-end gap-1">
                                                         Duration
                                                         {sortBy === 'duration' ? (
-                                                            sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                                                            sortOrder === 'asc' ? <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" /> : <HugeiconsIcon icon={ArrowDown01Icon} className="h-4 w-4" />
                                                         ) : (
-                                                            <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                                                            <HugeiconsIcon icon={ArrowUpDownIcon} className="h-4 w-4 text-[#737373]" />
                                                         )}
                                                     </div>
                                                 </TableHead>
@@ -633,7 +642,7 @@ export default function UsagePage() {
                                                                 {run.disposition}
                                                             </Badge>
                                                         ) : (
-                                                            <span className="text-sm text-muted-foreground">-</span>
+                                                            <span className="text-sm text-[#737373]">-</span>
                                                         )}
                                                     </TableCell>
                                                     <TableCell>{formatDateTime(run.created_at, effectiveTimezone)}</TableCell>
@@ -662,8 +671,8 @@ export default function UsagePage() {
 
                                 {/* Summary */}
                                 {appliedFilters.length > 0 && (
-                                    <div className="mt-4 p-3 bg-muted rounded-md">
-                                        <p className="text-sm text-muted-foreground">
+                                    <div className="mt-4 p-3 bg-[#F7F7F7] rounded-md">
+                                        <p className="text-sm text-[#737373]">
                                             Total for filtered period: <span className="font-semibold text-foreground">
                                                 {usageHistory.total_dograh_tokens.toLocaleString()} CallioAI Tokens
                                             </span>
@@ -678,7 +687,7 @@ export default function UsagePage() {
                                 {/* Pagination */}
                                 {usageHistory.total_pages > 1 && (
                                     <div className="flex items-center justify-between mt-6">
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-sm text-[#737373]">
                                             Page {usageHistory.page} of {usageHistory.total_pages} ({usageHistory.total_count} total runs)
                                         </p>
                                         <div className="flex gap-2">
@@ -688,7 +697,7 @@ export default function UsagePage() {
                                                 onClick={() => handlePageChange(currentPage - 1)}
                                                 disabled={currentPage === 1}
                                             >
-                                                <ChevronLeft className="h-4 w-4" />
+                                                <HugeiconsIcon icon={ChevronLeftIcon} className="h-4 w-4" />
                                                 Previous
                                             </Button>
                                             <Button
@@ -698,14 +707,14 @@ export default function UsagePage() {
                                                 disabled={currentPage === usageHistory.total_pages}
                                             >
                                                 Next
-                                                <ChevronRight className="h-4 w-4" />
+                                                <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4" />
                                             </Button>
                                         </div>
                                     </div>
                                 )}
                             </>
                         ) : (
-                            <p className="text-center py-8 text-muted-foreground">No runs found</p>
+                            <p className="text-center py-8 text-[#737373]">No runs found</p>
                         )}
                     </CardContent>
                 </Card>

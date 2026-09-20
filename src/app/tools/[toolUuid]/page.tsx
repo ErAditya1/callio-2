@@ -1,6 +1,14 @@
 "use client";
 
-import { ArrowLeft, Code, ExternalLink, FlaskConical, Loader2, Save } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  CodeIcon,
+  ExternalLinkIcon,
+  FlaskConicalIcon,
+  Loading02Icon,
+  SaveIcon,
+} from "@hugeicons/core-free-icons";;
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -861,7 +869,7 @@ const data = await response.json();`;
     if (isLoading) {
         return (
             <div className="min-h-screen">
-                <div className="container mx-auto px-4 py-8">
+                <div className="app-page">
                     <div className="max-w-4xl mx-auto space-y-6">
                         <Skeleton className="h-8 w-48" />
                         <Skeleton className="h-64 w-full" />
@@ -874,11 +882,11 @@ const data = await response.json();`;
     if (!tool) {
         return (
             <div className="min-h-screen">
-                <div className="container mx-auto px-4 py-8">
+                <div className="app-page">
                     <div className="max-w-4xl mx-auto text-center">
                         <h1 className="text-2xl font-bold mb-4">Tool not found</h1>
                         <Button onClick={() => router.push("/tools")}>
-                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-2" />
                             Back to Tools
                         </Button>
                     </div>
@@ -916,7 +924,7 @@ const data = await response.json();`;
 
     return (
         <div className="min-h-screen">
-            <div className="container mx-auto px-4 py-8">
+            <div className="app-page">
                 <div className="max-w-4xl mx-auto">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
@@ -926,7 +934,7 @@ const data = await response.json();`;
                                 size="sm"
                                 onClick={() => router.push("/tools")}
                             >
-                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-2" />
                                 Back
                             </Button>
                             <div className="flex items-center gap-3">
@@ -940,7 +948,7 @@ const data = await response.json();`;
                                 </div>
                                 <div>
                                     <h1 className="text-xl font-bold">{name}</h1>
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-sm text-[#737373]">
                                         {getToolTypeLabel(tool.category)}
                                     </p>
                                 </div>
@@ -952,7 +960,7 @@ const data = await response.json();`;
                                     variant="outline"
                                     onClick={() => setShowCodeDialog(true)}
                                 >
-                                    <Code className="w-4 h-4 mr-2" />
+                                    <HugeiconsIcon icon={CodeIcon} className="w-4 h-4 mr-2" />
                                     View Code
                                 </Button>
                             )}
@@ -961,10 +969,10 @@ const data = await response.json();`;
                                     href={TOOL_DOCUMENTATION_URLS[tool.category]}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                    className="flex items-center gap-1 text-sm text-[#737373] hover:text-foreground transition-colors"
                                 >
                                     Docs
-                                    <ExternalLink className="h-3.5 w-3.5" />
+                                    <HugeiconsIcon icon={ExternalLinkIcon} className="h-3.5 w-3.5" />
                                 </a>
                             )}
                         </div>
@@ -1071,7 +1079,7 @@ const data = await response.json();`;
 
                                 <div className="space-y-2">
                                     <Label htmlFor="mcp-description">Description</Label>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-[#737373]">
                                         Provide a description which makes it easy for LLM to understand what this tool does
                                     </p>
                                     <Textarea
@@ -1117,7 +1125,7 @@ const data = await response.json();`;
                                         onChange={(e) => setMcpToolsFilter(e.target.value)}
                                         placeholder="e.g., tool_one, tool_two"
                                     />
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-[#737373]">
                                         Comma-separated list of tool names to allow. Leave empty to expose all tools from the server.
                                     </p>
                                 </div>
@@ -1189,7 +1197,7 @@ const data = await response.json();`;
                                     <TooltipTrigger asChild>
                                         <span className="inline-flex" tabIndex={0}>
                                             <Button type="button" variant="outline" disabled>
-                                                <FlaskConical className="w-4 h-4 mr-2" />
+                                                <HugeiconsIcon icon={FlaskConicalIcon} className="w-4 h-4 mr-2" />
                                                 Test Tool
                                             </Button>
                                         </span>
@@ -1205,7 +1213,7 @@ const data = await response.json();`;
                                     onClick={() => setShowTestDialog(true)}
                                     disabled={isSaving}
                                 >
-                                    <FlaskConical className="w-4 h-4 mr-2" />
+                                    <HugeiconsIcon icon={FlaskConicalIcon} className="w-4 h-4 mr-2" />
                                     Test Tool
                                 </Button>
                             )
@@ -1213,12 +1221,12 @@ const data = await response.json();`;
                         <Button onClick={handleSave} disabled={isSaving}>
                             {isSaving ? (
                                 <>
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    <HugeiconsIcon icon={Loading02Icon} className="w-4 h-4 mr-2 animate-spin" />
                                     Saving...
                                 </>
                             ) : (
                                 <>
-                                    <Save className="w-4 h-4 mr-2" />
+                                    <HugeiconsIcon icon={SaveIcon} className="w-4 h-4 mr-2" />
                                     Save
                                 </>
                             )}
@@ -1236,7 +1244,7 @@ const data = await response.json();`;
                             JavaScript code to make this API call
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="bg-muted rounded-lg p-4 font-mono text-sm overflow-auto max-h-96">
+                    <div className="bg-[#F7F7F7] rounded-lg p-4 font-mono text-sm overflow-auto max-h-96">
                         <pre>{getCodeSnippet()}</pre>
                     </div>
                 </DialogContent>

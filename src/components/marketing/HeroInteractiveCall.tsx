@@ -1,17 +1,18 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  AlertCircle,
-  Clock,
-  Mic,
-  MicOff,
-  Phone,
-  PhoneOff,
-  Radio,
-  RotateCcw,
-  Sparkles,
-  Volume2,
-} from 'lucide-react';
+  AlertCircleIcon,
+  Clock01Icon,
+  Mic01Icon,
+  MicOff01Icon,
+  PhoneIcon,
+  PhoneOff01Icon,
+  RadioIcon,
+  RotateCcwIcon,
+  SparklesIcon,
+  VolumeHighIcon,
+} from "@hugeicons/core-free-icons";;
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -242,7 +243,7 @@ export function HeroInteractiveCall() {
                   )}
                   title={isMuted ? 'Unmute' : 'Mute'}
                 >
-                  {isMuted ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
+                  {isMuted ? <HugeiconsIcon icon={MicOff01Icon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={Mic01Icon} className="w-3.5 h-3.5" />}
                 </Button>
               </div>
             ) : (
@@ -284,13 +285,13 @@ export function HeroInteractiveCall() {
               )}
             >
               {status === 'connecting' ? (
-                <Radio className="w-6 h-6 animate-spin" />
+                <HugeiconsIcon icon={RadioIcon} className="w-6 h-6 animate-spin" />
               ) : status === 'connected' ? (
-                <Volume2 className="w-6 h-6 animate-pulse" />
+                <HugeiconsIcon icon={VolumeHighIcon} className="w-6 h-6 animate-pulse" />
               ) : status === 'failed' ? (
-                <RotateCcw className="w-6 h-6" />
+                <HugeiconsIcon icon={RotateCcwIcon} className="w-6 h-6" />
               ) : (
-                <Phone className="w-6 h-6" />
+                <HugeiconsIcon icon={PhoneIcon} className="w-6 h-6" />
               )}
             </div>
           </div>
@@ -332,7 +333,7 @@ export function HeroInteractiveCall() {
 
             {status === 'connecting' && (
               <p className="text-xs sm:text-sm text-indigo-400 font-medium flex items-center justify-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 animate-spin" />
+                <HugeiconsIcon icon={SparklesIcon} className="w-3.5 h-3.5 animate-spin" />
                 Connecting voice stream...
               </p>
             )}
@@ -369,22 +370,22 @@ export function HeroInteractiveCall() {
             >
               {status === 'connected' ? (
                 <>
-                  <PhoneOff className="w-4 h-4" />
+                  <HugeiconsIcon icon={PhoneOff01Icon} className="w-4 h-4" />
                   <span>End Call ({formatTime(callDuration)})</span>
                 </>
               ) : status === 'connecting' ? (
                 <>
-                  <Radio className="w-4 h-4 animate-spin" />
+                  <HugeiconsIcon icon={RadioIcon} className="w-4 h-4 animate-spin" />
                   <span>Connecting...</span>
                 </>
               ) : status === 'failed' ? (
                 <>
-                  <RotateCcw className="w-4 h-4" />
+                  <HugeiconsIcon icon={RotateCcwIcon} className="w-4 h-4" />
                   <span>Try Again</span>
                 </>
               ) : (
                 <>
-                  <Mic className="w-4 h-4" />
+                  <HugeiconsIcon icon={Mic01Icon} className="w-4 h-4" />
                   <span>Talk with Arushi</span>
                 </>
               )}

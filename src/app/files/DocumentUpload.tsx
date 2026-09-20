@@ -1,6 +1,12 @@
 'use client';
 
-import { FileText, Info, Upload, X } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  FileTextIcon,
+  InfoIcon,
+  Upload01Icon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -34,9 +40,9 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const ossNotice = (
-    <div className="flex gap-3 rounded-lg border border-border/70 bg-card/60 p-3">
-      <Info className="h-4 w-4 flex-shrink-0 text-primary mt-0.5" />
-      <div className="text-xs text-muted-foreground">
+    <div className="flex gap-3 rounded-lg border border-[#E5E5E5] bg-[#FFFFFF] p-3">
+      <HugeiconsIcon icon={InfoIcon} className="h-4 w-4 flex-shrink-0 text-primary mt-0.5" />
+      <div className="text-xs text-[#737373]">
         <p className="font-medium text-foreground">Secure Document Embedding</p>
         <p className="mt-1">
           Uploaded documents are parsed, chunked, and stored with vector embeddings in your private workspace for agent knowledge retrieval.
@@ -181,16 +187,16 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
       <div className="space-y-4">
         {ossNotice}
         {/* Selected file info */}
-        <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
-          <FileText className="w-8 h-8 text-primary flex-shrink-0" />
+        <div className="flex items-center gap-3 p-3 border rounded-lg bg-[#F7F7F7]">
+          <HugeiconsIcon icon={FileTextIcon} className="w-8 h-8 text-primary flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium truncate">{selectedFile.name}</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[#737373]">
               {(selectedFile.size / 1024).toFixed(1)} KB
             </p>
           </div>
           <Button variant="ghost" size="icon" onClick={clearSelectedFile}>
-            <X className="w-4 h-4" />
+            <HugeiconsIcon icon={XIcon} className="w-4 h-4" />
           </Button>
         </div>
 
@@ -201,13 +207,13 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
             <label
               htmlFor="full_document"
               className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
-                retrievalMode === 'full_document' ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
+                retrievalMode === 'full_document' ? 'border-primary bg-primary/5' : 'hover:bg-[#F7F7F7]'
               }`}
             >
               <RadioGroupItem value="full_document" id="full_document" className="mt-0.5" />
               <div>
                 <p className="font-medium text-sm">Full Document</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-[#737373]">
                   The entire document is provided to the agent on each retrieval.
                   Best for menus, price lists, FAQs, and other small reference documents.
                 </p>
@@ -216,13 +222,13 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
             <label
               htmlFor="chunked"
               className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
-                retrievalMode === 'chunked' ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
+                retrievalMode === 'chunked' ? 'border-primary bg-primary/5' : 'hover:bg-[#F7F7F7]'
               }`}
             >
               <RadioGroupItem value="chunked" id="chunked" className="mt-0.5" />
               <div>
                 <p className="font-medium text-sm">Chunked Search</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-[#737373]">
                   The document is split into chunks and the most relevant ones are retrieved.
                   Better for large documents like manuals or policies.
                 </p>
@@ -255,8 +261,8 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
       <div
         className={`
           border-2 border-dashed rounded-lg p-8 text-center transition-colors
-          ${dragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'}
-          ${uploading ? 'opacity-50 pointer-events-none' : 'cursor-pointer hover:border-primary hover:bg-muted/50'}
+          ${dragActive ? 'border-primary bg-primary/5' : 'border-[#E5E5E5]'}
+          ${uploading ? 'opacity-50 pointer-events-none' : 'cursor-pointer hover:border-primary hover:bg-[#F7F7F7]'}
         `}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -264,14 +270,14 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
         onDrop={handleDrop}
         onClick={handleButtonClick}
       >
-        <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+        <HugeiconsIcon icon={Upload01Icon} className="w-12 h-12 mx-auto mb-4 text-[#737373]" />
         <p className="text-lg font-medium mb-2">
           {uploading ? 'Uploading...' : 'Drop your document here'}
         </p>
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="text-sm text-[#737373] mb-4">
           or click to browse
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-[#737373]">
           Supported formats: {ACCEPTED_FILE_TYPES.join(', ')} (Max 5MB)
         </p>
       </div>
