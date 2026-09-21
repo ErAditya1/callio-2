@@ -253,15 +253,29 @@
     background-color: oklch(0.165 0.002 80);
   }
 
-  /* Giant faded "dograh" imprint for the auth pages (applied to the AuthShell
-     form column, shared by Stack + OSS login/signup). Same --brand-imprint as
-     .app-surface; element-relative here (no fixed attachment), so it centers
-     and scales to whatever element carries the class. */
+  /* Clean background for auth pages */
   .auth-imprint {
-    background-image: var(--brand-imprint);
-    background-size: min(86%, 920px) auto;
-    background-position: center calc(100% - 32px);
-    background-repeat: no-repeat;
+    background-image: radial-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .dark .auth-imprint {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  @keyframes soundwave {
+    0%, 100% {
+      transform: scaleY(0.25);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+
+  .animate-soundwave {
+    animation: soundwave 1.2s ease-in-out infinite alternate;
+    transform-origin: bottom;
   }
 
 }

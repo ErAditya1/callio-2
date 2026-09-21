@@ -148,11 +148,13 @@ export function RechargeWalletModal({
             const orderData = await orderRes.json();
 
             // 3. Open Razorpay Checkout modal (INR allows UPI, Cards, NetBanking, Wallets)
+            const logoUrl = "https://callioai.cheetahagi.com/icon.png"
             const options = {
                 key: orderData.key_id,
                 amount: orderData.amount_paise,
                 currency: orderData.currency || "INR",
-                name: "Dograh Voice Platform",
+                name: "CallioAI",
+                image: logoUrl,
                 description: `Calling Credits Top-up ($${orderData.amount_usd.toFixed(2)} USD)`,
                 order_id: orderData.order_id,
                 receipt: orderData.receipt,
@@ -193,9 +195,11 @@ export function RechargeWalletModal({
                     }
                 },
                 prefill: {
+                    name: (auth.user as any)?.name || "",
                     email: (auth.user as any)?.primaryEmail || (auth.user as any)?.email || "",
                 },
                 notes: {
+                    platform: "CallioAI",
                     organization_id: String(orderData.organization_id),
                     receipt: orderData.receipt,
                     amount_usd: String(orderData.amount_usd),
@@ -204,7 +208,7 @@ export function RechargeWalletModal({
                     total_inr: String(orderData.amount_inr),
                 },
                 theme: {
-                    color: "#059669", // emerald-600
+                    color: "#6366f1", // CallioAI indigo
                 },
                 modal: {
                     ondismiss: function () {
@@ -272,11 +276,10 @@ export function RechargeWalletModal({
                                         key={pkg.usd}
                                         type="button"
                                         onClick={() => handleSelectPreset(pkg.usd)}
-                                        className={`relative flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center ${
-                                            isSelected
+                                        className={`relative flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center ${isSelected
                                                 ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 shadow-sm ring-1 ring-emerald-500"
                                                 : "border-border/70 hover:border-border hover:bg-muted/40"
-                                        }`}
+                                            }`}
                                     >
                                         {pkg.popular && (
                                             <Badge

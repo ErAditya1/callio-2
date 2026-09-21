@@ -24,6 +24,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { RechargeWalletModal } from "@/components/billing/RechargeWalletModal";
+import { SubscriptionPlanSection } from "@/components/billing/SubscriptionPlanSection";
 
 
 import {
@@ -308,6 +309,9 @@ export default function BillingPage() {
                     </div>
                 </div>
             </div>
+
+            {/* SaaS Subscription Plans & Active Quota */}
+            <SubscriptionPlanSection onSubscriptionUpdated={handleRefresh} />
 
             {/* Quick Overview Stat Cards */}
             <div className="grid gap-4 md:grid-cols-3">
