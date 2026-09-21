@@ -1,4 +1,8 @@
-import { PlusIcon, Trash2Icon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  PlusIcon,
+} from "@hugeicons/core-free-icons";;
 
 import type {
     DocumentResponseSchema,
@@ -138,7 +142,7 @@ function StackedLabel({ spec }: { spec: PropertySpec }) {
                 {spec.required && <span className="text-destructive ml-1">*</span>}
             </Label>
             {spec.description && (
-                <Label className="text-xs text-muted-foreground">{spec.description}</Label>
+                <Label className="text-xs text-[#737373]">{spec.description}</Label>
             )}
         </>
     );
@@ -214,7 +218,7 @@ function BooleanWidget({ spec, value, onChange }: WidgetProps) {
             <Switch id={`prop-${spec.name}`} checked={v} onCheckedChange={onChange} />
             <Label htmlFor={`prop-${spec.name}`}>{spec.display_name}</Label>
             {spec.description && (
-                <Label className="text-xs text-muted-foreground ml-2">
+                <Label className="text-xs text-[#737373] ml-2">
                     {spec.description}
                 </Label>
             )}
@@ -334,13 +338,13 @@ function FixedCollectionWidget({
                                 onClick={() => handleRemove(idx)}
                                 aria-label={`Remove row ${idx + 1}`}
                             >
-                                <Trash2Icon className="w-4 h-4" />
+                                <HugeiconsIcon icon={Delete02Icon} className="w-4 h-4" />
                             </Button>
                         </div>
                     </div>
                 ))}
                 <Button variant="outline" size="sm" className="w-fit" onClick={handleAdd}>
-                    <PlusIcon className="w-4 h-4 mr-1" /> Add
+                    <HugeiconsIcon icon={PlusIcon} className="w-4 h-4 mr-1" /> Add
                 </Button>
             </div>
         </div>

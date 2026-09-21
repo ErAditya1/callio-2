@@ -1,16 +1,17 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowLeft,
-  ArrowRight,
-  Headphones,
-  Mic,
-  Pause,
-  Play,
-  Radio,
-  Sparkles,
-  Volume2
-} from 'lucide-react';
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  HeadphonesIcon,
+  Mic01Icon,
+  PauseIcon,
+  PlayIcon,
+  RadioIcon,
+  SparklesIcon,
+  VolumeHighIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -41,7 +42,7 @@ export default function VoiceDetailPage() {
           href="/voices"
           className="text-xs font-semibold text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5" />
           Back to Voice Marketplace
         </Link>
       </div>
@@ -84,7 +85,7 @@ export default function VoiceDetailPage() {
             >
               <Link href={`/dashboard/agents/create?voice=${voice.id}`}>
                 Use this Voice
-                <ArrowRight className="w-4 h-4 ml-1.5" />
+                <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1.5" />
               </Link>
             </Button>
             <Button
@@ -94,7 +95,7 @@ export default function VoiceDetailPage() {
               className="rounded-xl border-border/80 font-medium text-sm"
             >
               <Link href={`/demo/call?voice=${voice.id}`}>
-                <Radio className="w-4 h-4 mr-1.5 text-rose-500 animate-pulse" />
+                <HugeiconsIcon icon={RadioIcon} className="w-4 h-4 mr-1.5 text-rose-500 animate-pulse" />
                 Live Conversation
               </Link>
             </Button>
@@ -164,12 +165,12 @@ export default function VoiceDetailPage() {
                   >
                     {isPlaying ? (
                       <>
-                        <Pause className="w-3.5 h-3.5" />
+                        <HugeiconsIcon icon={PauseIcon} className="w-3.5 h-3.5" />
                         Pause Sample
                       </>
                     ) : (
                       <>
-                        <Play className="w-3.5 h-3.5 ml-0.5" />
+                        <HugeiconsIcon icon={PlayIcon} className="w-3.5 h-3.5 ml-0.5" />
                         Listen to Sample
                       </>
                     )}

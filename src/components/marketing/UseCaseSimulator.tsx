@@ -1,15 +1,17 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import type { IconSvgElement } from "@hugeicons/react";
 import {
-  Briefcase,
-  CheckCircle2,
-  Code2,
-  Home,
-  Sparkles,
-  Stethoscope,
-  User,
-  Wrench,
-} from 'lucide-react';
+  Briefcase01Icon,
+  CheckmarkCircle02Icon,
+  CodeSquareIcon,
+  Home01Icon,
+  SparklesIcon,
+  StethoscopeIcon,
+  UserIcon,
+  Wrench01Icon,
+} from "@hugeicons/core-free-icons";;
 import React, { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -25,7 +27,7 @@ interface UseCaseData {
   id: string;
   label: string;
   industry: string;
-  icon: React.ElementType;
+  icon: IconSvgElement;
   color: string;
   dialogue: Message[];
   extractedData: {
@@ -45,7 +47,7 @@ export function UseCaseSimulator() {
       id: 'healthcare',
       label: 'Clinic Reception',
       industry: 'Dental & Medical Clinics',
-      icon: Stethoscope,
+      icon: StethoscopeIcon,
       color: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
       dialogue: [
         {
@@ -93,7 +95,7 @@ export function UseCaseSimulator() {
       id: 'realestate',
       label: 'Real Estate Leads',
       industry: 'Brokers & Property Teams',
-      icon: Home,
+      icon: Home01Icon,
       color: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
       dialogue: [
         {
@@ -141,7 +143,7 @@ export function UseCaseSimulator() {
       id: 'sales',
       label: 'Speed-to-Lead SDR',
       industry: 'B2B SaaS & Inbound Leads',
-      icon: Briefcase,
+      icon: Briefcase01Icon,
       color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
       dialogue: [
         {
@@ -189,7 +191,7 @@ export function UseCaseSimulator() {
       id: 'dispatch',
       label: '24/7 Field Dispatch',
       industry: 'HVAC, Fleet & Logistics',
-      icon: Wrench,
+      icon: Wrench01Icon,
       color: 'text-teal-400 bg-teal-500/10 border-teal-500/20',
       dialogue: [
         {
@@ -241,7 +243,7 @@ export function UseCaseSimulator() {
     <div className="rounded-3xl border border-border/80 bg-card/60 p-6 sm:p-10 shadow-2xl relative overflow-hidden marketing-glow-card">
       <div className="text-center max-w-2xl mx-auto mb-10">
         <Badge variant="outline" className="mb-3 border-violet-500/30 text-violet-400 bg-violet-500/10 px-3 py-1">
-          <Sparkles className="w-3.5 h-3.5 mr-1.5 inline" />
+          <HugeiconsIcon icon={SparklesIcon} className="w-3.5 h-3.5 mr-1.5 inline" />
           Production Conversational Flows
         </Badge>
         <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground">
@@ -267,7 +269,7 @@ export function UseCaseSimulator() {
                   : 'bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40'
               }`}
             >
-              <Icon className="w-4 h-4" />
+              <HugeiconsIcon icon={Icon} className="w-4 h-4" />
               <span>{item.label}</span>
             </button>
           );
@@ -301,7 +303,7 @@ export function UseCaseSimulator() {
                         : 'bg-muted text-foreground border border-border'
                     }`}
                   >
-                    {isAgent ? <Sparkles className="w-3.5 h-3.5" /> : <User className="w-3.5 h-3.5" />}
+                    {isAgent ? <HugeiconsIcon icon={SparklesIcon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={UserIcon} className="w-3.5 h-3.5" />}
                   </div>
 
                   <div className={`space-y-1 max-w-[82%] ${isAgent ? 'text-left' : 'text-right'}`}>
@@ -319,7 +321,7 @@ export function UseCaseSimulator() {
                       <span>{msg.time}</span>
                       {msg.badge && (
                         <span className="inline-flex items-center gap-1 font-mono text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                          <CheckCircle2 className="w-2.5 h-2.5" />
+                          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-2.5 h-2.5" />
                           {msg.badge}
                         </span>
                       )}
@@ -335,7 +337,7 @@ export function UseCaseSimulator() {
         <div className="lg:col-span-5 bg-muted/25 rounded-2xl border border-border/70 p-5 sm:p-6 space-y-5">
           <div className="flex items-center justify-between border-b border-border/50 pb-3">
             <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Code2 className="w-4 h-4 text-indigo-400" />
+              <HugeiconsIcon icon={CodeSquareIcon} className="w-4 h-4 text-indigo-400" />
               Real-Time Extraction Payload
             </span>
             <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
@@ -373,7 +375,7 @@ export function UseCaseSimulator() {
                 Automated System Dispatch
               </span>
               <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-mono text-[11px] flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span className="truncate">{current.extractedData.actionTriggered}</span>
               </div>
             </div>

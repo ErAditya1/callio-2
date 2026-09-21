@@ -1,6 +1,11 @@
 "use client";
 
-import { Brain, ChevronRight, Wrench } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  BrainIcon,
+  ChevronRightIcon,
+  Wrench01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -33,8 +38,8 @@ export function ToolCallCard({
         <div className="flex justify-center">
             <div className="flex w-full max-w-[85%] flex-col gap-1">
                 {reasoningDurationMs !== undefined ? (
-                    <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-                        <Brain className="h-3 w-3" />
+                    <div className="flex items-center justify-center gap-1.5 text-xs text-[#737373]">
+                        <HugeiconsIcon icon={BrainIcon} className="h-3 w-3" />
                         <span className="font-medium">Reasoning Delay:</span>
                         <span>{Math.round(reasoningDurationMs)}ms</span>
                     </div>
@@ -42,10 +47,10 @@ export function ToolCallCard({
                 <Collapsible
                     open={hasDetails ? open : false}
                     onOpenChange={hasDetails ? setOpen : undefined}
-                    className="rounded-2xl border border-amber-500/20 bg-amber-500/10"
+                    className="rounded-2xl border border-amber-500/20 bg-[#E5E5E5]/10"
                 >
                     <div className="flex items-start gap-2 px-3.5 py-3 text-sm">
-                        <Wrench className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+                        <HugeiconsIcon icon={Wrench01Icon} className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
                         <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
                                 <span className="font-mono text-xs text-amber-700 dark:text-amber-400">
@@ -57,7 +62,7 @@ export function ToolCallCard({
                                         "h-5 px-1.5 text-[10px] uppercase tracking-[0.14em]",
                                         status === "running"
                                             ? "border-amber-400/60 text-amber-700 dark:text-amber-300"
-                                            : "border-emerald-500/30 text-emerald-700 dark:text-emerald-300",
+                                            : "border-[#DCE3EF] text-emerald-700 dark:text-emerald-300",
                                     )}
                                 >
                                     {status === "running" ? "Running" : "Completed"}
@@ -68,9 +73,9 @@ export function ToolCallCard({
                                     <CollapsibleTrigger asChild>
                                         <button
                                             type="button"
-                                            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                                            className="inline-flex items-center gap-1 text-xs text-[#737373] hover:text-foreground"
                                         >
-                                            <ChevronRight
+                                            <HugeiconsIcon icon={ChevronRightIcon}
                                                 className={cn(
                                                     "h-3.5 w-3.5 transition-transform",
                                                     open && "rotate-90",
@@ -88,7 +93,7 @@ export function ToolCallCard({
                             <div className="space-y-3">
                                 {hasArguments ? (
                                     <div className="space-y-1">
-                                        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                                        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[#737373]">
                                             Arguments
                                         </p>
                                         <pre className="overflow-x-auto rounded-xl bg-background/70 p-3 text-xs leading-5 text-foreground">
@@ -98,7 +103,7 @@ export function ToolCallCard({
                                 ) : null}
                                 {hasResult ? (
                                     <div className="space-y-1">
-                                        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                                        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[#737373]">
                                             Result
                                         </p>
                                         <pre className="overflow-x-auto rounded-xl bg-background/70 p-3 text-xs leading-5 text-foreground">

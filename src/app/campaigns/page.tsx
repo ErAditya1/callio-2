@@ -1,6 +1,9 @@
 "use client";
 
-import { Plus } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  PlusIcon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
@@ -93,14 +96,14 @@ export default function CampaignsPage() {
     };
 
     return (
-        <div className="container mx-auto p-6 space-y-6">
+        <div className="app-page space-y-6">
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold mb-2">Campaigns</h1>
                     <p>Manage your bulk workflow execution campaigns</p>
                 </div>
                     <Button onClick={handleCreateCampaign}>
-                        <Plus className="h-4 w-4 mr-2" />
+                        <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-2" />
                         Create Campaign
                     </Button>
                 </div>
@@ -116,7 +119,7 @@ export default function CampaignsPage() {
                         {isLoading ? (
                             <div className="animate-pulse space-y-3">
                                 {[...Array(5)].map((_, i) => (
-                                    <div key={i} className="h-12 bg-muted rounded"></div>
+                                    <div key={i} className="h-12 bg-[#F7F7F7] rounded"></div>
                                 ))}
                             </div>
                         ) : campaignsData && campaignsData.campaigns.length > 0 ? (
@@ -137,7 +140,7 @@ export default function CampaignsPage() {
                                         {campaignsData.campaigns.map((campaign) => (
                                             <TableRow
                                                 key={campaign.id}
-                                                className="cursor-pointer hover:bg-muted/50"
+                                                className="cursor-pointer hover:bg-[#F7F7F7]"
                                                 onClick={() => handleRowClick(campaign.id)}
                                             >
                                                 <TableCell>{campaign.id}</TableCell>
@@ -175,7 +178,7 @@ export default function CampaignsPage() {
                             <div className="text-center py-8">
                                 <p className="mb-4">No campaigns found</p>
                                 <Button onClick={handleCreateCampaign} variant="outline">
-                                    <Plus className="h-4 w-4 mr-2" />
+                                    <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-2" />
                                     Create your first campaign
                                 </Button>
                             </div>

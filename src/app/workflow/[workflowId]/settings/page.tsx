@@ -1,7 +1,30 @@
 "use client";
 
 import { format } from "date-fns";
-import { ArrowLeft, BookA, Brain, CalendarIcon, Clipboard, Download, ExternalLink, FileDown, Fingerprint, Loader2, Mic, Pause, PhoneOff, Play, Plus, Rocket, Settings, Trash2Icon, Upload, Variable, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  BookAIcon,
+  BrainIcon,
+  Calendar01Icon,
+  ClipboardIcon,
+  Delete02Icon,
+  Download01Icon,
+  ExternalLinkIcon,
+  FileDownIcon,
+  FingerPrintIcon,
+  Loading02Icon,
+  Mic01Icon,
+  PauseIcon,
+  PhoneOff01Icon,
+  PlayIcon,
+  PlusIcon,
+  Rocket01Icon,
+  Settings01Icon,
+  Upload01Icon,
+  VariableIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -79,15 +102,15 @@ const PUBLISH_WORKFLOW_REMINDER = "Publish the agent to apply the changes.";
 
 // Sidebar navigation items
 const NAV_ITEMS = [
-    { id: "general", label: "General", icon: Settings },
-    { id: "models", label: "Model Overrides", icon: Brain },
-    { id: "variables", label: "Template Variables", icon: Variable },
-    { id: "dictionary", label: "Dictionary", icon: BookA },
-    { id: "voicemail", label: "Voicemail & Screening", icon: PhoneOff },
-    { id: "recordings", label: "Recordings", icon: Mic },
-    { id: "deployment", label: "Add to Website", icon: Rocket },
-    { id: "report", label: "Report", icon: FileDown },
-    { id: "identity", label: "Agent UUID", icon: Fingerprint },
+    { id: "general", label: "General", icon: Settings01Icon },
+    { id: "models", label: "Model Overrides", icon: BrainIcon },
+    { id: "variables", label: "Template Variables", icon: VariableIcon },
+    { id: "dictionary", label: "Dictionary", icon: BookAIcon },
+    { id: "voicemail", label: "Voicemail & Screening", icon: PhoneOff01Icon },
+    { id: "recordings", label: "Recordings", icon: Mic01Icon },
+    { id: "deployment", label: "Add to Website", icon: Rocket01Icon },
+    { id: "report", label: "Report", icon: FileDownIcon },
+    { id: "identity", label: "Agent UUID", icon: FingerPrintIcon },
 ];
 
 // ---------------------------------------------------------------------------
@@ -155,7 +178,7 @@ function ReportSection({ workflowId }: { workflowId: number }) {
         <Card id="report">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                    <FileDown className="h-4 w-4" />
+                    <HugeiconsIcon icon={FileDownIcon} className="h-4 w-4" />
                     Report
                 </CardTitle>
                 <CardDescription>
@@ -166,7 +189,7 @@ function ReportSection({ workflowId }: { workflowId: number }) {
                 <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                     <PopoverTrigger asChild>
                         <Button variant="outline" disabled={isDownloading}>
-                            <Download className="h-4 w-4 mr-2" />
+                            <HugeiconsIcon icon={Download01Icon} className="h-4 w-4 mr-2" />
                             Download Report
                         </Button>
                     </PopoverTrigger>
@@ -180,7 +203,7 @@ function ReportSection({ workflowId }: { workflowId: number }) {
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <Button variant="outline" size="sm" className="w-[140px] justify-start text-left font-normal">
-                                                    <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                                                    <HugeiconsIcon icon={Calendar01Icon} className="mr-2 h-3.5 w-3.5" />
                                                     {startDate ? format(startDate, "MMM dd, yyyy") : "Start date"}
                                                 </Button>
                                             </PopoverTrigger>
@@ -207,7 +230,7 @@ function ReportSection({ workflowId }: { workflowId: number }) {
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <Button variant="outline" size="sm" className="w-[140px] justify-start text-left font-normal">
-                                                    <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                                                    <HugeiconsIcon icon={Calendar01Icon} className="mr-2 h-3.5 w-3.5" />
                                                     {endDate ? format(endDate, "MMM dd, yyyy") : "End date"}
                                                 </Button>
                                             </PopoverTrigger>
@@ -235,7 +258,7 @@ function ReportSection({ workflowId }: { workflowId: number }) {
                                     Clear
                                 </Button>
                                 <Button size="sm" onClick={handleDownload} disabled={isDownloading}>
-                                    <Download className="h-3.5 w-3.5 mr-1.5" />
+                                    <HugeiconsIcon icon={Download01Icon} className="h-3.5 w-3.5 mr-1.5" />
                                     {startDate || endDate ? "Download Filtered" : "Download All"}
                                 </Button>
                             </div>
@@ -453,11 +476,11 @@ function GeneralSection({
         <Card id="general">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                    <Settings className="h-4 w-4" />
+                    <HugeiconsIcon icon={Settings01Icon} className="h-4 w-4" />
                     General
                 </CardTitle>
                 <CardDescription>Agent name, call behavior, and turn detection.{" "}
-                    <a href={SETTINGS_DOCUMENTATION_URLS.general} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <ExternalLink className="h-3 w-3" /></a>
+                    <a href={SETTINGS_DOCUMENTATION_URLS.general} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" /></a>
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -478,7 +501,7 @@ function GeneralSection({
                 <div className="space-y-4">
                     <div>
                         <h3 className="text-sm font-medium">Ambient Noise</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-[#737373] mt-0.5">
                             Add background ambient noise to make the conversation sound more natural.
                         </p>
                     </div>
@@ -513,13 +536,13 @@ function GeneralSection({
                             {/* Custom Audio File */}
                             <div className="space-y-2">
                                 <Label className="text-xs">Custom Audio File</Label>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Upload your own audio file or use the default office ambience.
                                 </p>
 
                                 {ambientNoiseConfig.storage_key ? (
-                                    <div className="flex items-center gap-2 rounded-md border p-2 bg-muted/10">
-                                        <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono truncate flex-1">
+                                    <div className="flex items-center gap-2 rounded-md border p-2 bg-[#F7F7F7]/10">
+                                        <code className="text-xs bg-[#F7F7F7] px-1.5 py-0.5 rounded font-mono truncate flex-1">
                                             {ambientNoiseConfig.original_filename || "Custom audio"}
                                         </code>
                                         <Button
@@ -540,9 +563,9 @@ function GeneralSection({
                                             }}
                                         >
                                             {playingId === "ambient-noise" ? (
-                                                <Pause className="w-3.5 h-3.5" />
+                                                <HugeiconsIcon icon={PauseIcon} className="w-3.5 h-3.5" />
                                             ) : (
-                                                <Play className="w-3.5 h-3.5" />
+                                                <HugeiconsIcon icon={PlayIcon} className="w-3.5 h-3.5" />
                                             )}
                                         </Button>
                                         <Button
@@ -552,7 +575,7 @@ function GeneralSection({
                                             className="h-6 w-6 p-0 shrink-0"
                                             onClick={handleRemoveCustomAudio}
                                         >
-                                            <X className="w-3.5 h-3.5" />
+                                            <HugeiconsIcon icon={XIcon} className="w-3.5 h-3.5" />
                                         </Button>
                                     </div>
                                 ) : (
@@ -576,9 +599,9 @@ function GeneralSection({
                                             disabled={isUploadingAudio}
                                         >
                                             {isUploadingAudio ? (
-                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                <HugeiconsIcon icon={Loading02Icon} className="w-4 h-4 mr-2 animate-spin" />
                                             ) : (
-                                                <Upload className="w-4 h-4 mr-2" />
+                                                <HugeiconsIcon icon={Upload01Icon} className="w-4 h-4 mr-2" />
                                             )}
                                             {isUploadingAudio ? "Uploading..." : "Upload audio file (max 10MB)"}
                                         </Button>
@@ -590,7 +613,7 @@ function GeneralSection({
                                 )}
 
                                 {!ambientNoiseConfig.storage_key && (
-                                    <p className="text-xs text-muted-foreground italic">
+                                    <p className="text-xs text-[#737373] italic">
                                         Using default office ambience
                                     </p>
                                 )}
@@ -605,7 +628,7 @@ function GeneralSection({
                 <div className="space-y-4">
                     <div>
                         <h3 className="text-sm font-medium">Turn Detection</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-[#737373] mt-0.5">
                             Configure how the agent detects when the user has finished speaking.
                         </p>
                     </div>
@@ -623,7 +646,7 @@ function GeneralSection({
                                 <SelectItem value="turn_analyzer">Smart Turn Analyzer</SelectItem>
                             </SelectContent>
                         </Select>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-[#737373]">
                             {turnStopStrategy === "transcription"
                                 ? "Best for short responses (1-2 word statements). Ends turn when transcription indicates completion."
                                 : "Best for longer responses with natural pauses. Uses ML model to detect end of turn."}
@@ -646,7 +669,7 @@ function GeneralSection({
                                     if (!isNaN(value) && value >= 0.5) setSmartTurnStopSecs(value);
                                 }}
                             />
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 Max silence duration before ending an incomplete turn. Default: 2 seconds
                             </p>
                         </div>
@@ -659,7 +682,7 @@ function GeneralSection({
                 <div className="space-y-4">
                     <div>
                         <h3 className="text-sm font-medium">Interruption</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-[#737373] mt-0.5">
                             Configure when user speech should interrupt the agent while it is speaking.
                         </p>
                     </div>
@@ -680,7 +703,7 @@ function GeneralSection({
                                 ))}
                             </SelectContent>
                         </Select>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-[#737373]">
                             {selectedTurnStartStrategy?.description}
                         </p>
                     </div>
@@ -701,7 +724,7 @@ function GeneralSection({
                                     if (!isNaN(value) && value >= 1) setTurnStartMinWords(value);
                                 }}
                             />
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 Number of transcribed words needed to interrupt while the bot is speaking. Default: {DEFAULT_TURN_START_MIN_WORDS}
                             </p>
                         </div>
@@ -714,7 +737,7 @@ function GeneralSection({
                 <div className="space-y-4">
                     <div>
                         <h3 className="text-sm font-medium">Transcript</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-[#737373] mt-0.5">
                             Include start and stop timestamps for each speaker in the uploaded transcript.
                         </p>
                     </div>
@@ -728,8 +751,8 @@ function GeneralSection({
                             onCheckedChange={setIncludeTranscriptEndTimestamps}
                         />
                     </div>
-                    <div className="rounded-md border bg-muted/20 p-3">
-                        <pre className="whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground">
+                    <div className="rounded-md border bg-[#F7F7F7] p-3">
+                        <pre className="whitespace-pre-wrap text-xs leading-relaxed text-[#737373]">
                             {`[2026-07-06T10:00:00.000Z -> 2026-07-06T10:00:04.800Z] assistant: Can you confirm your date of birth?
 [2026-07-06T10:00:06.200Z -> 2026-07-06T10:00:08.700Z] user: January fifth, nineteen ninety.`}
                         </pre>
@@ -742,7 +765,7 @@ function GeneralSection({
                 <div className="space-y-4">
                     <div>
                         <h3 className="text-sm font-medium">Context Compaction</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-[#737373] mt-0.5">
                             Automatically summarize conversation context when transitioning between nodes. Not applicable in Realtime mode - the speech-to-speech service manages its own conversation state and this setting is ignored.
                         </p>
                     </div>
@@ -772,7 +795,7 @@ function GeneralSection({
                 <div className="space-y-4">
                     <div>
                         <h3 className="text-sm font-medium">Call Management</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-[#737373] mt-0.5">
                             Configure call duration limits and idle timeout settings.
                         </p>
                     </div>
@@ -789,7 +812,7 @@ function GeneralSection({
                                     if (!isNaN(value) && value > 0) setMaxCallDuration(value);
                                 }}
                             />
-                            <p className="text-xs text-muted-foreground">Default: 600 (10 minutes)</p>
+                            <p className="text-xs text-[#737373]">Default: 600 (10 minutes)</p>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="max_user_idle_timeout" className="text-xs">
@@ -805,7 +828,7 @@ function GeneralSection({
                                     if (!isNaN(value) && value > 0) setMaxUserIdleTimeout(value);
                                 }}
                             />
-                            <p className="text-xs text-muted-foreground">Default: 10 seconds</p>
+                            <p className="text-xs text-[#737373]">Default: 10 seconds</p>
                         </div>
                     </div>
                 </div>
@@ -818,7 +841,7 @@ function GeneralSection({
                         <div className="space-y-4">
                             <div>
                                 <h3 className="text-sm font-medium">External PBX Field Updates</h3>
-                                <p className="text-xs text-muted-foreground mt-0.5">
+                                <p className="text-xs text-[#737373] mt-0.5">
                                     Optionally copy final gathered-context values into provider-native fields before transfer or hangup.
                                 </p>
                             </div>
@@ -833,7 +856,7 @@ function GeneralSection({
                                         { context_path: "", destination_field: "" },
                                     ])}
                                 >
-                                    <Plus className="mr-1 h-4 w-4" /> Add mapping
+                                    <HugeiconsIcon icon={PlusIcon} className="mr-1 h-4 w-4" /> Add mapping
                                 </Button>
                             </div>
                             <div className="space-y-2">
@@ -872,12 +895,12 @@ function GeneralSection({
                                                 current.filter((_, itemIndex) => itemIndex !== index)
                                             )}
                                         >
-                                            <Trash2Icon className="h-4 w-4" />
+                                            <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 ))}
                                 {externalPbxFieldMappings.length === 0 && (
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-[#737373]">
                                         No external fields will be updated. Context names may be direct extracted-variable names or paths such as extracted_variables.qualified.
                                     </p>
                                 )}
@@ -891,7 +914,7 @@ function GeneralSection({
                             <div className="space-y-4 border-t pt-4">
                                 <div>
                                     <h3 className="text-sm font-medium">Lead Fields To Capture</h3>
-                                    <p className="text-xs text-muted-foreground mt-0.5">
+                                    <p className="text-xs text-[#737373] mt-0.5">
                                         Extra lead fields to read from the inbound call, named without the header prefix
                                         (<code>first_name</code> reads <code>X-VICIDIAL-first_name</code>). Captured values are
                                         addressable in prompts as <code>{"{{initial_context.external_pbx_call.lead.<field>}}"}</code>.
@@ -906,7 +929,7 @@ function GeneralSection({
                                         size="sm"
                                         onClick={() => setExternalPbxLeadHeaders((current) => [...current, ""])}
                                     >
-                                        <Plus className="mr-1 h-4 w-4" /> Add field
+                                        <HugeiconsIcon icon={PlusIcon} className="mr-1 h-4 w-4" /> Add field
                                     </Button>
                                 </div>
                                 <div className="space-y-2">
@@ -931,12 +954,12 @@ function GeneralSection({
                                                     current.filter((_, itemIndex) => itemIndex !== index)
                                                 )}
                                             >
-                                                <Trash2Icon className="h-4 w-4" />
+                                                <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
                                             </Button>
                                         </div>
                                     ))}
                                     {externalPbxLeadHeaders.length === 0 && (
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-xs text-[#737373]">
                                             Only the identity fields needed to transfer or hang up the call are captured.
                                         </p>
                                     )}
@@ -952,7 +975,7 @@ function GeneralSection({
                 )}
             </CardContent>
             <CardFooter className="justify-end gap-3 border-t pt-6">
-                {isDirty && <span className="text-xs text-muted-foreground">Unsaved changes</span>}
+                {isDirty && <span className="text-xs text-[#737373]">Unsaved changes</span>}
                 <Button
                     onClick={handleSave}
                     disabled={
@@ -1028,12 +1051,12 @@ function TemplateVariablesSection({
         <Card id="variables">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                    <Variable className="h-4 w-4" />
+                    <HugeiconsIcon icon={VariableIcon} className="h-4 w-4" />
                     Template Variables
                 </CardTitle>
                 <CardDescription>
                     Variables available in workflow prompts via {`{{variable_name}}`} syntax for testing the workflow.{" "}
-                    <a href={SETTINGS_DOCUMENTATION_URLS.templateVariables} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <ExternalLink className="h-3 w-3" /></a>
+                    <a href={SETTINGS_DOCUMENTATION_URLS.templateVariables} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" /></a>
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -1045,10 +1068,10 @@ function TemplateVariablesSection({
                             <div key={key} className="flex items-center gap-2 rounded-md border p-2">
                                 <div className="flex-1 min-w-0">
                                     <div className="text-sm font-medium">{key}</div>
-                                    <div className="text-xs text-muted-foreground truncate">{value}</div>
+                                    <div className="text-xs text-[#737373] truncate">{value}</div>
                                 </div>
                                 <Button size="sm" variant="ghost" onClick={() => handleRemove(key)}>
-                                    <Trash2Icon className="h-4 w-4" />
+                                    <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
                                 </Button>
                             </div>
                         ))}
@@ -1084,7 +1107,7 @@ function TemplateVariablesSection({
                 </div>
             </CardContent>
             <CardFooter className="justify-end gap-3 border-t pt-6">
-                {isDirty && <span className="text-xs text-muted-foreground">Unsaved changes</span>}
+                {isDirty && <span className="text-xs text-[#737373]">Unsaved changes</span>}
                 <Button onClick={handleSave} disabled={isSaving || !isDirty}>
                     {isSaving ? "Saving..." : "Save Variables"}
                 </Button>
@@ -1127,7 +1150,7 @@ function DictionarySection({
         <Card id="dictionary">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                    <BookA className="h-4 w-4" />
+                    <HugeiconsIcon icon={BookAIcon} className="h-4 w-4" />
                     Dictionary
                 </CardTitle>
                 <CardDescription>
@@ -1145,7 +1168,7 @@ function DictionarySection({
                 />
             </CardContent>
             <CardFooter className="justify-end gap-3 border-t pt-6">
-                {isDirty && <span className="text-xs text-muted-foreground">Unsaved changes</span>}
+                {isDirty && <span className="text-xs text-[#737373]">Unsaved changes</span>}
                 <Button onClick={handleSave} disabled={isSaving || !isDirty}>
                     {isSaving ? "Saving..." : "Save Dictionary"}
                 </Button>
@@ -1224,7 +1247,7 @@ function VoicemailSection({
         <Card id="voicemail">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                    <PhoneOff className="h-4 w-4" />
+                    <HugeiconsIcon icon={PhoneOff01Icon} className="h-4 w-4" />
                     Voicemail & Screening
                 </CardTitle>
                 <CardDescription>
@@ -1235,7 +1258,7 @@ function VoicemailSection({
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div className="flex items-center space-x-2 rounded-md border bg-muted/20 p-2">
+                <div className="flex items-center space-x-2 rounded-md border bg-[#F7F7F7] p-2">
                     <Switch id="voicemail-enabled" checked={enabled} onCheckedChange={setEnabled} />
                     <Label htmlFor="voicemail-enabled">Enable voicemail and screening handling</Label>
                 </div>
@@ -1246,14 +1269,14 @@ function VoicemailSection({
                         <details className="rounded-md border p-3">
                             <summary className="cursor-pointer text-sm font-medium">Classification model</summary>
                             <div className="mt-3 space-y-3">
-                                <div className="flex items-center space-x-2 rounded-md border bg-muted/20 p-2">
+                                <div className="flex items-center space-x-2 rounded-md border bg-[#F7F7F7] p-2">
                                     <Switch
                                         id="voicemail-use-workflow-llm"
                                         checked={useWorkflowLlm}
                                         onCheckedChange={setUseWorkflowLlm}
                                     />
                                     <Label htmlFor="voicemail-use-workflow-llm">Use Workflow LLM</Label>
-                                    <Label className="ml-2 text-xs text-muted-foreground">
+                                    <Label className="ml-2 text-xs text-[#737373]">
                                         Use the LLM configured in your account settings.
                                     </Label>
                                 </div>
@@ -1274,7 +1297,7 @@ function VoicemailSection({
                 )}
             </CardContent>
             <CardFooter className="justify-end gap-3 border-t pt-6">
-                {isDirty && <span className="text-xs text-muted-foreground">Unsaved changes</span>}
+                {isDirty && <span className="text-xs text-[#737373]">Unsaved changes</span>}
                 <Button onClick={handleSave} disabled={isSaving || !isDirty || (enabled && isVoicemailMessageMissing(answerSettings))}>
                     {isSaving ? "Saving..." : "Save Voicemail Settings"}
                 </Button>
@@ -1301,7 +1324,7 @@ function AgentUuidSection({ workflowUuid }: { workflowUuid: string }) {
         <Card id="identity">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                    <Fingerprint className="h-4 w-4" />
+                    <HugeiconsIcon icon={FingerPrintIcon} className="h-4 w-4" />
                     Agent UUID
                 </CardTitle>
                 <CardDescription>
@@ -1314,15 +1337,15 @@ function AgentUuidSection({ workflowUuid }: { workflowUuid: string }) {
                     type="button"
                     onClick={handleCopy}
                     title="Click to copy"
-                    className="group flex w-full items-center gap-2 rounded-md border bg-muted/20 p-2 text-left font-mono text-xs transition-colors hover:bg-muted/40"
+                    className="group flex w-full items-center gap-2 rounded-md border bg-[#F7F7F7] p-2 text-left font-mono text-xs transition-colors hover:bg-[#F7F7F7]"
                 >
                     <code className="flex-1 truncate">{workflowUuid}</code>
-                    <Clipboard className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
+                    <HugeiconsIcon icon={ClipboardIcon} className="h-3.5 w-3.5 shrink-0 text-[#737373] transition-colors group-hover:text-foreground" />
                 </button>
             </CardContent>
             <CardFooter className="border-t pt-6">
                 <Button variant="outline" size="sm" onClick={handleCopy}>
-                    <Clipboard className="h-3.5 w-3.5 mr-2" />
+                    <HugeiconsIcon icon={ClipboardIcon} className="h-3.5 w-3.5 mr-2" />
                     Copy UUID
                 </Button>
             </CardFooter>
@@ -1393,18 +1416,18 @@ function WorkflowModelOverridesSection({
         <Card id="models">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                    <Brain className="h-4 w-4" />
+                    <HugeiconsIcon icon={BrainIcon} className="h-4 w-4" />
                     Model Overrides
                 </CardTitle>
                 <CardDescription>
                     Override the full organization model configuration for this workflow.{" "}
-                    <a href={SETTINGS_DOCUMENTATION_URLS.modelOverrides} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <ExternalLink className="h-3 w-3" /></a>
+                    <a href={SETTINGS_DOCUMENTATION_URLS.modelOverrides} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" /></a>
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 {modelConfigurationLoading && (
-                    <div className="flex items-center gap-2 rounded-md border p-4 text-sm text-muted-foreground">
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                    <div className="flex items-center gap-2 rounded-md border p-4 text-sm text-[#737373]">
+                        <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin" />
                         Loading model configuration
                     </div>
                 )}
@@ -1416,8 +1439,8 @@ function WorkflowModelOverridesSection({
                 )}
 
                 {!modelConfigurationLoading && !modelConfigurationError && !hasOrgConfiguration && (
-                    <div className="flex flex-col gap-3 rounded-md border bg-muted/30 p-4 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-sm text-muted-foreground">
+                    <div className="flex flex-col gap-3 rounded-md border bg-[#F7F7F7] p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="text-sm text-[#737373]">
                             Set up your organization model configuration before overriding it per workflow.
                         </p>
                         <Button type="button" variant="outline" size="sm" asChild>
@@ -1433,7 +1456,7 @@ function WorkflowModelOverridesSection({
                                 <Label htmlFor="workflow-model-v2-override" className="text-sm font-medium">
                                     Override for this workflow
                                 </Label>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     {overrideEnabled
                                         ? "This workflow uses its own complete model configuration."
                                         : "This workflow uses the organization model configuration."}
@@ -1463,8 +1486,8 @@ function WorkflowModelOverridesSection({
                                 onSave={saveV2Override}
                             />
                         ) : (
-                            <div className="rounded-md border bg-muted/20 p-4">
-                                <p className="text-sm text-muted-foreground">
+                            <div className="rounded-md border bg-[#F7F7F7] p-4">
+                                <p className="text-sm text-[#737373]">
                                     Using organization model configuration.
                                 </p>
                                 {hasSavedModelOverride && (
@@ -1691,16 +1714,16 @@ function WorkflowSettingsInner({
                     size="icon"
                     onClick={() => confirmNavigate(() => router.push(`/workflow/${workflowId}`))}
                 >
-                    <ArrowLeft className="h-4 w-4" />
+                    <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4" />
                 </Button>
                 <div>
-                    <p className="text-xs text-muted-foreground">Workflow Settings</p>
+                    <p className="text-xs text-[#737373]">Workflow Settings</p>
                     <h1 className="text-sm font-semibold">{workflowName || workflow.name}</h1>
                 </div>
             </header>
 
             {/* Main + right nav */}
-            <div className="mx-auto flex max-w-5xl gap-8 px-6 py-8">
+            <div className="app-page flex max-w-5xl gap-8">
                 {/* Sections */}
                 <div className="min-w-0 flex-1 space-y-8">
                     {resolvedWorkflowConfigurationsForRender && (
@@ -1745,20 +1768,20 @@ function WorkflowSettingsInner({
                             <Card id="recordings">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-base">
-                                        <Mic className="h-4 w-4" />
+                                        <HugeiconsIcon icon={Mic01Icon} className="h-4 w-4" />
                                         Recordings
                                     </CardTitle>
                                     <CardDescription>
                                         Recordings are now managed at the organization level and shared across all agents.
-                                        Use <code className="rounded bg-muted px-1 text-xs">@</code> in prompt fields to insert them.{" "}
-                                        <a href={SETTINGS_DOCUMENTATION_URLS.recordings} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <ExternalLink className="h-3 w-3" /></a>
+                                        Use <code className="rounded bg-[#F7F7F7] px-1 text-xs">@</code> in prompt fields to insert them.{" "}
+                                        <a href={SETTINGS_DOCUMENTATION_URLS.recordings} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" /></a>
                                     </CardDescription>
                                 </CardHeader>
                                 <CardFooter className="border-t pt-6">
                                     <Button variant="outline" asChild>
                                         <Link href="/recordings">
                                             Go to Recordings
-                                            <ExternalLink className="ml-2 h-4 w-4" />
+                                            <HugeiconsIcon icon={ExternalLinkIcon} className="ml-2 h-4 w-4" />
                                         </Link>
                                     </Button>
                                 </CardFooter>
@@ -1768,12 +1791,12 @@ function WorkflowSettingsInner({
                             <Card id="deployment">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-base">
-                                        <Rocket className="h-4 w-4" />
+                                        <HugeiconsIcon icon={Rocket01Icon} className="h-4 w-4" />
                                         Add to Website
                                     </CardTitle>
                                     <CardDescription>
                                         Configure a widget to add this voice agent to your website.{" "}
-                                        <a href={SETTINGS_DOCUMENTATION_URLS.deployment} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <ExternalLink className="h-3 w-3" /></a>
+                                        <a href={SETTINGS_DOCUMENTATION_URLS.deployment} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" /></a>
                                     </CardDescription>
                                 </CardHeader>
                                 <CardFooter className="border-t pt-6">
@@ -1797,7 +1820,7 @@ function WorkflowSettingsInner({
                 {/* ---- Right-side sticky nav ---- */}
                 <nav className="hidden w-44 shrink-0 lg:block">
                     <div className="sticky top-20 space-y-1">
-                        <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                        <p className="mb-2 text-xs font-medium uppercase tracking-wider text-[#737373]">
                             On this page
                         </p>
                         {NAV_ITEMS.map((item) => (
@@ -1807,7 +1830,7 @@ function WorkflowSettingsInner({
                                 className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-sm transition-colors hover:text-foreground ${
                                     activeSection === item.id
                                         ? "font-medium text-foreground"
-                                        : "text-muted-foreground"
+                                        : "text-[#737373]"
                                 }`}
                             >
                                 {item.label}

@@ -1,6 +1,14 @@
 "use client";
 
-import { Loader2, MessageSquareText, Mic, Phone, RefreshCw, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+  MessageSquareTextIcon,
+  Mic01Icon,
+  PhoneIcon,
+  RefreshCwIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import posthog from "posthog-js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -161,15 +169,15 @@ export function WorkflowTesterPanel({
                 onValueChange={handleModeChange}
                 className="min-h-0 flex-1 gap-0"
             >
-                <div className="border-b border-border/70 px-4 py-3">
+                <div className="border-b border-[#E5E5E5] px-4 py-3">
                     <div className="flex items-center gap-3">
-                        <TabsList className="grid h-9 flex-1 grid-cols-2 rounded-lg bg-muted/60 p-1">
+                        <TabsList className="grid h-9 flex-1 grid-cols-2 rounded-lg bg-[#F7F7F7] p-1">
                             <TabsTrigger value="audio" className="rounded-md text-sm">
-                                <Mic className="h-4 w-4" />
+                                <HugeiconsIcon icon={Mic01Icon} className="h-4 w-4" />
                                 Test Audio
                             </TabsTrigger>
                             <TabsTrigger value="text" className="rounded-md text-sm">
-                                <MessageSquareText className="h-4 w-4" />
+                                <HugeiconsIcon icon={MessageSquareTextIcon} className="h-4 w-4" />
                                 Test Chat
                             </TabsTrigger>
                         </TabsList>
@@ -178,10 +186,10 @@ export function WorkflowTesterPanel({
                                 variant="ghost"
                                 size="icon"
                                 onClick={onClose}
-                                className="shrink-0 text-muted-foreground hover:text-foreground"
+                                className="shrink-0 text-[#737373] hover:text-foreground"
                                 aria-label="Close tester panel"
                             >
-                                <X className="h-4 w-4" />
+                                <HugeiconsIcon icon={XIcon} className="h-4 w-4" />
                             </Button>
                         ) : null}
                     </div>
@@ -211,7 +219,7 @@ export function WorkflowTesterPanel({
                             <>
                                 {effectiveDisabledReason ? <DisabledNotice reason={effectiveDisabledReason} /> : null}
                                 <EmptyState
-                                    icon={<Phone className="h-7 w-7" />}
+                                    icon={<HugeiconsIcon icon={PhoneIcon} className="h-7 w-7" />}
                                     title="Call this agent in the browser"
                                     description="Test the agent over a voice call. Some telephony-only tools, like call transfer, are not yet supported here."
                                     action={
@@ -222,12 +230,12 @@ export function WorkflowTesterPanel({
                                         >
                                             {creatingVoiceRun ? (
                                                 <>
-                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                    <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin" />
                                                     Starting test...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Phone className="h-4 w-4" />
+                                                    <HugeiconsIcon icon={PhoneIcon} className="h-4 w-4" />
                                                     Run Test
                                                 </>
                                             )}
@@ -249,9 +257,9 @@ export function WorkflowTesterPanel({
                                     size="sm"
                                     onClick={() => setChatSessionKey((value) => value + 1)}
                                     disabled={testerBlocked}
-                                    className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+                                    className="h-7 px-2 text-xs text-[#737373] hover:text-foreground"
                                 >
-                                    <RefreshCw className="h-3.5 w-3.5" />
+                                    <HugeiconsIcon icon={RefreshCwIcon} className="h-3.5 w-3.5" />
                                     Reset
                                 </Button>
                             ) : null}

@@ -1,21 +1,10 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Briefcase,
-  Calendar,
-  ChevronDown,
-  Headphones,
-  Home,
-  Menu,
-  PhoneCall,
-  PhoneForwarded,
-  PhoneIncoming,
-  Radio,
-  Sparkles,
-  Stethoscope,
-  Truck,
-  X
-} from 'lucide-react';
+  Menu01Icon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -23,6 +12,12 @@ import { BrandLogo } from '@/components/BrandLogo';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth';
 
+/**
+ * Marketing site header — ElevenLabs-style left-aligned nav merged with the
+ * site system: brand left, text-only links grouped left, CTAs right; hover is
+ * a plain neutral pill (no icons, no accent colors). Bar color, links, routes,
+ * and auth states are unchanged — alignment + hover design only.
+ */
 export function MarketingNavbar() {
   const { isAuthenticated, loading } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -33,103 +28,90 @@ export function MarketingNavbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const triggerClass = (open: boolean) =>
+    `px-4 py-2 rounded-full text-[15px] font-medium transition-colors ${open
+      ? 'bg-neutral-100 text-neutral-950'
+      : 'text-neutral-800 hover:bg-neutral-100 hover:text-neutral-950'
+    }`;
+
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? 'bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-sm shadow-black/5 py-3'
-          : 'bg-transparent py-5'
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${isScrolled
+        ? 'border-b border-neutral-200/80 shadow-[0_1px_2px_rgba(16,16,20,0.05)]'
+        : 'border-b border-transparent'
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-8">
+        <div className="flex items-center h-16 sm:h-[72px]">
+          {/* Brand */}
+          <Link href="/" className="flex items-center shrink-0" aria-label="Callio home">
             <BrandLogo />
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-medium">
+          {/* Links grouped left, like the reference */}
+          <nav
+            aria-label="Primary"
+            className="hidden lg:flex items-center gap-1 text-[15px] font-medium ml-8 xl:ml-12"
+          >
             {/* Product Menu */}
             <div
               className="relative"
               onMouseEnter={() => setActiveDropdown('product')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+              <button className={triggerClass(activeDropdown === 'product')}>
                 Product
-                <ChevronDown className="w-3.5 h-3.5 opacity-70" />
               </button>
 
               {activeDropdown === 'product' && (
-                <div className="absolute top-full left-0 w-80 pt-2 z-50">
-                  <div className="bg-popover/95 backdrop-blur-xl border border-border/70 rounded-2xl p-3 shadow-2xl shadow-black/20 space-y-1">
+                <div className="absolute top-full left-0 w-[340px] pt-2 z-50">
+                  <div className="bg-white border border-neutral-200 rounded-2xl p-2.5 shadow-2xl shadow-neutral-900/10 space-y-0.5">
                     <Link
                       href="/ai-voice-agents"
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                        <Sparkles className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-foreground text-sm">AI Voice Agents</div>
-                        <div className="text-xs text-muted-foreground">Autonomous agents for customer conversations</div>
-                      </div>
+                      <div className="font-semibold text-neutral-900 text-[15px]">AI Voice Agents</div>
+                      <div className="text-[13px] text-neutral-500">Autonomous agents for customer conversations</div>
                     </Link>
                     <Link
                       href="/ai-calling"
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                        <PhoneCall className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-foreground text-sm">AI Calling Platform</div>
-                        <div className="text-xs text-muted-foreground">Automated inbound & outbound call workflows</div>
-                      </div>
+                      <div className="font-semibold text-neutral-900 text-[15px]">AI Calling Platform</div>
+                      <div className="text-[13px] text-neutral-500">Automated inbound & outbound call workflows</div>
                     </Link>
                     <Link
                       href="/inbound-calls"
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                        <PhoneIncoming className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-foreground text-sm">Inbound Calls</div>
-                        <div className="text-xs text-muted-foreground">24/7 receptionist, smart triage & routing</div>
-                      </div>
+                      <div className="font-semibold text-neutral-900 text-[15px]">Inbound Calls</div>
+                      <div className="text-[13px] text-neutral-500">24/7 receptionist, smart triage & routing</div>
                     </Link>
                     <Link
                       href="/outbound-calls"
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                        <PhoneForwarded className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-foreground text-sm">Outbound Campaigns</div>
-                        <div className="text-xs text-muted-foreground">Lead follow-ups, qualification & appointment booking</div>
-                      </div>
+                      <div className="font-semibold text-neutral-900 text-[15px]">Outbound Campaigns</div>
+                      <div className="text-[13px] text-neutral-500">Lead follow-ups, qualification & appointment booking</div>
                     </Link>
 
-                    <div className="pt-2 mt-2 border-t border-border/50 grid grid-cols-2 gap-1">
+                    <div className="pt-2 mt-2 border-t border-neutral-200 grid grid-cols-2 gap-1">
                       <Link
                         href="/voices"
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        className="block p-2 rounded-lg hover:bg-neutral-100 text-[13px] font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
                       >
-                        <Radio className="w-3.5 h-3.5 text-indigo-400" />
-                        <span>Voice Marketplace</span>
+                        Voice Marketplace
                       </Link>
                       <Link
                         href="/ai-voice-agents"
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+                        className="block p-2 rounded-lg hover:bg-neutral-100 text-[13px] font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
                       >
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>Try Live Agents</span>
+                        Try Live Agents
                       </Link>
                     </div>
                   </div>
@@ -143,73 +125,54 @@ export function MarketingNavbar() {
               onMouseEnter={() => setActiveDropdown('solutions')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+              <button className={triggerClass(activeDropdown === 'solutions')}>
                 Solutions
-                <ChevronDown className="w-3.5 h-3.5 opacity-70" />
               </button>
 
               {activeDropdown === 'solutions' && (
-                <div className="absolute top-full -left-12 w-[480px] pt-2 z-50">
-                  <div className="bg-popover/95 backdrop-blur-xl border border-border/70 rounded-2xl p-4 shadow-2xl shadow-black/20 grid grid-cols-2 gap-2">
+                <div className="absolute top-full left-0 w-[480px] pt-2 z-50">
+                  <div className="bg-white border border-neutral-200 rounded-2xl p-3.5 shadow-2xl shadow-neutral-900/10 grid grid-cols-2 gap-1">
                     <Link
                       href="/use-cases/healthcare"
-                      className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <Stethoscope className="w-4 h-4 text-rose-400 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-foreground text-sm">Healthcare & Clinics</div>
-                        <div className="text-xs text-muted-foreground">Appointment booking & patient triage</div>
-                      </div>
+                      <div className="font-medium text-neutral-900 text-[15px]">Healthcare & Clinics</div>
+                      <div className="text-[13px] text-neutral-500">Appointment booking & patient triage</div>
                     </Link>
                     <Link
                       href="/use-cases/real-estate"
-                      className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <Home className="w-4 h-4 text-amber-400 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-foreground text-sm">Real Estate</div>
-                        <div className="text-xs text-muted-foreground">Buyer screening & showing dispatch</div>
-                      </div>
+                      <div className="font-medium text-neutral-900 text-[15px]">Real Estate</div>
+                      <div className="text-[13px] text-neutral-500">Buyer screening & showing dispatch</div>
                     </Link>
                     <Link
                       href="/use-cases/sales"
-                      className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <Briefcase className="w-4 h-4 text-indigo-400 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-foreground text-sm">Sales & SDR</div>
-                        <div className="text-xs text-muted-foreground">Instant speed-to-lead & BANT qualifying</div>
-                      </div>
+                      <div className="font-medium text-neutral-900 text-[15px]">Sales & SDR</div>
+                      <div className="text-[13px] text-neutral-500">Instant speed-to-lead & BANT qualifying</div>
                     </Link>
                     <Link
                       href="/use-cases/customer-support"
-                      className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <Headphones className="w-4 h-4 text-teal-400 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-foreground text-sm">Customer Support</div>
-                        <div className="text-xs text-muted-foreground">Instant FAQ & order resolution</div>
-                      </div>
+                      <div className="font-medium text-neutral-900 text-[15px]">Customer Support</div>
+                      <div className="text-[13px] text-neutral-500">Instant FAQ & order resolution</div>
                     </Link>
                     <Link
                       href="/use-cases/logistics"
-                      className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <Truck className="w-4 h-4 text-orange-400 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-foreground text-sm">Logistics & Supply</div>
-                        <div className="text-xs text-muted-foreground">Driver check-in calls & ETA updates</div>
-                      </div>
+                      <div className="font-medium text-neutral-900 text-[15px]">Logistics & Supply</div>
+                      <div className="text-[13px] text-neutral-500">Driver check-in calls & ETA updates</div>
                     </Link>
                     <Link
                       href="/customer-stories"
-                      className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-muted transition-colors group"
+                      className="block p-2.5 rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                      <Calendar className="w-4 h-4 text-sky-400 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-foreground text-sm">Case Studies</div>
-                        <div className="text-xs text-muted-foreground">Enterprise ROI & success stories</div>
-                      </div>
+                      <div className="font-medium text-neutral-900 text-[15px]">Case Studies</div>
+                      <div className="text-[13px] text-neutral-500">Enterprise ROI & success stories</div>
                     </Link>
                   </div>
                 </div>
@@ -219,44 +182,46 @@ export function MarketingNavbar() {
             {/* Voice Agents */}
             <Link
               href="/ai-voice-agents"
-              className="px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors flex items-center gap-1.5"
+              className="px-4 py-2 rounded-full text-neutral-800 hover:text-neutral-950 hover:bg-neutral-100 transition-colors"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Voice Agents</span>
+              Agents
             </Link>
 
             {/* Pricing */}
             <Link
               href="/pricing"
-              className="px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              className="px-4 py-2 rounded-full text-neutral-800 hover:text-neutral-950 hover:bg-neutral-100 transition-colors"
             >
               Pricing
             </Link>
-          </div>
+          </nav>
 
-          {/* Right Action CTAs */}
-          <div className="hidden sm:flex items-center gap-3">
+          {/* Right CTAs */}
+          <div className="hidden sm:flex items-center gap-2.5 shrink-0 ml-auto">
             {!loading && isAuthenticated ? (
-              <>
-                <Button
-                  size="sm"
-                  asChild
-                  className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/25 rounded-xl font-medium px-4 h-9"
-                >
-                  <Link href="/overview">
-                    Dashboard
-                  </Link>
-                </Button>
-              </>
+              <Button
+                size="sm"
+                asChild
+                className="bg-[#17171c] hover:bg-[#232329] text-white shadow-[0_4px_12px_-6px_rgba(0,0,0,0.35)] rounded-full font-medium px-5 h-10 text-[14px]"
+              >
+                <Link href="/dashboard/overview">
+                  Dashboard
+                </Link>
+              </Button>
             ) : (
               <>
-                <Button variant="ghost" size="sm" asChild className="text-sm font-medium">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="h-10 rounded-full border-neutral-200 bg-white px-5 text-[14px] font-medium text-neutral-900 shadow-none hover:bg-neutral-50"
+                >
                   <Link href="/auth/login">Log in</Link>
                 </Button>
                 <Button
                   size="sm"
                   asChild
-                  className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/25 rounded-xl font-medium px-4 h-9"
+                  className="bg-[#17171c] hover:bg-[#232329] text-white shadow-[0_4px_12px_-6px_rgba(0,0,0,0.35)] rounded-full font-medium px-5 h-10 text-[14px]"
                 >
                   <Link href="/workflow">
                     Start Free Trial
@@ -266,50 +231,50 @@ export function MarketingNavbar() {
             )}
           </div>
 
-          {/* Mobile menu hamburger toggle */}
-          <div className="lg:hidden flex items-center gap-2">
+          {/* Mobile hamburger */}
+          <div className="lg:hidden flex items-center gap-2 ml-auto">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle Navigation"
+              className="text-neutral-800 hover:bg-neutral-100"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <HugeiconsIcon icon={XIcon} className="w-5 h-5" /> : <HugeiconsIcon icon={Menu01Icon} className="w-5 h-5" />}
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-b border-border/80 bg-background/95 backdrop-blur-2xl px-4 pt-3 pb-6 space-y-3">
+        <div className="lg:hidden border-t border-b border-neutral-200 bg-white px-4 pt-3 pb-6 space-y-3">
           <div className="space-y-1">
             <Link
               href="/ai-voice-agents"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium hover:bg-muted"
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-neutral-800 hover:bg-neutral-100"
             >
               AI Voice Agents
             </Link>
             <Link
               href="/ai-calling"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium hover:bg-muted"
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-neutral-800 hover:bg-neutral-100"
             >
               AI Calling Platform
             </Link>
             <Link
               href="/ai-voice-agents"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-emerald-400 hover:bg-muted"
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-neutral-800 hover:bg-neutral-100"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Voice Agents (Live Demos)</span>
+              Voice Agents (Live Demos)
             </Link>
             <Link
               href="/pricing"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium hover:bg-muted"
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-neutral-800 hover:bg-neutral-100"
             >
               Pricing & Plans
             </Link>
@@ -317,28 +282,28 @@ export function MarketingNavbar() {
               <Link
                 href="/workflow"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-medium text-indigo-400 hover:bg-muted"
+                className="block px-3 py-2 rounded-lg text-sm font-medium text-neutral-800 hover:bg-neutral-100"
               >
                 Studio (Visual Canvas)
               </Link>
             )}
           </div>
 
-          <div className="pt-3 border-t border-border flex flex-col gap-2">
+          <div className="pt-3 border-t border-neutral-200 flex flex-col gap-2">
             {!loading && isAuthenticated ? (
-              <Button asChild className="w-full bg-indigo-600 hover:bg-indigo-500 text-white">
-                <Link href="/overview" onClick={() => setMobileMenuOpen(false)}>
+              <Button asChild className="w-full bg-[#17171c] hover:bg-[#232329] text-white rounded-full">
+                <Link href="/dashboard/overview" onClick={() => setMobileMenuOpen(false)}>
                   Go to Dashboard
                 </Link>
               </Button>
             ) : (
               <>
-                <Button variant="outline" asChild className="w-full">
+                <Button variant="outline" asChild className="w-full border-neutral-200 bg-white text-neutral-900 rounded-full">
                   <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
                     Log in
                   </Link>
                 </Button>
-                <Button asChild className="w-full bg-indigo-600 hover:bg-indigo-500 text-white">
+                <Button asChild className="w-full bg-[#17171c] hover:bg-[#232329] text-white rounded-full">
                   <Link href="/ai-voice-agents" onClick={() => setMobileMenuOpen(false)}>
                     Explore Voice Agents
                   </Link>
@@ -348,6 +313,6 @@ export function MarketingNavbar() {
           </div>
         </div>
       )}
-    </nav>
+    </header>
   );
 }

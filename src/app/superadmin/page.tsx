@@ -1,5 +1,6 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Activity,
   ArrowRight,
@@ -16,6 +17,17 @@ import {
   UserCheck,
   Users,
 } from "lucide-react";
+ArrowRight01Icon,
+  Dollar01Icon,
+  Key01Icon,
+  ListIcon,
+  Loading02Icon,
+  PhoneIcon,
+  ShieldAlertIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  UsersIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -174,142 +186,349 @@ export default function SuperadminOverviewPage() {
               </Button>
             </Link>
           </div>
-        </div>
+  const handleProviderImpersonate = async (e: React.FormEvent) => {
+            e.preventDefault();
+          await handleImpersonate("provider", providerUserId);
+  };
 
-        {/* Ambient background glow */}
-        <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
-      </div>
+  const handleEmailImpersonate = async (e: React.FormEvent) => {
+            e.preventDefault();
+          await handleImpersonate("email", email);
+  };
 
-      {/* KPI Stats Row */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Fleet Concurrency
-            </CardTitle>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
-              <Activity className="h-4 w-4" />
+          if (checkingSuperuser) {
+    return (
+          <div className="app-page flex items-center justify-center min-h-[400px]">
+            <div className="flex items-center space-x-2 text-[#737373]">
+              <HugeiconsIcon icon={Loading02Icon} className="h-6 w-6 animate-spin" />
+              <span>Verifying administrator credentials...</span>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">
-              {metrics ? metrics.fleet_active_calls ?? 0 : "—"}
-            </div>
-            <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              Live simultaneous calls in progress
-            </p>
-          </CardContent>
-        </Card>
 
-        <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Total Organizations
-            </CardTitle>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
-              <Users className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">
-              {metrics ? metrics.total_organizations ?? 0 : "—"}
-            </div>
-            <p className="text-[11px] text-muted-foreground mt-1">
-              Registered customer tenant accounts
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Total Wallet Balance
-            </CardTitle>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 text-amber-400">
-              <DollarSign className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">
-              ${metrics ? (metrics.total_wallet_balance_usd ?? 0).toFixed(2) : "0.00"}
-            </div>
-            <p className="text-[11px] text-muted-foreground mt-1">
-              Pre-funded balance across all customer accounts
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Paid Subscriptions
-            </CardTitle>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-500/10 text-violet-400">
-              <Layers className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">
-              {metrics ? metrics.active_paid_subscriptions ?? 0 : "—"}
-            </div>
-            <p className="text-[11px] text-muted-foreground mt-1">
-              Active Starter, Pro, or Enterprise organizations
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Launch Navigation Tiles */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-semibold tracking-tight text-foreground">
-              Administrative Control Centers
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Jump directly to any administrative subsystem via the sidebar or below.
-            </p>
+            {/* Ambient background glow */}
+            <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
           </div>
-        </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {navTiles.map((tile) => {
-            const Icon = tile.icon;
-            return (
-              <Link key={tile.href} href={tile.href} className="group block">
-                <Card className="h-full border-border/60 bg-card/50 hover:bg-card/90 transition-all duration-200 hover:border-indigo-500/40 hover:shadow-md hover:-translate-y-0.5">
-                  <CardHeader className="p-5 pb-3">
-                    <div className="flex items-center justify-between mb-3">
-                      <div
-                        className={`flex h-9 w-9 items-center justify-center rounded-xl border ${tile.iconColor}`}
-                      >
-                        <Icon className="h-4.5 w-4.5" />
+          {/* KPI Stats Row */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-xs">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Fleet Concurrency
+                </CardTitle>
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+                  <Activity className="h-4 w-4" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-foreground">
+                  {metrics ? metrics.fleet_active_calls ?? 0 : "—"}
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Live simultaneous calls in progress
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-xs">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Total Organizations
+                </CardTitle>
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                  <Users className="h-4 w-4" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-foreground">
+                  {metrics ? metrics.total_organizations ?? 0 : "—"}
+                  );
+  }
+
+                  if (!isSuperuser) {
+    return (
+                  <div className="flex min-h-[75vh] w-full items-center justify-center p-4">
+                    <Card className="max-w-md border-[#E5E5E5] shadow-2xl bg-[#FFFFFF]">
+                      <CardHeader className="text-center pb-3">
+                        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive border border-destructive/20">
+                          <HugeiconsIcon icon={ShieldAlertIcon} className="h-7 w-7" />
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mt-1">
+                          Registered customer tenant accounts
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-xs">
+                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                        <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Total Wallet Balance
+                        </CardTitle>
+                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 text-amber-400">
+                          <DollarSign className="h-4 w-4" />
+                        </div>
+                        <CardDescription className="text-sm text-[#737373] pt-1">
+                          Superadmin privileges are required to view the administrative portal.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-foreground">
+                          ${metrics ? (metrics.total_wallet_balance_usd ?? 0).toFixed(2) : "0.00"}
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mt-1">
+                          Pre-funded balance across all customer accounts
+                        </p>
+                        <CardContent className="text-center text-xs text-[#737373] leading-relaxed px-6 pb-6">
+                          Your account does not have superuser privileges. Please return to
+                          your workspace overview.
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border-border/60 bg-card/60 backdrop-blur-sm shadow-xs">
+                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                        <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Paid Subscriptions
+                        </CardTitle>
+                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-500/10 text-violet-400">
+                          <Layers className="h-4 w-4" />
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-foreground">
+                          {metrics ? metrics.active_paid_subscriptions ?? 0 : "—"}
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mt-1">
+                          Active Starter, Pro, or Enterprise organizations
+                        </p>
+                      </CardContent>
+                      <div className="p-6 pt-0 flex flex-col gap-2">
+                        <Button
+                          asChild
+                          className="w-full bg-neutral-950 hover:bg-neutral-800 text-white"
+                        >
+                          <Link href="/dashboard/overview">Return to Workspace Overview</Link>
+                        </Button>
                       </div>
-                      <Badge variant="outline" className="text-[10px] py-0 px-2 border-border/60 text-muted-foreground">
-                        {tile.badge}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-sm font-semibold group-hover:text-indigo-400 transition-colors flex items-center justify-between">
-                      {tile.title}
-                      <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-indigo-400" />
-                    </CardTitle>
-                    <CardDescription className="text-xs line-clamp-2 mt-1 leading-relaxed">
-                      {tile.description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+                    </Card>
+                  </div>
 
-      {/* Embedded Impersonation Quick Section */}
-      <div className="pt-2">
-        <SuperadminImpersonationManager />
-      </div>
-    </div>
-  );
+                  {/* Quick Launch Navigation Tiles */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">
+                          Administrative Control Centers
+                        </h2>
+                        <p className="text-xs text-muted-foreground">
+                          Jump directly to any administrative subsystem via the sidebar or below.
+                        </p>
+                        );
+  }
+
+                        return (
+                        <main className="app-page space-y-6">
+                          {/* Top Header */}
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-5">
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F0F3F9] text-[#7186AD] border border-[#DCE3EF]">
+                                  <HugeiconsIcon icon={ShieldCheckIcon} className="h-4 w-4" />
+                                </span>
+                                <h1 className="text-2xl font-bold tracking-tight">Platform Operations Center</h1>
+                                <Badge variant="outline" className="bg-[#F0F3F9] text-[#7186AD] dark:text-[#7186AD] border-[#DCE3EF] text-xs">
+                                  Superadmin Mode
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-[#737373]">
+                                Configure platform master API keys, stock telephony numbers, grant customer credits, and monitor system operations.
+                              </p>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                              {navTiles.map((tile) => {
+                                const Icon = tile.icon;
+                                return (
+                                  <Link key={tile.href} href={tile.href} className="group block">
+                                    <Card className="h-full border-border/60 bg-card/50 hover:bg-card/90 transition-all duration-200 hover:border-indigo-500/40 hover:shadow-md hover:-translate-y-0.5">
+                                      <CardHeader className="p-5 pb-3">
+                                        <div className="flex items-center justify-between mb-3">
+                                          <div
+                                            className={`flex h-9 w-9 items-center justify-center rounded-xl border ${tile.iconColor}`}
+                                          >
+                                            <Icon className="h-4.5 w-4.5" />
+                                          </div>
+                                          <Badge variant="outline" className="text-[10px] py-0 px-2 border-border/60 text-muted-foreground">
+                                            {tile.badge}
+                                          </Badge>
+                                        </div>
+                                        <CardTitle className="text-sm font-semibold group-hover:text-indigo-400 transition-colors flex items-center justify-between">
+                                          {tile.title}
+                                          <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-indigo-400" />
+                                        </CardTitle>
+                                        <CardDescription className="text-xs line-clamp-2 mt-1 leading-relaxed">
+                                          {tile.description}
+                                        </CardDescription>
+                                      </CardHeader>
+                                    </Card>
+                                  </Link>
+                                );
+                              })}
+                              <div className="flex items-center gap-3">
+                                <Link href="/superadmin/runs">
+                                  <Button variant="outline" size="sm" className="h-9 gap-2">
+                                    <HugeiconsIcon icon={ListIcon} className="h-4 w-4" />
+                                    Global Run Logs
+                                    <HugeiconsIcon icon={ArrowRight01Icon} className="h-3.5 w-3.5" />
+                                  </Button>
+                                </Link>
+                              </div>
+                            </div>
+
+                            {/* Embedded Impersonation Quick Section */}
+                            <div className="pt-2">
+                              <SuperadminImpersonationManager />
+                            </div>
+                          </div>
+                          {/* Main Tabbed Operations Dashboard */}
+                          <Tabs defaultValue="keys" className="space-y-6">
+                            <TabsList className="bg-[#F7F7F7] p-1 border h-11 w-full sm:w-auto flex-wrap justify-start">
+                              <TabsTrigger value="keys" className="gap-2 text-xs sm:text-sm">
+                                <HugeiconsIcon icon={Key01Icon} className="h-4 w-4 text-[#7186AD]" />
+                                Master API Keys &amp; Pricing
+                              </TabsTrigger>
+                              <TabsTrigger value="telephony" className="gap-2 text-xs sm:text-sm">
+                                <HugeiconsIcon icon={PhoneIcon} className="h-4 w-4 text-[#7186AD]" />
+                                Telephony Inventory
+                              </TabsTrigger>
+                              <TabsTrigger value="wallets" className="gap-2 text-xs sm:text-sm">
+                                <HugeiconsIcon icon={Dollar01Icon} className="h-4 w-4 text-amber-500" />
+                                Customer Wallets &amp; Credits
+                              </TabsTrigger>
+                              <TabsTrigger value="showcase" className="gap-2 text-xs sm:text-sm">
+                                <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-[#7186AD]" />
+                                Public Showcase Agents
+                              </TabsTrigger>
+                              <TabsTrigger value="ops" className="gap-2 text-xs sm:text-sm">
+                                <HugeiconsIcon icon={UsersIcon} className="h-4 w-4 text-[#7186AD]" />
+                                Account Impersonation
+                              </TabsTrigger>
+                            </TabsList>
+
+                            {/* Tab 1: Master Keys */}
+                            <TabsContent value="keys" className="space-y-4">
+                              <SuperadminMasterKeysManager />
+                            </TabsContent>
+
+                            {/* Tab 2: Telephony Inventory */}
+                            <TabsContent value="telephony" className="space-y-4">
+                              <SuperadminTelephonyInventoryManager />
+                            </TabsContent>
+
+                            {/* Tab 3: Customer Wallets & Credit Grants */}
+                            <TabsContent value="wallets" className="space-y-4">
+                              <SuperadminWalletManager />
+                            </TabsContent>
+
+                            {/* Tab 4: Showcase Agents */}
+                            <TabsContent value="showcase" className="space-y-4">
+                              <SuperadminShowcaseManager />
+                            </TabsContent>
+
+                            {/* Tab 5: Account Impersonation & Tools */}
+                            <TabsContent value="ops" className="space-y-6">
+                              <div className="grid gap-6 md:grid-cols-2">
+                                <Card>
+                                  <CardHeader>
+                                    <CardTitle className="text-lg">Provider User ID</CardTitle>
+                                    <CardDescription>
+                                      Impersonate with the Stack provider user ID
+                                    </CardDescription>
+                                  </CardHeader>
+                                  <CardContent>
+                                    <form onSubmit={handleProviderImpersonate} className="space-y-4">
+                                      <div className="space-y-2">
+                                        <Label htmlFor="providerUserId">Provider User ID</Label>
+                                        <Input
+                                          id="providerUserId"
+                                          value={providerUserId}
+                                          onChange={(e) => setProviderUserId(e.target.value)}
+                                          placeholder="Provider user ID"
+                                          required
+                                        />
+                                      </div>
+
+                                      {error?.target === "provider" && (
+                                        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg text-sm">
+                                          {error.message}
+                                        </div>
+                                      )}
+
+                                      <Button
+                                        type="submit"
+                                        disabled={loadingTarget !== null}
+                                        className="w-full"
+                                      >
+                                        {loadingTarget === "provider" ? (
+                                          <>
+                                            <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-4 w-4 animate-spin" />
+                                            Processing...
+                                          </>
+                                        ) : (
+                                          "Impersonate by Provider ID"
+                                        )}
+                                      </Button>
+                                    </form>
+                                  </CardContent>
+                                </Card>
+
+                                <Card>
+                                  <CardHeader>
+                                    <CardTitle className="text-lg">Email Address</CardTitle>
+                                    <CardDescription>
+                                      Impersonate with a primary email address
+                                    </CardDescription>
+                                  </CardHeader>
+                                  <CardContent>
+                                    <form onSubmit={handleEmailImpersonate} className="space-y-4">
+                                      <div className="space-y-2">
+                                        <Label htmlFor="email">Email Address</Label>
+                                        <Input
+                                          id="email"
+                                          type="email"
+                                          value={email}
+                                          onChange={(e) => setEmail(e.target.value)}
+                                          placeholder="user@example.com"
+                                          required
+                                        />
+                                      </div>
+
+                                      {error?.target === "email" && (
+                                        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg text-sm">
+                                          {error.message}
+                                        </div>
+                                      )}
+
+                                      <Button
+                                        type="submit"
+                                        disabled={loadingTarget !== null}
+                                        className="w-full"
+                                      >
+                                        {loadingTarget === "email" ? (
+                                          <>
+                                            <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-4 w-4 animate-spin" />
+                                            Processing...
+                                          </>
+                                        ) : (
+                                          "Impersonate by Email"
+                                        )}
+                                      </Button>
+                                    </form>
+                                  </CardContent>
+                                </Card>
+                              </div>
+                            </TabsContent>
+                          </Tabs>
+                        </main>
+                        );
 }

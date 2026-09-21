@@ -1,6 +1,9 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -26,7 +29,7 @@ export function BackButton() {
       onClick={handleBack}
       className="-ml-2 gap-2 text-muted-foreground hover:text-foreground"
     >
-      <ArrowLeft className="h-4 w-4" />
+      <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4" />
       Go Back
     </Button>
   );

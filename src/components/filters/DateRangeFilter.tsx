@@ -1,4 +1,7 @@
-import { CalendarIcon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Calendar01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -109,7 +112,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                   !value.from && "text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
+                <HugeiconsIcon icon={Calendar01Icon} className="mr-2 h-4 w-4" />
                 {formatDate(value.from)}
               </Button>
             </PopoverTrigger>
@@ -148,7 +151,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                   !value.to && "text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
+                <HugeiconsIcon icon={Calendar01Icon} className="mr-2 h-4 w-4" />
                 {formatDate(value.to)}
               </Button>
             </PopoverTrigger>

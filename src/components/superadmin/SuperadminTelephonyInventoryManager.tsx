@@ -1,24 +1,25 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Phone,
-  Plus,
-  Trash2,
-  Loader2,
-  ExternalLink,
-  Layers,
-  Sparkles,
-  CheckCircle2,
-  Users,
-  Lock,
-  Globe,
-  Settings2,
-  Radio,
-  Copy,
-  LayoutList,
-  LayoutGrid,
-} from 'lucide-react';
+  CheckmarkCircle02Icon,
+  Copy01Icon,
+  Delete02Icon,
+  ExternalLinkIcon,
+  GlobeIcon,
+  Layers01Icon,
+  LayoutGridIcon,
+  LayoutListIcon,
+  Loading02Icon,
+  LockIcon,
+  PhoneIcon,
+  PlusIcon,
+  RadioIcon,
+  Settings02Icon,
+  SparklesIcon,
+  UsersIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -254,7 +255,7 @@ export function SuperadminTelephonyInventoryManager() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
-              <Phone className="h-5 w-5" />
+              <HugeiconsIcon icon={PhoneIcon} className="h-5 w-5" />
             </span>
             <CardTitle className="text-xl">Platform Telephony Inventory &amp; Testing Numbers</CardTitle>
           </div>
@@ -269,7 +270,7 @@ export function SuperadminTelephonyInventoryManager() {
             onClick={() => setConfigModalOpen(true)}
             className="gap-1.5"
           >
-            <Settings2 className="h-4 w-4 text-blue-600" />
+            <HugeiconsIcon icon={Settings02Icon} className="h-4 w-4 text-blue-600" />
             Add Telephony Configuration
           </Button>
 
@@ -280,7 +281,7 @@ export function SuperadminTelephonyInventoryManager() {
             }}
             className="bg-blue-600 hover:bg-blue-500 text-white"
           >
-            <Plus className="h-4 w-4 mr-2" /> Stock Inventory Numbers
+            <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-2" /> Stock Inventory Numbers
           </Button>
         </div>
       </CardHeader>
@@ -290,19 +291,19 @@ export function SuperadminTelephonyInventoryManager() {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-3 text-xs">
           <div className="flex flex-wrap items-center gap-2.5">
             <Badge variant="outline" className="gap-1.5 py-1 px-2.5">
-              <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+              <HugeiconsIcon icon={Layers01Icon} className="h-3.5 w-3.5 text-muted-foreground" />
               Total Stocked: <span className="font-bold">{numbers.length}</span>
             </Badge>
             <Badge variant="outline" className="gap-1.5 py-1 px-2.5 border-blue-500/30 text-blue-600 dark:text-blue-400">
-              <Users className="h-3.5 w-3.5" />
+              <HugeiconsIcon icon={UsersIcon} className="h-3.5 w-3.5" />
               Shared Trial: <span className="font-bold">{sharedCount}</span>
             </Badge>
             <Badge variant="outline" className="gap-1.5 py-1 px-2.5 border-purple-500/30 text-purple-600 dark:text-purple-400">
-              <Lock className="h-3.5 w-3.5" />
+              <HugeiconsIcon icon={LockIcon} className="h-3.5 w-3.5" />
               Dedicated: <span className="font-bold">{dedicatedCount}</span>
             </Badge>
             <Badge variant="outline" className="gap-1.5 py-1 px-2.5 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
-              <CheckCircle2 className="h-3.5 w-3.5" />
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-3.5 w-3.5" />
               Claimed: <span className="font-bold">{claimedCount}</span>
             </Badge>
           </div>
@@ -315,7 +316,7 @@ export function SuperadminTelephonyInventoryManager() {
               className="h-7 px-2.5 text-xs gap-1.5 font-medium shadow-none"
               onClick={() => setViewMode('list')}
             >
-              <LayoutList className="h-3.5 w-3.5" />
+              <HugeiconsIcon icon={LayoutListIcon} className="h-3.5 w-3.5" />
               List
             </Button>
             <Button
@@ -325,7 +326,7 @@ export function SuperadminTelephonyInventoryManager() {
               className="h-7 px-2.5 text-xs gap-1.5 font-medium shadow-none"
               onClick={() => setViewMode('grid')}
             >
-              <LayoutGrid className="h-3.5 w-3.5" />
+              <HugeiconsIcon icon={LayoutGridIcon} className="h-3.5 w-3.5" />
               Cards
             </Button>
           </div>
@@ -333,11 +334,11 @@ export function SuperadminTelephonyInventoryManager() {
 
         {loading ? (
           <div className="flex items-center justify-center p-8 text-muted-foreground text-sm">
-            <Loader2 className="h-5 w-5 animate-spin mr-2" /> Loading telephony inventory...
+            <HugeiconsIcon icon={Loading02Icon} className="h-5 w-5 animate-spin mr-2" /> Loading telephony inventory...
           </div>
         ) : numbers.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center bg-muted/20">
-            <Phone className="h-8 w-8 mx-auto text-muted-foreground/60 mb-2" />
+            <HugeiconsIcon icon={PhoneIcon} className="h-8 w-8 mx-auto text-muted-foreground/60 mb-2" />
             <p className="text-sm font-medium">No Numbers in Platform Inventory</p>
             <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
               Stock shared trial numbers so users can instantly test agents, or add dedicated numbers for users to provision directly from their telephony settings.
@@ -348,7 +349,7 @@ export function SuperadminTelephonyInventoryManager() {
                 size="sm"
                 onClick={() => setConfigModalOpen(true)}
               >
-                <Plus className="h-3.5 w-3.5 mr-1" /> Add Telephony Configuration
+                <HugeiconsIcon icon={PlusIcon} className="h-3.5 w-3.5 mr-1" /> Add Telephony Configuration
               </Button>
               <Button
                 size="sm"
@@ -390,7 +391,7 @@ export function SuperadminTelephonyInventoryManager() {
                             onClick={() => handleCopyNumber(num.phone_number)}
                             title="Copy number"
                           >
-                            <Copy className="h-3 w-3" />
+                            <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3" />
                           </Button>
                         </div>
                       </TableCell>
@@ -407,7 +408,7 @@ export function SuperadminTelephonyInventoryManager() {
                                 title={num.configuration_name}
                               >
                                 <span className="truncate max-w-[180px]">{num.configuration_name}</span>
-                                <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                                <HugeiconsIcon icon={ExternalLinkIcon} className="h-2.5 w-2.5 shrink-0" />
                               </Link>
                             ) : (
                               <span className="text-muted-foreground text-[11px] truncate max-w-[180px]">
@@ -439,17 +440,17 @@ export function SuperadminTelephonyInventoryManager() {
                       <TableCell className="py-3.5 text-xs">
                         {isShared ? (
                           <div className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-medium bg-blue-500/10 px-2 py-1 rounded-md text-[11px]">
-                            <Users className="h-3 w-3 shrink-0" />
+                            <HugeiconsIcon icon={UsersIcon} className="h-3 w-3 shrink-0" />
                             <span>Public Testing (All Orgs)</span>
                           </div>
                         ) : isClaimed ? (
                           <div className="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2 py-1 rounded-md text-[11px]">
-                            <CheckCircle2 className="h-3 w-3 shrink-0" />
+                            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-3 w-3 shrink-0" />
                             <span>Claimed (Org #{num.assigned_organization_id})</span>
                           </div>
                         ) : (
                           <div className="inline-flex items-center gap-1.5 text-muted-foreground bg-muted/60 px-2 py-1 rounded-md text-[11px]">
-                            <Sparkles className="h-3 w-3 shrink-0 text-amber-500" />
+                            <HugeiconsIcon icon={SparklesIcon} className="h-3 w-3 shrink-0 text-amber-500" />
                             <span>Available in Marketplace</span>
                           </div>
                         )}
@@ -463,7 +464,7 @@ export function SuperadminTelephonyInventoryManager() {
                             className="text-xs h-7 text-destructive hover:bg-destructive/10 px-2"
                             title="Remove number from inventory"
                           >
-                            <Trash2 className="h-3.5 w-3.5 mr-1" />
+                            <HugeiconsIcon icon={Delete02Icon} className="h-3.5 w-3.5 mr-1" />
                             Remove
                           </Button>
                         </div>
@@ -499,7 +500,7 @@ export function SuperadminTelephonyInventoryManager() {
                           onClick={() => handleCopyNumber(num.phone_number)}
                           title="Copy number"
                         >
-                          <Copy className="h-3 w-3" />
+                          <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3" />
                         </Button>
                       </div>
                       <Badge
@@ -528,7 +529,7 @@ export function SuperadminTelephonyInventoryManager() {
                               title={num.configuration_name}
                             >
                               <span>{num.configuration_name}</span>
-                              <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                              <HugeiconsIcon icon={ExternalLinkIcon} className="h-2.5 w-2.5 shrink-0" />
                             </Link>
                           ) : (
                             <span className="truncate max-w-[140px]" title={num.configuration_name}>
@@ -546,17 +547,17 @@ export function SuperadminTelephonyInventoryManager() {
                     <div className="space-y-1 text-xs">
                       {isShared ? (
                         <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-medium bg-blue-500/10 p-2 rounded-lg text-[11px]">
-                          <Users className="h-3.5 w-3.5 shrink-0" />
+                          <HugeiconsIcon icon={UsersIcon} className="h-3.5 w-3.5 shrink-0" />
                           <span>Usable by all users for agent testing. Live bulk campaigns blocked.</span>
                         </div>
                       ) : isClaimed ? (
                         <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 p-2 rounded-lg text-[11px]">
-                          <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-3.5 w-3.5 shrink-0" />
                           <span>Claimed by Org #{num.assigned_organization_id}</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5 text-muted-foreground bg-muted/40 p-2 rounded-lg text-[11px]">
-                          <Sparkles className="h-3.5 w-3.5 shrink-0" />
+                          <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5 shrink-0" />
                           <span>Available in Marketplace for claiming</span>
                         </div>
                       )}
@@ -570,7 +571,7 @@ export function SuperadminTelephonyInventoryManager() {
                       onClick={() => handleDelete(num.id, num.phone_number)}
                       className="text-xs h-7 text-destructive hover:bg-destructive/10"
                     >
-                      <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove
+                      <HugeiconsIcon icon={Delete02Icon} className="h-3.5 w-3.5 mr-1" /> Remove
                     </Button>
                   </div>
                 </div>
@@ -598,7 +599,7 @@ export function SuperadminTelephonyInventoryManager() {
           <form onSubmit={handleStockNumbers} className="space-y-5">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Phone className="h-5 w-5 text-blue-600" />
+                <HugeiconsIcon icon={PhoneIcon} className="h-5 w-5 text-blue-600" />
                 Stock Platform Telephony Numbers
               </DialogTitle>
               <DialogDescription>
@@ -622,13 +623,13 @@ export function SuperadminTelephonyInventoryManager() {
                       setConfigModalOpen(true);
                     }}
                   >
-                    <Plus className="h-3.5 w-3.5 mr-1" /> Add New Configuration
+                    <HugeiconsIcon icon={PlusIcon} className="h-3.5 w-3.5 mr-1" /> Add New Configuration
                   </Button>
                 </div>
 
                 {loadingConfigs ? (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground py-2">
-                    <Loader2 className="h-4 w-4 animate-spin" /> Loading configurations...
+                    <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin" /> Loading configurations...
                   </div>
                 ) : configs.length === 0 ? (
                   <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs space-y-2">
@@ -644,7 +645,7 @@ export function SuperadminTelephonyInventoryManager() {
                       onClick={() => setConfigModalOpen(true)}
                       className="bg-amber-600 hover:bg-amber-500 text-white text-xs h-7"
                     >
-                      <Plus className="h-3.5 w-3.5 mr-1" /> Add Telephony Configuration
+                      <HugeiconsIcon icon={PlusIcon} className="h-3.5 w-3.5 mr-1" /> Add Telephony Configuration
                     </Button>
                   </div>
                 ) : (
@@ -679,7 +680,7 @@ export function SuperadminTelephonyInventoryManager() {
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-blue-600 hover:underline"
                         >
-                          View Config <ExternalLink className="h-3 w-3" />
+                          View Config <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                         </Link>
                       </div>
                     )}
@@ -710,7 +711,7 @@ export function SuperadminTelephonyInventoryManager() {
                   <div className="space-y-2">
                     <Label htmlFor="stock-country-code">Country Code Hint</Label>
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4 text-muted-foreground shrink-0" />
                       <Input
                         id="stock-country-code"
                         placeholder="US, IN, GB..."
@@ -790,7 +791,7 @@ export function SuperadminTelephonyInventoryManager() {
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Stocking Numbers...
+                    <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-4 w-4 animate-spin" /> Stocking Numbers...
                   </>
                 ) : (
                   'Stock in Platform Inventory'

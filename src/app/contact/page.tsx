@@ -1,12 +1,13 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  CheckCircle2,
-  Mail,
-  Phone,
-  ShieldCheck,
-} from 'lucide-react';
+  ArrowRight01Icon,
+  CheckmarkCircle02Icon,
+  Mail01Icon,
+  PhoneIcon,
+  ShieldCheckIcon,
+} from "@hugeicons/core-free-icons";;
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,7 @@ export default function ContactSalesPage() {
     <div className="py-12 sm:py-16 max-w-4xl mx-auto px-4 sm:px-6">
       <div className="text-center max-w-xl mx-auto mb-12">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/70 bg-muted/30 text-xs text-muted-foreground mb-4">
-          <Mail className="w-3.5 h-3.5 text-indigo-500" />
+          <HugeiconsIcon icon={Mail01Icon} className="w-3.5 h-3.5 text-indigo-500" />
           <span>Enterprise & Custom Support</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
@@ -40,7 +41,7 @@ export default function ContactSalesPage() {
         {submitted ? (
           <div className="text-center py-10 space-y-3">
             <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-6 h-6" />
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold text-foreground">Request Received</h3>
             <p className="text-xs text-muted-foreground max-w-xs mx-auto">
@@ -94,7 +95,7 @@ export default function ContactSalesPage() {
 
       <div className="mt-8 flex items-center justify-center gap-6 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          <HugeiconsIcon icon={ShieldCheckIcon} className="w-3.5 h-3.5 text-emerald-500" />
           NDA Protected
         </span>
         <span>•</span>

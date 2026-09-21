@@ -62,7 +62,7 @@ export function DurationChart({ data }: DurationChartProps) {
       </CardHeader>
       <CardContent>
         {data.length === 0 ? (
-          <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+          <div className="h-[300px] flex items-center justify-center text-[#737373]">
             No duration data available
           </div>
         ) : (

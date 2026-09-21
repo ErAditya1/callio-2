@@ -1,13 +1,14 @@
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  Award,
-  Building,
-  CheckCircle2,
-  Quote,
-  Sparkles,
-  Star,
-  TrendingUp
-} from 'lucide-react';
+  ArrowRight01Icon,
+  Award01Icon,
+  Building01Icon,
+  ChartIncreaseIcon,
+  CheckmarkCircle02Icon,
+  QuoteDownIcon,
+  SparklesIcon,
+  StarIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
@@ -60,7 +61,7 @@ export default function CustomerStoriesPage() {
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <Badge variant="outline" className="mb-3 border-amber-500/30 text-amber-400 bg-amber-500/10 px-3 py-1">
-          <Award className="w-3.5 h-3.5 mr-1.5 inline" />
+          <HugeiconsIcon icon={Award01Icon} className="w-3.5 h-3.5 mr-1.5 inline" />
           Measurable Business Impact
         </Badge>
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">
@@ -97,7 +98,7 @@ export default function CustomerStoriesPage() {
 
             {/* Quote body */}
             <div className="pt-8 space-y-4">
-              <Quote className="w-8 h-8 text-indigo-400 opacity-60" />
+              <HugeiconsIcon icon={QuoteDownIcon} className="w-8 h-8 text-indigo-400 opacity-60" />
               <p className="text-base sm:text-lg text-foreground/90 italic leading-relaxed">
                 "{story.quote}"
               </p>

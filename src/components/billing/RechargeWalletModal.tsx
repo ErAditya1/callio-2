@@ -11,15 +11,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    Wallet,
-    CreditCard,
-    Sparkles,
-    ShieldCheck,
-    Loader2,
-    Clock,
-    Receipt,
-} from "lucide-react";
+    Clock01Icon,
+    CreditCardIcon,
+    Loading02Icon,
+    ReceiptIcon,
+    ShieldCheckIcon,
+    SparklesIcon,
+    Wallet01Icon,
+} from "@hugeicons/core-free-icons";;
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 
@@ -208,7 +209,7 @@ export function RechargeWalletModal({
                     total_inr: String(orderData.amount_inr),
                 },
                 theme: {
-                    color: "#6366f1", // CallioAI indigo
+                    color: "#7186AD", // accent
                 },
                 modal: {
                     ondismiss: function () {
@@ -234,26 +235,26 @@ export function RechargeWalletModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-xl p-0 overflow-hidden border-border/60">
+            <DialogContent className="sm:max-w-xl p-0 overflow-hidden border-[#E5E5E5]">
                 {/* Modal Header with Gradient */}
-                <div className="bg-gradient-to-br from-emerald-500/15 via-teal-500/10 to-indigo-500/10 p-6 border-b border-border/40">
+                <div className="bg-[#F7F7F7] p-6 border-b border-[#E5E5E5]">
                     <DialogHeader className="text-left space-y-2">
                         <div className="flex items-center gap-2.5">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                                <Wallet className="h-5 w-5" />
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F0F3F9] text-[#7186AD] dark:text-[#7186AD] border border-[#DCE3EF]">
+                                <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5" />
                             </div>
                             <div>
                                 <DialogTitle className="text-xl font-bold">
                                     Recharge Calling Wallet
                                 </DialogTitle>
-                                <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                                <DialogDescription className="text-xs text-[#737373] mt-0.5">
                                     Add funds to power inbound and outbound AI voice conversations
                                 </DialogDescription>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between rounded-lg bg-background/70 backdrop-blur-sm border border-border/50 px-3.5 py-2 mt-2">
-                            <span className="text-xs text-muted-foreground">Current Balance</span>
+                        <div className="flex items-center justify-between rounded-lg bg-background/70 backdrop-blur-sm border border-[#E5E5E5] px-3.5 py-2 mt-2">
+                            <span className="text-xs text-[#737373]">Current Balance</span>
                             <span className="text-sm font-bold font-mono text-foreground">
                                 ${currentBalanceUsd.toFixed(2)} USD
                             </span>
@@ -265,7 +266,7 @@ export function RechargeWalletModal({
                 <div className="p-6 space-y-6">
                     {/* Packages Grid */}
                     <div>
-                        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-2.5">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-[#737373] block mb-2.5">
                             Select Recharge Package (USD)
                         </label>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -277,14 +278,18 @@ export function RechargeWalletModal({
                                         type="button"
                                         onClick={() => handleSelectPreset(pkg.usd)}
                                         className={`relative flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center ${isSelected
-                                                ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 shadow-sm ring-1 ring-emerald-500"
-                                                : "border-border/70 hover:border-border hover:bg-muted/40"
+                                            ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 shadow-sm ring-1 ring-emerald-500"
+                                            : "border-border/70 hover:border-border hover:bg-muted/40"
+                                            }`}
+                                        className={`relative flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center ${isSelected
+                                                ? "border-[#DCE3EF] bg-[#F0F3F9] text-[#171717] dark:text-[#7186AD] shadow-sm ring-1 ring-[#DCE3EF]"
+                                                : "border-[#E5E5E5] hover:border-[#E5E5E5] hover:bg-[#F7F7F7]"
                                             }`}
                                     >
                                         {pkg.popular && (
                                             <Badge
                                                 variant="secondary"
-                                                className="absolute -top-2.5 px-1.5 py-0 text-[10px] bg-emerald-600 text-white font-semibold shadow-xs"
+                                                className="absolute -top-2.5 px-1.5 py-0 text-[10px] bg-neutral-950 text-white font-semibold shadow-xs"
                                             >
                                                 Popular
                                             </Badge>
@@ -292,8 +297,8 @@ export function RechargeWalletModal({
                                         <span className="text-xl font-bold font-mono">
                                             ${pkg.usd}
                                         </span>
-                                        <span className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1">
-                                            <Clock className="h-3 w-3 inline" /> ~{pkg.minutes}m
+                                        <span className="text-[11px] text-[#737373] mt-1 flex items-center gap-1">
+                                            <HugeiconsIcon icon={Clock01Icon} className="h-3 w-3 inline" /> ~{pkg.minutes}m
                                         </span>
                                     </button>
                                 );
@@ -314,11 +319,11 @@ export function RechargeWalletModal({
                                 }}
                                 className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
                             >
-                                <Sparkles className="h-3.5 w-3.5" />
+                                <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5" />
                                 {isCustom ? "Select from preset packages" : "Or enter custom amount in USD"}
                             </button>
                             {isCustom && (
-                                <span className="text-[11px] text-muted-foreground">
+                                <span className="text-[11px] text-[#737373]">
                                     Min $1.00 USD
                                 </span>
                             )}
@@ -327,7 +332,7 @@ export function RechargeWalletModal({
                         {isCustom && (
                             <div className="flex items-center gap-3">
                                 <div className="relative flex-1">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-mono font-medium">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#737373] font-mono font-medium">
                                         $
                                     </span>
                                     <Input
@@ -339,66 +344,66 @@ export function RechargeWalletModal({
                                         autoFocus
                                     />
                                 </div>
-                                <span className="text-xs font-mono text-muted-foreground">USD</span>
+                                <span className="text-xs font-mono text-[#737373]">USD</span>
                             </div>
                         )}
                     </div>
 
                     {/* Summary Card */}
-                    <div className="rounded-xl border border-border/60 bg-muted/30 p-4 space-y-2.5">
+                    <div className="rounded-xl border border-[#E5E5E5] bg-[#F7F7F7] p-4 space-y-2.5">
                         <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">Calling Credits to Add</span>
-                            <span className="font-semibold font-mono text-emerald-600 dark:text-emerald-400">
+                            <span className="text-[#737373]">Calling Credits to Add</span>
+                            <span className="font-semibold font-mono text-[#7186AD] dark:text-[#7186AD]">
                                 +${activeUsd.toFixed(2)} USD
                             </span>
                         </div>
                         <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">Estimated Calling Time</span>
+                            <span className="text-[#737373]">Estimated Calling Time</span>
                             <span className="font-semibold text-foreground">
                                 ~{estMinutes} minutes (at ~$0.06/min)
                             </span>
                         </div>
                         <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">Conversion Rate</span>
+                            <span className="text-[#737373]">Conversion Rate</span>
                             <span className="font-mono text-foreground">
                                 $1 USD = ₹{usdToInrRate.toFixed(2)} INR
                             </span>
                         </div>
                         <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">Base Amount</span>
+                            <span className="text-[#737373]">Base Amount</span>
                             <span className="font-mono text-foreground">
                                 ₹{subtotalInr.toFixed(2)} INR
                             </span>
                         </div>
                         <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">GST ({gstPercentage}%)</span>
+                            <span className="text-[#737373]">GST ({gstPercentage}%)</span>
                             <span className="font-mono text-foreground">
                                 +₹{gstAmountInr.toFixed(2)} INR
                             </span>
                         </div>
-                        <div className="border-t border-border/40 pt-2 flex items-center justify-between">
+                        <div className="border-t border-[#E5E5E5] pt-2 flex items-center justify-between">
                             <div>
                                 <span className="text-sm font-semibold text-foreground block">
                                     Total Payable (INR)
                                 </span>
-                                <span className="text-[11px] text-muted-foreground">
+                                <span className="text-[11px] text-[#737373]">
                                     UPI, NetBanking, Cards & Wallets
                                 </span>
                             </div>
-                            <span className="text-lg font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
+                            <span className="text-lg font-extrabold font-mono text-[#7186AD] dark:text-[#7186AD]">
                                 ₹{totalPayableInr.toFixed(2)} INR
                             </span>
                         </div>
                     </div>
 
                     {/* Features / Assurance */}
-                    <div className="flex flex-col gap-1.5 text-xs text-muted-foreground">
+                    <div className="flex flex-col gap-1.5 text-xs text-[#737373]">
                         <div className="flex items-center gap-2">
-                            <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                            <HugeiconsIcon icon={ShieldCheckIcon} className="h-4 w-4 text-[#7186AD] dark:text-[#7186AD] shrink-0" />
                             <span>Instant USD wallet crediting & 256-bit SSL encrypted checkout.</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Receipt className="h-4 w-4 text-indigo-500 shrink-0" />
+                            <HugeiconsIcon icon={ReceiptIcon} className="h-4 w-4 text-[#7186AD] shrink-0" />
                             <span>
                                 Custom receipt ID automatically generated for easy Razorpay dashboard tracking.
                             </span>
@@ -407,7 +412,7 @@ export function RechargeWalletModal({
                 </div>
 
                 {/* Modal Footer */}
-                <div className="bg-muted/20 px-6 py-4 border-t border-border/40 flex items-center justify-between">
+                <div className="bg-[#F7F7F7] px-6 py-4 border-t border-[#E5E5E5] flex items-center justify-between">
                     <Button
                         variant="ghost"
                         onClick={() => onOpenChange(false)}
@@ -418,16 +423,16 @@ export function RechargeWalletModal({
                     <Button
                         onClick={handleProceedPayment}
                         disabled={isProcessing || activeUsd < 1.0}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                        className="bg-neutral-950 hover:bg-neutral-800 text-white font-semibold"
                     >
                         {isProcessing ? (
                             <>
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 mr-2 animate-spin" />
                                 Processing...
                             </>
                         ) : (
                             <>
-                                <CreditCard className="h-4 w-4 mr-2" />
+                                <HugeiconsIcon icon={CreditCardIcon} className="h-4 w-4 mr-2" />
                                 Pay ₹{totalPayableInr.toFixed(2)} via Razorpay
                             </>
                         )}

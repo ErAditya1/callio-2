@@ -1,4 +1,8 @@
-import { AlertCircle, ExternalLink } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  ExternalLinkIcon,
+} from "@hugeicons/core-free-icons";;
 import { ReactNode, useCallback, useEffect, useState } from "react";
 
 import { useWorkflowOptional } from "@/app/workflow/[workflowId]/contexts/WorkflowContext";
@@ -96,10 +100,10 @@ export const NodeEditDialog = ({
                                 href={documentationUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors pr-6"
+                                className="flex items-center gap-1 text-sm text-[#737373] hover:text-foreground transition-colors pr-6"
                             >
                                 Docs
-                                <ExternalLink className="h-3.5 w-3.5" />
+                                <HugeiconsIcon icon={ExternalLinkIcon} className="h-3.5 w-3.5" />
                             </a>
                         )}
                     </div>
@@ -108,7 +112,7 @@ export const NodeEditDialog = ({
                     </DialogDescription>
                     {nodeData.invalid && nodeData.validationMessage && (
                         <div className="mt-2 flex items-center gap-2 rounded-md bg-red-50 p-2 text-sm text-red-500 border border-red-200">
-                            <AlertCircle className="h-4 w-4" />
+                            <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
                             <span>{nodeData.validationMessage}</span>
                         </div>
                     )}
@@ -118,7 +122,7 @@ export const NodeEditDialog = ({
                 </div>
                 {error && (
                     <div className="flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-200">
-                        <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                        <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4 flex-shrink-0" />
                         <span>{error}</span>
                     </div>
                 )}

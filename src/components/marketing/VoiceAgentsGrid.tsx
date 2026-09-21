@@ -2,19 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { HugeiconsIcon } from "@hugeicons/react";
+import type { IconSvgElement } from "@hugeicons/react";
 import {
-  PhoneCall,
-  Zap,
-  Calendar,
-  Headphones,
-  Building2,
-  ArrowRight,
-  Sparkles,
-  Volume2,
-  Copy,
-  Loader2,
-  CheckCircle2,
-} from 'lucide-react';
+  ArrowRight01Icon,
+  Building02Icon,
+  Calendar01Icon,
+  CheckmarkCircle02Icon,
+  Copy01Icon,
+  HeadphonesIcon,
+  Loading02Icon,
+  PhoneCallIcon,
+  SparklesIcon,
+  VolumeHighIcon,
+  ZapIcon,
+} from "@hugeicons/core-free-icons";;
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -22,24 +24,24 @@ import { PUBLIC_AGENTS, PublicAgent, cloneAgentToWorkspace } from '@/config/publ
 import { CallerIdPhoneCallModal } from './CallerIdPhoneCallModal';
 import { useAuth } from '@/lib/auth';
 
-const AGENT_ICONS: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
+const AGENT_ICONS: Record<string, { icon: IconSvgElement; color: string; bg: string }> = {
   'sdr-sales': {
-    icon: Zap,
+    icon: ZapIcon,
     color: 'text-amber-400',
     bg: 'bg-amber-500/10 border-amber-500/20',
   },
   'receptionist-booking': {
-    icon: Calendar,
+    icon: Calendar01Icon,
     color: 'text-emerald-400',
     bg: 'bg-emerald-500/10 border-emerald-500/20',
   },
   'tier1-support': {
-    icon: Headphones,
+    icon: HeadphonesIcon,
     color: 'text-blue-400',
     bg: 'bg-blue-500/10 border-blue-500/20',
   },
   'realestate-inquiry': {
-    icon: Building2,
+    icon: Building02Icon,
     color: 'text-purple-400',
     bg: 'bg-purple-500/10 border-purple-500/20',
   },
@@ -125,7 +127,7 @@ export function VoiceAgentsGrid() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {agents.map((agent) => {
           const iconConfig = AGENT_ICONS[agent.id] || {
-            icon: Sparkles,
+            icon: SparklesIcon,
             color: 'text-indigo-400',
             bg: 'bg-indigo-500/10 border-indigo-500/20',
           };
@@ -146,7 +148,7 @@ export function VoiceAgentsGrid() {
                     <div
                       className={`w-11 h-11 rounded-xl flex items-center justify-center border shrink-0 ${iconConfig.bg}`}
                     >
-                      <Icon className={`w-5 h-5 ${iconConfig.color}`} />
+                      <HugeiconsIcon icon={Icon} className={`w-5 h-5 ${iconConfig.color}`} />
                     </div>
 
                     <div>
@@ -197,7 +199,7 @@ export function VoiceAgentsGrid() {
               {/* Card Bottom: Voice details & CTAs (Import to Dashboard + Test Call) */}
               <div className="pt-3 border-t border-border/50 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Volume2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                  <HugeiconsIcon icon={VolumeHighIcon} className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                   <span className="truncate max-w-[140px] sm:max-w-[170px]">
                     {agent.voice_accent}
                   </span>
@@ -215,12 +217,12 @@ export function VoiceAgentsGrid() {
                   >
                     {isCloningThis ? (
                       <>
-                        <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+                        <HugeiconsIcon icon={Loading02Icon} className="w-3 h-3 animate-spin text-indigo-400" />
                         <span>Importing...</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3 h-3 text-indigo-400" />
+                        <HugeiconsIcon icon={Copy01Icon} className="w-3 h-3 text-indigo-400" />
                         <span>Import to Dashboard</span>
                       </>
                     )}
@@ -235,7 +237,7 @@ export function VoiceAgentsGrid() {
                     }}
                     className="h-8 px-3 text-xs font-medium rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition-all flex items-center gap-1.5 shrink-0 shadow-xs"
                   >
-                    <PhoneCall className="w-3 h-3" />
+                    <HugeiconsIcon icon={PhoneCallIcon} className="w-3 h-3" />
                     <span>Test Call</span>
                   </Button>
                 </div>

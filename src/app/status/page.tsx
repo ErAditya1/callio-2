@@ -1,4 +1,7 @@
-import { CheckCircle2 } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CheckmarkCircle02Icon,
+} from "@hugeicons/core-free-icons";;
 
 import { Badge } from '@/components/ui/badge';
 
@@ -35,7 +38,7 @@ export default function StatusPage() {
             <div className="flex items-center gap-3">
               <span className="text-xs text-muted-foreground font-mono">{sys.uptime}</span>
               <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-                <CheckCircle2 className="w-3 h-3 mr-1" />
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3 h-3 mr-1" />
                 {sys.status}
               </Badge>
             </div>

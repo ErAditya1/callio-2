@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowDownLeft, ArrowUpRight, Globe, MessageSquare, Phone } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowDownLeft01Icon,
+  ArrowUpRight01Icon,
+  GlobeIcon,
+  MessageSquareIcon,
+  PhoneIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -25,19 +32,20 @@ export function CallTypeCell({
     }
 
     const channel = getCallChannel(mode);
-    const ChannelIcon = channel === "chat" ? MessageSquare : channel === "web" ? Globe : Phone;
+    const ChannelIcon = channel === "chat" ? MessageSquareIcon : channel === "web" ? GlobeIcon : PhoneIcon;
     const channelLabel = channel === "chat" ? "Text chat" : channel === "web" ? "Web call" : "Phone call";
 
     const isInbound = callType === "inbound";
-    const DirectionIcon = isInbound ? ArrowDownLeft : ArrowUpRight;
+    const DirectionIcon = isInbound ? ArrowDownLeft01Icon : ArrowUpRight01Icon;
     const directionLabel = isInbound ? "Inbound" : "Outbound";
 
     return (
         <Tooltip>
             <TooltipTrigger asChild>
                 <span className="inline-flex items-center gap-1">
-                    <ChannelIcon className="h-4 w-4 text-muted-foreground" />
-                    <DirectionIcon
+                    <HugeiconsIcon icon={ChannelIcon} className="h-4 w-4 text-muted-foreground" />
+                    <HugeiconsIcon
+                        icon={DirectionIcon}
                         className={`h-3.5 w-3.5 ${isInbound ? "text-emerald-600" : "text-blue-600"}`}
                     />
                 </span>

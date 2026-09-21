@@ -1,4 +1,9 @@
-import { AlertCircle, Check, Copy } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  CheckIcon,
+  Copy01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
@@ -137,9 +142,9 @@ export function JsonEditor({
                             type="button"
                         >
                             {copied ? (
-                                <Check className="h-4 w-4 mr-1" />
+                                <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 mr-1" />
                             ) : (
-                                <Copy className="h-4 w-4 mr-1" />
+                                <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4 mr-1" />
                             )}
                             Copy
                         </Button>
@@ -160,7 +165,7 @@ export function JsonEditor({
             />
             {error && (
                 <div className="flex items-start gap-2 p-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4 mt-0.5 flex-shrink-0" />
                     <span>{error}</span>
                 </div>
             )}

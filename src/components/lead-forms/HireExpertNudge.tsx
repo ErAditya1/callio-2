@@ -1,6 +1,10 @@
 "use client";
 
-import { UserRound, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  UserRoundIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import posthog from "posthog-js";
 import { useEffect, useRef, useState } from "react";
 
@@ -74,7 +78,7 @@ export function HireExpertNudge({ workflowId }: HireExpertNudgeProps) {
       className="fixed bottom-6 right-6 z-50 flex max-w-xs items-center gap-3 rounded-lg border border-primary bg-background p-3 shadow-lg animate-in fade-in slide-in-from-bottom-2"
     >
       <button type="button" onClick={handleClick} className="flex flex-1 items-center gap-3 text-left">
-        <UserRound className="h-5 w-5 shrink-0 text-primary" />
+        <HugeiconsIcon icon={UserRoundIcon} className="h-5 w-5 shrink-0 text-primary" />
         <span>
           <span className="block text-sm font-semibold">Hire an Expert</span>
           <span className="block text-xs text-muted-foreground">We&apos;ll build your agent for you</span>
@@ -86,7 +90,7 @@ export function HireExpertNudge({ workflowId }: HireExpertNudgeProps) {
         aria-label="Dismiss"
         className="shrink-0 text-muted-foreground hover:text-foreground"
       >
-        <X className="h-4 w-4" />
+        <HugeiconsIcon icon={XIcon} className="h-4 w-4" />
       </button>
     </div>
   );

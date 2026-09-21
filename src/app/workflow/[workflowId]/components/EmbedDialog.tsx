@@ -1,4 +1,17 @@
-import { Check, ChevronDown, Copy, ExternalLink, Loader2, MessageCircle, Mic, Plus, Rocket, Send, Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  Copy01Icon,
+  Delete02Icon,
+  ExternalLinkIcon,
+  Loading02Icon,
+  MessageCircleIcon,
+  Mic01Icon,
+  PlusIcon,
+  Rocket01Icon,
+  SendIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -141,21 +154,21 @@ function WidgetTextSection({
     const [open, setOpen] = useState(false);
 
     return (
-        <Collapsible open={open} onOpenChange={setOpen} className="rounded-lg border bg-muted/20">
+        <Collapsible open={open} onOpenChange={setOpen} className="rounded-lg border bg-[#F7F7F7]">
             <CollapsibleTrigger className="flex w-full items-center justify-between gap-4 p-4 text-left">
                 <div className="space-y-0.5">
                     <div className="text-sm font-medium">{title}</div>
-                    <p className="text-xs text-muted-foreground">{description}</p>
+                    <p className="text-xs text-[#737373]">{description}</p>
                 </div>
-                <ChevronDown
-                    className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+                <HugeiconsIcon icon={ChevronDownIcon}
+                    className={`h-4 w-4 shrink-0 text-[#737373] transition-transform ${open ? "rotate-180" : ""}`}
                 />
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4 border-t p-4">
                 {groups.map((group, groupIndex) => (
                     <div key={group.heading ?? groupIndex} className="space-y-3">
                         {group.heading && (
-                            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            <div className="text-xs font-medium uppercase tracking-wide text-[#737373]">
                                 {group.heading}
                             </div>
                         )}
@@ -165,7 +178,7 @@ function WidgetTextSection({
                                     <Label htmlFor={`widget-text-${key}`} className="text-sm">
                                         {label}
                                         {hint && (
-                                            <span className="ml-1 text-xs font-normal text-muted-foreground">
+                                            <span className="ml-1 text-xs font-normal text-[#737373]">
                                                 ({hint})
                                             </span>
                                         )}
@@ -452,17 +465,17 @@ export function EmbedDialog({
                 <DialogHeader>
                     <div className="flex items-center justify-between">
                         <DialogTitle className="flex items-center gap-2">
-                            <Rocket className="h-5 w-5" />
+                            <HugeiconsIcon icon={Rocket01Icon} className="h-5 w-5" />
                             Configure Widget
                         </DialogTitle>
                         <a
                             href={WIDGET_MODE_DOCUMENTATION_URLS[embedMode]}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors pr-6"
+                            className="flex items-center gap-1 text-sm text-[#737373] hover:text-foreground transition-colors pr-6"
                         >
                             Docs
-                            <ExternalLink className="h-3.5 w-3.5" />
+                            <HugeiconsIcon icon={ExternalLinkIcon} className="h-3.5 w-3.5" />
                         </a>
                     </div>
                     <DialogDescription>
@@ -472,7 +485,7 @@ export function EmbedDialog({
 
                 {loading ? (
                     <div className="flex items-center justify-center py-8">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        <HugeiconsIcon icon={Loading02Icon} className="h-8 w-8 animate-spin text-[#737373]" />
                     </div>
                 ) : (
                     <div className="space-y-6">
@@ -480,7 +493,7 @@ export function EmbedDialog({
                         <div className="flex items-center justify-between">
                             <div className="space-y-0.5">
                                 <Label htmlFor="embed-enabled">Enable Embedding</Label>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-[#737373]">
                                     Allow this workflow to be embedded on external websites
                                 </p>
                             </div>
@@ -499,7 +512,7 @@ export function EmbedDialog({
                                 <div className="space-y-3">
                                     <Label>
                                         Allowed Domains
-                                        <span className="text-xs text-muted-foreground ml-2">
+                                        <span className="text-xs text-[#737373] ml-2">
                                             (leave empty to allow all domains)
                                         </span>
                                     </Label>
@@ -519,7 +532,7 @@ export function EmbedDialog({
                                             onClick={addDomain}
                                             disabled={!newDomain.trim()}
                                         >
-                                            <Plus className="h-4 w-4" />
+                                            <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />
                                         </Button>
                                     </div>
 
@@ -529,7 +542,7 @@ export function EmbedDialog({
                                             {domains.map((domain, index) => (
                                                 <div
                                                     key={index}
-                                                    className="flex items-center justify-between bg-muted/50 rounded-lg px-3 py-2"
+                                                    className="flex items-center justify-between bg-[#F7F7F7] rounded-lg px-3 py-2"
                                                 >
                                                     <span className="text-sm font-mono">{domain}</span>
                                                     <Button
@@ -539,7 +552,7 @@ export function EmbedDialog({
                                                         className="h-6 w-6"
                                                         onClick={() => removeDomain(domain)}
                                                     >
-                                                        <Trash2 className="h-3 w-3" />
+                                                        <HugeiconsIcon icon={Delete02Icon} className="h-3 w-3" />
                                                     </Button>
                                                 </div>
                                             ))}
@@ -557,15 +570,15 @@ export function EmbedDialog({
                                             className={`p-4 rounded-lg border-2 transition-all ${
                                                 widgetType === "voice"
                                                     ? "border-primary bg-primary/5"
-                                                    : "border-muted hover:border-muted-foreground/20"
+                                                    : "border-[#E5E5E5] hover:border-[#E5E5E5]"
                                             }`}
                                         >
                                             <div className="space-y-2">
                                                 <div className="flex items-center justify-center gap-2 font-medium">
-                                                    <Mic className="h-4 w-4" />
+                                                    <HugeiconsIcon icon={Mic01Icon} className="h-4 w-4" />
                                                     Voice Agent
                                                 </div>
-                                                <div className="text-xs text-muted-foreground">
+                                                <div className="text-xs text-[#737373]">
                                                     Visitors talk to your agent by voice
                                                 </div>
                                             </div>
@@ -576,15 +589,15 @@ export function EmbedDialog({
                                             className={`p-4 rounded-lg border-2 transition-all ${
                                                 widgetType === "chat"
                                                     ? "border-primary bg-primary/5"
-                                                    : "border-muted hover:border-muted-foreground/20"
+                                                    : "border-[#E5E5E5] hover:border-[#E5E5E5]"
                                             }`}
                                         >
                                             <div className="space-y-2">
                                                 <div className="flex items-center justify-center gap-2 font-medium">
-                                                    <MessageCircle className="h-4 w-4" />
+                                                    <HugeiconsIcon icon={MessageCircleIcon} className="h-4 w-4" />
                                                     Chat Agent
                                                 </div>
-                                                <div className="text-xs text-muted-foreground">
+                                                <div className="text-xs text-[#737373]">
                                                     Visitors type messages to your agent
                                                 </div>
                                             </div>
@@ -593,7 +606,7 @@ export function EmbedDialog({
                                 </div>
 
                                 {widgetType === "chat" && (
-                                    <div className="space-y-2 rounded-lg border bg-muted/20 p-4">
+                                    <div className="space-y-2 rounded-lg border bg-[#F7F7F7] p-4">
                                         <Label htmlFor="text-chat-inactivity-timeout">
                                             Chat Inactivity Timeout
                                         </Label>
@@ -611,11 +624,11 @@ export function EmbedDialog({
                                                 aria-invalid={!textChatInactivityIsValid}
                                                 className="w-32"
                                             />
-                                            <span className="text-sm text-muted-foreground">
+                                            <span className="text-sm text-[#737373]">
                                                 minutes
                                             </span>
                                         </div>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-xs text-[#737373]">
                                             End a text chat and trigger its completion webhook after this long without chat activity.
                                         </p>
                                         {!textChatInactivityIsValid && (
@@ -636,12 +649,12 @@ export function EmbedDialog({
                                             className={`p-4 rounded-lg border-2 transition-all ${
                                                 embedMode === "floating"
                                                     ? "border-primary bg-primary/5"
-                                                    : "border-muted hover:border-muted-foreground/20"
+                                                    : "border-[#E5E5E5] hover:border-[#E5E5E5]"
                                             }`}
                                         >
                                             <div className="space-y-2">
                                                 <div className="font-medium">Floating Widget</div>
-                                                <div className="text-xs text-muted-foreground">
+                                                <div className="text-xs text-[#737373]">
                                                     Shows as a button in corner of the page
                                                 </div>
                                             </div>
@@ -652,12 +665,12 @@ export function EmbedDialog({
                                             className={`p-4 rounded-lg border-2 transition-all ${
                                                 embedMode === "inline"
                                                     ? "border-primary bg-primary/5"
-                                                    : "border-muted hover:border-muted-foreground/20"
+                                                    : "border-[#E5E5E5] hover:border-[#E5E5E5]"
                                             }`}
                                         >
                                             <div className="space-y-2">
                                                 <div className="font-medium">Inline Component</div>
-                                                <div className="text-xs text-muted-foreground">
+                                                <div className="text-xs text-[#737373]">
                                                     Embeds directly in your page content
                                                 </div>
                                             </div>
@@ -668,12 +681,12 @@ export function EmbedDialog({
                                             className={`p-4 rounded-lg border-2 transition-all ${
                                                 embedMode === "headless"
                                                     ? "border-primary bg-primary/5"
-                                                    : "border-muted hover:border-muted-foreground/20"
+                                                    : "border-[#E5E5E5] hover:border-[#E5E5E5]"
                                             }`}
                                         >
                                             <div className="space-y-2">
                                                 <div className="font-medium">Headless (Bring Your Own UI)</div>
-                                                <div className="text-xs text-muted-foreground">
+                                                <div className="text-xs text-[#737373]">
                                                     No UI - drive calls from your own buttons via the JS API
                                                 </div>
                                             </div>
@@ -788,15 +801,15 @@ export function EmbedDialog({
 
                                     {/* Preview (skipped for headless — host renders its own UI) */}
                                     {embedMode === "headless" ? null : embedMode === "floating" ? (
-                                        <div className="rounded-lg border bg-muted/30 p-6 flex items-center justify-center">
+                                        <div className="rounded-lg border bg-[#F7F7F7] p-6 flex items-center justify-center">
                                             <button
                                                 className="inline-flex items-center gap-2 rounded-full px-5 py-3 font-medium text-white shadow-lg whitespace-nowrap"
                                                 style={{ backgroundColor: buttonColor }}
                                             >
                                                 {widgetType === "chat" ? (
-                                                    <MessageCircle className="h-4 w-4" />
+                                                    <HugeiconsIcon icon={MessageCircleIcon} className="h-4 w-4" />
                                                 ) : (
-                                                    <Mic className="h-4 w-4" />
+                                                    <HugeiconsIcon icon={Mic01Icon} className="h-4 w-4" />
                                                 )}
                                                 {buttonText || WIDGET_TYPE_DEFAULTS[widgetType].buttonText}
                                             </button>
@@ -810,8 +823,8 @@ export function EmbedDialog({
                                                 >
                                                     {buttonText || "Chat with Agent"}
                                                 </div>
-                                                <div className="p-4 space-y-2 bg-muted/20">
-                                                    <div className="max-w-[80%] rounded-lg rounded-bl-sm bg-muted px-3 py-2 text-sm">
+                                                <div className="p-4 space-y-2 bg-[#F7F7F7]">
+                                                    <div className="max-w-[80%] rounded-lg rounded-bl-sm bg-[#F7F7F7] px-3 py-2 text-sm">
                                                         Hi! How can I help you today?
                                                     </div>
                                                     <div
@@ -822,7 +835,7 @@ export function EmbedDialog({
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2 border-t px-3 py-2">
-                                                    <div className="flex-1 rounded-md border bg-background px-3 py-1.5 text-sm text-muted-foreground">
+                                                    <div className="flex-1 rounded-md border bg-background px-3 py-1.5 text-sm text-[#737373]">
                                                         {widgetTexts.chatInputPlaceholder?.trim()
                                                             || widgetTextDefaults?.chatInputPlaceholder}
                                                     </div>
@@ -830,7 +843,7 @@ export function EmbedDialog({
                                                         className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white"
                                                         style={{ backgroundColor: buttonColor }}
                                                     >
-                                                        <Send className="h-4 w-4" />
+                                                        <HugeiconsIcon icon={SendIcon} className="h-4 w-4" />
                                                     </span>
                                                 </div>
                                             </div>
@@ -838,13 +851,13 @@ export function EmbedDialog({
                                     ) : (
                                         <div className="rounded-lg border bg-background p-6 flex items-center justify-center">
                                             <div className="text-center">
-                                                <svg className="w-16 h-16 mx-auto mb-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                                <svg className="w-16 h-16 mx-auto mb-4 text-[#737373]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                                                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                                                 </svg>
                                                 <p className="text-lg font-medium text-foreground mb-1">
                                                     {widgetTexts.voiceReadyTitle?.trim() || widgetTextDefaults?.voiceReadyTitle}
                                                 </p>
-                                                <p className="text-sm text-muted-foreground mb-5">{callToActionText}</p>
+                                                <p className="text-sm text-[#737373] mb-5">{callToActionText}</p>
                                                 <button
                                                     className="px-8 py-3 rounded-lg font-semibold text-white shadow-md"
                                                     style={{ backgroundColor: buttonColor }}
@@ -858,9 +871,9 @@ export function EmbedDialog({
                                     {/* Headless mode: Integration Instructions (chat) */}
                                     {embedMode === "headless" && widgetType === "chat" && (
                                         <div className="space-y-3">
-                                            <div className="rounded-lg bg-muted/50 p-4">
+                                            <div className="rounded-lg bg-[#F7F7F7] p-4">
                                                 <h4 className="font-medium mb-2">Integration Instructions</h4>
-                                                <ul className="text-sm space-y-2 text-muted-foreground">
+                                                <ul className="text-sm space-y-2 text-[#737373]">
                                                     <li>• Add the embed script tag to your page (see below).</li>
                                                     <li>• The widget renders no UI - render your own chat interface.</li>
                                                     <li>• Call <code className="text-xs">window.DograhWidget.startChat()</code> to start a conversation (the agent greeting arrives via <code className="text-xs">onMessage</code>).</li>
@@ -872,10 +885,10 @@ export function EmbedDialog({
                                                 </ul>
                                             </div>
 
-                                            <div className="rounded-lg bg-blue-50 dark:bg-blue-950/20 p-4 border border-blue-200 dark:border-blue-800">
-                                                <h4 className="font-medium mb-2 text-blue-900 dark:text-blue-100">Example - drive your own chat UI</h4>
+                                            <div className="rounded-lg bg-[#F0F3F9] dark:bg-[#F0F3F9] p-4 border border-[#DCE3EF] dark:border-[#DCE3EF]">
+                                                <h4 className="font-medium mb-2 text-[#737373] dark:text-[#737373]">Example - drive your own chat UI</h4>
                                                 <pre className="text-xs overflow-x-auto">
-                                                    <code className="text-blue-800 dark:text-blue-200">{HEADLESS_CHAT_EXAMPLE}</code>
+                                                    <code className="text-[#7186AD] dark:text-[#737373]">{HEADLESS_CHAT_EXAMPLE}</code>
                                                 </pre>
                                             </div>
                                         </div>
@@ -884,9 +897,9 @@ export function EmbedDialog({
                                     {/* Headless mode: Integration Instructions (voice) */}
                                     {embedMode === "headless" && widgetType === "voice" && (
                                         <div className="space-y-3">
-                                            <div className="rounded-lg bg-muted/50 p-4">
+                                            <div className="rounded-lg bg-[#F7F7F7] p-4">
                                                 <h4 className="font-medium mb-2">Integration Instructions</h4>
-                                                <ul className="text-sm space-y-2 text-muted-foreground">
+                                                <ul className="text-sm space-y-2 text-[#737373]">
                                                     <li>• Add the embed script tag to your page (see below).</li>
                                                     <li>• The widget renders no UI - render your own buttons.</li>
                                                     <li>• Call <code className="text-xs">window.DograhWidget.start()</code> to begin a call.</li>
@@ -897,13 +910,13 @@ export function EmbedDialog({
                                                 </ul>
                                             </div>
 
-                                            <div className="rounded-lg bg-blue-50 dark:bg-blue-950/20 p-4 border border-blue-200 dark:border-blue-800">
-                                                <h4 className="font-medium mb-2 text-blue-900 dark:text-blue-100">Example - track status in your own state</h4>
-                                                <p className="text-xs text-blue-900/80 dark:text-blue-100/80 mb-2">
+                                            <div className="rounded-lg bg-[#F0F3F9] dark:bg-[#F0F3F9] p-4 border border-[#DCE3EF] dark:border-[#DCE3EF]">
+                                                <h4 className="font-medium mb-2 text-[#737373] dark:text-[#737373]">Example - track status in your own state</h4>
+                                                <p className="text-xs text-[#737373]/80 dark:text-[#737373]/80 mb-2">
                                                     Mirror the call status into a variable you control, then render whatever UI you like from it. The status values are <code className="text-xs">idle</code>, <code className="text-xs">connecting</code>, <code className="text-xs">connected</code>, <code className="text-xs">failed</code>.
                                                 </p>
                                                 <pre className="text-xs overflow-x-auto">
-                                                    <code className="text-blue-800 dark:text-blue-200">{`// Vanilla JS - keep your own state, render however you want
+                                                    <code className="text-[#7186AD] dark:text-[#737373]">{`// Vanilla JS - keep your own state, render however you want
 let callStatus = 'idle';
 
 window.DograhWidget?.onStatusChange((status) => {
@@ -919,9 +932,9 @@ document.getElementById('talk-btn').addEventListener('click', () => {
   }
 });`}</code>
                                                 </pre>
-                                                <p className="text-xs text-blue-900/80 dark:text-blue-100/80 mt-3 mb-2">React:</p>
+                                                <p className="text-xs text-[#737373]/80 dark:text-[#737373]/80 mt-3 mb-2">React:</p>
                                                 <pre className="text-xs overflow-x-auto">
-                                                    <code className="text-blue-800 dark:text-blue-200">{`function TalkButton() {
+                                                    <code className="text-[#7186AD] dark:text-[#737373]">{`function TalkButton() {
   const [status, setStatus] = useState('idle');
 
   useEffect(() => {
@@ -943,9 +956,9 @@ document.getElementById('talk-btn').addEventListener('click', () => {
                                     {/* Inline mode: Integration Instructions */}
                                     {embedMode === "inline" && (
                                         <div className="space-y-3">
-                                            <div className="rounded-lg bg-muted/50 p-4">
+                                            <div className="rounded-lg bg-[#F7F7F7] p-4">
                                                 <h4 className="font-medium mb-2">Integration Instructions</h4>
-                                                <ul className="text-sm space-y-2 text-muted-foreground">
+                                                <ul className="text-sm space-y-2 text-[#737373]">
                                                     <li>• Add a div with id=&quot;dograh-inline-container&quot; where you want the widget</li>
                                                     <li>• The widget will render inside this container</li>
                                                     <li>• You have full control over the container&apos;s styling</li>
@@ -961,20 +974,20 @@ document.getElementById('talk-btn').addEventListener('click', () => {
                                             </div>
 
                                             {widgetType === "chat" ? (
-                                                <div className="rounded-lg bg-blue-50 dark:bg-blue-950/20 p-4 border border-blue-200 dark:border-blue-800">
-                                                    <h4 className="font-medium mb-2 text-blue-900 dark:text-blue-100">Example</h4>
+                                                <div className="rounded-lg bg-[#F0F3F9] dark:bg-[#F0F3F9] p-4 border border-[#DCE3EF] dark:border-[#DCE3EF]">
+                                                    <h4 className="font-medium mb-2 text-[#737373] dark:text-[#737373]">Example</h4>
                                                     <pre className="text-xs overflow-x-auto">
-                                                        <code className="text-blue-800 dark:text-blue-200">{`<h2>Chat with Our Agent</h2>
+                                                        <code className="text-[#7186AD] dark:text-[#737373]">{`<h2>Chat with Our Agent</h2>
 <div id="dograh-inline-container" style="min-height: 480px">
   <!-- Chat panel renders here; no extra JS needed -->
 </div>`}</code>
                                                     </pre>
                                                 </div>
                                             ) : (
-                                                <div className="rounded-lg bg-blue-50 dark:bg-blue-950/20 p-4 border border-blue-200 dark:border-blue-800">
-                                                    <h4 className="font-medium mb-2 text-blue-900 dark:text-blue-100">Example React Component</h4>
+                                                <div className="rounded-lg bg-[#F0F3F9] dark:bg-[#F0F3F9] p-4 border border-[#DCE3EF] dark:border-[#DCE3EF]">
+                                                    <h4 className="font-medium mb-2 text-[#737373] dark:text-[#737373]">Example React Component</h4>
                                                     <pre className="text-xs overflow-x-auto">
-                                                        <code className="text-blue-800 dark:text-blue-200">{`export function DograhAgent() {
+                                                        <code className="text-[#7186AD] dark:text-[#737373]">{`export function DograhAgent() {
   const [isCallActive, setIsCallActive] = useState(false);
 
   useEffect(() => {
@@ -1023,7 +1036,7 @@ document.getElementById('talk-btn').addEventListener('click', () => {
                                     >
                                         {saving ? (
                                             <>
-                                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                                <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 mr-2 animate-spin" />
                                                 Saving...
                                             </>
                                         ) : (
@@ -1046,27 +1059,27 @@ document.getElementById('talk-btn').addEventListener('click', () => {
                                                 >
                                                     {copied ? (
                                                         <>
-                                                            <Check className="h-4 w-4 mr-1" />
+                                                            <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 mr-1" />
                                                             Copied!
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <Copy className="h-4 w-4 mr-1" />
+                                                            <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4 mr-1" />
                                                             Copy Code
                                                         </>
                                                     )}
                                                 </Button>
                                             </div>
                                             <div className="relative">
-                                                <pre className="bg-muted/50 rounded-lg p-4 text-xs overflow-x-auto whitespace-pre-wrap break-all">
+                                                <pre className="bg-[#F7F7F7] rounded-lg p-4 text-xs overflow-x-auto whitespace-pre-wrap break-all">
                                                     <code>{embedToken.embed_script}</code>
                                                 </pre>
                                             </div>
-                                            <p className="text-xs text-muted-foreground">
+                                            <p className="text-xs text-[#737373]">
                                                 Add this script to your website&apos;s HTML to enable the widget.
                                                 Configuration changes will apply automatically without re-embedding.
                                             </p>
-                                            <p className="text-xs text-muted-foreground">
+                                            <p className="text-xs text-[#737373]">
                                                 To pass visitor details to the agent, edit the{" "}
                                                 <code className="text-xs">data-dograh-context</code> values above — or call{" "}
                                                 <code className="text-xs">{"window.DograhWidget.setContext({ ... })"}</code> for
@@ -1087,8 +1100,8 @@ document.getElementById('talk-btn').addEventListener('click', () => {
                                     <>
                                         <Separator />
                                         <div className="space-y-3">
-                                            <Label className="text-muted-foreground">Embed Code</Label>
-                                            <div className="rounded-lg border border-dashed bg-muted/30 px-4 py-8 text-center text-sm text-muted-foreground">
+                                            <Label className="text-[#737373]">Embed Code</Label>
+                                            <div className="rounded-lg border border-dashed bg-[#F7F7F7] px-4 py-8 text-center text-sm text-[#737373]">
                                                 Click <span className="font-medium">Save Configurations</span> to generate your embed script.
                                             </div>
                                         </div>

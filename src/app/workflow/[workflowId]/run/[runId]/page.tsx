@@ -1,19 +1,20 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    Bot,
-    Check,
-    Clock,
-    Copy,
-    Download,
-    ExternalLink,
-    FileText,
-    Loader2,
-    Pause,
-    Play,
-    UserRound,
-    Video,
-} from 'lucide-react';
+  BotIcon,
+  CheckIcon,
+  Clock01Icon,
+  Copy01Icon,
+  Download01Icon,
+  ExternalLinkIcon,
+  FileTextIcon,
+  Loading02Icon,
+  PauseIcon,
+  PlayIcon,
+  UserRoundIcon,
+  Video01Icon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import posthog from 'posthog-js';
@@ -99,8 +100,8 @@ function getTranscriptMetrics(logs: WorkflowRunLogs | null, gatheredContext: Rec
 
 function MetricCard({ label, value }: { label: string; value: string }) {
     return (
-        <div className="rounded-xl border border-border bg-muted/40 px-4 py-3">
-            <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
+        <div className="rounded-xl border border-[#E5E5E5] bg-[#F7F7F7] px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#737373]">{label}</p>
             <p className="mt-2 text-lg font-semibold text-foreground">{value}</p>
         </div>
     );
@@ -120,9 +121,9 @@ function CopyDebugIdButton({ label, value }: { label: string; value: string }) {
     };
 
     return (
-        <div className="flex items-center gap-2 rounded-md border border-border bg-muted/30 px-3 py-2">
+        <div className="flex items-center gap-2 rounded-md border border-[#E5E5E5] bg-[#F7F7F7] px-3 py-2">
             <div className="min-w-0">
-                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">{label}</p>
+                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#737373]">{label}</p>
                 <p className="font-mono text-sm font-semibold text-foreground">{value}</p>
             </div>
             <Button
@@ -133,7 +134,7 @@ function CopyDebugIdButton({ label, value }: { label: string; value: string }) {
                 onClick={handleCopy}
                 aria-label={`Copy ${label.toLowerCase()}`}
             >
-                {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                {copied ? <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" /> : <HugeiconsIcon icon={Copy01Icon} className="h-3.5 w-3.5" />}
             </Button>
         </div>
     );
@@ -217,7 +218,7 @@ function WaveformLane({
                         key={`${track}-${index}`}
                         className={cn(
                             'min-h-1 flex-1 rounded-full',
-                            track === 'user' ? 'bg-sky-500' : 'bg-emerald-500'
+                            track === 'user' ? 'bg-[#7186AD]' : 'bg-[#171717]'
                         )}
                         style={{ height: `${Math.round(peak * 100)}%` }}
                     />
@@ -429,7 +430,7 @@ function SplitTracksSection({
     const playbackTargetLabel = playbackMode === 'both' ? 'split tracks' : `${playbackMode} track`;
 
     return (
-        <Card className="border-border">
+        <Card className="border-[#E5E5E5]">
             <audio
                 ref={userAudioRef}
                 src={signedUrls.user ?? undefined}
@@ -461,10 +462,10 @@ function SplitTracksSection({
                                 'gap-1.5',
                                 userTrackActive
                                     ? 'border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 dark:border-sky-900/60 dark:bg-sky-950/30 dark:text-sky-300'
-                                    : 'text-muted-foreground opacity-60'
+                                    : 'text-[#737373] opacity-60'
                             )}
                         >
-                            <UserRound className="h-4 w-4" />
+                            <HugeiconsIcon icon={UserRoundIcon} className="h-4 w-4" />
                             User
                         </Button>
                         <span className="h-4 w-px bg-border" />
@@ -478,11 +479,11 @@ function SplitTracksSection({
                             className={cn(
                                 'gap-1.5',
                                 botTrackActive
-                                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-300'
-                                    : 'text-muted-foreground opacity-60'
+                                    ? 'border-[#DCE3EF] bg-[#F0F3F9] text-[#7186AD] hover:bg-[#F0F3F9] dark:border-[#DCE3EF] dark:bg-[#F0F3F9] dark:text-[#7186AD]'
+                                    : 'text-[#737373] opacity-60'
                             )}
                         >
-                            <Bot className="h-4 w-4" />
+                            <HugeiconsIcon icon={BotIcon} className="h-4 w-4" />
                             Bot
                         </Button>
                     </div>
@@ -494,7 +495,7 @@ function SplitTracksSection({
                             onClick={() => downloadFile(userRecordingUrl)}
                             className="gap-2"
                         >
-                            <Download className="h-4 w-4" />
+                            <HugeiconsIcon icon={Download01Icon} className="h-4 w-4" />
                             User
                         </Button>
                         <Button
@@ -504,7 +505,7 @@ function SplitTracksSection({
                             onClick={() => downloadFile(botRecordingUrl)}
                             className="gap-2"
                         >
-                            <Download className="h-4 w-4" />
+                            <HugeiconsIcon icon={Download01Icon} className="h-4 w-4" />
                             Bot
                         </Button>
                     </div>
@@ -519,9 +520,9 @@ function SplitTracksSection({
                         aria-label={isPlaying ? `Pause ${playbackTargetLabel}` : `Play ${playbackTargetLabel}`}
                         className="h-10 w-10 shrink-0"
                     >
-                        {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                        {isPlaying ? <HugeiconsIcon icon={PauseIcon} className="h-4 w-4" /> : <HugeiconsIcon icon={PlayIcon} className="h-4 w-4" />}
                     </Button>
-                    <div className="relative h-36 min-w-0 flex-1 overflow-hidden rounded-lg border border-border/70 bg-background">
+                    <div className="relative h-36 min-w-0 flex-1 overflow-hidden rounded-lg border border-[#E5E5E5] bg-background">
                         <div className="absolute left-3 right-3 top-1/2 h-px bg-border/80" />
                         <WaveformLane peaks={peaks.user} track="user" position="top" isActive={userTrackActive} />
                         <WaveformLane peaks={peaks.bot} track="bot" position="bottom" isActive={botTrackActive} />
@@ -534,8 +535,8 @@ function SplitTracksSection({
                             </div>
                         )}
                         {isLoading && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-background/70 text-xs text-muted-foreground">
-                                <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-background/70 text-xs text-[#737373]">
+                                <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-3.5 w-3.5 animate-spin" />
                                 Loading
                             </div>
                         )}
@@ -584,14 +585,14 @@ function RunMetricsSection({
     const hasProviderUsage = llmEntries.length > 0 || ttsEntries.length > 0 || sttEntries.length > 0;
 
     return (
-        <Card className="border-border">
+        <Card className="border-[#E5E5E5]">
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
                 <div>
                     <CardTitle className="text-lg">Run Metrics &amp; Usage</CardTitle>
-                    <p className="text-xs text-muted-foreground mt-0.5">Call duration, cost calculation, and conversation analytics</p>
+                    <p className="text-xs text-[#737373] mt-0.5">Call duration, cost calculation, and conversation analytics</p>
                 </div>
                 {cost !== null && (
-                    <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                    <div className="flex items-center gap-2 rounded-lg border border-[#DCE3EF] bg-[#F0F3F9] px-3 py-1.5 text-sm font-semibold text-[#7186AD] dark:text-[#7186AD]">
                         <span>Total Cost: ${cost.toFixed(4)} USD</span>
                     </div>
                 )}
@@ -607,27 +608,27 @@ function RunMetricsSection({
             </CardContent>
             {hasProviderUsage && (
                 <CardContent className="pt-0">
-                    <div className="border-t border-border pt-4">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Provider Usage Breakdown</p>
+                    <div className="border-t border-[#E5E5E5] pt-4">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-[#737373] mb-3">Provider Usage Breakdown</p>
                         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                             {ttsEntries.map(([key, chars]) => (
-                                <div key={key} className="rounded-xl border border-border bg-muted/40 px-4 py-3">
+                                <div key={key} className="rounded-xl border border-[#E5E5E5] bg-[#F7F7F7] px-4 py-3">
                                     <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sky-500">TTS</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{extractProvider(key)}</p>
+                                    <p className="text-xs text-[#737373] mt-0.5 truncate">{extractProvider(key)}</p>
                                     <p className="mt-1 text-sm font-semibold text-foreground">{typeof chars === 'number' ? `${chars.toLocaleString()} chars` : '-'}</p>
                                 </div>
                             ))}
                             {sttEntries.map(([key, seconds]) => (
-                                <div key={key} className="rounded-xl border border-border bg-muted/40 px-4 py-3">
-                                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-violet-500">STT</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{extractProvider(key)}</p>
+                                <div key={key} className="rounded-xl border border-[#E5E5E5] bg-[#F7F7F7] px-4 py-3">
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#7186AD]">STT</p>
+                                    <p className="text-xs text-[#737373] mt-0.5 truncate">{extractProvider(key)}</p>
                                     <p className="mt-1 text-sm font-semibold text-foreground">{typeof seconds === 'number' ? `${seconds.toFixed(1)}s` : '-'}</p>
                                 </div>
                             ))}
                             {llmEntries.map(([key, usage]) => (
-                                <div key={key} className="rounded-xl border border-border bg-muted/40 px-4 py-3">
-                                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-emerald-500">LLM</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{extractProvider(key)}</p>
+                                <div key={key} className="rounded-xl border border-[#E5E5E5] bg-[#F7F7F7] px-4 py-3">
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#7186AD]">LLM</p>
+                                    <p className="text-xs text-[#737373] mt-0.5 truncate">{extractProvider(key)}</p>
                                     <p className="mt-1 text-sm font-semibold text-foreground">
                                         {typeof usage?.total_tokens === 'number' ? `${usage.total_tokens.toLocaleString()} tokens` : '-'}
                                     </p>
@@ -657,28 +658,28 @@ function ContextDisplay({ title, context }: { title: string; context: Record<str
 
     if (!context || Object.keys(context).length === 0) {
         return (
-            <Card className="border-border">
+            <Card className="border-[#E5E5E5]">
                 <CardHeader className="pb-2">
                     <CardTitle className="text-lg">{title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-sm text-muted-foreground">No data available</p>
+                    <p className="text-sm text-[#737373]">No data available</p>
                 </CardContent>
             </Card>
         );
     }
 
     return (
-        <Card className="border-border">
+        <Card className="border-[#E5E5E5]">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-lg">{title}</CardTitle>
                 <Button variant="ghost" size="sm" onClick={handleCopy} className="gap-2">
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copied ? <HugeiconsIcon icon={CheckIcon} className="h-4 w-4" /> : <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />}
                     {copied ? 'Copied' : 'Copy'}
                 </Button>
             </CardHeader>
             <CardContent>
-                <pre className="text-sm bg-muted p-3 rounded-md overflow-auto max-h-64">
+                <pre className="text-sm bg-[#F7F7F7] p-3 rounded-md overflow-auto max-h-64">
                     {JSON.stringify(context, null, 2)}
                 </pre>
             </CardContent>
@@ -797,17 +798,17 @@ export default function WorkflowRunPage() {
         returnValue = (
             <div className={`flex ${RUN_SHELL_HEIGHT_CLASS} min-h-0 w-full overflow-hidden bg-background`}>
                 <div className="min-w-0 flex-1 overflow-y-auto">
-                    <div className="mx-auto w-full max-w-4xl space-y-6 p-6">
-                    <Card className="border-border">
+                    <div className="app-page space-y-6 max-w-4xl">
+                    <Card className="border-[#E5E5E5]">
                         <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div className="min-w-0 flex-1 space-y-2">
                                 {workflowName && (
                                     <div className="flex min-w-0 items-center gap-3">
                                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-primary/20 bg-primary/10 text-primary">
-                                            <Bot className="h-5 w-5" />
+                                            <HugeiconsIcon icon={BotIcon} className="h-5 w-5" />
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                                            <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#737373]">
                                                 Agent
                                             </p>
                                             <p className="truncate text-xl font-semibold text-foreground">
@@ -824,19 +825,19 @@ export default function WorkflowRunPage() {
                                     <CardTitle className="min-w-0 text-2xl">
                                         {isTextChatRun ? 'Text Chat Session' : 'Agent Run Completed'}
                                     </CardTitle>
-                                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${isTextChatRun ? 'bg-sky-500/15' : 'bg-emerald-500/20'}`}>
+                                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${isTextChatRun ? 'bg-[#7186AD]/15' : 'bg-[#171717]/20'}`}>
                                         {isTextChatRun ? (
-                                            <FileText className="h-5 w-5 text-sky-500" />
+                                            <HugeiconsIcon icon={FileTextIcon} className="h-5 w-5 text-sky-500" />
                                         ) : (
-                                            <svg className="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="h-5 w-5 text-[#7186AD]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                                             </svg>
                                         )}
                                     </div>
                                 </div>
                                 {workflowRun?.created_at && (
-                                    <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                                        <Clock className="h-4 w-4" />
+                                    <p className="flex items-center gap-1.5 text-sm text-[#737373]">
+                                        <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4" />
                                         Call time: {formatDateTime(workflowRun.created_at, organizationTimezone)}
                                     </p>
                                 )}
@@ -856,7 +857,7 @@ export default function WorkflowRunPage() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-muted-foreground mb-8">
+                            <p className="text-[#737373] mb-8">
                                 {isTextChatRun
                                     ? 'Review the conversation history, metrics, and context captured for this text session.'
                                     : 'Your voice agent run has been completed successfully. You can preview or download the transcript and recording.'}
@@ -866,7 +867,7 @@ export default function WorkflowRunPage() {
                                 {!isTextChatRun && (
                                     <>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm text-muted-foreground">Preview:</span>
+                                            <span className="text-sm text-[#737373]">Preview:</span>
                                             <MediaPreviewButton
                                                 recordingUrl={workflowRun?.recording_url}
                                                 transcriptUrl={workflowRun?.transcript_url}
@@ -874,15 +875,15 @@ export default function WorkflowRunPage() {
                                                 onOpenPreview={openPreview}
                                             />
                                         </div>
-                                        <div className="flex items-center gap-2 border-l border-border pl-4">
-                                            <span className="text-sm text-muted-foreground">Download:</span>
+                                        <div className="flex items-center gap-2 border-l border-[#E5E5E5] pl-4">
+                                            <span className="text-sm text-[#737373]">Download:</span>
                                             <Button
                                                 onClick={() => downloadFile(workflowRun?.transcript_url ?? null)}
                                                 disabled={!workflowRun?.transcript_url || !auth.isAuthenticated}
                                                 size="sm"
                                                 className="gap-2"
                                             >
-                                                <FileText className="h-4 w-4" />
+                                                <HugeiconsIcon icon={FileTextIcon} className="h-4 w-4" />
                                                 Transcript
                                             </Button>
                                             <Button
@@ -891,15 +892,15 @@ export default function WorkflowRunPage() {
                                                 size="sm"
                                                 className="gap-2"
                                             >
-                                                <Video className="h-4 w-4" />
+                                                <HugeiconsIcon icon={Video01Icon} className="h-4 w-4" />
                                                 Recording
                                             </Button>
                                         </div>
                                     </>
                                 )}
                                 {workflowRun?.gathered_context?.trace_url && (
-                                    <div className={`flex items-center gap-2 ${isTextChatRun ? '' : 'border-l border-border pl-4'}`}>
-                                        <span className="text-sm text-muted-foreground">Trace:</span>
+                                    <div className={`flex items-center gap-2 ${isTextChatRun ? '' : 'border-l border-[#E5E5E5] pl-4'}`}>
+                                        <span className="text-sm text-[#737373]">Trace:</span>
                                         <Button
                                             asChild
                                             size="sm"
@@ -911,7 +912,7 @@ export default function WorkflowRunPage() {
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                             >
-                                                <ExternalLink className="h-4 w-4" />
+                                                <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4" />
                                                 View Trace
                                             </a>
                                         </Button>
@@ -955,7 +956,7 @@ export default function WorkflowRunPage() {
                     </div>
                 </div>
 
-                <div className="h-full min-h-0 w-[420px] shrink-0 border-l border-border bg-background p-5">
+                <div className="h-full min-h-0 w-[420px] shrink-0 border-l border-[#E5E5E5] bg-background p-5">
                     <ConversationRailFrame className="h-full">
                         <RealtimeFeedback mode="historical" logs={workflowRun?.logs ?? null} />
                     </ConversationRailFrame>
@@ -966,10 +967,10 @@ export default function WorkflowRunPage() {
     else {
         returnValue = (
             <div className="flex h-full items-center justify-center p-6">
-                <Card className="w-full max-w-xl border-border">
+                <Card className="w-full max-w-xl border-[#E5E5E5]">
                     <CardHeader className="space-y-2">
                         <CardTitle className="text-2xl">Run Details Unavailable</CardTitle>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-[#737373]">
                             This run does not have a details view yet. Go back to the workflow to continue testing or make changes.
                         </p>
                     </CardHeader>

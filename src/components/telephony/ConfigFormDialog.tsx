@@ -1,6 +1,10 @@
 "use client";
 
-import { Copy, ExternalLink } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Copy01Icon,
+  ExternalLinkIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -261,10 +265,10 @@ export function ConfigFormDialog({
                     .catch(() => toast.error("Failed to copy ID"));
                 }}
                 title="Click to copy"
-                className="group flex w-full items-center gap-2 rounded-md border bg-muted/20 p-2 text-left font-mono text-xs transition-colors hover:bg-muted/40"
+                className="group flex w-full items-center gap-2 rounded-md border bg-[#F7F7F7] p-2 text-left font-mono text-xs transition-colors hover:bg-[#F7F7F7]"
               >
                 <code className="flex-1 truncate">{existing.id}</code>
-                <Copy className="h-3 w-3 shrink-0 text-muted-foreground group-hover:text-foreground" />
+                <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3 shrink-0 text-[#737373] group-hover:text-foreground" />
               </button>
             </div>
           )}
@@ -298,7 +302,7 @@ export function ConfigFormDialog({
               </SelectContent>
             </Select>
             {lockedProvider && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[#737373]">
                 Provider cannot be changed after creation.
               </p>
             )}
@@ -307,9 +311,9 @@ export function ConfigFormDialog({
                 href={currentProvider.docs_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-blue-600 underline"
+                className="inline-flex items-center gap-1 text-xs text-[#7186AD] underline"
               >
-                {currentProvider.display_name} docs <ExternalLink className="h-3 w-3" />
+                {currentProvider.display_name} docs <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
               </a>
             )}
           </div>
@@ -318,7 +322,7 @@ export function ConfigFormDialog({
             <div className="flex items-center justify-between rounded border p-3">
               <div>
                 <Label className="text-sm">Set as default for outbound calls</Label>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-[#737373]">
                   Used by test calls and campaigns when no specific config is selected.
                   {suggestDefaultOutbound
                     ? " Your organization has no default yet."
@@ -341,7 +345,7 @@ export function ConfigFormDialog({
                   <Label htmlFor={`cfg-field-${field.name}`}>
                     {field.label}
                     {!field.required && field.type !== "readonly" && (
-                      <span className="ml-1 text-xs text-muted-foreground">
+                      <span className="ml-1 text-xs text-[#737373]">
                         (optional)
                       </span>
                     )}
@@ -353,7 +357,7 @@ export function ConfigFormDialog({
                     isEdit={isEdit}
                   />
                   {field.description && (
-                    <p className="text-xs text-muted-foreground">{field.description}</p>
+                    <p className="text-xs text-[#737373]">{field.description}</p>
                   )}
                 </div>
               ))}
@@ -386,7 +390,7 @@ interface FieldInputProps {
 function FieldInput({ field, value, onChange, isEdit }: FieldInputProps) {
   if (field.name === "from_numbers") {
     return (
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-[#737373]">
         Phone numbers are managed separately on the configuration page.
       </p>
     );
@@ -411,10 +415,10 @@ function FieldInput({ field, value, onChange, isEdit }: FieldInputProps) {
             .catch(() => toast.error("Failed to copy"));
         }}
         title="Click to copy"
-        className="group flex w-full items-center gap-2 rounded-md border bg-muted/20 p-2 text-left font-mono text-xs transition-colors hover:bg-muted/40"
+        className="group flex w-full items-center gap-2 rounded-md border bg-[#F7F7F7] p-2 text-left font-mono text-xs transition-colors hover:bg-[#F7F7F7]"
       >
         <code className="flex-1 truncate">{generated}</code>
-        <Copy className="h-3 w-3 shrink-0 text-muted-foreground group-hover:text-foreground" />
+        <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3 shrink-0 text-[#737373] group-hover:text-foreground" />
       </button>
     );
   }

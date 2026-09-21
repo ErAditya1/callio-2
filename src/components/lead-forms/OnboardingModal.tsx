@@ -1,6 +1,9 @@
 "use client";
 
-import { Rocket } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Rocket01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -188,7 +191,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
         onPointerDownOutside: (e) => e.preventDefault(),
         onInteractOutside: (e) => e.preventDefault(),
       }}
-      icon={Rocket}
+      icon={Rocket01Icon}
       eyebrow="Welcome"
       title="Welcome to Callio AI"
       description="A few quick questions so we can tailor your experience. Takes ~20 seconds."

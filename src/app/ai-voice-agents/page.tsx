@@ -1,12 +1,13 @@
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  BrainCircuit,
-  Calendar,
-  Headphones,
-  PhoneCall,
-  Sparkles,
-  Zap
-} from 'lucide-react';
+  ArrowRight01Icon,
+  BrainIcon,
+  Calendar01Icon,
+  HeadphonesIcon,
+  PhoneCallIcon,
+  SparklesIcon,
+  ZapIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -35,37 +36,37 @@ export default function AIVoiceAgentsPage() {
           {
             title: 'Answer Inbound Calls 24/7',
             desc: 'Zero hold time. Answers on the very first ring, answers questions, checks inventory or hours, and directs callers.',
-            icon: PhoneCall,
+            icon: PhoneCallIcon,
             color: 'text-blue-400 bg-blue-500/10'
           },
           {
             title: 'Automate Calendar Bookings',
             desc: 'Checks real-time availability in Google Calendar or Cal.com, books slots, sends calendar invites, and texts SMS reminders.',
-            icon: Calendar,
+            icon: Calendar01Icon,
             color: 'text-emerald-400 bg-emerald-500/10'
           },
           {
             title: 'Qualify Prospects in 30s',
             desc: 'Call form leads in sub-30 seconds, asks custom BANT questions, and live-transfers high-intent buyers to senior sales reps.',
-            icon: Zap,
+            icon: ZapIcon,
             color: 'text-amber-400 bg-amber-500/10'
           },
           {
             title: 'Trained on Your Knowledge',
             desc: 'Feed your website URL, PDF documentation, and FAQs. Agents speak strictly from your verified facts with zero hallucination.',
-            icon: BrainCircuit,
+            icon: BrainIcon,
             color: 'text-purple-400 bg-purple-500/10'
           },
           {
             title: 'Warm Human Transfers',
             desc: 'When a caller requests a manager or complex support, CallioAI dials your team and delivers a 10-second spoken briefing before connecting.',
-            icon: Headphones,
+            icon: HeadphonesIcon,
             color: 'text-rose-400 bg-rose-500/10'
           },
           {
             title: 'Actionable Intelligence',
             desc: 'Every call generates a structured summary, extracted parameters (name, dates, budget), sentiment score, and full transcript in your CRM.',
-            icon: Sparkles,
+            icon: SparklesIcon,
             color: 'text-indigo-400 bg-indigo-500/10'
           }
         ].map((item, i) => {
@@ -73,7 +74,7 @@ export default function AIVoiceAgentsPage() {
           return (
             <div key={i} className="p-8 rounded-3xl border border-border/80 bg-card/70 space-y-4 shadow-md">
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${item.color}`}>
-                <Icon className="w-6 h-6" />
+                <HugeiconsIcon icon={Icon} className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-foreground">{item.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>

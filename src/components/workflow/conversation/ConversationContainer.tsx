@@ -1,6 +1,11 @@
 "use client";
 
-import { MessageSquare, Mic, MicOff } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  MessageSquareIcon,
+  Mic01Icon,
+  MicOff01Icon,
+} from "@hugeicons/core-free-icons";;
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -16,21 +21,21 @@ interface ConversationContainerProps {
 
 const STATUS_CONFIG = {
     ready: {
-        icon: MicOff,
+        icon: MicOff01Icon,
         label: "Ready",
-        className: "bg-muted text-muted-foreground",
+        className: "bg-[#F7F7F7] text-[#737373]",
     },
     live: {
-        icon: Mic,
+        icon: Mic01Icon,
         label: "Live",
         className: "bg-green-500/10 text-green-600 dark:text-green-400",
     },
     ended: {
-        icon: MicOff,
+        icon: MicOff01Icon,
         label: "Ended",
-        className: "bg-muted text-muted-foreground",
+        className: "bg-[#F7F7F7] text-[#737373]",
     },
-} satisfies Record<ConversationStatus, { icon: typeof Mic; label: string; className: string }>;
+} satisfies Record<ConversationStatus, { icon: typeof Mic01Icon; label: string; className: string }>;
 
 export function ConversationContainer({
     title,
@@ -43,15 +48,15 @@ export function ConversationContainer({
 
     return (
         <div className="flex h-full min-h-0 w-full flex-col bg-background">
-            <div className="shrink-0 border-b border-border px-4 py-3">
+            <div className="shrink-0 border-b border-[#E5E5E5] px-4 py-3">
                 <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-2">
-                        <MessageSquare className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <HugeiconsIcon icon={MessageSquareIcon} className="h-4 w-4 shrink-0 text-[#737373]" />
                         <span className="truncate whitespace-nowrap text-sm font-medium">{title}</span>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
                         {messageCount !== undefined && messageCount > 0 ? (
-                            <span className="text-xs text-muted-foreground">{messageCount} messages</span>
+                            <span className="text-xs text-[#737373]">{messageCount} messages</span>
                         ) : null}
                         <div
                             className={cn(
@@ -59,7 +64,7 @@ export function ConversationContainer({
                                 statusConfig.className,
                             )}
                         >
-                            <StatusIcon className="h-3 w-3" />
+                            <HugeiconsIcon icon={StatusIcon} className="h-3 w-3" />
                             <span>{statusConfig.label}</span>
                         </div>
                     </div>

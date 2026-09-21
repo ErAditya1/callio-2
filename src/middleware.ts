@@ -4,6 +4,11 @@ import { NextResponse } from 'next/server';
 import { getServerBackendUrl } from '@/lib/apiClient';
 import { OSS_TOKEN_COOKIE } from '@/lib/auth/cookies';
 
+// DEMO FLOW (frontend-only prototype): every route is open without login so the
+// full click-through (auth → create-agent → payment → dashboard) can be built
+// and reviewed with no backend running. Set to false to restore the login gate.
+const DEMO_OPEN_ROUTES = true;
+
 // Paths that don't require authentication in OSS mode.
 // Marketing pages, demo simulators, voices showcase, pricing, and auth endpoints.
 const PUBLIC_PATHS = [
@@ -59,6 +64,11 @@ async function fetchAuthProvider(): Promise<string> {
 }
 
 export async function middleware(request: NextRequest) {
+  // DEMO: entire app open — no auth check on any route.
+  if (DEMO_OPEN_ROUTES) {
+    return NextResponse.next();
+  }
+
   const { pathname } = request.nextUrl;
 
   // FAST PATH: Allow public marketing & demo paths immediately without any backend network call

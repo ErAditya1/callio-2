@@ -1,6 +1,14 @@
 "use client";
 
-import { Check, ChevronDown, Loader2, Pencil, Play, Square } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  Loading02Icon,
+  PencilIcon,
+  PlayIcon,
+  SquareIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { getVoicesApiV1UserConfigurationsVoicesProviderGet } from "@/client/sdk.gen";
@@ -381,7 +389,7 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
                         <span className="truncate text-xs text-muted-foreground">{triggerTraits}</span>
                     )}
                 </span>
-                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                <HugeiconsIcon icon={ChevronDownIcon} className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
 
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -463,7 +471,7 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
                             <p className="py-10 text-center text-sm text-destructive">{error}</p>
                         ) : isLoading ? (
                             <div className="flex items-center justify-center py-10">
-                                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                                <HugeiconsIcon icon={Loading02Icon} className="h-6 w-6 animate-spin text-muted-foreground" />
                             </div>
                         ) : voices.length === 0 ? (
                             <p className="py-10 text-center text-sm text-muted-foreground">
@@ -507,15 +515,15 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
                                                 )}
                                             >
                                                 {isPlaying ? (
-                                                    <Square className="h-4 w-4 fill-current" />
+                                                    <HugeiconsIcon icon={SquareIcon} className="h-4 w-4 fill-current" />
                                                 ) : (
-                                                    <Play className="h-4 w-4 fill-current" />
+                                                    <HugeiconsIcon icon={PlayIcon} className="h-4 w-4 fill-current" />
                                                 )}
                                             </span>
                                             <span className="flex min-w-0 flex-1 flex-col">
                                                 <span className="flex items-center gap-2">
                                                     <span className="truncate text-sm font-medium">{voice.name}</span>
-                                                    {isSelected && <Check className="h-4 w-4 shrink-0 text-primary" />}
+                                                    {isSelected && <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 shrink-0 text-primary" />}
                                                 </span>
                                                 {voiceTraits(voice) && (
                                                     <span className="truncate text-xs text-muted-foreground">
@@ -543,7 +551,7 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
                                 className="text-muted-foreground"
                                 onClick={() => setManualMode((prev) => !prev)}
                             >
-                                <Pencil className="mr-2 h-4 w-4" />
+                                <HugeiconsIcon icon={PencilIcon} className="mr-2 h-4 w-4" />
                                 {manualMode ? "Browse catalog" : "Custom voice ID"}
                             </Button>
                         ) : (

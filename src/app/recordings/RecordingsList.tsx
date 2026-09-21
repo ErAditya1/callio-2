@@ -1,6 +1,17 @@
 "use client";
 
-import { AudioLines, Check, Pause, Pencil, Play, RefreshCw, Search, Trash2, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AudioLinesIcon,
+  CheckIcon,
+  Delete02Icon,
+  PauseIcon,
+  PencilIcon,
+  PlayIcon,
+  RefreshCwIcon,
+  Search01Icon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -173,7 +184,7 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
             {/* Search and Refresh */}
             <div className="flex items-center gap-4">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <HugeiconsIcon icon={Search01Icon} className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#737373]" />
                     <Input
                         placeholder="Search by filename, transcript, or ID..."
                         value={searchQuery}
@@ -187,12 +198,12 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
                     onClick={() => { stopPlayback(); fetchRecordings(); }}
                     disabled={isLoading}
                 >
-                    <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+                    <HugeiconsIcon icon={RefreshCwIcon} className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
                 </Button>
             </div>
 
             {/* Results count */}
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-[#737373]">
                 {filteredRecordings.length} recording{filteredRecordings.length !== 1 ? "s" : ""}
                 {searchQuery && ` matching "${searchQuery}"`}
             </div>
@@ -200,8 +211,8 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
             {/* Recordings List */}
             {filteredRecordings.length === 0 ? (
                 <div className="text-center py-12">
-                    <AudioLines className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">
+                    <HugeiconsIcon icon={AudioLinesIcon} className="w-12 h-12 text-[#737373] mx-auto mb-4" />
+                    <p className="text-[#737373]">
                         {searchQuery
                             ? "No recordings match your search"
                             : "No recordings yet"}
@@ -216,11 +227,11 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
                         return (
                             <div
                                 key={rec.recording_id}
-                                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                                className="flex items-center justify-between p-4 border rounded-lg hover:bg-[#F7F7F7] transition-colors"
                             >
                                 <div className="flex items-center gap-4 flex-1 min-w-0">
                                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                        <AudioLines className="w-5 h-5 text-primary" />
+                                        <HugeiconsIcon icon={AudioLinesIcon} className="w-5 h-5 text-primary" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         {/* Recording ID (editable) */}
@@ -244,7 +255,7 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
                                                         className="h-7 w-7 p-0"
                                                         onClick={() => saveRecordingId(rec)}
                                                     >
-                                                        <Check className="w-3.5 h-3.5" />
+                                                        <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5" />
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
@@ -252,7 +263,7 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
                                                         className="h-7 w-7 p-0"
                                                         onClick={cancelEditing}
                                                     >
-                                                        <X className="w-3.5 h-3.5" />
+                                                        <HugeiconsIcon icon={XIcon} className="w-3.5 h-3.5" />
                                                     </Button>
                                                     {editError && (
                                                         <span className="text-xs text-destructive">{editError}</span>
@@ -260,16 +271,16 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
                                                 </div>
                                             ) : (
                                                 <div className="flex items-center gap-1.5">
-                                                    <code className="text-sm font-mono bg-muted px-1.5 py-0.5 rounded truncate max-w-[250px]">
+                                                    <code className="text-sm font-mono bg-[#F7F7F7] px-1.5 py-0.5 rounded truncate max-w-[250px]">
                                                         {rec.recording_id}
                                                     </code>
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="h-6 px-1.5 text-xs text-muted-foreground gap-1"
+                                                        className="h-6 px-1.5 text-xs text-[#737373] gap-1"
                                                         onClick={() => startEditing(rec)}
                                                     >
-                                                        <Pencil className="w-3 h-3" />
+                                                        <HugeiconsIcon icon={PencilIcon} className="w-3 h-3" />
                                                         Edit ID
                                                     </Button>
                                                 </div>
@@ -277,15 +288,15 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
                                         </div>
                                         {/* Filename */}
                                         {filename && (
-                                            <p className="text-xs text-muted-foreground mb-0.5 truncate max-w-[300px]">
+                                            <p className="text-xs text-[#737373] mb-0.5 truncate max-w-[300px]">
                                                 {filename}
                                             </p>
                                         )}
                                         {/* Transcript */}
-                                        <p className="text-sm text-muted-foreground line-clamp-1 mb-1">
+                                        <p className="text-sm text-[#737373] line-clamp-1 mb-1">
                                             {rec.transcript}
                                         </p>
-                                        <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+                                        <div className="flex items-center gap-3 text-xs text-[#737373] flex-wrap">
                                             <span>{formatDateTime(rec.created_at, organizationTimezone)}</span>
                                         </div>
                                     </div>
@@ -297,9 +308,9 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
                                         onClick={() => handlePlay(rec)}
                                     >
                                         {playingId === rec.recording_id ? (
-                                            <Pause className="w-4 h-4" />
+                                            <HugeiconsIcon icon={PauseIcon} className="w-4 h-4" />
                                         ) : (
-                                            <Play className="w-4 h-4" />
+                                            <HugeiconsIcon icon={PlayIcon} className="w-4 h-4" />
                                         )}
                                     </Button>
                                     <Button
@@ -308,7 +319,7 @@ export default function RecordingsList({ refreshKey }: { refreshKey?: number }) 
                                         onClick={() => handleDelete(rec.recording_id)}
                                         className="text-destructive hover:text-destructive/90"
                                     >
-                                        <Trash2 className="w-4 h-4" />
+                                        <HugeiconsIcon icon={Delete02Icon} className="w-4 h-4" />
                                     </Button>
                                 </div>
                             </div>

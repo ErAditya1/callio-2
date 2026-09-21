@@ -1,7 +1,10 @@
 'use client';
 
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react-dom';
-import { X } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -127,7 +130,7 @@ export const OnboardingTooltip = ({
                     className="absolute top-2 right-2 p-1 hover:bg-blue-600 rounded-full transition-colors"
                     aria-label="Close tooltip"
                 >
-                    <X className="h-4 w-4" />
+                    <HugeiconsIcon icon={XIcon} className="h-4 w-4" />
                 </button>
 
                 {/* Title */}

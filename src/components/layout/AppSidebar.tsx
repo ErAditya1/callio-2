@@ -1,37 +1,38 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  AlertTriangle,
-  AudioWaveform,
-  BarChart3,
-  Bot,
-  ChevronLeft,
-  ChevronRight,
-  CreditCard,
-  Database,
-  FileText,
-  KeyRound,
-  LayoutDashboard,
-  LogOut,
-  type LucideIcon,
-  Megaphone,
-  PhoneCall,
-  Radio,
-  Settings,
-  ShieldCheck,
-  Sliders,
-  Sparkles,
-  UserRound,
-  Workflow,
-  Zap,
-} from "lucide-react";
+  AudioWaveformIcon,
+  BotIcon,
+  ChartColumnIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CreditCardIcon,
+  Database01Icon,
+  FileTextIcon,
+  Home01Icon,
+  KeyRoundIcon,
+  Logout01Icon,
+  Megaphone01Icon,
+  PhoneCallIcon,
+  RadioIcon,
+  Settings01Icon,
+  ShieldCheckIcon,
+  SlidersHorizontalIcon,
+  SparklesIcon,
+  TriangleAlertIcon,
+  UserRoundIcon,
+  WorkflowIcon,
+  ZapIcon,
+} from "@hugeicons/core-free-icons";
+import type { IconSvgElement } from "@hugeicons/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
-import { BrandLogo } from "@/components/BrandLogo";
 import { SidebarTeamSwitcher } from "@/components/layout/SidebarTeamSwitcher";
-import ThemeToggle from "@/components/ThemeSwitcher";
+// PARKED (2026-09-20): dark-mode toggle removed — app is light-only.
+// import ThemeToggle from "@/components/ThemeSwitcher";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -67,7 +68,7 @@ import { cn } from "@/lib/utils";
 type SidebarNavItem = {
   title: string;
   url: string;
-  icon: LucideIcon;
+  icon: IconSvgElement;
   badge?: string;
   showsTelephonyWarning?: boolean;
   requiresSuperuser?: boolean;
@@ -81,58 +82,60 @@ type SidebarNavSection = {
 const TELEPHONY_WARNING_COPY = "Configuration required";
 
 const NAV_SECTIONS: SidebarNavSection[] = [
-  {
-    items: [
-      {
-        title: "Overview",
-        url: "/overview",
-        icon: LayoutDashboard,
-      },
-    ],
-  },
+  // PARKED (2026-09-20): Overview entry commented out per user request — not deleted.
+  // To restore, uncomment the block below.
+  // PARKED (2026-09-20): old standalone /overview entry removed per user request —
+  // replaced by "Home" (→ /dashboard/overview) inside VOICE STUDIO. Not deleted:
+  // restore by re-adding { title: "Overview", url: "/dashboard/overview",
+  // icon: LayoutDashboardIcon } here.
   {
     label: "VOICE STUDIO",
     items: [
       {
+        title: "Home",
+        url: "/dashboard/overview",
+        icon: Home01Icon,
+      },
+      {
         title: "Voice Agents",
         url: "/workflow",
-        icon: Bot,
+        icon: BotIcon,
       },
       {
         title: "Campaigns",
         url: "/campaigns",
-        icon: Megaphone,
+        icon: Megaphone01Icon,
       },
       {
         title: "AI Models & Voices",
         url: "/model-configurations",
-        icon: Sparkles,
+        icon: SparklesIcon,
       },
       {
         title: "Telephony & SIP",
         url: "/telephony-configurations",
-        icon: PhoneCall,
+        icon: PhoneCallIcon,
         showsTelephonyWarning: true,
       },
       {
         title: "Tools & Actions",
         url: "/tools",
-        icon: Zap,
+        icon: ZapIcon,
       },
       {
         title: "Knowledge Files",
         url: "/files",
-        icon: Database,
+        icon: Database01Icon,
       },
       {
         title: "Call Recordings",
         url: "/recordings",
-        icon: AudioWaveform,
+        icon: AudioWaveformIcon,
       },
       {
         title: "Developer Keys",
         url: "/api-keys",
-        icon: KeyRound,
+        icon: KeyRoundIcon,
       },
     ],
   },
@@ -142,33 +145,33 @@ const NAV_SECTIONS: SidebarNavSection[] = [
       {
         title: "Call Analytics",
         url: "/usage",
-        icon: BarChart3,
+        icon: ChartColumnIcon,
       },
       {
         title: "Billing & Plans",
         url: "/billing",
-        icon: CreditCard,
+        icon: CreditCardIcon,
       },
       {
         title: "Reports & Logs",
         url: "/reports",
-        icon: FileText,
+        icon: FileTextIcon,
       },
       {
         title: "Automations",
         url: "/automation",
-        icon: Workflow,
+        icon: WorkflowIcon,
       },
       {
         title: "Platform Admin",
         url: "/superadmin",
-        icon: ShieldCheck,
+        icon: ShieldCheckIcon,
         requiresSuperuser: true,
       },
       {
         title: "Workspace Settings",
         url: "/settings",
-        icon: Sliders,
+        icon: SlidersHorizontalIcon,
       },
     ],
   },
@@ -222,7 +225,7 @@ export function AppSidebar() {
     };
 
     const warningIndicator = (
-      <AlertTriangle
+      <HugeiconsIcon icon={TriangleAlertIcon}
         aria-label="Action required on a telephony configuration"
         className={cn(
           "text-amber-500 shrink-0",
@@ -239,9 +242,8 @@ export function AppSidebar() {
           "relative group/btn rounded-lg px-3 py-2 h-9 transition-all duration-150",
           "hover:bg-accent/60 hover:text-foreground",
           isItemActive && [
-            "bg-indigo-500/10 dark:bg-indigo-500/15 text-foreground font-semibold",
-            "border border-indigo-500/20 dark:border-indigo-400/25",
-            "dark:text-white",
+            "bg-[#F0F3F9] text-[#171717] font-semibold",
+            "border border-[#DCE3EF]",
           ]
         )}
       >
@@ -254,16 +256,16 @@ export function AppSidebar() {
           {/* Active Accent Indicator */}
           {isItemActive && !isCollapsed && (
             <span
-              className="absolute -left-2.5 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-gradient-to-b from-indigo-500 to-violet-600 shadow-[0_0_8px_rgba(99,102,241,0.7)]"
+              className="absolute -left-2.5 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-[#7186AD]"
               aria-hidden
             />
           )}
 
-          <Icon
+          <HugeiconsIcon icon={Icon}
             className={cn(
               "h-[18px] w-[18px] shrink-0 transition-transform duration-200 group-hover/btn:scale-110",
               isItemActive
-                ? "text-indigo-600 dark:text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]"
+                ? "text-[#7186AD]"
                 : "text-muted-foreground group-hover/btn:text-foreground"
             )}
           />
@@ -318,52 +320,38 @@ export function AppSidebar() {
     "";
 
   return (
-    <Sidebar collapsible="icon" variant="sidebar" className="border-r border-border/60 bg-sidebar/95 backdrop-blur-md">
+    <Sidebar collapsible="icon" variant="sidebar" className="bg-sidebar backdrop-blur-md border-0">
       {/* Sidebar Header */}
-      <SidebarHeader className="px-3 py-3 border-b border-border/50 notranslate" translate="no">
+      <SidebarHeader className="px-3 pt-4 pb-6 notranslate" translate="no">
         <div className="flex items-center justify-between">
           <div className={cn("flex items-center gap-2.5", isCollapsed && "hidden")}>
             <Link
-              href="/overview"
-              className="notranslate flex items-center gap-2.5 px-1 group"
+              href="/dashboard/overview"
+              className="notranslate flex items-center pr-1 pl-3.5"
               translate="no"
+              aria-label="Callio home"
             >
-              <div className="relative flex items-center justify-center">
-                <BrandLogo mark className="h-7 w-7 rounded-xl shadow-md shadow-indigo-500/25 ring-1 ring-indigo-500/30 transition-transform duration-200 group-hover:scale-105" />
-                <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-              </div>
-              <div className="flex flex-col leading-none">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-sm tracking-tight text-foreground">
-                    Callio<span className="bg-gradient-to-r from-indigo-500 to-violet-500 bg-clip-text text-transparent">AI</span>
-                  </span>
-                  <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gradient-to-r from-indigo-500/15 to-violet-500/15 text-indigo-500 dark:text-indigo-400 border border-indigo-500/25">
-                    Pro
-                  </span>
-                </div>
-                <span className="text-[10px] text-muted-foreground font-normal tracking-tight mt-0.5">
-                  Voice Calling SaaS
-                </span>
-              </div>
+              <span className="text-[15px] font-bold tracking-[0.18em] text-[#0b0b0e]">
+                CALLIO
+              </span>
             </Link>
           </div>
 
           {/* Brand Mark & Sidebar Trigger */}
           {isCollapsed ? (
             <div className="flex flex-col items-center gap-1.5 mx-auto my-1">
-              <Link href="/overview">
-                <BrandLogo mark className="h-7 w-7 rounded-xl shadow-md shadow-indigo-500/25 ring-1 ring-indigo-500/30" />
+              <Link href="/dashboard/overview" aria-label="Callio home">
+                <span className="text-[15px] font-bold tracking-[0.1em] text-[#0b0b0e]">
+                  C
+                </span>
               </Link>
               <SidebarTrigger className="hover:bg-accent rounded-lg h-7 w-7 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors" title="Expand Sidebar">
-                <ChevronRight className="h-4 w-4" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4" />
               </SidebarTrigger>
             </div>
           ) : (
             <SidebarTrigger className="hover:bg-accent rounded-lg h-7 w-7">
-              <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+              <HugeiconsIcon icon={ChevronLeftIcon} className="h-4 w-4 text-muted-foreground" />
             </SidebarTrigger>
           )}
         </div>
@@ -426,9 +414,9 @@ export function AppSidebar() {
                     isCollapsed && "justify-center p-0.5"
                   )}
                 >
-                  <div className="h-8 w-8 shrink-0 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 p-[1.5px] shadow-sm">
-                    <div className="h-full w-full rounded-full bg-background dark:bg-slate-950 flex items-center justify-center">
-                      <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{userInitials}</span>
+                  <div className="h-8 w-8 shrink-0 rounded-full bg-neutral-900 p-[1.5px] shadow-sm">
+                    <div className="h-full w-full rounded-full bg-background flex items-center justify-center">
+                      <span className="text-xs font-bold text-neutral-900">{userInitials}</span>
                     </div>
                   </div>
                   {!isCollapsed && (
@@ -453,17 +441,17 @@ export function AppSidebar() {
                 <DropdownMenuSeparator />
                 {provider === "stack" && (
                   <DropdownMenuItem onClick={() => router.push("/handler/account-settings")} className="cursor-pointer text-xs rounded-lg">
-                    <Settings className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
+                    <HugeiconsIcon icon={Settings01Icon} className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
                     Account Settings
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onClick={() => router.push("/settings")} className="cursor-pointer text-xs rounded-lg">
-                  <Sliders className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
+                  <HugeiconsIcon icon={SlidersHorizontalIcon} className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
                   Workspace Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => logout()} className="cursor-pointer text-xs text-rose-600 dark:text-rose-400 rounded-lg">
-                  <LogOut className="mr-2 h-3.5 w-3.5" />
+                <DropdownMenuItem onClick={() => logout()} className="cursor-pointer text-xs text-neutral-700 rounded-lg">
+                  <HugeiconsIcon icon={Logout01Icon} className="mr-2 h-3.5 w-3.5" />
                   Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -477,11 +465,11 @@ export function AppSidebar() {
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-7 w-7 rounded-lg text-muted-foreground hover:text-indigo-500 hover:bg-indigo-500/10 transition-colors"
+                    className="h-7 w-7 rounded-lg text-muted-foreground hover:text-neutral-900 hover:bg-neutral-950/5 transition-colors"
                     onClick={() => openHireExpert("sidebar")}
                     aria-label="Expert Support"
                   >
-                    <UserRound className="h-3.5 w-3.5" />
+                    <HugeiconsIcon icon={UserRoundIcon} className="h-3.5 w-3.5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right">
@@ -489,20 +477,7 @@ export function AppSidebar() {
                 </TooltipContent>
               </Tooltip>
 
-              {/* Theme Toggle */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div>
-                    <ThemeToggle
-                      showLabel={false}
-                      className="h-7 w-7 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent"
-                    />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side={isCollapsed ? "right" : "top"}>
-                  <p>Toggle theme</p>
-                </TooltipContent>
-              </Tooltip>
+              {/* PARKED (2026-09-20): Theme Toggle removed — light-only mode. Restore with ThemeSwitcher. */}
             </div>
           </div>
         </div>

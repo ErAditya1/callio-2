@@ -1,4 +1,15 @@
-import { AlertCircle, Calendar, CheckSquare, Hash, ListFilter, Radio, RefreshCw, Tag, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  Calendar01Icon,
+  CheckmarkSquare01Icon,
+  HashIcon,
+  ListFilterIcon,
+  RadioIcon,
+  RefreshCwIcon,
+  TagIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DateRangeFilter } from "@/components/filters/DateRangeFilter";
@@ -170,20 +181,20 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
   const getFilterIcon = (type: FilterAttribute["type"]) => {
     switch (type) {
       case "dateRange":
-        return <Calendar className="h-4 w-4" />;
+        return <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4" />;
       case "multiSelect":
-        return <CheckSquare className="h-4 w-4" />;
+        return <HugeiconsIcon icon={CheckmarkSquare01Icon} className="h-4 w-4" />;
       case "number":
       case "numberRange":
-        return <Hash className="h-4 w-4" />;
+        return <HugeiconsIcon icon={HashIcon} className="h-4 w-4" />;
       case "numberSelect":
-        return <ListFilter className="h-4 w-4" />;
+        return <HugeiconsIcon icon={ListFilterIcon} className="h-4 w-4" />;
       case "radio":
-        return <Radio className="h-4 w-4" />;
+        return <HugeiconsIcon icon={RadioIcon} className="h-4 w-4" />;
       case "tags":
-        return <Tag className="h-4 w-4" />;
+        return <HugeiconsIcon icon={TagIcon} className="h-4 w-4" />;
       case "text":
-        return <Hash className="h-4 w-4" />;
+        return <HugeiconsIcon icon={HashIcon} className="h-4 w-4" />;
     }
   };
 
@@ -412,7 +423,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
                         {getFilterIcon(filter.attribute.type)}
                         <span className="font-medium">{filter.attribute.label}</span>
                         {!filter.isValid && (
-                          <AlertCircle className="h-4 w-4 text-red-500" />
+                          <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4 text-red-500" />
                         )}
                       </div>
                       <div className="flex items-center gap-2">
@@ -430,7 +441,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
                             removeFilter(index);
                           }}
                         >
-                          <X className="h-4 w-4" />
+                          <HugeiconsIcon icon={XIcon} className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -460,7 +471,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
                     Auto-refresh every 5s
                   </label>
                   {autoRefresh && (
-                    <RefreshCw className="h-4 w-4 text-gray-500 animate-spin" />
+                    <HugeiconsIcon icon={RefreshCwIcon} className="h-4 w-4 text-gray-500 animate-spin" />
                   )}
                 </div>
               )}

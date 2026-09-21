@@ -1,16 +1,17 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  AlertTriangle,
-  ArrowLeft,
-  Copy,
-  ExternalLink,
-  Pencil,
-  Plus,
-  RotateCcw,
-  Star,
-  Trash2,
-} from "lucide-react";
+  ArrowLeft01Icon,
+  Copy01Icon,
+  Delete02Icon,
+  ExternalLinkIcon,
+  PencilIcon,
+  PlusIcon,
+  RotateCcwIcon,
+  StarIcon,
+  TriangleAlertIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -224,7 +225,7 @@ export default function TelephonyConfigurationDetailPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8 space-y-3">
+      <div className="app-page space-y-3">
         <Skeleton className="h-10 w-1/3" />
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-64 w-full" />
@@ -234,23 +235,23 @@ export default function TelephonyConfigurationDetailPage() {
 
   if (!config) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="app-page">
         <Button variant="ghost" onClick={() => router.push("/telephony-configurations")}>
-          <ArrowLeft className="h-4 w-4 mr-2" /> Back
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4 mr-2" /> Back
         </Button>
-        <p className="mt-4 text-muted-foreground">Configuration not found.</p>
+        <p className="mt-4 text-[#737373]">Configuration not found.</p>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
+    <div className="app-page space-y-6">
       <div>
         <Link
           href="/telephony-configurations"
-          className="inline-flex items-center text-sm text-muted-foreground hover:underline"
+          className="inline-flex items-center text-sm text-[#737373] hover:underline"
         >
-          <ArrowLeft className="h-4 w-4 mr-1" /> All configurations
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4 mr-1" /> All configurations
         </Link>
       </div>
 
@@ -262,7 +263,7 @@ export default function TelephonyConfigurationDetailPage() {
               <Badge variant="secondary">{config.provider}</Badge>
               {config.is_default_outbound && (
                 <Badge className="gap-1">
-                  <Star className="h-3 w-3 fill-current" />
+                  <HugeiconsIcon icon={StarIcon} className="h-3 w-3 fill-current" />
                   Default
                 </Badge>
               )}
@@ -279,25 +280,25 @@ export default function TelephonyConfigurationDetailPage() {
                   .catch(() => toast.error("Failed to copy ID"));
               }}
               title="Click to copy"
-              className="inline-flex items-center gap-1 self-start rounded font-mono text-xs text-muted-foreground hover:text-foreground"
+              className="inline-flex items-center gap-1 self-start rounded font-mono text-xs text-[#737373] hover:text-foreground"
             >
               <span className="truncate">Configuration ID: {config.id}</span>
-              <Copy className="h-3 w-3 shrink-0" />
+              <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3 shrink-0" />
             </button>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {config.inactive && (
               <Button variant="outline" size="sm" onClick={onReactivate}>
-                <RotateCcw className="h-4 w-4 mr-2" /> Reactivate
+                <HugeiconsIcon icon={RotateCcwIcon} className="h-4 w-4 mr-2" /> Reactivate
               </Button>
             )}
             {!config.is_default_outbound && (
               <Button variant="outline" size="sm" onClick={onSetDefaultOutbound}>
-                <Star className="h-4 w-4 mr-2" /> Set as default
+                <HugeiconsIcon icon={StarIcon} className="h-4 w-4 mr-2" /> Set as default
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={() => setEditConfigOpen(true)}>
-              <Pencil className="h-4 w-4 mr-2" /> Edit credentials
+              <HugeiconsIcon icon={PencilIcon} className="h-4 w-4 mr-2" /> Edit credentials
             </Button>
           </div>
         </CardHeader>
@@ -305,12 +306,12 @@ export default function TelephonyConfigurationDetailPage() {
           {config.inactive && (
             <div className="rounded-md border border-destructive/40 bg-destructive/5 p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5 text-destructive" />
+                <HugeiconsIcon icon={TriangleAlertIcon} className="h-5 w-5 shrink-0 mt-0.5 text-destructive" />
                 <div className="space-y-1 text-sm">
                   <p className="font-medium text-destructive">
                     This configuration is disabled
                   </p>
-                  <p className="text-muted-foreground">
+                  <p className="text-[#737373]">
                     CallioAI stopped reconnecting after repeated connection
                     failures
                     {config.inactive_reason ? `: ${config.inactive_reason}` : ""}.
@@ -318,7 +319,7 @@ export default function TelephonyConfigurationDetailPage() {
                     settings below, then choose Reactivate to try again.
                   </p>
                   {config.inactive_since && (
-                    <p className="text-muted-foreground">
+                    <p className="text-[#737373]">
                       Disabled{" "}
                       {formatDateTime(config.inactive_since, organizationTimezone)}
                     </p>
@@ -333,7 +334,7 @@ export default function TelephonyConfigurationDetailPage() {
               .filter(([key]) => key !== "stasis_app_name")
               .map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-3">
-                  <dt className="text-muted-foreground">{k}</dt>
+                  <dt className="text-[#737373]">{k}</dt>
                   <dd className="font-mono text-right truncate max-w-[60%]">
                     {v && typeof v === "object" ? "Configured" : String(v ?? "")}
                   </dd>
@@ -343,7 +344,7 @@ export default function TelephonyConfigurationDetailPage() {
           {stasisAppName && (
             <div className="space-y-1 rounded-md border border-dashed p-3">
               <p className="text-sm font-medium">Route calls into this Stasis application</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[#737373]">
                 Add this line to your Asterisk <code>extensions.conf</code>, then run{" "}
                 <code>dialplan reload</code>. Until you do, calls reach Asterisk but never
                 arrive at CallioAI.
@@ -356,15 +357,15 @@ export default function TelephonyConfigurationDetailPage() {
                     .catch(() => toast.error("Failed to copy"));
                 }}
                 title="Click to copy"
-                className="group mt-1 flex w-full items-center gap-2 rounded-md border bg-muted/20 p-2 text-left font-mono text-xs transition-colors hover:bg-muted/40"
+                className="group mt-1 flex w-full items-center gap-2 rounded-md border bg-[#F7F7F7] p-2 text-left font-mono text-xs transition-colors hover:bg-[#F7F7F7]"
               >
                 <code className="flex-1 truncate">{stasisDialplanLine}</code>
-                <Copy className="h-3 w-3 shrink-0 text-muted-foreground group-hover:text-foreground" />
+                <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3 shrink-0 text-[#737373] group-hover:text-foreground" />
               </button>
             </div>
           )}
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">Inbound webhook URL</p>
+            <p className="text-xs text-[#737373]">Inbound webhook URL</p>
             <button
               type="button"
               onClick={() => {
@@ -375,10 +376,10 @@ export default function TelephonyConfigurationDetailPage() {
               }}
               title="Click to copy inbound webhook URL"
               aria-label="Copy inbound webhook URL"
-              className="inline-flex items-center gap-1 self-start rounded font-mono text-xs text-muted-foreground hover:text-foreground"
+              className="inline-flex items-center gap-1 self-start rounded font-mono text-xs text-[#737373] hover:text-foreground"
             >
               <span className="truncate">{inboundWebhookUrl}</span>
-              <Copy className="h-3 w-3 shrink-0" />
+              <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3 shrink-0" />
             </button>
           </div>
         </CardContent>
@@ -423,17 +424,17 @@ export default function TelephonyConfigurationDetailPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-0.5 underline"
               >
-                Inbound docs <ExternalLink className="h-3 w-3" />
+                Inbound docs <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
               </a>
             </CardDescription>
           </div>
           <Button size="sm" onClick={() => openPhoneDialog(null)}>
-            <Plus className="h-4 w-4 mr-2" /> Add phone number
+            <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-2" /> Add phone number
           </Button>
         </CardHeader>
         <CardContent>
           {phoneNumbers.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-[#737373]">
               No phone numbers yet. Add one to start placing or receiving calls on this
               configuration.
             </p>
@@ -467,16 +468,16 @@ export default function TelephonyConfigurationDetailPage() {
                         }}
                         title="Click to copy phone number ID"
                         aria-label={`Copy phone number ID ${n.id}`}
-                        className="group inline-flex items-center gap-1 rounded font-mono text-xs text-muted-foreground hover:text-foreground"
+                        className="group inline-flex items-center gap-1 rounded font-mono text-xs text-[#737373] hover:text-foreground"
                       >
                         <span>{n.id}</span>
-                        <Copy className="h-3 w-3 shrink-0" />
+                        <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3 shrink-0" />
                       </button>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{n.address_type}</Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="text-[#737373]">
                       {n.label ?? "-"}
                     </TableCell>
                     <TableCell>
@@ -488,12 +489,12 @@ export default function TelephonyConfigurationDetailPage() {
                         )}
                         {n.is_default_caller_id && (
                           <Badge className="gap-1">
-                            <Star className="h-3 w-3 fill-current" /> Default caller
+                            <HugeiconsIcon icon={StarIcon} className="h-3 w-3 fill-current" /> Default caller
                           </Badge>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="text-[#737373]">
                       {n.inbound_workflow_id ? (
                         <Link
                           href={`/workflow/${n.inbound_workflow_id}`}
@@ -516,7 +517,7 @@ export default function TelephonyConfigurationDetailPage() {
                       )}
                     </TableCell>
                     {(config.trunks?.length ?? 0) > 0 && (
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-[#737373]">
                         {/* Unassigned is only ambiguous once there are
                             several trunks; with one the call path falls
                             back to it. */}
@@ -544,7 +545,7 @@ export default function TelephonyConfigurationDetailPage() {
                             onClick={() => onSetDefaultCaller(n)}
                             title="Set as default caller ID"
                           >
-                            <Star className="h-4 w-4" />
+                            <HugeiconsIcon icon={StarIcon} className="h-4 w-4" />
                           </Button>
                         )}
                         <Button
@@ -553,7 +554,7 @@ export default function TelephonyConfigurationDetailPage() {
                           onClick={() => openPhoneDialog(n)}
                           title="Edit"
                         >
-                          <Pencil className="h-4 w-4" />
+                          <HugeiconsIcon icon={PencilIcon} className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -561,7 +562,7 @@ export default function TelephonyConfigurationDetailPage() {
                           onClick={() => setPhoneDeleteTarget(n)}
                           title="Delete"
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>

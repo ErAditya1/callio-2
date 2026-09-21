@@ -1,22 +1,23 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Key,
-  Plus,
-  Trash2,
-  CheckCircle,
-  Star,
-  Loader2,
-  Cpu,
-  Mic,
-  Volume2,
-  DollarSign,
-  Eye,
-  EyeOff,
-  Sparkles,
-  ExternalLink,
-} from 'lucide-react';
+  CircleCheckIcon,
+  CpuIcon,
+  Delete02Icon,
+  Dollar01Icon,
+  ExternalLinkIcon,
+  EyeIcon,
+  EyeOffIcon,
+  Key01Icon,
+  Loading02Icon,
+  Mic01Icon,
+  PlusIcon,
+  SparklesIcon,
+  StarIcon,
+  VolumeHighIcon,
+} from "@hugeicons/core-free-icons";;
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -756,13 +757,13 @@ export function SuperadminMasterKeysManager() {
   const getServiceIcon = (type: string) => {
     switch (type) {
       case 'llm':
-        return <Cpu className="h-4 w-4 text-purple-500" />;
+        return <HugeiconsIcon icon={CpuIcon} className="h-4 w-4 text-purple-500" />;
       case 'stt':
-        return <Mic className="h-4 w-4 text-emerald-500" />;
+        return <HugeiconsIcon icon={Mic01Icon} className="h-4 w-4 text-emerald-500" />;
       case 'tts':
-        return <Volume2 className="h-4 w-4 text-blue-500" />;
+        return <HugeiconsIcon icon={VolumeHighIcon} className="h-4 w-4 text-blue-500" />;
       default:
-        return <Key className="h-4 w-4 text-muted-foreground" />;
+        return <HugeiconsIcon icon={Key01Icon} className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -782,7 +783,7 @@ export function SuperadminMasterKeysManager() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-              <Key className="h-5 w-5" />
+              <HugeiconsIcon icon={Key01Icon} className="h-5 w-5" />
             </span>
             <CardTitle className="text-xl">Platform Master API Keys &amp; Model Pricing</CardTitle>
           </div>
@@ -802,7 +803,7 @@ export function SuperadminMasterKeysManager() {
           }}
           className="bg-emerald-600 hover:bg-emerald-500 text-white shrink-0"
         >
-          <Plus className="h-4 w-4 mr-2" /> Add Master Provider Key
+          <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-2" /> Add Master Provider Key
         </Button>
       </CardHeader>
 
@@ -824,7 +825,7 @@ export function SuperadminMasterKeysManager() {
               onClick={() => setActiveTab('llm')}
               className="h-8 text-xs gap-1.5"
             >
-              <Cpu className="h-3.5 w-3.5 text-purple-500" /> LLM ({keys.filter((k) => k.service_type === 'llm').length})
+              <HugeiconsIcon icon={CpuIcon} className="h-3.5 w-3.5 text-purple-500" /> LLM ({keys.filter((k) => k.service_type === 'llm').length})
             </Button>
             <Button
               variant={activeTab === 'stt' ? 'default' : 'ghost'}
@@ -832,7 +833,7 @@ export function SuperadminMasterKeysManager() {
               onClick={() => setActiveTab('stt')}
               className="h-8 text-xs gap-1.5"
             >
-              <Mic className="h-3.5 w-3.5 text-emerald-500" /> Transcribers STT ({keys.filter((k) => k.service_type === 'stt').length})
+              <HugeiconsIcon icon={Mic01Icon} className="h-3.5 w-3.5 text-emerald-500" /> Transcribers STT ({keys.filter((k) => k.service_type === 'stt').length})
             </Button>
             <Button
               variant={activeTab === 'tts' ? 'default' : 'ghost'}
@@ -840,12 +841,12 @@ export function SuperadminMasterKeysManager() {
               onClick={() => setActiveTab('tts')}
               className="h-8 text-xs gap-1.5"
             >
-              <Volume2 className="h-3.5 w-3.5 text-blue-500" /> Voices TTS ({keys.filter((k) => k.service_type === 'tts').length})
+              <HugeiconsIcon icon={VolumeHighIcon} className="h-3.5 w-3.5 text-blue-500" /> Voices TTS ({keys.filter((k) => k.service_type === 'tts').length})
             </Button>
           </div>
 
           <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+            <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5 text-emerald-500" />
             Registry-synced pipeline engine
           </div>
         </div>
@@ -853,11 +854,11 @@ export function SuperadminMasterKeysManager() {
         {/* Master Keys Grid */}
         {loading ? (
           <div className="flex items-center justify-center p-8 text-muted-foreground text-sm">
-            <Loader2 className="h-5 w-5 animate-spin mr-2" /> Loading platform master keys...
+            <HugeiconsIcon icon={Loading02Icon} className="h-5 w-5 animate-spin mr-2" /> Loading platform master keys...
           </div>
         ) : filteredKeys.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center bg-muted/20">
-            <Key className="h-8 w-8 mx-auto text-muted-foreground/60 mb-2" />
+            <HugeiconsIcon icon={Key01Icon} className="h-8 w-8 mx-auto text-muted-foreground/60 mb-2" />
             <p className="text-sm font-medium">No Master Keys Configured</p>
             <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
               Add master API keys so your users can immediately make test and production calls without adding their own BYOK credentials.
@@ -880,7 +881,7 @@ export function SuperadminMasterKeysManager() {
                       </Badge>
                       {k.is_default && (
                         <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 text-[10px] gap-1">
-                          <Star className="h-3 w-3 fill-amber-500" /> Default
+                          <HugeiconsIcon icon={StarIcon} className="h-3 w-3 fill-amber-500" /> Default
                         </Badge>
                       )}
                     </div>
@@ -908,14 +909,14 @@ export function SuperadminMasterKeysManager() {
                       }
                       className="text-muted-foreground hover:text-foreground shrink-0"
                     >
-                      {visibleKeyIds[k.id] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                      {visibleKeyIds[k.id] ? <HugeiconsIcon icon={EyeOffIcon} className="h-3.5 w-3.5" /> : <HugeiconsIcon icon={EyeIcon} className="h-3.5 w-3.5" />}
                     </button>
                   </div>
 
                   {/* Default Model Display & Quick Switcher */}
                   <div className="flex items-center justify-between gap-2 p-2 rounded bg-amber-500/10 border border-amber-500/20 text-xs mb-3">
                     <div className="flex items-center gap-1.5 truncate">
-                      <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500 shrink-0" />
+                      <HugeiconsIcon icon={StarIcon} className="h-3.5 w-3.5 fill-amber-500 text-amber-500 shrink-0" />
                       <span className="font-semibold text-amber-800 dark:text-amber-300">Default Model:</span>
                       <span className="font-mono font-medium truncate text-foreground">
                         {k.default_model || Object.keys(k.models_pricing || {}).filter((m) => m !== 'default')[0] || 'auto'}
@@ -947,7 +948,7 @@ export function SuperadminMasterKeysManager() {
                     <div className="space-y-1.5 p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs mb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5 font-semibold text-blue-800 dark:text-blue-300">
-                          <Volume2 className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                          <HugeiconsIcon icon={VolumeHighIcon} className="h-3.5 w-3.5 text-blue-500 shrink-0" />
                           <span>Default Voice:</span>
                         </div>
                         <span className="text-[10px] font-mono text-muted-foreground truncate max-w-[140px]" title={k.default_voice || 'auto'}>
@@ -968,7 +969,7 @@ export function SuperadminMasterKeysManager() {
                   {/* Pricing Matrix */}
                   <div className="space-y-1 mb-4">
                     <div className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
-                      <DollarSign className="h-3 w-3" /> Configured Rates / Min
+                      <HugeiconsIcon icon={Dollar01Icon} className="h-3 w-3" /> Configured Rates / Min
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {Object.entries(k.models_pricing || {}).map(([model, rate]) => {
@@ -985,7 +986,7 @@ export function SuperadminMasterKeysManager() {
                             <span className="font-medium text-foreground">{model}:</span>
                             <span>${typeof rate === 'object' ? rate.price_per_minute_usd : rate}/m</span>
                             {isThisDefault && (
-                              <Star className="h-2.5 w-2.5 fill-amber-500 text-amber-500 ml-0.5" />
+                              <HugeiconsIcon icon={StarIcon} className="h-2.5 w-2.5 fill-amber-500 text-amber-500 ml-0.5" />
                             )}
                           </span>
                         );
@@ -1002,11 +1003,11 @@ export function SuperadminMasterKeysManager() {
                       onClick={() => handleSetDefault(k)}
                       className="text-xs h-7 text-amber-600 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/20"
                     >
-                      <Star className="h-3 w-3 mr-1" /> Set Default
+                      <HugeiconsIcon icon={StarIcon} className="h-3 w-3 mr-1" /> Set Default
                     </Button>
                   ) : (
                     <span className="inline-flex items-center text-xs text-muted-foreground gap-1">
-                      <CheckCircle className="h-3.5 w-3.5 text-emerald-500" /> Active Platform Default
+                      <HugeiconsIcon icon={CircleCheckIcon} className="h-3.5 w-3.5 text-emerald-500" /> Active Platform Default
                     </span>
                   )}
 
@@ -1016,7 +1017,7 @@ export function SuperadminMasterKeysManager() {
                     onClick={() => handleDelete(k.id, k.provider)}
                     className="text-xs h-7 text-destructive hover:bg-destructive/10"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <HugeiconsIcon icon={Delete02Icon} className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
@@ -1031,7 +1032,7 @@ export function SuperadminMasterKeysManager() {
           <form onSubmit={handleCreate} className="space-y-4">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Key className="h-5 w-5 text-emerald-600" />
+                <HugeiconsIcon icon={Key01Icon} className="h-5 w-5 text-emerald-600" />
                 Add Platform Master Provider Key
               </DialogTitle>
               <DialogDescription>
@@ -1085,7 +1086,7 @@ export function SuperadminMasterKeysManager() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-[11px] text-emerald-600 hover:underline"
                   >
-                    Documentation <ExternalLink className="h-3 w-3" />
+                    Documentation <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                   </a>
                 )}
               </div>
@@ -1094,7 +1095,7 @@ export function SuperadminMasterKeysManager() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="defaultModel" className="flex items-center gap-1.5 font-medium">
-                  <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                  <HugeiconsIcon icon={StarIcon} className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
                   Default Model for this Provider
                 </Label>
                 <span className="text-[11px] text-muted-foreground">
@@ -1119,7 +1120,7 @@ export function SuperadminMasterKeysManager() {
               <div className="space-y-2 p-3 rounded-lg border border-blue-500/30 bg-blue-500/5">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="defaultVoice" className="flex items-center gap-1.5 font-medium text-blue-900 dark:text-blue-300">
-                    <Volume2 className="h-4 w-4 text-blue-500" />
+                    <HugeiconsIcon icon={VolumeHighIcon} className="h-4 w-4 text-blue-500" />
                     Default Voice for this Provider
                   </Label>
                   <span className="text-[11px] text-muted-foreground">
@@ -1160,7 +1161,7 @@ export function SuperadminMasterKeysManager() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label className="text-sm font-semibold flex items-center gap-1.5">
-                    <Sparkles className="h-4 w-4 text-emerald-500" />
+                    <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-emerald-500" />
                     Dynamic Models &amp; Pricing Matrix
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -1194,7 +1195,7 @@ export function SuperadminMasterKeysManager() {
                         </span>
                         {mName === defaultModel && (
                           <Badge className="text-[9px] py-0 px-1.5 bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40 gap-0.5 shrink-0">
-                            <Star className="h-2.5 w-2.5 fill-amber-500" /> Default
+                            <HugeiconsIcon icon={StarIcon} className="h-2.5 w-2.5 fill-amber-500" /> Default
                           </Badge>
                         )}
                       </div>
@@ -1229,7 +1230,7 @@ export function SuperadminMasterKeysManager() {
                           className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                           title="Remove custom rate (falls back to default)"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <HugeiconsIcon icon={Delete02Icon} className="h-3 w-3" />
                         </Button>
                       </div>
                     </div>
@@ -1269,7 +1270,7 @@ export function SuperadminMasterKeysManager() {
                     onClick={handleAddCustomModel}
                     className="h-8 text-xs px-2.5"
                   >
-                    <Plus className="h-3.5 w-3.5 mr-1" /> Add
+                    <HugeiconsIcon icon={PlusIcon} className="h-3.5 w-3.5 mr-1" /> Add
                   </Button>
                 </div>
               </div>
@@ -1343,7 +1344,7 @@ export function SuperadminMasterKeysManager() {
               <Button type="submit" disabled={submitting} className="bg-emerald-600 hover:bg-emerald-500 text-white">
                 {submitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                    <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-4 w-4 animate-spin" /> Saving...
                   </>
                 ) : (
                   'Save Master Key'
@@ -1359,7 +1360,7 @@ export function SuperadminMasterKeysManager() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Volume2 className="h-5 w-5 text-blue-500" />
+              <HugeiconsIcon icon={VolumeHighIcon} className="h-5 w-5 text-blue-500" />
               Update Default Voice ({editingVoiceKey?.provider?.toUpperCase()})
             </DialogTitle>
             <DialogDescription>

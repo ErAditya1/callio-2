@@ -1,6 +1,11 @@
 "use client";
 
-import { Loader2, Phone, RefreshCw } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+  PhoneIcon,
+  RefreshCwIcon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
@@ -142,8 +147,8 @@ export function EmbeddedVoiceTester({
 
     return (
         <>
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border/70 bg-background">
-                <div className="min-h-0 flex-1 overflow-hidden bg-muted/15">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-[#E5E5E5] bg-background">
+                <div className="min-h-0 flex-1 overflow-hidden bg-[#F7F7F7]">
                     <RealtimeFeedback
                         mode="live"
                         messages={feedbackMessages}
@@ -152,7 +157,7 @@ export function EmbeddedVoiceTester({
                     />
                 </div>
 
-                <div className="border-t border-border/70 bg-background px-4 py-3">
+                <div className="border-t border-[#E5E5E5] bg-background px-4 py-3">
                     <div className="flex flex-col gap-3">
                         <ConnectionStatus connectionStatus={connectionStatus} />
                         {permissionError ? (
@@ -166,38 +171,38 @@ export function EmbeddedVoiceTester({
                         >
                             {configUnreachable ? (
                                 <>
-                                    <RefreshCw className="h-4 w-4" />
+                                    <HugeiconsIcon icon={RefreshCwIcon} className="h-4 w-4" />
                                     {endButtonLabel}
                                 </>
                             ) : isStarting && connectionStatus !== "failed" ? (
                                 <>
-                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin" />
                                     Starting Test...
                                 </>
                             ) : connectionActive ? (
                                 <>
-                                    <Phone className="h-4 w-4" />
+                                    <HugeiconsIcon icon={PhoneIcon} className="h-4 w-4" />
                                     {endButtonLabel}
                                 </>
                             ) : connectionStatus === "failed" ? (
                                 <>
-                                    <RefreshCw className="h-4 w-4" />
+                                    <HugeiconsIcon icon={RefreshCwIcon} className="h-4 w-4" />
                                     {endButtonLabel}
                                 </>
                             ) : isCompleted ? (
                                 <>
-                                    <RefreshCw className="h-4 w-4" />
+                                    <HugeiconsIcon icon={RefreshCwIcon} className="h-4 w-4" />
                                     {endButtonLabel}
                                 </>
                             ) : (
                                 <>
-                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin" />
                                     {endButtonLabel}
                                 </>
                             )}
                         </Button>
                         {configUnreachable ? (
-                            <p className="text-center text-sm text-muted-foreground">
+                            <p className="text-center text-sm text-[#737373]">
                                 Couldn&apos;t reach the backend to confirm call settings. Tap retry once it&apos;s back.
                             </p>
                         ) : null}

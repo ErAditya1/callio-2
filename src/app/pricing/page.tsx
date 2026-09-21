@@ -1,12 +1,13 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  Check,
-  CheckCircle2,
-  Minus,
-  Sparkles,
-} from 'lucide-react';
+  ArrowRight01Icon,
+  CheckIcon,
+  CheckmarkCircle02Icon,
+  MinusIcon,
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import React, { useState } from 'react';
 
@@ -129,7 +130,7 @@ export default function PricingPage() {
       {/* Header Section */}
       <div className="text-center max-w-3xl mx-auto mb-14">
         <Badge variant="outline" className="mb-4 border-indigo-500/30 text-indigo-400 bg-indigo-500/10 px-3 py-1 text-xs">
-          <Sparkles className="w-3.5 h-3.5 mr-1.5 inline" />
+          <HugeiconsIcon icon={SparklesIcon} className="w-3.5 h-3.5 mr-1.5 inline" />
           Transparent, ROI-Driven Pricing
         </Badge>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.12]">
@@ -231,7 +232,7 @@ export default function PricingPage() {
                   </span>
                   {plan.features.map((feat, i) => (
                     <div key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground leading-snug">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       <span className="text-foreground/90">{feat}</span>
                     </div>
                   ))}
@@ -250,7 +251,7 @@ export default function PricingPage() {
                 >
                   <Link href={plan.ctaHref}>
                     {plan.ctaText}
-                    <ArrowRight className="w-4 h-4 ml-1.5" />
+                    <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1.5" />
                   </Link>
                 </Button>
                 <p className="text-[11px] text-center text-muted-foreground mt-2">
@@ -302,9 +303,9 @@ export default function PricingPage() {
                     <td className="py-3.5 px-4 text-center">
                       {typeof row.starter === 'boolean' ? (
                         row.starter ? (
-                          <Check className="w-4 h-4 text-emerald-400 mx-auto" />
+                          <HugeiconsIcon icon={CheckIcon} className="w-4 h-4 text-emerald-400 mx-auto" />
                         ) : (
-                          <Minus className="w-4 h-4 text-muted-foreground/40 mx-auto" />
+                          <HugeiconsIcon icon={MinusIcon} className="w-4 h-4 text-muted-foreground/40 mx-auto" />
                         )
                       ) : (
                         <span className="font-mono text-xs text-muted-foreground">{row.starter}</span>
@@ -314,9 +315,9 @@ export default function PricingPage() {
                     <td className="py-3.5 px-4 text-center bg-indigo-500/5">
                       {typeof row.growth === 'boolean' ? (
                         row.growth ? (
-                          <Check className="w-4 h-4 text-emerald-400 mx-auto" />
+                          <HugeiconsIcon icon={CheckIcon} className="w-4 h-4 text-emerald-400 mx-auto" />
                         ) : (
-                          <Minus className="w-4 h-4 text-muted-foreground/40 mx-auto" />
+                          <HugeiconsIcon icon={MinusIcon} className="w-4 h-4 text-muted-foreground/40 mx-auto" />
                         )
                       ) : (
                         <span className="font-mono text-xs font-semibold text-indigo-300">{row.growth}</span>
@@ -326,9 +327,9 @@ export default function PricingPage() {
                     <td className="py-3.5 px-4 text-center">
                       {typeof row.enterprise === 'boolean' ? (
                         row.enterprise ? (
-                          <Check className="w-4 h-4 text-emerald-400 mx-auto" />
+                          <HugeiconsIcon icon={CheckIcon} className="w-4 h-4 text-emerald-400 mx-auto" />
                         ) : (
-                          <Minus className="w-4 h-4 text-muted-foreground/40 mx-auto" />
+                          <HugeiconsIcon icon={MinusIcon} className="w-4 h-4 text-muted-foreground/40 mx-auto" />
                         )
                       ) : (
                         <span className="font-mono text-xs font-semibold text-foreground">{row.enterprise}</span>
@@ -359,7 +360,7 @@ export default function PricingPage() {
           <Button asChild size="lg" className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl px-8 shadow-lg shadow-indigo-600/25">
             <Link href="/workflow">
               Start Free Trial Now
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-2" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="rounded-xl border-border/80">

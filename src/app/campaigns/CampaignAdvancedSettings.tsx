@@ -1,6 +1,10 @@
 "use client";
 
-import { Plus, X } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  PlusIcon,
+  XIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useId } from 'react';
 import TimezoneSelect, { type ITimezoneOption } from 'react-timezone-select';
@@ -97,11 +101,11 @@ const timezoneSelectStyles = {
     }),
     singleValue: (base: Record<string, unknown>) => ({ ...base, color: 'var(--foreground)' }),
     input: (base: Record<string, unknown>) => ({ ...base, color: 'var(--foreground)' }),
-    placeholder: (base: Record<string, unknown>) => ({ ...base, color: 'var(--muted-foreground)' }),
+    placeholder: (base: Record<string, unknown>) => ({ ...base, color: '#737373' }),
     indicatorSeparator: (base: Record<string, unknown>) => ({ ...base, backgroundColor: 'var(--border)' }),
     dropdownIndicator: (base: Record<string, unknown>) => ({
         ...base,
-        color: 'var(--muted-foreground)',
+        color: '#737373',
         '&:hover': { color: 'var(--foreground)' },
     }),
 };
@@ -136,12 +140,12 @@ export default function CampaignAdvancedSettings({
                     min={1}
                     max={effectiveLimit}
                 />
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-[#737373]">
                     Maximum number of simultaneous calls. Leave empty to use {effectiveLimit}.
                     {fromNumbersCount > 0 && ` You have ${fromNumbersCount} CLI${fromNumbersCount !== 1 ? 's' : ''} and an org limit of ${orgConcurrentLimit}.`}
                 </p>
                 {fromNumbersCount > 0 && (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-[#737373]">
                         Caller IDs rotate across calls and may be reused on simultaneous calls.
                     </p>
                 )}
@@ -165,7 +169,7 @@ export default function CampaignAdvancedSettings({
                     value={rateLimitPerSecond}
                     onChange={(e) => onRateLimitPerSecondChange(e.target.value)}
                 />
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-[#737373]">
                     Maximum new calls this campaign can start each second. Default: 1. Your account allows up to {orgConcurrentLimit}.
                 </p>
             </div>
@@ -175,7 +179,7 @@ export default function CampaignAdvancedSettings({
                 <div className="flex items-center justify-between">
                     <div>
                         <Label htmlFor="retry-enabled">Enable Retries</Label>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-[#737373]">
                             Automatically retry failed calls
                         </p>
                     </div>
@@ -187,7 +191,7 @@ export default function CampaignAdvancedSettings({
                 </div>
 
                 {retryEnabled && (
-                    <div className="space-y-4 pl-4 border-l-2 border-muted">
+                    <div className="space-y-4 pl-4 border-l-2 border-[#E5E5E5]">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="max-retries">Max Retries</Label>
@@ -241,7 +245,7 @@ export default function CampaignAdvancedSettings({
                 <div className="flex items-center justify-between">
                     <div>
                         <Label htmlFor="schedule-enabled">Call Schedule</Label>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-[#737373]">
                             Restrict when calls are made
                         </p>
                     </div>
@@ -253,7 +257,7 @@ export default function CampaignAdvancedSettings({
                 </div>
 
                 {scheduleEnabled && (
-                    <div className="space-y-4 pl-4 border-l-2 border-muted">
+                    <div className="space-y-4 pl-4 border-l-2 border-[#E5E5E5]">
                         <div className="space-y-2">
                             <Label>Timezone</Label>
                             <TimezoneSelect
@@ -295,7 +299,7 @@ export default function CampaignAdvancedSettings({
                                         }}
                                         className="w-[130px]"
                                     />
-                                    <span className="text-sm text-muted-foreground">to</span>
+                                    <span className="text-sm text-[#737373]">to</span>
                                     <Input
                                         type="time"
                                         value={slot.end_time}
@@ -313,7 +317,7 @@ export default function CampaignAdvancedSettings({
                                             size="icon"
                                             onClick={() => onTimeSlotsChange(timeSlots.filter((_, i) => i !== index))}
                                         >
-                                            <X className="h-4 w-4" />
+                                            <HugeiconsIcon icon={XIcon} className="h-4 w-4" />
                                         </Button>
                                     )}
                                 </div>
@@ -324,7 +328,7 @@ export default function CampaignAdvancedSettings({
                                 size="sm"
                                 onClick={() => onTimeSlotsChange([...timeSlots, { day_of_week: 0, start_time: '09:00', end_time: '17:00' }])}
                             >
-                                <Plus className="h-4 w-4 mr-1" />
+                                <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-1" />
                                 Add Time Slot
                             </Button>
                         </div>
@@ -339,7 +343,7 @@ export default function CampaignAdvancedSettings({
                 <div className="flex items-center justify-between">
                     <div>
                         <Label htmlFor="circuit-breaker-enabled">Circuit Breaker</Label>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-[#737373]">
                             Auto-pause campaign on high failure rates
                         </p>
                     </div>
@@ -351,7 +355,7 @@ export default function CampaignAdvancedSettings({
                 </div>
 
                 {circuitBreakerEnabled && (
-                    <div className="space-y-4 pl-4 border-l-2 border-muted">
+                    <div className="space-y-4 pl-4 border-l-2 border-[#E5E5E5]">
                         <div className="space-y-2">
                             <Label htmlFor="cb-failure-threshold">Failure Threshold (%)</Label>
                             <Input
@@ -362,7 +366,7 @@ export default function CampaignAdvancedSettings({
                                 min={1}
                                 max={100}
                             />
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-[#737373]">
                                 Pause when failure rate exceeds this percentage
                             </p>
                         </div>

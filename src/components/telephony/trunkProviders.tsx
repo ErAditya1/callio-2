@@ -76,7 +76,7 @@ function CloudonixTrunkFields({
           placeholder="sip.example.com"
           disabled={disabled}
         />
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-[#737373]">
           Your carrier or PBX. Used for both the SIP To header and the
           Request-URI.
         </p>
@@ -99,7 +99,7 @@ function CloudonixTrunkFields({
             ))}
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-[#737373]">
           Sets the remote peer Callio AI dials for this trunk.
           {originIp
             ? ` Calls leave from ${originIp} — allow it on your side.`

@@ -3,23 +3,24 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    ArrowLeft,
-    ArrowRight,
-    Bot,
-    Check,
-    CheckCircle2,
-    Copy,
-    MessageSquare,
-    PhoneIncoming,
-    PhoneOutgoing,
-    Play,
-    RefreshCw,
-    Send,
-    Sparkles,
-    User,
-    Workflow,
-} from 'lucide-react';
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  BotIcon,
+  CheckIcon,
+  CheckmarkCircle02Icon,
+  Copy01Icon,
+  MessageSquareIcon,
+  PhoneIncomingIcon,
+  PhoneOutgoingIcon,
+  PlayIcon,
+  RefreshCwIcon,
+  SendIcon,
+  SparklesIcon,
+  UserIcon,
+  WorkflowIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -299,25 +300,25 @@ export default function CreateWorkflowPage() {
             }`}
         >
             {/* Top Navigation Bar */}
-            <header className="border-b bg-card/60 backdrop-blur-md sticky top-0 z-20 px-4 lg:px-8 py-3.5 flex items-center justify-between">
+            <header className="border-b bg-[#FFFFFF] backdrop-blur-md sticky top-0 z-20 px-4 lg:px-8 py-3.5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Link
                         href="/workflow"
-                        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-[#737373] hover:text-foreground transition-colors"
                     >
-                        <ArrowLeft className="w-4 h-4" />
+                        <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" />
                         Back
                     </Link>
                     <div className="h-4 w-px bg-border mx-1" />
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
-                            <Sparkles className="w-4 h-4" />
+                            <HugeiconsIcon icon={SparklesIcon} className="w-4 h-4" />
                         </div>
                         <div>
                             <h1 className="text-base font-semibold leading-tight">
                                 AI Agent Architect
                             </h1>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 Interactive Conversational Agent Builder
                             </p>
                         </div>
@@ -325,17 +326,17 @@ export default function CreateWorkflowPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="flex bg-muted/70 p-0.5 rounded-lg border text-xs font-medium">
+                    <div className="flex bg-[#F7F7F7] p-0.5 rounded-lg border text-xs font-medium">
                         <button
                             type="button"
                             onClick={() => setBuilderMode('copilot')}
                             className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
                                 builderMode === 'copilot'
                                     ? 'bg-background text-foreground shadow-sm'
-                                    : 'text-muted-foreground hover:text-foreground'
+                                    : 'text-[#737373] hover:text-foreground'
                             }`}
                         >
-                            <Bot className="w-3.5 h-3.5 text-primary" />
+                            <HugeiconsIcon icon={BotIcon} className="w-3.5 h-3.5 text-primary" />
                             AI Copilot
                         </button>
                         <button
@@ -344,7 +345,7 @@ export default function CreateWorkflowPage() {
                             className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
                                 builderMode === 'classic'
                                     ? 'bg-background text-foreground shadow-sm'
-                                    : 'text-muted-foreground hover:text-foreground'
+                                    : 'text-[#737373] hover:text-foreground'
                             }`}
                         >
                             Classic Form
@@ -356,17 +357,17 @@ export default function CreateWorkflowPage() {
                             size="sm"
                             onClick={handleOpenInStudio}
                             disabled={isSaving}
-                            className="gap-2 shadow-sm font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                            className="gap-2 shadow-sm font-medium bg-neutral-950 hover:bg-neutral-800 text-white"
                         >
                             {isSaving ? (
                                 <>
-                                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                    <HugeiconsIcon icon={RefreshCwIcon} className="w-3.5 h-3.5 animate-spin" />
                                     Saving...
                                 </>
                             ) : (
                                 <>
                                     Open in Studio
-                                    <ArrowRight className="w-3.5 h-3.5" />
+                                    <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5" />
                                 </>
                             )}
                         </Button>
@@ -376,9 +377,9 @@ export default function CreateWorkflowPage() {
 
             {/* Classic Form Fallback */}
             {builderMode === 'classic' ? (
-                <div className="container mx-auto px-4 py-8 max-w-2xl flex-1 flex flex-col justify-center">
+                <div className="app-page max-w-2xl flex-1 flex flex-col justify-center">
                     <div className="w-full my-auto py-2">
-                        <Card className="shadow-md border-border/80">
+                        <Card className="shadow-md border-[#E5E5E5]">
                             <CardHeader>
                                 <CardTitle className="text-xl">Create Voice Agent (Classic)</CardTitle>
                                 <CardDescription>
@@ -423,7 +424,7 @@ export default function CreateWorkflowPage() {
                                         <Label htmlFor="activity-description">
                                             Activity & Agent Description / System Prompt
                                         </Label>
-                                        <span className="text-[11px] text-muted-foreground">
+                                        <span className="text-[11px] text-[#737373]">
                                             {classicActivityDescription.length > 0 && `${classicActivityDescription.length} characters`}
                                         </span>
                                     </div>
@@ -452,12 +453,12 @@ export default function CreateWorkflowPage() {
                                 >
                                     {isLoading ? (
                                         <>
-                                            <RefreshCw className="w-4 h-4 animate-spin" />
+                                            <HugeiconsIcon icon={RefreshCwIcon} className="w-4 h-4 animate-spin" />
                                             Generating Agent...
                                         </>
                                     ) : (
                                         <>
-                                            <Sparkles className="w-4 h-4" />
+                                            <HugeiconsIcon icon={SparklesIcon} className="w-4 h-4" />
                                             Generate & Open Canvas
                                         </>
                                     )}
@@ -481,8 +482,8 @@ export default function CreateWorkflowPage() {
                                     }`}
                                 >
                                     {msg.role === 'assistant' && (
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                                            <Bot className="w-4 h-4" />
+                                        <div className="w-8 h-8 rounded-full bg-neutral-950 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                                            <HugeiconsIcon icon={BotIcon} className="w-4 h-4" />
                                         </div>
                                     )}
 
@@ -490,7 +491,7 @@ export default function CreateWorkflowPage() {
                                         className={`max-w-[85%] space-y-3 ${
                                             msg.role === 'user'
                                                 ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm'
-                                                : 'bg-card border text-card-foreground rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm'
+                                                : 'bg-[#FFFFFF] border text-card-foreground rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm'
                                         }`}
                                     >
                                         <div className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -499,14 +500,14 @@ export default function CreateWorkflowPage() {
 
                                         {/* Suggested Quick Reply Pills */}
                                         {msg.quickReplies && msg.quickReplies.length > 0 && (
-                                            <div className="pt-2 flex flex-wrap gap-2 border-t border-border/50">
+                                            <div className="pt-2 flex flex-wrap gap-2 border-t border-[#E5E5E5]">
                                                 {msg.quickReplies.map((pill, pIdx) => (
                                                     <button
                                                         key={pIdx}
                                                         type="button"
                                                         onClick={() => handleQuickReply(pill)}
                                                         disabled={isLoading}
-                                                        className="text-xs bg-muted/80 hover:bg-primary/10 hover:text-primary hover:border-primary/40 border text-foreground/80 px-2.5 py-1.5 rounded-full transition-all text-left font-medium"
+                                                        className="text-xs bg-[#F7F7F7]/80 hover:bg-primary/10 hover:text-primary hover:border-primary/40 border text-foreground/80 px-2.5 py-1.5 rounded-full transition-all text-left font-medium"
                                                     >
                                                         {pill}
                                                     </button>
@@ -516,8 +517,8 @@ export default function CreateWorkflowPage() {
                                     </div>
 
                                     {msg.role === 'user' && (
-                                        <div className="w-8 h-8 rounded-full bg-muted border text-muted-foreground flex items-center justify-center shrink-0 mt-0.5">
-                                            <User className="w-4 h-4" />
+                                        <div className="w-8 h-8 rounded-full bg-[#F7F7F7] border text-[#737373] flex items-center justify-center shrink-0 mt-0.5">
+                                            <HugeiconsIcon icon={UserIcon} className="w-4 h-4" />
                                         </div>
                                     )}
                                 </div>
@@ -526,10 +527,10 @@ export default function CreateWorkflowPage() {
                             {/* Typing Indicator */}
                             {isLoading && (
                                 <div className="flex gap-3.5 items-center">
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-                                        <Bot className="w-4 h-4" />
+                                    <div className="w-8 h-8 rounded-full bg-neutral-950 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                        <HugeiconsIcon icon={BotIcon} className="w-4 h-4" />
                                     </div>
-                                    <div className="bg-card border rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm flex items-center gap-1.5">
+                                    <div className="bg-[#FFFFFF] border rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm flex items-center gap-1.5">
                                         <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce" />
                                         <div
                                             className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"
@@ -539,7 +540,7 @@ export default function CreateWorkflowPage() {
                                             className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"
                                             style={{ animationDelay: '0.4s' }}
                                         />
-                                        <span className="text-xs text-muted-foreground ml-2">
+                                        <span className="text-xs text-[#737373] ml-2">
                                             Architect is thinking & updating blueprint...
                                         </span>
                                     </div>
@@ -548,7 +549,7 @@ export default function CreateWorkflowPage() {
                         </div>
 
                         {/* Chat Input Bar */}
-                        <div className="p-4 border-t bg-card/40 backdrop-blur-sm">
+                        <div className="p-4 border-t bg-[#FFFFFF] backdrop-blur-sm">
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
@@ -561,7 +562,7 @@ export default function CreateWorkflowPage() {
                                     onChange={(e) => setInputMessage(e.target.value)}
                                     placeholder="Type your answer or instructions... (e.g. 'Sneha naam rakho, Hindi-English mix bole')"
                                     disabled={isLoading}
-                                    className="pr-24 py-6 text-sm bg-background/80 shadow-inner rounded-xl border-border/80 focus-visible:ring-primary/40"
+                                    className="pr-24 py-6 text-sm bg-background/80 shadow-inner rounded-xl border-[#E5E5E5] focus-visible:ring-primary/40"
                                 />
                                 <div className="absolute right-2 flex items-center gap-1">
                                     <Button
@@ -570,27 +571,27 @@ export default function CreateWorkflowPage() {
                                         disabled={!inputMessage.trim() || isLoading}
                                         className="rounded-lg h-9 px-3 gap-1.5 bg-primary text-primary-foreground shadow-sm"
                                     >
-                                        <Send className="w-3.5 h-3.5" />
+                                        <HugeiconsIcon icon={SendIcon} className="w-3.5 h-3.5" />
                                         Send
                                     </Button>
                                 </div>
                             </form>
-                            <p className="text-[11px] text-muted-foreground mt-2 px-1 text-center">
+                            <p className="text-[11px] text-[#737373] mt-2 px-1 text-center">
                                 Tip: You can reply in Hindi, Hinglish, or English. Copilot will design the agent accordingly.
                             </p>
                         </div>
                     </div>
 
                     {/* Right Pane: Live Agent Blueprint (Artifacts Card) */}
-                    <div className="lg:col-span-6 xl:col-span-5 flex flex-col h-full bg-muted/20 overflow-y-auto p-4 lg:p-6 space-y-5">
+                    <div className="lg:col-span-6 xl:col-span-5 flex flex-col h-full bg-[#F7F7F7] overflow-y-auto p-4 lg:p-6 space-y-5">
                         {/* Blueprint Card Header */}
                         <div className="flex items-center justify-between pb-3 border-b">
                             <div>
                                 <h2 className="text-base font-semibold flex items-center gap-2">
-                                    <Workflow className="w-4 h-4 text-primary" />
+                                    <HugeiconsIcon icon={WorkflowIcon} className="w-4 h-4 text-primary" />
                                     Live Agent Blueprint
                                 </h2>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Updates in real-time as you chat with the Copilot
                                 </p>
                             </div>
@@ -600,15 +601,15 @@ export default function CreateWorkflowPage() {
                                     variant="outline"
                                     className={`text-xs gap-1.5 py-1 px-2.5 ${
                                         isReadyToTest
-                                            ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30 font-semibold'
-                                            : 'bg-amber-500/10 text-amber-600 border-amber-500/30'
+                                            ? 'bg-[#F0F3F9] text-[#7186AD] border-[#DCE3EF] font-semibold'
+                                            : 'bg-[#E5E5E5]/10 text-amber-600 border-amber-500/30'
                                     }`}
                                 >
                                     <span
                                         className={`w-2 h-2 rounded-full ${
                                             isReadyToTest
-                                                ? 'bg-emerald-500 animate-pulse'
-                                                : 'bg-amber-500'
+                                                ? 'bg-[#171717] animate-pulse'
+                                                : 'bg-[#E5E5E5]'
                                         }`}
                                     />
                                     {isReadyToTest ? 'Ready to Deploy' : 'Drafting...'}
@@ -624,11 +625,11 @@ export default function CreateWorkflowPage() {
                         {workflowDraft ? (
                             <div className="space-y-4">
                                 {/* Agent Identity Box */}
-                                <Card className="border-border/80 shadow-sm bg-card/90">
+                                <Card className="border-[#E5E5E5] shadow-sm bg-[#FFFFFF]">
                                     <CardContent className="p-4 space-y-3">
                                         <div className="flex items-start justify-between">
                                             <div>
-                                                <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                                                <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold">
                                                     Agent Name
                                                 </span>
                                                 <h3 className="text-lg font-bold text-foreground">
@@ -641,9 +642,9 @@ export default function CreateWorkflowPage() {
                                                     className="gap-1 capitalize text-xs"
                                                 >
                                                     {workflowDraft.call_type === 'inbound' ? (
-                                                        <PhoneIncoming className="w-3 h-3 text-blue-500" />
+                                                        <HugeiconsIcon icon={PhoneIncomingIcon} className="w-3 h-3 text-[#7186AD]" />
                                                     ) : (
-                                                        <PhoneOutgoing className="w-3 h-3 text-amber-500" />
+                                                        <HugeiconsIcon icon={PhoneOutgoingIcon} className="w-3 h-3 text-amber-500" />
                                                     )}
                                                     {workflowDraft.call_type}
                                                 </Badge>
@@ -655,11 +656,11 @@ export default function CreateWorkflowPage() {
 
                                         {/* Opening Line / First Message */}
                                         <div className="space-y-1.5 pt-2 border-t">
-                                            <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1">
-                                                <MessageSquare className="w-3 h-3" />
+                                            <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold flex items-center gap-1">
+                                                <HugeiconsIcon icon={MessageSquareIcon} className="w-3 h-3" />
                                                 Opening Greeting (Spoken First)
                                             </span>
-                                            <div className="p-3 bg-muted/60 rounded-lg text-sm border font-normal italic text-foreground/90 leading-relaxed">
+                                            <div className="p-3 bg-[#F7F7F7] rounded-lg text-sm border font-normal italic text-foreground/90 leading-relaxed">
                                                 &ldquo;{workflowDraft.first_message}&rdquo;
                                             </div>
                                         </div>
@@ -669,10 +670,10 @@ export default function CreateWorkflowPage() {
                                 {/* Questions / Extraction Checklist */}
                                 {workflowDraft.questions_to_ask &&
                                     workflowDraft.questions_to_ask.length > 0 && (
-                                        <Card className="border-border/80 shadow-sm bg-card/90">
+                                        <Card className="border-[#E5E5E5] shadow-sm bg-[#FFFFFF]">
                                             <CardContent className="p-4 space-y-2.5">
-                                                <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
-                                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                                <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold flex items-center gap-1.5">
+                                                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-[#7186AD]" />
                                                     Information to Gather
                                                 </span>
                                                 <div className="grid grid-cols-1 gap-1.5">
@@ -680,7 +681,7 @@ export default function CreateWorkflowPage() {
                                                         (q, qIdx) => (
                                                             <div
                                                                 key={qIdx}
-                                                                className="flex items-center gap-2 text-xs bg-muted/40 p-2 rounded-md border text-foreground/90 font-medium"
+                                                                className="flex items-center gap-2 text-xs bg-[#F7F7F7] p-2 rounded-md border text-foreground/90 font-medium"
                                                             >
                                                                 <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
                                                                 {q}
@@ -693,10 +694,10 @@ export default function CreateWorkflowPage() {
                                     )}
 
                                 {/* System Prompt Preview */}
-                                <Card className="border-border/80 shadow-sm bg-card/90">
+                                <Card className="border-[#E5E5E5] shadow-sm bg-[#FFFFFF]">
                                     <CardContent className="p-4 space-y-2">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                                            <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold">
                                                 Persona & Rules (System Prompt)
                                             </span>
                                             <button
@@ -708,19 +709,19 @@ export default function CreateWorkflowPage() {
                                                     setCopiedPrompt(true);
                                                     setTimeout(() => setCopiedPrompt(false), 2000);
                                                 }}
-                                                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                                                className="text-xs text-[#737373] hover:text-foreground flex items-center gap-1 transition-colors"
                                             >
                                                 {copiedPrompt ? (
-                                                    <Check className="w-3 h-3 text-emerald-500" />
+                                                    <HugeiconsIcon icon={CheckIcon} className="w-3 h-3 text-[#7186AD]" />
                                                 ) : (
-                                                    <Copy className="w-3 h-3" />
+                                                    <HugeiconsIcon icon={Copy01Icon} className="w-3 h-3" />
                                                 )}
                                                 {copiedPrompt ? 'Copied' : 'Copy'}
                                             </button>
                                         </div>
 
                                         <div
-                                            className={`p-3 bg-muted/50 rounded-lg text-xs font-mono text-muted-foreground whitespace-pre-wrap leading-relaxed border ${
+                                            className={`p-3 bg-[#F7F7F7] rounded-lg text-xs font-mono text-[#737373] whitespace-pre-wrap leading-relaxed border ${
                                                 !showFullPrompt ? 'max-h-36 overflow-hidden' : ''
                                             }`}
                                         >
@@ -740,28 +741,28 @@ export default function CreateWorkflowPage() {
                                 </Card>
 
                                 {/* Flow Graph Visual Steps */}
-                                <Card className="border-border/80 shadow-sm bg-card/90">
+                                <Card className="border-[#E5E5E5] shadow-sm bg-[#FFFFFF]">
                                     <CardContent className="p-4 space-y-2.5">
-                                        <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                                        <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold">
                                             Generated Canvas Flow Nodes
                                         </span>
-                                        <div className="flex items-center justify-between p-3 bg-muted/40 rounded-lg border text-xs font-medium">
+                                        <div className="flex items-center justify-between p-3 bg-[#F7F7F7] rounded-lg border text-xs font-medium">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold text-[10px]">
+                                                <div className="w-6 h-6 rounded-full bg-[#F0F3F9] text-[#7186AD] flex items-center justify-center font-bold text-[10px]">
                                                     1
                                                 </div>
                                                 <span>Start Call</span>
                                             </div>
-                                            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+                                            <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5 text-[#737373]" />
                                             <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 rounded-full bg-indigo-500/10 text-indigo-600 flex items-center justify-center font-bold text-[10px]">
+                                                <div className="w-6 h-6 rounded-full bg-[#F0F3F9] text-[#7186AD] flex items-center justify-center font-bold text-[10px]">
                                                     2
                                                 </div>
                                                 <span>Agent ({workflowDraft.name})</span>
                                             </div>
-                                            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+                                            <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5 text-[#737373]" />
                                             <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-[10px]">
+                                                <div className="w-6 h-6 rounded-full bg-[#F0F3F9] text-[#7186AD] flex items-center justify-center font-bold text-[10px]">
                                                     3
                                                 </div>
                                                 <span>End Call</span>
@@ -775,36 +776,36 @@ export default function CreateWorkflowPage() {
                                     <Button
                                         onClick={handleOpenInStudio}
                                         disabled={isSaving}
-                                        className="w-full py-6 text-sm font-semibold gap-2 shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                                        className="w-full py-6 text-sm font-semibold gap-2 shadow-md bg-neutral-950 hover:bg-neutral-800 text-white"
                                     >
                                         {isSaving ? (
                                             <>
-                                                <RefreshCw className="w-4 h-4 animate-spin" />
+                                                <HugeiconsIcon icon={RefreshCwIcon} className="w-4 h-4 animate-spin" />
                                                 Finalizing & Saving Agent...
                                             </>
                                         ) : (
                                             <>
-                                                <Sparkles className="w-4 h-4" />
+                                                <HugeiconsIcon icon={SparklesIcon} className="w-4 h-4" />
                                                 Open in Canvas Studio & Test Voice Call
-                                                <ArrowRight className="w-4 h-4 ml-1" />
+                                                <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1" />
                                             </>
                                         )}
                                     </Button>
-                                    <p className="text-[11px] text-muted-foreground text-center mt-2">
+                                    <p className="text-[11px] text-[#737373] text-center mt-2">
                                         You can test speaking with this agent via your microphone inside the Studio!
                                     </p>
                                 </div>
                             </div>
                         ) : (
                             /* Empty State when no conversation yet */
-                            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-2xl border-border/60">
+                            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-2xl border-[#E5E5E5]">
                                 <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-3">
-                                    <Bot className="w-6 h-6" />
+                                    <HugeiconsIcon icon={BotIcon} className="w-6 h-6" />
                                 </div>
                                 <h3 className="font-semibold text-sm mb-1">
                                     Agent Blueprint will appear here
                                 </h3>
-                                <p className="text-xs text-muted-foreground max-w-xs mb-4">
+                                <p className="text-xs text-[#737373] max-w-xs mb-4">
                                     Reply to the Copilot on the left or tap a suggestion pill to start creating your agent.
                                 </p>
                                 <div className="flex flex-wrap gap-2 justify-center max-w-sm">

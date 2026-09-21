@@ -1,6 +1,11 @@
 "use client";
 
-import { AlertTriangle, ExternalLink, MicOff } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ExternalLinkIcon,
+  MicOff01Icon,
+  TriangleAlertIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { cn } from "@/lib/utils";
 
@@ -20,18 +25,19 @@ export function NoticeCard({
     linkLabel,
 }: NoticeCardProps) {
     const isWarning = tone === "warning";
-    const Icon = isWarning ? MicOff : AlertTriangle;
+    const Icon = isWarning ? MicOff01Icon : TriangleAlertIcon;
 
     return (
         <div
             className={cn(
                 "flex items-start gap-2 rounded-lg border px-3 py-2",
                 isWarning
-                    ? "border-amber-500/20 bg-amber-500/10"
+                    ? "border-amber-500/20 bg-[#E5E5E5]/10"
                     : "border-red-500/20 bg-red-500/10",
             )}
         >
-            <Icon
+            <HugeiconsIcon
+                icon={Icon}
                 className={cn(
                     "mt-0.5 h-4 w-4 shrink-0",
                     isWarning ? "text-amber-500" : "text-red-500",
@@ -64,7 +70,7 @@ export function NoticeCard({
                             isWarning ? "text-amber-600 dark:text-amber-400" : "text-red-600 dark:text-red-400",
                         )}
                     >
-                        {linkLabel} <ExternalLink className="h-3 w-3" />
+                        {linkLabel} <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                     </a>
                 ) : null}
             </div>

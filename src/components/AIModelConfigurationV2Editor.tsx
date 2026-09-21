@@ -1,17 +1,18 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    AlertCircle,
-    AudioWaveform,
-    Bot,
-    Check,
-    ExternalLink,
-    Info,
-    KeyRound,
-    Mic,
-    Save,
-    Sparkles,
-} from "lucide-react";
+  AlertCircleIcon,
+  AudioWaveformIcon,
+  BotIcon,
+  CheckIcon,
+  ExternalLinkIcon,
+  InfoIcon,
+  KeyRoundIcon,
+  Mic01Icon,
+  SaveIcon,
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useMemo, useState } from "react";
 
 import type {
@@ -320,7 +321,7 @@ function optionalByokService(config: Record<string, unknown>, service: ServiceSe
 function ThirdPartyProviderNotice() {
     return (
         <div className="mt-4 flex gap-3 rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-200">
-            <Info className="mt-0.5 h-4 w-4 shrink-0" />
+            <HugeiconsIcon icon={InfoIcon} className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
                 <p className="font-medium">Third-party provider data notice</p>
                 <p className="mt-1 leading-6">
@@ -816,7 +817,7 @@ export function AIModelConfigurationV2Editor({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border bg-card/70 shadow-xs">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-emerald-500" />
+                        <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-emerald-500" />
                         <Label htmlFor="master-key-toggle" className="text-sm font-semibold cursor-pointer">
                             Use Platform Master Keys
                         </Label>
@@ -851,13 +852,13 @@ export function AIModelConfigurationV2Editor({
                         Speech to Speech
                     </TabsTrigger>
                     <TabsTrigger value="dograh" className="flex items-center justify-center gap-1.5">
-                        <Sparkles className="h-4 w-4 text-emerald-500" /> Platform Master Keys
+                        <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-emerald-500" /> Platform Master Keys
                         {usePlatformCredentials && (
                             <span className="ml-1 h-2 w-2 rounded-full bg-emerald-500" />
                         )}
                     </TabsTrigger>
                     <TabsTrigger value="byok" className="flex items-center justify-center gap-1.5">
-                        <KeyRound className="h-4 w-4" /> BYOK (Own Keys)
+                        <HugeiconsIcon icon={KeyRoundIcon} className="h-4 w-4" /> BYOK (Own Keys)
                         {!usePlatformCredentials && (
                             <span className="ml-1 h-2 w-2 rounded-full bg-blue-500" />
                         )}
@@ -885,7 +886,7 @@ export function AIModelConfigurationV2Editor({
                 <TabsContent value="dograh" className="mt-0 space-y-6">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-950 dark:text-emerald-200">
                         <div className="flex items-start gap-3">
-                            <Sparkles className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                            <HugeiconsIcon icon={SparklesIcon} className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                             <div>
                                 <h4 className="font-semibold text-sm">Platform Master Credentials Active</h4>
                                 <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
@@ -909,7 +910,7 @@ export function AIModelConfigurationV2Editor({
                     {hasNoMasterKeys ? (
                         <Card className="border-dashed border-amber-500/40 bg-amber-500/5">
                             <CardContent className="pt-6 pb-6 text-center space-y-3">
-                                <AlertCircle className="h-8 w-8 text-amber-500 mx-auto" />
+                                <HugeiconsIcon icon={AlertCircleIcon} className="h-8 w-8 text-amber-500 mx-auto" />
                                 <h4 className="font-semibold text-foreground">No Platform Master Keys Configured Yet</h4>
                                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
                                     No platform master keys are currently configured in the platform. You can configure them in the Superadmin dashboard, or use the BYOK tab to configure your own credentials.

@@ -1,6 +1,11 @@
 "use client";
 
-import { ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -368,18 +373,18 @@ export default function NewCampaignPage() {
     };
 
     return (
-        <div className="container mx-auto p-6 pb-12 space-y-6 max-w-2xl">
+        <div className="app-page space-y-6 pb-12 max-w-2xl">
             <div>
                 <Button
                     variant="ghost"
                     onClick={handleBack}
                     className="mb-4"
                 >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4 mr-2" />
                     Back to Campaigns
                 </Button>
                 <h1 className="text-3xl font-bold mb-2">Create New Campaign</h1>
-                <p className="text-muted-foreground">Set up a new campaign to execute workflows at scale</p>
+                <p className="text-[#737373]">Set up a new campaign to execute workflows at scale</p>
             </div>
 
             <Card>
@@ -401,7 +406,7 @@ export default function NewCampaignPage() {
                                     maxLength={255}
                                     required
                                 />
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-[#737373]">
                                     Choose a descriptive name for your campaign
                                 </p>
                             </div>
@@ -437,7 +442,7 @@ export default function NewCampaignPage() {
                                         )}
                                     </SelectContent>
                                 </Select>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-[#737373]">
                                     Select the workflow to execute for each row in the data source
                                 </p>
                             </div>
@@ -445,7 +450,7 @@ export default function NewCampaignPage() {
                             <div className="space-y-2">
                                 <Label htmlFor="telephony-config">Telephony Configuration</Label>
                                 {!isLoadingTelephonyConfigs && telephonyConfigs.length === 0 ? (
-                                    <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
+                                    <div className="rounded-md border border-dashed p-3 text-sm text-[#737373]">
                                         No telephony configurations yet.{' '}
                                         <Link
                                             href="/telephony-configurations"
@@ -488,7 +493,7 @@ export default function NewCampaignPage() {
                                             </SelectContent>
                                         </Select>
                                         {!isLoadingTelephonyConfigs && !telephonyConfigs.some((c) => !(c as unknown as { is_shared_trial?: boolean }).is_shared_trial && !c.name?.startsWith("Platform - ")) && (
-                                            <div className="rounded-md bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-600 dark:text-amber-400">
+                                            <div className="rounded-md bg-[#E5E5E5]/10 border border-amber-500/20 p-3 text-xs text-amber-600 dark:text-amber-400">
                                                 <p className="font-semibold">Dedicated telephony required for campaigns</p>
                                                 <p className="mt-0.5">
                                                     Platform test numbers are strictly for testing agents in the workflow editor. To launch bulk outbound campaigns, please{' '}
@@ -500,7 +505,7 @@ export default function NewCampaignPage() {
                                         )}
                                     </>
                                 )}
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-[#737373]">
                                     Outbound calls for this campaign will use this configuration&apos;s caller IDs
                                 </p>
                             </div>
@@ -523,7 +528,7 @@ export default function NewCampaignPage() {
                                         <SelectItem value="csv">CSV File</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-[#737373]">
                                     Choose where your contact data is stored
                                 </p>
                             </div>
@@ -539,12 +544,12 @@ export default function NewCampaignPage() {
                                 onOpenChange={setShowAdvancedSettings}
                                 className="border rounded-lg"
                             >
-                                <CollapsibleTrigger className="flex items-center justify-between w-full p-4 hover:bg-muted/50 transition-colors">
+                                <CollapsibleTrigger className="flex items-center justify-between w-full p-4 hover:bg-[#F7F7F7] transition-colors">
                                     <span className="font-medium">Advanced Settings</span>
                                     {showAdvancedSettings ? (
-                                        <ChevronDown className="h-4 w-4" />
+                                        <HugeiconsIcon icon={ChevronDownIcon} className="h-4 w-4" />
                                     ) : (
-                                        <ChevronRight className="h-4 w-4" />
+                                        <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4" />
                                     )}
                                 </CollapsibleTrigger>
                                 <CollapsibleContent className="px-4 pb-4">

@@ -1,14 +1,15 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    Archive,
-    Check,
-    Folder as FolderIcon,
-    FolderInput,
-    Inbox,
-    Pencil,
-    RotateCcw,
-} from 'lucide-react';
+  Archive01Icon,
+  CheckIcon,
+  Folder01Icon,
+  FolderInputIcon,
+  InboxIcon,
+  PencilIcon,
+  RotateCcwIcon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
@@ -149,7 +150,7 @@ export function WorkflowTable({
                                 key={workflow.id}
                                 className={`hover:bg-accent transition-colors ${showArchived ? 'opacity-60' : ''}`}
                             >
-                                <TableCell className="text-muted-foreground">
+                                <TableCell className="text-[#737373]">
                                     {workflow.id}
                                 </TableCell>
                                 <TableCell className="font-medium">
@@ -159,7 +160,7 @@ export function WorkflowTable({
                                     {formatDate(workflow.created_at, organizationTimezone)}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-1 text-sm font-semibold bg-muted rounded-full">
+                                    <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-1 text-sm font-semibold bg-[#F7F7F7] rounded-full">
                                         {workflow.total_runs || 0}
                                     </span>
                                 </TableCell>
@@ -171,7 +172,7 @@ export function WorkflowTable({
                                             onClick={() => handleEdit(workflow.id)}
                                             className="flex items-center gap-2"
                                         >
-                                            <Pencil size={16} />
+                                            <HugeiconsIcon icon={PencilIcon} size={16} />
                                             Edit
                                         </Button>
                                         {folders && (
@@ -186,7 +187,7 @@ export function WorkflowTable({
                                                         {movingWorkflowId === workflow.id ? (
                                                             <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                                                         ) : (
-                                                            <FolderInput size={16} />
+                                                            <HugeiconsIcon icon={FolderInputIcon} size={16} />
                                                         )}
                                                         Move
                                                     </Button>
@@ -198,10 +199,10 @@ export function WorkflowTable({
                                                         disabled={currentFolderId === null}
                                                         onClick={() => handleMove(workflow.id, null)}
                                                     >
-                                                        <Inbox size={14} className="mr-2" />
+                                                        <HugeiconsIcon icon={InboxIcon} size={14} className="mr-2" />
                                                         Uncategorized
                                                         {currentFolderId === null && (
-                                                            <Check size={14} className="ml-auto" />
+                                                            <HugeiconsIcon icon={CheckIcon} size={14} className="ml-auto" />
                                                         )}
                                                     </DropdownMenuItem>
                                                     {folders.map((folder) => (
@@ -210,10 +211,10 @@ export function WorkflowTable({
                                                             disabled={folder.id === currentFolderId}
                                                             onClick={() => handleMove(workflow.id, folder.id)}
                                                         >
-                                                            <FolderIcon size={14} className="mr-2" />
+                                                            <HugeiconsIcon icon={Folder01Icon} size={14} className="mr-2" />
                                                             <span className="truncate">{folder.name}</span>
                                                             {folder.id === currentFolderId && (
-                                                                <Check size={14} className="ml-auto shrink-0" />
+                                                                <HugeiconsIcon icon={CheckIcon} size={14} className="ml-auto shrink-0" />
                                                             )}
                                                         </DropdownMenuItem>
                                                     ))}
@@ -236,12 +237,12 @@ export function WorkflowTable({
                                                 <>
                                                     {showArchived ? (
                                                         <>
-                                                            <RotateCcw size={16} />
+                                                            <HugeiconsIcon icon={RotateCcwIcon} size={16} />
                                                             Restore
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <Archive size={16} />
+                                                            <HugeiconsIcon icon={Archive01Icon} size={16} />
                                                             Archive
                                                         </>
                                                     )}

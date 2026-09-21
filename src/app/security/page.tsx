@@ -1,13 +1,14 @@
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  CheckCircle2,
-  Database,
-  FileCheck,
-  Key,
-  Lock,
-  Server,
-  ShieldCheck,
-  UserCheck,
-} from 'lucide-react';
+  CheckmarkCircle02Icon,
+  Database01Icon,
+  FileCheckIcon,
+  Key01Icon,
+  LockIcon,
+  ServerIcon,
+  ShieldCheckIcon,
+  UserCheck01Icon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -23,7 +24,7 @@ export default function SecurityPage() {
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto mb-14">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/70 bg-muted/30 text-xs text-muted-foreground mb-4">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          <HugeiconsIcon icon={ShieldCheckIcon} className="w-3.5 h-3.5 text-emerald-500" />
           <span>Security & Compliance</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground leading-[1.15]">

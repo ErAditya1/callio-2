@@ -1,6 +1,10 @@
 'use client';
 
-import { Headphones, Loader2 } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  HeadphonesIcon,
+  Loading02Icon,
+} from "@hugeicons/core-free-icons";;
 import posthog from 'posthog-js';
 import { useCallback, useState } from 'react';
 
@@ -79,7 +83,7 @@ export function MediaPreviewDialog() {
 
                     {mediaLoading && (
                         <div className="flex items-center justify-center py-8 space-x-2">
-                            <Loader2 className="h-6 w-6 animate-spin" />
+                            <HugeiconsIcon icon={Loading02Icon} className="h-6 w-6 animate-spin" />
                             <span>Loading...</span>
                         </div>
                     )}
@@ -160,7 +164,7 @@ export function MediaPreviewButton({
             size="icon"
             onClick={handleOpen}
         >
-            <Headphones className="h-4 w-4" />
+            <HugeiconsIcon icon={HeadphonesIcon} className="h-4 w-4" />
         </Button>
     );
 }

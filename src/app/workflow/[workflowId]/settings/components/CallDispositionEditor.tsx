@@ -1,6 +1,10 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  PlusIcon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -175,7 +179,7 @@ export function CallDispositionEditor({
                     <Label htmlFor="call-disposition-extraction-enabled" className="text-sm font-medium">
                         Extract call disposition at the end of the call
                     </Label>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-[#737373]">
                         {enabled
                             ? `${rows.length} outcome${rows.length === 1 ? "" : "s"} configured. CallioAI will classify the completed conversation into one of them.`
                             : "Disabled. CallioAI will keep the disposition recorded by the call-ending event."}
@@ -270,7 +274,7 @@ function CallDispositionRowsEditor({
                         { id: createUuid(), code: "", description: "" },
                     ])}
                 >
-                    <Plus className="mr-1 h-4 w-4" /> Add custom disposition
+                    <HugeiconsIcon icon={PlusIcon} className="mr-1 h-4 w-4" /> Add custom disposition
                 </Button>
             </div>
 
@@ -286,7 +290,7 @@ function CallDispositionRowsEditor({
                         >
                             <div className="flex items-start gap-3">
                                 <div className="min-w-0 flex-1 space-y-3">
-                                    <p className="text-xs font-medium text-muted-foreground">
+                                    <p className="text-xs font-medium text-[#737373]">
                                         Disposition {index + 1}
                                     </p>
                                     <div className="space-y-1.5">
@@ -336,7 +340,7 @@ function CallDispositionRowsEditor({
                                     aria-label={`Remove disposition ${index + 1}`}
                                     onClick={() => onChange(rows.filter((item) => item.id !== row.id))}
                                 >
-                                    <Trash2 className="h-4 w-4" />
+                                    <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
                                 </Button>
                             </div>
                         </div>
@@ -346,13 +350,13 @@ function CallDispositionRowsEditor({
                 {rows.length === 0 && (
                     <div className="rounded-md border border-dashed p-4 text-center">
                         <p className="text-sm font-medium">Add at least one disposition</p>
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="mt-1 text-xs text-[#737373]">
                             Extraction needs a closed list of outcomes to choose from.
                         </p>
                     </div>
                 )}
 
-                <div className="flex justify-end text-xs text-muted-foreground">
+                <div className="flex justify-end text-xs text-[#737373]">
                     <p className={validation.totalError ? "text-destructive" : undefined}>
                         {validation.totalDescriptionLength.toLocaleString()} / {MAX_CALL_DISPOSITION_DESCRIPTIONS_TOTAL_LENGTH.toLocaleString()} description characters
                     </p>

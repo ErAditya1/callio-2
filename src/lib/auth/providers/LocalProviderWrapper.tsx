@@ -7,6 +7,11 @@ import logger from '@/lib/logger';
 import type { AuthUser, LocalUser } from '../types';
 import { AuthContext } from './AuthProvider';
 
+// DEMO FLOW (frontend-only prototype): skip the bounce to /auth/login so every
+// page is visitable without login. Mirrors DEMO_OPEN_ROUTES in src/middleware.ts.
+// Set to false to restore the login gate.
+const DEMO_OPEN_ROUTES = true;
+
 export function LocalProviderWrapper({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<LocalUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -14,6 +19,22 @@ export function LocalProviderWrapper({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    // DEMO: every page open — provide a mock user immediately so page-level
+    // `redirectToLogin` guards don't bounce back to /auth/login.
+    if (DEMO_OPEN_ROUTES) {
+      tokenRef.current = 'demo-token';
+      setUser({
+        id: 'demo-user',
+        email: 'demo@local',
+        displayName: 'Demo User',
+        name: 'Demo User',
+        provider: 'local',
+        organizationId: 'demo-org',
+      });
+      setLoading(false);
+      return;
+    }
 
     const initializeAuth = async () => {
       try {

@@ -1,4 +1,10 @@
-import { Loader2, Mic, Phone, PhoneOff } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+  Mic01Icon,
+  PhoneIcon,
+  PhoneOff01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -75,11 +81,11 @@ export const AudioControls = ({
             return (
                 <div className="flex flex-col items-center justify-center space-y-4 p-8">
                     <div className="h-12 w-12 bg-destructive/10 rounded-full flex items-center justify-center">
-                        <Mic className="h-6 w-6 text-destructive" />
+                        <HugeiconsIcon icon={Mic01Icon} className="h-6 w-6 text-destructive" />
                     </div>
                     <div className="text-center space-y-2">
                         <p className="text-foreground font-medium">Microphone access denied</p>
-                        <p className="text-sm text-muted-foreground max-w-md">
+                        <p className="text-sm text-[#737373] max-w-md">
                             To use the voice agent, you need to allow microphone access.
                             Please enable it in your browser settings and try again.
                         </p>
@@ -91,12 +97,12 @@ export const AudioControls = ({
                     >
                         {isRequestingPermission ? (
                             <>
-                                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                                <HugeiconsIcon icon={Loading02Icon} className="h-5 w-5 mr-2 animate-spin" />
                                 Waiting for permission...
                             </>
                         ) : (
                             <>
-                                <Mic className="h-5 w-5 mr-2" />
+                                <HugeiconsIcon icon={Mic01Icon} className="h-5 w-5 mr-2" />
                                 Try Again
                             </>
                         )}
@@ -110,7 +116,7 @@ export const AudioControls = ({
             <div className="flex flex-col items-center justify-center space-y-4 p-8">
                 <div className="text-center space-y-2">
                     <p className="text-foreground font-medium">Audio permissions required</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-[#737373]">
                         {isRequestingPermission
                             ? "Please allow microphone access in the browser dialog"
                             : "Click below to grant microphone access"}
@@ -123,12 +129,12 @@ export const AudioControls = ({
                 >
                     {isRequestingPermission ? (
                         <>
-                            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                            <HugeiconsIcon icon={Loading02Icon} className="h-5 w-5 mr-2 animate-spin" />
                             Waiting for permission...
                         </>
                     ) : (
                         <>
-                            <Mic className="h-5 w-5 mr-2" />
+                            <HugeiconsIcon icon={Mic01Icon} className="h-5 w-5 mr-2" />
                             Grant Audio Permissions
                         </>
                     )}
@@ -144,26 +150,26 @@ export const AudioControls = ({
                     <button
                         onClick={start}
                         disabled={isStarting}
-                        className="group relative h-20 w-20 rounded-full bg-emerald-600 hover:bg-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                        className="group relative h-20 w-20 rounded-full bg-neutral-950 hover:bg-neutral-800 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                         aria-label="Start Call"
                     >
-                        <div className="absolute inset-0 rounded-full bg-emerald-600 animate-ping opacity-25"></div>
+                        <div className="absolute inset-0 rounded-full bg-neutral-950 animate-ping opacity-25"></div>
                         <div className="relative flex items-center justify-center h-full">
-                            <Phone className="h-8 w-8 text-white" />
+                            <HugeiconsIcon icon={PhoneIcon} className="h-8 w-8 text-white" />
                         </div>
                     </button>
                     <p className="text-sm font-medium text-foreground">Start Call</p>
                 </>
             ) : (
                 <>
-                    <p className="text-sm text-muted-foreground">Call in progress</p>
+                    <p className="text-sm text-[#737373]">Call in progress</p>
                     <button
                         onClick={stop}
                         className="group relative h-20 w-20 rounded-full bg-destructive hover:bg-destructive/90 transition-all duration-200 shadow-lg hover:shadow-xl"
                         aria-label="End Call"
                     >
                         <div className="relative flex items-center justify-center h-full">
-                            <PhoneOff className="h-8 w-8 text-destructive-foreground" />
+                            <HugeiconsIcon icon={PhoneOff01Icon} className="h-8 w-8 text-destructive-foreground" />
                         </div>
                     </button>
                     <p className="text-sm font-medium text-foreground">End Call</p>

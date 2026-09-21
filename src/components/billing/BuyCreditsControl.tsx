@@ -84,7 +84,7 @@ export function BuyCreditsControl({ className }: { className?: string }) {
       <PopoverContent align="end" className="w-72 space-y-3">
         <div className="space-y-0.5">
           <p className="text-sm font-medium">Top up credits</p>
-          <p className="text-xs text-muted-foreground">Pick an amount (min ${MIN_TOPUP_USD}).</p>
+          <p className="text-xs text-[#737373]">Pick an amount (min ${MIN_TOPUP_USD}).</p>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -104,7 +104,7 @@ export function BuyCreditsControl({ className }: { className?: string }) {
             </button>
           ))}
           <div className="relative">
-            <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+            <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-[#737373]">
               $
             </span>
             <Input
@@ -118,7 +118,7 @@ export function BuyCreditsControl({ className }: { className?: string }) {
           </div>
         </div>
 
-        {error && <p className="text-xs text-muted-foreground">{error}</p>}
+        {error && <p className="text-xs text-[#737373]">{error}</p>}
 
         <Button
           type="button"

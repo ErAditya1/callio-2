@@ -1,6 +1,10 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CheckIcon,
+  Copy01Icon,
+} from "@hugeicons/core-free-icons";;
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -83,9 +87,9 @@ export function MCPSection() {
                   onClick={() => handleCopy(url, key)}
                 >
                   {copiedKey === key ? (
-                    <Check className="h-4 w-4" />
+                    <HugeiconsIcon icon={CheckIcon} className="h-4 w-4" />
                   ) : (
-                    <Copy className="h-4 w-4" />
+                    <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
                   )}
                 </Button>
               </div>

@@ -1,6 +1,6 @@
 import { getSignupEnabled } from "@/lib/auth/config";
 
-import { LoginForm } from "./LoginForm";
+import { OnboardingFlow } from "@/components/auth/flow/OnboardingFlow";
 
 // Resolve the backend health check before rendering so the "Sign up" link is
 // correct on first paint — no client-side fetch, no flicker on locked-down
@@ -10,5 +10,5 @@ export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
   const signupEnabled = await getSignupEnabled();
-  return <LoginForm signupEnabled={signupEnabled} />;
+  return <OnboardingFlow signupEnabled={signupEnabled} />;
 }

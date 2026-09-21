@@ -1,22 +1,23 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  AlertTriangle,
-  ChevronRight,
-  Copy,
-  ExternalLink,
-  Loader2,
-  Pencil,
-  Phone,
-  Plus,
-  RotateCcw,
-  ShieldCheck,
-  ShoppingCart,
-  Sparkles,
-  Star,
-  Trash2,
-  Zap,
-} from "lucide-react";
+  ChevronRightIcon,
+  Copy01Icon,
+  Delete02Icon,
+  ExternalLinkIcon,
+  Loading02Icon,
+  PencilIcon,
+  PhoneIcon,
+  PlusIcon,
+  RotateCcwIcon,
+  ShieldCheckIcon,
+  ShoppingCart01Icon,
+  SparklesIcon,
+  StarIcon,
+  TriangleAlertIcon,
+  ZapIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -242,11 +243,11 @@ export default function TelephonyConfigurationsPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
+      <div className="app-page">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold mb-2">Telephony configurations</h1>
-            <p className="text-muted-foreground">
+            <p className="text-[#737373]">
               Connect one or more telephony provider accounts. Each campaign uses one
               configuration; inbound calls are routed to the right one by account ID.{" "}
               <a
@@ -255,29 +256,29 @@ export default function TelephonyConfigurationsPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-0.5 underline"
               >
-                Learn more <ExternalLink className="h-3 w-3" />
+                Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
               </a>
             </p>
           </div>
           <Button onClick={() => setCreateOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" /> Add configuration
+            <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-2" /> Add configuration
           </Button>
         </div>
 
         {/* Instant Testing Pool & Platform Numbers Showcase */}
-        <div className="mb-8 rounded-xl border border-primary/20 bg-gradient-to-r from-blue-50/60 via-indigo-50/40 to-purple-50/50 dark:from-blue-950/20 dark:via-indigo-950/15 dark:to-purple-950/20 p-6 shadow-sm">
+        <div className="mb-8 rounded-xl border border-[#E5E5E5] bg-[#F7F7F7] p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Sparkles className="h-4 w-4" />
+                  <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4" />
                 </span>
                 <h2 className="text-xl font-bold tracking-tight">Instant Voice Testing &amp; Platform Numbers</h2>
-                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs">
+                <Badge variant="outline" className="bg-[#F0F3F9] text-[#7186AD] dark:text-[#7186AD] border-[#DCE3EF] text-xs">
                   Zero Config Required
                 </Badge>
               </div>
-              <p className="text-sm text-muted-foreground max-w-2xl">
+              <p className="text-sm text-[#737373] max-w-2xl">
                 Test AI Voice Agents instantly without your own provider account. Claim a shared trial number for free sandbox testing, or purchase dedicated platform numbers with 1-click provisioning into your workspace.
               </p>
             </div>
@@ -295,10 +296,10 @@ export default function TelephonyConfigurationsPage() {
               <Skeleton className="h-28 w-full rounded-lg" />
             </div>
           ) : platformNumbers.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-muted-foreground/25 bg-background/70 p-5 text-center">
-              <Phone className="h-7 w-7 mx-auto text-muted-foreground/60 mb-2" />
+            <div className="rounded-lg border border-dashed border-[#E5E5E5] bg-background/70 p-5 text-center">
+              <HugeiconsIcon icon={PhoneIcon} className="h-7 w-7 mx-auto text-[#737373]/60 mb-2" />
               <p className="text-sm font-medium">No Platform Numbers in Marketplace</p>
-              <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
+              <p className="text-xs text-[#737373] mt-1 max-w-md mx-auto">
                 Bring your own provider account using &quot;Add configuration&quot; below, or superadmins can stock numbers in the Superadmin Inventory.
               </p>
             </div>
@@ -312,7 +313,7 @@ export default function TelephonyConfigurationsPage() {
                 return (
                   <div
                     key={num.id}
-                    className="flex flex-col justify-between p-4 rounded-lg border bg-card/85 backdrop-blur hover:border-primary/40 transition-all shadow-sm"
+                    className="flex flex-col justify-between p-4 rounded-lg border bg-[#FFFFFF]/85 backdrop-blur hover:border-primary/40 transition-all shadow-sm"
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-2">
@@ -323,15 +324,15 @@ export default function TelephonyConfigurationsPage() {
                           variant={isShared ? "default" : "outline"}
                           className={`text-xs ${
                             isShared
-                              ? "bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-                              : "border-purple-500/40 text-purple-600 dark:text-purple-400"
+                              ? "bg-neutral-950 hover:bg-neutral-800 text-white font-semibold"
+                              : "border-[#DCE3EF] text-[#737373] dark:text-[#7186AD]"
                           }`}
                         >
                           {isShared ? "Shared Trial" : "Dedicated"}
                         </Badge>
                       </div>
 
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                      <div className="flex items-center gap-2 text-xs text-[#737373] mb-2">
                         <span className="capitalize font-medium text-foreground">{num.carrier}</span>
                         <span>•</span>
                         <span>
@@ -340,15 +341,15 @@ export default function TelephonyConfigurationsPage() {
                       </div>
 
                       {isShared && (
-                        <div className="mb-3 text-[11px] leading-tight text-blue-700 dark:text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded p-1.5 flex items-start gap-1">
+                        <div className="mb-3 text-[11px] leading-tight text-blue-700 dark:text-blue-300 bg-[#F0F3F9] border border-[#DCE3EF] rounded p-1.5 flex items-start gap-1">
                           <span>Sandbox testing only. Live campaigns are prevented from using this number.</span>
                         </div>
                       )}
                     </div>
 
                     <div className="pt-2 border-t flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                      <span className="text-xs text-[#737373] flex items-center gap-1">
+                        <HugeiconsIcon icon={ShieldCheckIcon} className="h-3.5 w-3.5 text-[#7186AD]" />
                         {isShared ? "Instant Sandbox" : "Dedicated Caller ID"}
                       </span>
 
@@ -360,9 +361,9 @@ export default function TelephonyConfigurationsPage() {
                             navigator.clipboard.writeText(num.phone_number);
                             toast.success(`Copied test number ${num.phone_number} to clipboard!`);
                           }}
-                          className="h-8 gap-1.5 text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 border border-blue-500/30"
+                          className="h-8 gap-1.5 text-xs font-medium bg-[#F0F3F9] text-[#7186AD] dark:text-[#7186AD] hover:bg-[#7186AD]/20 border border-[#DCE3EF]"
                         >
-                          <Copy className="h-3.5 w-3.5" /> Copy Test Number
+                          <HugeiconsIcon icon={Copy01Icon} className="h-3.5 w-3.5" /> Copy Test Number
                         </Button>
                       ) : isAlreadyInUse ? (
                         <Badge variant="secondary" className="text-xs opacity-75">
@@ -378,11 +379,11 @@ export default function TelephonyConfigurationsPage() {
                         >
                           {isClaiming ? (
                             <>
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Claiming...
+                              <HugeiconsIcon icon={Loading02Icon} className="h-3.5 w-3.5 animate-spin" /> Claiming...
                             </>
                           ) : (
                             <>
-                              <ShoppingCart className="h-3.5 w-3.5" /> Claim Number
+                              <HugeiconsIcon icon={ShoppingCart01Icon} className="h-3.5 w-3.5" /> Claim Number
                             </>
                           )}
                         </Button>
@@ -402,7 +403,7 @@ export default function TelephonyConfigurationsPage() {
         {telnyxMissingWebhookPublicKeyCount > 0 && (
           <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
+              <HugeiconsIcon icon={TriangleAlertIcon} className="h-5 w-5 shrink-0 mt-0.5" />
               <div className="space-y-1 text-sm">
                 <p className="font-medium">Webhook public key not configured</p>
                 <p>
@@ -425,7 +426,7 @@ export default function TelephonyConfigurationsPage() {
         {vonageMissingSignatureSecretCount > 0 && (
           <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
+              <HugeiconsIcon icon={TriangleAlertIcon} className="h-5 w-5 shrink-0 mt-0.5" />
               <div className="space-y-1 text-sm">
                 <p className="font-medium">Signature secret not configured</p>
                 <p>
@@ -457,7 +458,7 @@ export default function TelephonyConfigurationsPage() {
             </CardHeader>
             <CardContent>
               <Button onClick={() => setCreateOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" /> Add configuration
+                <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-2" /> Add configuration
               </Button>
             </CardContent>
           </Card>
@@ -476,7 +477,7 @@ export default function TelephonyConfigurationsPage() {
                         <Badge variant="secondary">{item.provider}</Badge>
                         {item.is_default_outbound && (
                           <Badge className="gap-1">
-                            <Star className="h-3 w-3 fill-current" />
+                            <HugeiconsIcon icon={StarIcon} className="h-3 w-3 fill-current" />
                             Default
                           </Badge>
                         )}
@@ -488,12 +489,12 @@ export default function TelephonyConfigurationsPage() {
                             variant="outline"
                             className="gap-1 border-amber-400 text-amber-700 dark:border-amber-700 dark:text-amber-400"
                           >
-                            <AlertTriangle className="h-3 w-3" />
+                            <HugeiconsIcon icon={TriangleAlertIcon} className="h-3 w-3" />
                             Setup incomplete
                           </Badge>
                         )}
                       </div>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-sm text-[#737373]">
                         {item.phone_number_count} phone{" "}
                         {item.phone_number_count === 1 ? "number" : "numbers"}
                       </span>
@@ -518,10 +519,10 @@ export default function TelephonyConfigurationsPage() {
                             .catch(() => toast.error("Failed to copy ID"));
                         }}
                         title="Click to copy"
-                        className="inline-flex items-center gap-1 self-start rounded font-mono text-xs text-muted-foreground hover:text-foreground"
+                        className="inline-flex items-center gap-1 self-start rounded font-mono text-xs text-[#737373] hover:text-foreground"
                       >
                         <span className="truncate">Configuration ID: {item.id}</span>
-                        <Copy className="h-3 w-3 shrink-0" />
+                        <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3 shrink-0" />
                       </button>
                     </div>
                   </Link>
@@ -533,7 +534,7 @@ export default function TelephonyConfigurationsPage() {
                         onClick={() => onReactivate(item)}
                         title="Reconnect this configuration now"
                       >
-                        <RotateCcw className="h-4 w-4 mr-1" />
+                        <HugeiconsIcon icon={RotateCcwIcon} className="h-4 w-4 mr-1" />
                         Reactivate
                       </Button>
                     )}
@@ -544,7 +545,7 @@ export default function TelephonyConfigurationsPage() {
                         onClick={() => onSetDefault(item)}
                         title="Set as default outbound"
                       >
-                        <Star className="h-4 w-4" />
+                        <HugeiconsIcon icon={StarIcon} className="h-4 w-4" />
                       </Button>
                     )}
                     <Button
@@ -553,7 +554,7 @@ export default function TelephonyConfigurationsPage() {
                       onClick={() => onEdit(item)}
                       title="Edit"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <HugeiconsIcon icon={PencilIcon} className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -561,7 +562,7 @@ export default function TelephonyConfigurationsPage() {
                       onClick={() => setDeleteTarget(item)}
                       title="Delete"
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4 text-destructive" />
                     </Button>
                     <Button variant="outline" size="sm" asChild>
                       <Link
@@ -569,7 +570,7 @@ export default function TelephonyConfigurationsPage() {
                         aria-label={`Manage phone numbers for ${item.name}`}
                       >
                         Manage Phone Numbers
-                        <ChevronRight className="h-4 w-4" />
+                        <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4" />
                       </Link>
                     </Button>
                   </div>
@@ -622,22 +623,22 @@ export default function TelephonyConfigurationsPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5 text-primary" />
+              <HugeiconsIcon icon={ShoppingCart01Icon} className="h-5 w-5 text-primary" />
               Confirm Dedicated Number Purchase
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-3 pt-2">
-              <div className="rounded-md bg-muted p-3 text-sm space-y-1">
+              <div className="rounded-md bg-[#F7F7F7] p-3 text-sm space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Phone Number:</span>
+                  <span className="text-[#737373]">Phone Number:</span>
                   <span className="font-mono font-medium text-foreground">{purchasingNumber?.phone_number}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Carrier:</span>
+                  <span className="text-[#737373]">Carrier:</span>
                   <span className="font-medium text-foreground capitalize">{purchasingNumber?.carrier}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Monthly Recurring:</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                  <span className="text-[#737373]">Monthly Recurring:</span>
+                  <span className="font-semibold text-[#7186AD] dark:text-[#7186AD]">
                     ${purchasingNumber ? (purchasingNumber.monthly_price_cents / 100).toFixed(2) : "0.00"}/month
                   </span>
                 </div>

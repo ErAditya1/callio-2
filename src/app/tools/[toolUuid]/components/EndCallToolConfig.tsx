@@ -57,7 +57,7 @@ export function EndCallToolConfig({
             <CardContent className="space-y-6">
                 <div className="grid gap-2">
                     <Label>Tool Name</Label>
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         A descriptive name for this tool
                     </Label>
                     <Input
@@ -69,7 +69,7 @@ export function EndCallToolConfig({
 
                 <div className="grid gap-2">
                     <Label>Description</Label>
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         Helps the LLM understand when to use this tool
                     </Label>
                     <Textarea
@@ -89,14 +89,14 @@ export function EndCallToolConfig({
                         />
                         <Label htmlFor="end-call-reason">Capture End Call Reason</Label>
                     </div>
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         When enabled, the AI will provide a reason for ending the call.
                         The reason will be set as the call disposition and added to call tags for analytics.
                     </Label>
                     {endCallReason && (
                         <div className="grid gap-2 pt-2">
                             <Label>Reason Description</Label>
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Instructions shown to the AI for what kind of reason to provide
                             </Label>
                             <Textarea
@@ -111,7 +111,7 @@ export function EndCallToolConfig({
 
                 <div className="grid gap-4 pt-4 border-t">
                     <Label>Goodbye Message</Label>
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         Choose whether to play a message before disconnecting
                     </Label>
                     <RadioGroup
@@ -121,21 +121,21 @@ export function EndCallToolConfig({
                     >
                         <label
                             htmlFor="none"
-                            className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
+                            className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-[#F7F7F7] cursor-pointer"
                         >
                             <RadioGroupItem value="none" id="none" />
                             <div className="flex-1">
                                 <span className="font-medium">No Message</span>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     End the call immediately without any message
                                 </p>
                             </div>
                         </label>
-                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-muted/50">
+                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-[#F7F7F7]">
                             <RadioGroupItem value="custom" id="custom" className="mt-1" />
                             <label htmlFor="custom" className="flex-1 space-y-2 cursor-pointer">
                                 <span className="font-medium">Custom Message</span>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Play a custom message before disconnecting
                                 </p>
                             </label>
@@ -151,11 +151,11 @@ export function EndCallToolConfig({
                                 />
                             </div>
                         )}
-                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-muted/50">
+                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-[#F7F7F7]">
                             <RadioGroupItem value="audio" id="audio" className="mt-1" />
                             <label htmlFor="audio" className="flex-1 space-y-2 cursor-pointer">
                                 <span className="font-medium">Pre-recorded Audio</span>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Play a pre-recorded audio file before disconnecting
                                 </p>
                             </label>

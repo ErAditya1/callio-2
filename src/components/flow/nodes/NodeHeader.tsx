@@ -1,6 +1,10 @@
 import { Slot } from "@radix-ui/react-slot";
 import { useNodeId, useReactFlow } from "@xyflow/react";
-import { EllipsisVertical, Trash } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  MoreVerticalIcon,
+  TrashIcon,
+} from "@hugeicons/core-free-icons";;
 import { forwardRef, HTMLAttributes, ReactNode,useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -163,7 +167,7 @@ export const NodeHeaderMenuAction = forwardRef<
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <NodeHeaderAction ref={ref} {...props}>
-                    {trigger ?? <EllipsisVertical />}
+                    {trigger ?? <HugeiconsIcon icon={MoreVerticalIcon} />}
                 </NodeHeaderAction>
             </DropdownMenuTrigger>
             <DropdownMenuContent>{children}</DropdownMenuContent>
@@ -185,7 +189,7 @@ export const NodeHeaderDeleteAction = () => {
 
     return (
         <NodeHeaderAction onClick={handleClick} label="Delete node">
-            <Trash />
+            <HugeiconsIcon icon={TrashIcon} />
         </NodeHeaderAction>
     );
 };

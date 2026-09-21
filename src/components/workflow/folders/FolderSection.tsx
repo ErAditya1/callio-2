@@ -1,15 +1,16 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    Archive,
-    ChevronRight,
-    Folder as FolderIcon,
-    FolderOpen,
-    Inbox,
-    MoreVertical,
-    Pencil,
-    Trash2,
-} from 'lucide-react';
+  Archive01Icon,
+  ChevronRightIcon,
+  Delete02Icon,
+  Folder01Icon,
+  FolderOpenIcon,
+  InboxIcon,
+  MoreVerticalIcon,
+  PencilIcon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -131,26 +132,26 @@ export function FolderSection({
                             className="group flex flex-1 items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent"
                             aria-label={`Toggle ${title}`}
                         >
-                            <ChevronRight
+                            <HugeiconsIcon icon={ChevronRightIcon}
                                 size={16}
                                 className={cn(
-                                    'shrink-0 text-muted-foreground transition-transform duration-200',
+                                    'shrink-0 text-[#737373] transition-transform duration-200',
                                     open && 'rotate-90',
                                 )}
                             />
                             {isFolder ? (
                                 open ? (
-                                    <FolderOpen size={17} className="shrink-0 text-amber-500" />
+                                    <HugeiconsIcon icon={FolderOpenIcon} size={17} className="shrink-0 text-amber-500" />
                                 ) : (
-                                    <FolderIcon size={17} className="shrink-0 text-amber-500" />
+                                    <HugeiconsIcon icon={Folder01Icon} size={17} className="shrink-0 text-amber-500" />
                                 )
                             ) : isArchived ? (
-                                <Archive size={16} className="shrink-0 text-muted-foreground" />
+                                <HugeiconsIcon icon={Archive01Icon} size={16} className="shrink-0 text-[#737373]" />
                             ) : (
-                                <Inbox size={17} className="shrink-0 text-muted-foreground" />
+                                <HugeiconsIcon icon={InboxIcon} size={17} className="shrink-0 text-[#737373]" />
                             )}
                             <span
-                                className={cn('font-medium', !isFolder && 'text-muted-foreground')}
+                                className={cn('font-medium', !isFolder && 'text-[#737373]')}
                             >
                                 {title}
                             </span>
@@ -166,22 +167,22 @@ export function FolderSection({
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-muted-foreground"
+                                    className="h-8 w-8 text-[#737373]"
                                     aria-label="Folder actions"
                                 >
-                                    <MoreVertical size={16} />
+                                    <HugeiconsIcon icon={MoreVerticalIcon} size={16} />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => setIsRenaming(true)}>
-                                    <Pencil size={14} className="mr-2" />
+                                    <HugeiconsIcon icon={PencilIcon} size={14} className="mr-2" />
                                     Rename
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                     onClick={() => setConfirmDelete(true)}
                                     className="text-destructive focus:text-destructive"
                                 >
-                                    <Trash2 size={14} className="mr-2" />
+                                    <HugeiconsIcon icon={Delete02Icon} size={14} className="mr-2" />
                                     Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -200,7 +201,7 @@ export function FolderSection({
                                 currentFolderId={folder?.id ?? null}
                             />
                         ) : (
-                            <div className="rounded-lg border border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+                            <div className="rounded-lg border border-dashed bg-[#F7F7F7] p-6 text-center text-sm text-[#737373]">
                                 {isArchived
                                     ? 'No archived agents.'
                                     : isFolder

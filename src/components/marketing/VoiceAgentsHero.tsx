@@ -3,26 +3,27 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  PhoneCall,
-  Sparkles,
-  Zap,
-  ShieldCheck,
-  Calendar,
-  Headphones,
-  Building2,
-  Volume2,
-  CheckCircle2,
-  Play,
-  Pause,
-  Layers,
-  Bot,
-  Activity,
-  Radio,
-  Copy,
-  Loader2,
-} from 'lucide-react';
+  Activity01Icon,
+  ArrowRight01Icon,
+  BotIcon,
+  Building02Icon,
+  Calendar01Icon,
+  CheckmarkCircle02Icon,
+  Copy01Icon,
+  HeadphonesIcon,
+  Layers01Icon,
+  Loading02Icon,
+  PauseIcon,
+  PhoneCallIcon,
+  PlayIcon,
+  RadioIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  VolumeHighIcon,
+  ZapIcon,
+} from "@hugeicons/core-free-icons";;
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -40,7 +41,7 @@ const HERO_PREVIEWS = [
     color: 'from-amber-500 to-orange-500',
     borderColor: 'border-amber-500/30',
     badgeColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    icon: Zap,
+    icon: ZapIcon,
     callerUtterance: 'Hey, I filled out your demo request form. How does your pricing work?',
     agentResponse: 'Thanks for reaching out! Our pricing scales with your call volume, starting with 500 free minutes. Are you looking to handle inbound reception or outbound sales calls?',
     latency: '312ms',
@@ -55,7 +56,7 @@ const HERO_PREVIEWS = [
     color: 'from-emerald-500 to-teal-500',
     borderColor: 'border-emerald-500/30',
     badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    icon: Calendar,
+    icon: Calendar01Icon,
     callerUtterance: 'Hi, do you have any appointments available this Thursday after 3 PM?',
     agentResponse: 'Let me check real-time availability for you. Yes! We have 3:30 PM and 4:45 PM available on Thursday. Which one works best for you?',
     latency: '298ms',
@@ -70,7 +71,7 @@ const HERO_PREVIEWS = [
     color: 'from-blue-500 to-indigo-500',
     borderColor: 'border-blue-500/30',
     badgeColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    icon: Headphones,
+    icon: HeadphonesIcon,
     callerUtterance: 'Where is my order #84920? I need it delivered by tomorrow.',
     agentResponse: 'I located order #84920. It is out for delivery today with FedEx and scheduled to arrive by 6:00 PM. Would you like me to send live GPS tracking to this phone number?',
     latency: '325ms',
@@ -85,7 +86,7 @@ const HERO_PREVIEWS = [
     color: 'from-purple-500 to-pink-500',
     borderColor: 'border-purple-500/30',
     badgeColor: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-    icon: Building2,
+    icon: Building02Icon,
     callerUtterance: 'I am looking for a 3-bedroom condo in downtown under 800k.',
     agentResponse: 'We have 4 active properties matching that exact criteria right now. One includes a private terrace and 2 parking stalls. Can I text you the virtual tour brochure right now?',
     latency: '330ms',
@@ -185,7 +186,7 @@ export function VoiceAgentsHero() {
             >
               <Link href="/workflow">
                 Build Custom Agent
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-2" />
               </Link>
             </Button>
 
@@ -195,7 +196,7 @@ export function VoiceAgentsHero() {
               onClick={() => handleOpenPhoneTest()}
               className="h-12 px-7 rounded-xl border-border/80 bg-card/60 backdrop-blur-md text-foreground hover:bg-muted/80 font-medium text-sm transition-all hover:border-foreground/30 shadow-xs flex items-center gap-2"
             >
-              <PhoneCall className="w-4 h-4 text-emerald-500" />
+              <HugeiconsIcon icon={PhoneCallIcon} className="w-4 h-4 text-emerald-500" />
               <span>Test Live Call on Your Phone</span>
             </Button>
           </div>
@@ -203,13 +204,13 @@ export function VoiceAgentsHero() {
           {/* Quick micro guarantees */}
           <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground pt-1">
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> No robotic monotone
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-emerald-500" /> No robotic monotone
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Natural barge-in (Interruptible)
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-emerald-500" /> Natural barge-in (Interruptible)
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Instant calendar & CRM sync
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-emerald-500" /> Instant calendar & CRM sync
             </span>
           </div>
         </div>
@@ -217,7 +218,7 @@ export function VoiceAgentsHero() {
         {/* Interactive Live Voice Engine Showcase Console */}
         <div className="max-w-4xl mx-auto">
           {/* Glass Console Outer Frame */}
-          <div className="rounded-3xl border border-border/80 bg-card/80 dark:bg-[#0c1017]/80 backdrop-blur-xl shadow-2xl shadow-indigo-950/20 overflow-hidden">
+          <div className="rounded-3xl border border-border/80 bg-card/80 backdrop-blur-xl shadow-2xl shadow-indigo-950/20 overflow-hidden">
             {/* Top Navigation Tabs for Roles */}
             <div className="px-4 py-3 border-b border-border/60 bg-muted/25 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none">
               <div className="flex items-center gap-1.5">
@@ -234,7 +235,7 @@ export function VoiceAgentsHero() {
                           : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                       }`}
                     >
-                      <TabIcon className={`w-3.5 h-3.5 ${isActive ? 'text-indigo-400' : 'opacity-60'}`} />
+                      <HugeiconsIcon icon={TabIcon} className={`w-3.5 h-3.5 ${isActive ? 'text-indigo-400' : 'opacity-60'}`} />
                       <span>{tab.agentName}</span>
                       <span className="text-[10px] opacity-60 hidden sm:inline">({tab.role.split(' ')[0]})</span>
                     </button>
@@ -256,7 +257,7 @@ export function VoiceAgentsHero() {
                   <div
                     className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${currentPreview.color} text-white font-bold flex items-center justify-center text-base shadow-md`}
                   >
-                    <IconComponent className="w-6 h-6" />
+                    <HugeiconsIcon icon={IconComponent} className="w-6 h-6" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
@@ -284,12 +285,12 @@ export function VoiceAgentsHero() {
                   >
                     {isCloning ? (
                       <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                        <HugeiconsIcon icon={Loading02Icon} className="w-3.5 h-3.5 animate-spin text-indigo-400" />
                         <span>Importing...</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5 text-indigo-400" />
+                        <HugeiconsIcon icon={Copy01Icon} className="w-3.5 h-3.5 text-indigo-400" />
                         <span>Import to Dashboard</span>
                       </>
                     )}
@@ -300,7 +301,7 @@ export function VoiceAgentsHero() {
                     onClick={() => handleOpenPhoneTest(currentPreview.id)}
                     className="h-9 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs flex items-center gap-2 shadow-sm transition-all"
                   >
-                    <PhoneCall className="w-3.5 h-3.5" />
+                    <HugeiconsIcon icon={PhoneCallIcon} className="w-3.5 h-3.5" />
                     <span>Call on Phone</span>
                   </Button>
                 </div>
@@ -328,7 +329,7 @@ export function VoiceAgentsHero() {
                   <div className="p-4 rounded-2xl rounded-tr-sm bg-indigo-500/10 border border-indigo-500/20 text-xs sm:text-sm text-foreground leading-relaxed shadow-xs space-y-2">
                     <p>&ldquo;{currentPreview.agentResponse}&rdquo;</p>
                     <div className="flex items-center gap-2 text-[10px] text-indigo-400 font-mono pt-1">
-                      <Zap className="w-3 h-3" />
+                      <HugeiconsIcon icon={ZapIcon} className="w-3 h-3" />
                       <span>{currentPreview.actionExecuted}</span>
                     </div>
                   </div>
@@ -345,13 +346,13 @@ export function VoiceAgentsHero() {
                       title={isSimulatingWave ? 'Pause Waveform' : 'Play Waveform'}
                     >
                       {isSimulatingWave ? (
-                        <Pause className="w-3.5 h-3.5" />
+                        <HugeiconsIcon icon={PauseIcon} className="w-3.5 h-3.5" />
                       ) : (
-                        <Play className="w-3.5 h-3.5 ml-0.5" />
+                        <HugeiconsIcon icon={PlayIcon} className="w-3.5 h-3.5 ml-0.5" />
                       )}
                     </button>
                     <div className="flex items-center gap-1">
-                      <Volume2 className="w-4 h-4 text-indigo-400 shrink-0" />
+                      <HugeiconsIcon icon={VolumeHighIcon} className="w-4 h-4 text-indigo-400 shrink-0" />
                       <span className="text-xs font-medium text-foreground">
                         Voice Stream Spectrum
                       </span>
@@ -384,7 +385,7 @@ export function VoiceAgentsHero() {
                   {/* Telephony Specs */}
                   <div className="flex items-center gap-3 text-[11px] text-muted-foreground font-mono">
                     <span className="flex items-center gap-1">
-                      <Activity className="w-3 h-3 text-emerald-500" />
+                      <HugeiconsIcon icon={Activity01Icon} className="w-3 h-3 text-emerald-500" />
                       <span>48kHz Opus</span>
                     </span>
                     <span>•</span>

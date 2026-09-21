@@ -2,16 +2,15 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Sparkles,
-  ArrowRight,
-  Loader2,
-  PhoneIncoming,
-  PhoneOutgoing,
-  Layers,
-  ChevronRight,
-  Check,
-} from 'lucide-react';
+  ArrowRight01Icon,
+  ChevronRightIcon,
+  Layers01Icon,
+  Loading02Icon,
+  PhoneIncomingIcon,
+  PhoneOutgoingIcon,
+} from "@hugeicons/core-free-icons";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/lib/auth';
@@ -64,16 +63,12 @@ export function WorkflowTemplateGallery() {
     <div className="mb-10 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-indigo-400" />
+          <h2 className="text-[22px] font-bold text-foreground">
             Pre-Built Agent Templates
           </h2>
-          <p className="text-xs text-muted-foreground">
-            Pick a ready-made agent template and clone it into your workspace with 1-click.
-          </p>
         </div>
 
-        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
           {/* Category Chips */}
           <div className="flex flex-wrap items-center gap-1">
             {categories.map((cat) => (
@@ -83,20 +78,16 @@ export function WorkflowTemplateGallery() {
                   setSelectedCategory(cat.key);
                   setShowAll(true);
                 }}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                className={`px-4 py-2 rounded-full text-[13px] font-medium transition-all border ${
                   selectedCategory === cat.key
-                    ? 'bg-foreground text-background font-semibold shadow-xs'
-                    : 'bg-muted/40 hover:bg-muted/70 text-muted-foreground hover:text-foreground border border-border/50'
+                    ? 'bg-neutral-950 text-white border-neutral-950 font-semibold shadow-xs'
+                    : 'bg-white hover:bg-neutral-50 text-[#737373] hover:text-foreground border-[#E5E5E5]'
                 }`}
               >
                 {cat.label}
               </button>
             ))}
           </div>
-
-          <Badge variant="outline" className="text-xs text-muted-foreground hidden lg:inline-flex">
-            {WORKFLOW_TEMPLATES.length} Available
-          </Badge>
         </div>
       </div>
 
@@ -106,69 +97,50 @@ export function WorkflowTemplateGallery() {
           return (
             <div
               key={tpl.id}
-              className="rounded-2xl border border-border/70 bg-card/50 p-5 flex flex-col justify-between hover:border-border hover:bg-card/90 transition-all duration-200 space-y-4 shadow-sm"
+              className="rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF]/50 px-5 pb-5 pt-4 flex flex-col justify-between hover:border-[#E5E5E5] hover:bg-[#FFFFFF] transition-all duration-200 space-y-4 shadow-sm"
             >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl">{tpl.emoji}</span>
+              <div>
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="text-[22px] font-bold leading-[1.2] text-foreground">{tpl.name}</h3>
+                  <HugeiconsIcon
+                    icon={tpl.callType === 'inbound' ? PhoneIncomingIcon : tpl.callType === 'outbound' ? PhoneOutgoingIcon : Layers01Icon}
+                    className="mt-1 size-5 shrink-0 text-neutral-700"
+                    aria-hidden="true"
+                  />
+                </div>
+                <div className="mt-2">
                   <Badge
                     variant="outline"
-                    className="text-[10px] uppercase tracking-wider font-mono flex items-center gap-1 border-border/70"
+                    className="text-[10px] uppercase tracking-wider font-mono border-[#E5E5E5]"
                   >
-                    {tpl.callType === 'inbound' ? (
-                      <>
-                        <PhoneIncoming className="w-2.5 h-2.5 text-blue-400" />
-                        Inbound
-                      </>
-                    ) : tpl.callType === 'outbound' ? (
-                      <>
-                        <PhoneOutgoing className="w-2.5 h-2.5 text-purple-400" />
-                        Outbound
-                      </>
-                    ) : (
-                      <>
-                        <Layers className="w-2.5 h-2.5 text-emerald-400" />
-                        Universal
-                      </>
-                    )}
+                    {tpl.callType === 'inbound'
+                      ? 'Inbound'
+                      : tpl.callType === 'outbound'
+                        ? 'Outbound'
+                        : 'Universal'}
                   </Badge>
                 </div>
 
-                <div>
-                  <h3 className="text-sm font-bold text-foreground">{tpl.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
-                    {tpl.description}
-                  </p>
-                </div>
-
-                <div className="space-y-1.5 pt-1">
-                  {tpl.capabilities.slice(0, 3).map((cap, i) => (
-                    <div
-                      key={i}
-                      className="text-[11px] text-muted-foreground flex items-center gap-1.5"
-                    >
-                      <Check className="w-3 h-3 text-emerald-400 shrink-0" />
-                      <span className="line-clamp-1">{cap}</span>
-                    </div>
-                  ))}
-                </div>
+                <p className="mt-3 text-[14px] text-[#737373] line-clamp-2 leading-relaxed">
+                  {tpl.description}
+                </p>
               </div>
 
-              <div className="pt-3 border-t border-border/40">
+              <div className="pt-1">
                 <Button
                   onClick={() => handleCloneTemplate(tpl)}
                   disabled={isCloning}
-                  className="w-full h-8 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-xs flex items-center justify-center gap-1.5"
+                  className="w-full h-8 text-xs font-semibold bg-neutral-950 hover:bg-neutral-800 text-white rounded-md shadow-xs flex items-center justify-center gap-1.5"
                 >
                   {isCloning ? (
                     <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <HugeiconsIcon icon={Loading02Icon} className="w-3.5 h-3.5 animate-spin" />
                       Cloning into Workspace...
                     </>
                   ) : (
                     <>
                       <span>Use Template</span>
-                      <ArrowRight className="w-3 h-3 ml-0.5" />
+                      <HugeiconsIcon icon={ArrowRight01Icon} className="w-3 h-3 ml-0.5" />
                     </>
                   )}
                 </Button>
@@ -184,10 +156,10 @@ export function WorkflowTemplateGallery() {
             variant="ghost"
             size="sm"
             onClick={() => setShowAll(!showAll)}
-            className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+            className="text-xs text-[#737373] hover:text-foreground flex items-center gap-1"
           >
             {showAll ? 'Show Fewer' : `View All (${filteredTemplates.length}) Templates`}
-            <ChevronRight className={`w-3.5 h-3.5 transition-transform ${showAll ? '-rotate-90' : 'rotate-90'}`} />
+            <HugeiconsIcon icon={ChevronRightIcon} className={`w-3.5 h-3.5 transition-transform ${showAll ? '-rotate-90' : 'rotate-90'}`} />
           </Button>
         </div>
       )}

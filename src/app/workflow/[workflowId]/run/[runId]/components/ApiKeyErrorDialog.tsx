@@ -1,4 +1,10 @@
-import { AlertCircle, CreditCard, ExternalLink, Key } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  CreditCardIcon,
+  ExternalLinkIcon,
+  Key01Icon,
+} from "@hugeicons/core-free-icons";;
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -33,7 +39,7 @@ export const ApiKeyErrorDialog = ({
         : isServiceKeyOrgMismatch
             ? "Service Token Account Mismatch"
             : "API Configuration Error";
-    const icon = isQuotaError ? <CreditCard className="h-5 w-5 text-orange-500" /> : <Key className="h-5 w-5 text-red-500" />;
+    const icon = isQuotaError ? <HugeiconsIcon icon={CreditCardIcon} className="h-5 w-5 text-orange-500" /> : <HugeiconsIcon icon={Key01Icon} className="h-5 w-5 text-red-500" />;
     const buttonText = isBillingCreditsError
         ? "Go to Billing"
         : isServiceKeyOrgMismatch
@@ -55,11 +61,11 @@ export const ApiKeyErrorDialog = ({
                     </DialogTitle>
                     <DialogDescription className="pt-3" asChild>
                         <div className="flex items-start gap-2">
-                            <AlertCircle className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                            <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4 text-[#737373] mt-0.5 flex-shrink-0" />
                             <div className="text-sm space-y-1">
                                 <p className="font-medium text-foreground">{error}</p>
                                 {isBillingCreditsError && (
-                                    <p className="text-muted-foreground">
+                                    <p className="text-[#737373]">
                                         Purchase credits from Billing to continue using CallioAI-managed models.
                                     </p>
                                 )}
@@ -68,9 +74,9 @@ export const ApiKeyErrorDialog = ({
                                         href={SERVICE_KEYS_DOCS_URL}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-0.5 text-muted-foreground underline"
+                                        className="inline-flex items-center gap-0.5 text-[#737373] underline"
                                     >
-                                        Learn more <ExternalLink className="h-3 w-3" />
+                                        Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                                     </a>
                                 )}
                             </div>

@@ -11,7 +11,10 @@
 // primary action and the focused-field underline (see .lead-form-* in
 // globals.css).
 
-import type { LucideIcon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+} from "@hugeicons/core-free-icons";
+import type { IconSvgElement } from "@hugeicons/react";;
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -26,7 +29,7 @@ import { cn } from "@/lib/utils";
 
 interface LeadModalShellProps {
   // Accepted for caller compatibility; the Ledger design renders no icon.
-  icon?: LucideIcon;
+  icon?: IconSvgElement;
   title: string;
   eyebrow?: string;
   description?: string;

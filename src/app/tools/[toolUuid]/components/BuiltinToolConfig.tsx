@@ -43,7 +43,7 @@ export function BuiltinToolConfig({
                 {/* Tool Description */}
                 <div className="space-y-2">
                     <Label htmlFor="tool-description">Description</Label>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-[#737373]">
                         Provide a description which makes it easy for LLM to understand what this tool does
                     </p>
                     <Textarea

@@ -1,20 +1,21 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  Blocks,
-  Calendar,
-  CheckCircle2,
-  Code2,
-  Database,
-  Globe,
-  Headphones,
-  Link2,
-  MessageSquare,
-  Search,
-  Sparkles,
-  Zap
-} from 'lucide-react';
+  ArrowRight01Icon,
+  BlocksIcon,
+  Calendar01Icon,
+  CheckmarkCircle02Icon,
+  CodeSquareIcon,
+  Database01Icon,
+  GlobeIcon,
+  HeadphonesIcon,
+  Link02Icon,
+  MessageSquareIcon,
+  Search01Icon,
+  SparklesIcon,
+  ZapIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
@@ -100,7 +101,7 @@ export default function IntegrationsPage() {
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-14">
         <Badge variant="outline" className="mb-3 border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3 py-1">
-          <Blocks className="w-3.5 h-3.5 mr-1.5 inline" />
+          <HugeiconsIcon icon={BlocksIcon} className="w-3.5 h-3.5 mr-1.5 inline" />
           Seamless Ecosystem
         </Badge>
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">
@@ -137,7 +138,7 @@ export default function IntegrationsPage() {
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <HugeiconsIcon icon={Search01Icon} className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search integrations..."
             value={search}

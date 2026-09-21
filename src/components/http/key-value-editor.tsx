@@ -1,6 +1,10 @@
 "use client";
 
-import { PlusIcon, Trash2Icon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  PlusIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,7 +70,7 @@ export function KeyValueEditor({
                         onClick={() => removeItem(index)}
                         disabled={disabled}
                     >
-                        <Trash2Icon className="h-4 w-4" />
+                        <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
                     </Button>
                 </div>
             ))}
@@ -78,7 +82,7 @@ export function KeyValueEditor({
                 className="w-fit"
                 disabled={disabled}
             >
-                <PlusIcon className="h-4 w-4 mr-1" /> {addButtonText}
+                <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-1" /> {addButtonText}
             </Button>
         </div>
     );

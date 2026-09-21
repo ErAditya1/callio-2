@@ -24,12 +24,12 @@ interface DispositionChartProps {
 }
 
 const COLORS = [
-  '#3b82f6', // blue-500
-  '#10b981', // emerald-500
-  '#f59e0b', // amber-500
-  '#8b5cf6', // violet-500
-  '#ef4444', // red-500
-  '#6b7280', // gray-500 for "Other"
+  '#7186AD', // accent
+  '#171717', // primary
+  '#737373', // secondary
+  '#DCE3EF', // subtle border
+  '#5D7299', // accent hover
+  '#E5E5E5', // border
 ];
 
 export function DispositionChart({ data }: DispositionChartProps) {
@@ -59,7 +59,7 @@ export function DispositionChart({ data }: DispositionChartProps) {
       </CardHeader>
       <CardContent>
         {data.length === 0 ? (
-          <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+          <div className="h-[300px] flex items-center justify-center text-[#737373]">
             No disposition data available
           </div>
         ) : (

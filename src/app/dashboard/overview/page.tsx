@@ -1,50 +1,58 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowRight,
-  ArrowUpRight,
-  Award,
-  Calendar,
-  CheckCircle2,
-  Clock,
-  Headphones,
-  Lightbulb,
-  PhoneCall,
-  PhoneForwarded,
-  PhoneIncoming,
-  Radio,
-  Sparkles,
-  TrendingUp,
-  Users
-} from 'lucide-react';
+  ArrowRight01Icon,
+  ArrowUpRight01Icon,
+  Award01Icon,
+  Calendar01Icon,
+  ChartIncreaseIcon,
+  CheckmarkCircle02Icon,
+  Clock01Icon,
+  HeadphonesIcon,
+  PhoneCallIcon,
+  PhoneForwardedIcon,
+  PhoneIncomingIcon,
+  RadioIcon,
+  SparklesIcon,
+  UsersIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { MOCK_AGENTS, MOCK_CALLS } from '@/lib/services/mockData';
 
 export default function DashboardOverviewPage() {
   return (
-    <div className="space-y-8">
+    <div className="app-page space-y-8">
       {/* Morning Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-            Good morning, Acme Health
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#171717]">
+            Heyy👋 Divyansh
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-[#737373] mt-1">
             Here is your live conversational operations summary for today, September 8, 2026.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5">
-          <Button variant="outline" size="sm" asChild className="rounded-xl text-xs">
+          <Button variant="outline" size="sm" asChild className="rounded-xl text-xs border-[#DCE3EF] hover:bg-[#F0F3F9] hover:text-[#7186AD] focus-visible:border-[#DCE3EF] focus-visible:ring-[#DCE3EF]">
             <Link href="/demo/call">
-              <Radio className="w-3.5 h-3.5 mr-1.5 text-rose-500 animate-pulse" />
+              <HugeiconsIcon icon={RadioIcon} className="w-3.5 h-3.5 mr-1.5 text-[#7186AD]" />
               Test Live Agent
             </Link>
           </Button>
-          <Button asChild size="sm" className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs">
+          <Button asChild size="sm" className="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl text-xs">
             <Link href="/dashboard/agents/create">
               + Create Agent
             </Link>
@@ -53,67 +61,64 @@ export default function DashboardOverviewPage() {
       </div>
 
       {/* Overview KPI Cards Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div className="p-4 rounded-2xl border border-border/80 bg-card space-y-1 shadow-sm">
-          <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Calls Today</div>
-          <div className="text-2xl font-extrabold text-foreground">187</div>
-          <div className="text-[10px] text-emerald-400 font-medium flex items-center gap-0.5">
-            <TrendingUp className="w-3 h-3" /> ↑ 12% vs yesterday
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="p-4 rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] space-y-1 shadow-sm">
+          <div className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider">Calls Today</div>
+          <div className="text-2xl font-extrabold text-[#171717]">187</div>
+          <div className="text-[10px] text-[#7186AD] font-medium flex items-center gap-0.5">
+            <HugeiconsIcon icon={ChartIncreaseIcon} className="w-3 h-3 text-[#7186AD]" /> ↑ 12% vs yesterday
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-border/80 bg-card space-y-1 shadow-sm">
-          <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Connected Rate</div>
-          <div className="text-2xl font-extrabold text-foreground">96.8%</div>
-          <div className="text-[10px] text-emerald-400 font-medium">Zero missed calls</div>
+        <div className="p-4 rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] space-y-1 shadow-sm">
+          <div className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider">Connected Rate</div>
+          <div className="text-2xl font-extrabold text-[#171717]">96.8%</div>
+          <div className="text-[10px] text-[#7186AD] font-medium">Zero missed calls</div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-border/80 bg-card space-y-1 shadow-sm">
-          <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Appointments</div>
-          <div className="text-2xl font-extrabold text-indigo-400">42</div>
-          <div className="text-[10px] text-indigo-400 font-medium">Direct to Calendar</div>
+        <div className="p-4 rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] space-y-1 shadow-sm">
+          <div className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider">Appointments</div>
+          <div className="text-2xl font-extrabold text-[#171717]">42</div>
+          <div className="text-[10px] text-[#7186AD] font-medium">Direct to Calendar</div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-border/80 bg-card space-y-1 shadow-sm">
-          <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Qualified Leads</div>
-          <div className="text-2xl font-extrabold text-purple-400">28</div>
-          <div className="text-[10px] text-purple-400 font-medium">Speed-to-lead &lt;30s</div>
+        <div className="p-4 rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] space-y-1 shadow-sm">
+          <div className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider">Qualified Leads</div>
+          <div className="text-2xl font-extrabold text-[#171717]">28</div>
+          <div className="text-[10px] text-[#7186AD] font-medium">Speed-to-lead &lt;30s</div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-border/80 bg-card space-y-1 shadow-sm">
-          <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Avg Call Time</div>
-          <div className="text-2xl font-extrabold text-foreground">2m 14s</div>
-          <div className="text-[10px] text-muted-foreground">Fast resolution</div>
-        </div>
-
-        <div className="p-4 rounded-2xl border border-border/80 bg-card space-y-1 shadow-sm">
-          <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Resolution Rate</div>
-          <div className="text-2xl font-extrabold text-emerald-400">93.4%</div>
-          <div className="text-[10px] text-emerald-400 font-medium">Without escalation</div>
+        <div className="p-4 rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] space-y-1 shadow-sm">
+          <div className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider">Avg Call Time</div>
+          <div className="text-2xl font-extrabold text-[#171717]">2m 14s</div>
+          <div className="text-[10px] text-[#737373]">Fast resolution</div>
         </div>
       </div>
 
-      {/* Main Charts & Activity Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left 8 Cols: Call Volume Trends Chart */}
-        <div className="lg:col-span-8 rounded-3xl border border-border/80 bg-card p-6 shadow-md space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-border/60">
-            <div>
-              <h2 className="text-base font-bold text-foreground">Call Activity & Volume</h2>
-              <p className="text-xs text-muted-foreground">Hourly inbound vs outbound calls handled today</p>
-            </div>
+      {/* Call Volume Chart (full width) */}
+      <div>
+        <div className="rounded-3xl border border-[#E5E5E5] bg-[#FFFFFF] p-6 shadow-md space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[22px] font-bold text-[#171717]">Call Activity & Volume</h2>
             <div className="flex items-center gap-3 text-xs font-medium">
-              <span className="flex items-center gap-1.5 text-muted-foreground">
-                <span className="w-2 h-2 rounded-full bg-indigo-500" /> Inbound
+              <span className="flex items-center gap-1.5 text-[#737373]">
+                <span className="w-2 h-2 rounded-full bg-[#171717]" /> Inbound
               </span>
-              <span className="flex items-center gap-1.5 text-muted-foreground">
-                <span className="w-2 h-2 rounded-full bg-purple-500" /> Outbound
+              <span className="flex items-center gap-1.5 text-[#737373]">
+                <span className="w-2 h-2 rounded-full bg-[#7186AD]" /> Outbound
               </span>
             </div>
           </div>
 
           {/* Simulated Volume Bar Chart */}
-          <div className="h-56 flex items-end justify-between gap-2 pt-6 px-2">
+          <div className="relative h-56 flex items-end justify-between gap-2 pt-6 px-2 border-t border-[#EAECEF] bg-[#FFFFFF]">
+            {/* gridlines */}
+            <div className="pointer-events-none absolute inset-0 flex flex-col justify-between py-6" aria-hidden="true">
+              <span className="h-px w-full bg-[#EAECEF]" />
+              <span className="h-px w-full bg-[#EAECEF]" />
+              <span className="h-px w-full bg-[#EAECEF]" />
+              <span className="h-px w-full bg-[#EAECEF]" />
+            </div>
             {[
               { time: '8 AM', inb: 14, out: 8 },
               { time: '9 AM', inb: 28, out: 19 },
@@ -126,170 +131,143 @@ export default function DashboardOverviewPage() {
               { time: '4 PM', inb: 29, out: 16 },
               { time: '5 PM', inb: 18, out: 10 }
             ].map((slot, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group">
+              <div key={i} className="relative flex-1 flex flex-col items-center gap-1.5 h-full justify-end group">
                 <div className="w-full flex items-end justify-center gap-1 h-full">
                   <div
-                    className="w-full max-w-[14px] bg-indigo-600 rounded-t-md transition-all group-hover:bg-indigo-500"
+                    className="w-full max-w-[14px] bg-[#171717] rounded-t-md transition-all group-hover:bg-[#DCE3EB]"
                     style={{ height: `${(slot.inb / 45) * 100}%` }}
                     title={`Inbound: ${slot.inb}`}
                   />
                   <div
-                    className="w-full max-w-[14px] bg-purple-500/80 rounded-t-md transition-all group-hover:bg-purple-400"
+                    className="w-full max-w-[14px] bg-[#7186AD] rounded-t-md transition-all group-hover:bg-[#5D7299]"
                     style={{ height: `${(slot.out / 45) * 100}%` }}
                     title={`Outbound: ${slot.out}`}
                   />
                 </div>
-                <span className="text-[10px] text-muted-foreground font-mono">{slot.time}</span>
+                <span className="text-[10px] text-[#737373] font-mono">{slot.time}</span>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Right 4 Cols: AI Optimization Recommendation Card */}
-        <div className="lg:col-span-4 rounded-3xl border border-indigo-500/40 bg-gradient-to-br from-indigo-950/20 via-card to-card p-6 shadow-md flex flex-col justify-between space-y-4">
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
-              <Lightbulb className="w-5 h-5" />
-            </div>
-            <h3 className="text-base font-bold text-foreground">AI Performance Insights</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Your <strong>Sarah — AI Receptionist</strong> agent has achieved a <span className="text-emerald-400 font-semibold">94.2% resolution rate</span> over the past 7 days.
-            </p>
-            <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-xs space-y-1">
-              <div className="font-semibold text-foreground">Top Customer Question:</div>
-              <div className="text-muted-foreground">"Does clinic accept Delta Dental PPO insurance?" (42 times today)</div>
-            </div>
-          </div>
-
-          <Button asChild size="sm" className="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs">
-            <Link href="/dashboard/knowledge">
-              Review Knowledge Base FAQs →
-            </Link>
-          </Button>
-        </div>
       </div>
 
       {/* Active Agents Fleet Table */}
-      <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-md space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-border/60">
+      <div className="rounded-3xl border border-[#E5E5E5] bg-[#FFFFFF] p-6 shadow-md space-y-4">
+        <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-foreground">Active Agent Fleet</h2>
-            <p className="text-xs text-muted-foreground">Current live status and performance per voice persona</p>
+            <h2 className="text-[22px] font-bold text-[#171717]">Active Agent Fleet</h2>
           </div>
-          <Button asChild variant="outline" size="sm" className="rounded-xl text-xs">
+          <Button asChild variant="outline" size="sm" className="rounded-xl text-xs border-[#DCE3EF] hover:bg-[#F0F3F9] hover:text-[#7186AD] hover:border-[#DCE3EF]">
             <Link href="/dashboard/agents">
               View All Agents
-              <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5 ml-1" />
             </Link>
           </Button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead>
-              <tr className="border-b border-border/50 text-muted-foreground uppercase tracking-wider text-[10px]">
-                <th className="pb-3 font-semibold">Agent</th>
-                <th className="pb-3 font-semibold">Voice</th>
-                <th className="pb-3 font-semibold">Status</th>
-                <th className="pb-3 font-semibold">Calls Today</th>
-                <th className="pb-3 font-semibold">Success Rate</th>
-                <th className="pb-3 font-semibold">Avg Time</th>
-                <th className="pb-3 font-semibold text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40 font-medium">
-              {MOCK_AGENTS.map((agent) => (
-                <tr key={agent.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="py-3.5 flex items-center gap-3">
+        <Table>
+          <TableHeader className="bg-[#F7F7F7]">
+            <TableRow className="hover:bg-transparent border-b border-[#E5E5E5]">
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Agent</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Voice</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Status</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Calls Today</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Success Rate</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Avg Time</TableHead>
+              <TableHead className="h-auto pb-3 text-right text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="text-xs font-medium">
+            {MOCK_AGENTS.map((agent) => (
+              <TableRow key={agent.id} className="border-b border-[#E5E5E5] hover:bg-[#F0F3F9]">
+                <TableCell className="py-3.5">
+                  <span className="flex items-center gap-3">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={agent.avatar} alt={agent.name} className="w-8 h-8 rounded-full object-cover" />
-                    <div>
-                      <div className="font-bold text-foreground text-xs">{agent.name}</div>
-                      <div className="text-[10px] text-muted-foreground">{agent.role}</div>
-                    </div>
-                  </td>
-                  <td className="py-3.5 text-muted-foreground">{agent.voiceName}</td>
-                  <td className="py-3.5">
-                    <Badge variant="outline" className="text-[10px] py-0 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-                      ● Live
-                    </Badge>
-                  </td>
-                  <td className="py-3.5 text-foreground font-semibold">{agent.metrics.callsToday} calls</td>
-                  <td className="py-3.5 text-emerald-400 font-semibold">{agent.metrics.successRate}%</td>
-                  <td className="py-3.5 text-muted-foreground">{Math.round(agent.metrics.avgDurationSec / 60)}m {agent.metrics.avgDurationSec % 60}s</td>
-                  <td className="py-3.5 text-right space-x-2">
-                    <Button asChild variant="ghost" size="sm" className="h-7 text-xs">
+                    <span>
+                      <span className="block font-bold text-[#171717] text-xs">{agent.name}</span>
+                      <span className="block text-[10px] font-normal text-[#737373]">{agent.role}</span>
+                    </span>
+                  </span>
+                </TableCell>
+                <TableCell className="py-3.5 font-normal text-[#737373]">{agent.voiceName}</TableCell>
+                <TableCell className="py-3.5">
+                  <Badge variant="outline" className="text-[10px] py-0 bg-[#F0F3F9] text-[#7186AD] border-[#DCE3EF]">
+                    ● Live
+                  </Badge>
+                </TableCell>
+                <TableCell className="py-3.5 font-semibold text-[#171717]">{agent.metrics.callsToday} calls</TableCell>
+                <TableCell className="py-3.5 font-semibold text-[#7186AD]">{agent.metrics.successRate}%</TableCell>
+                <TableCell className="py-3.5 font-normal text-[#737373]">{Math.round(agent.metrics.avgDurationSec / 60)}m {agent.metrics.avgDurationSec % 60}s</TableCell>
+                <TableCell className="py-3.5 text-right">
+                  <span className="inline-flex items-center gap-2">
+                    <Button asChild variant="ghost" size="sm" className="h-7 text-xs hover:bg-[#F0F3F9] hover:text-[#7186AD]">
                       <Link href={`/dashboard/agents/${agent.id}`}>Configure</Link>
                     </Button>
-                    <Button asChild size="sm" className="h-7 text-xs bg-indigo-600 text-white rounded-lg">
+                    <Button asChild size="sm" className="h-7 text-xs bg-neutral-950 hover:bg-neutral-800 text-white rounded-lg">
                       <Link href={`/demo/call?agent=${agent.id}`}>Test</Link>
                     </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </span>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
 
       {/* Recent Calls Feed */}
-      <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-md space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-border/60">
+      <div className="rounded-3xl border border-[#E5E5E5] bg-[#FFFFFF] p-6 shadow-md space-y-4">
+        <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-foreground">Recent Call Activity</h2>
-            <p className="text-xs text-muted-foreground">Real-time transcripts, outcomes, and caller sentiment</p>
+            <h2 className="text-[22px] font-bold text-[#171717]">Recent Call Activity</h2>
           </div>
-          <Button asChild variant="outline" size="sm" className="rounded-xl text-xs">
+          <Button asChild variant="outline" size="sm" className="rounded-xl text-xs border-[#DCE3EF] hover:bg-[#F0F3F9] hover:text-[#7186AD] hover:border-[#DCE3EF]">
             <Link href="/dashboard/calls">
               View All Calls
-              <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5 ml-1" />
             </Link>
           </Button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead>
-              <tr className="border-b border-border/50 text-muted-foreground uppercase tracking-wider text-[10px]">
-                <th className="pb-3 font-semibold">Caller</th>
-                <th className="pb-3 font-semibold">Handled By</th>
-                <th className="pb-3 font-semibold">Time</th>
-                <th className="pb-3 font-semibold">Duration</th>
-                <th className="pb-3 font-semibold">Outcome</th>
-                <th className="pb-3 font-semibold">Sentiment</th>
-                <th className="pb-3 font-semibold text-right">Review</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40 font-medium">
-              {MOCK_CALLS.map((call) => (
-                <tr key={call.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="py-3.5">
-                    <div className="font-bold text-foreground text-xs">{call.customerName}</div>
-                    <div className="text-[10px] text-muted-foreground font-mono">{call.customerPhone}</div>
-                  </td>
-                  <td className="py-3.5 text-muted-foreground">{call.agentName}</td>
-                  <td className="py-3.5 text-muted-foreground">{call.startedAt}</td>
-                  <td className="py-3.5 font-mono">{Math.floor(call.durationSec / 60)}m {call.durationSec % 60}s</td>
-                  <td className="py-3.5">
-                    <Badge variant="outline" className="text-[10px] py-0 bg-indigo-500/10 text-indigo-400 border-indigo-500/20">
-                      {call.outcome}
-                    </Badge>
-                  </td>
-                  <td className="py-3.5">
-                    <span className="text-xs font-semibold text-emerald-400">
-                      ★ {call.sentimentScore}% Positive
-                    </span>
-                  </td>
-                  <td className="py-3.5 text-right">
-                    <Button asChild variant="outline" size="sm" className="h-7 text-xs rounded-lg">
+        <Table>
+          <TableHeader className="bg-[#F7F7F7]">
+            <TableRow className="hover:bg-transparent border-b border-[#E5E5E5]">
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Caller</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Handled By</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Time</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Duration</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Outcome</TableHead>
+              <TableHead className="h-auto pb-3 text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Sentiment</TableHead>
+              <TableHead className="h-auto pb-3 text-right text-[10px] font-semibold uppercase tracking-wider text-[#737373]">Review</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="text-xs font-medium">
+            {MOCK_CALLS.map((call) => (
+              <TableRow key={call.id} className="border-b border-[#E5E5E5] hover:bg-[#F0F3F9]">
+                <TableCell className="py-3.5">
+                  <span className="block font-bold text-[#171717] text-xs">{call.customerName}</span>
+                  <span className="block text-[10px] font-normal text-[#737373] font-mono">{call.customerPhone}</span>
+                </TableCell>
+                <TableCell className="py-3.5 font-normal text-[#737373]">{call.agentName}</TableCell>
+                <TableCell className="py-3.5 font-normal text-[#737373]">{call.startedAt}</TableCell>
+                <TableCell className="py-3.5 font-normal font-mono text-[#737373]">{Math.floor(call.durationSec / 60)}m {call.durationSec % 60}s</TableCell>
+                <TableCell className="py-3.5">
+                  <Badge variant="outline" className="text-[10px] py-0 bg-[#F0F3F9] text-[#7186AD] border-[#DCE3EF]">
+                    {call.outcome}
+                  </Badge>
+                </TableCell>
+                <TableCell className="py-3.5 font-semibold text-[#7186AD]">
+                  ★ {call.sentimentScore}% Positive
+                </TableCell>
+                <TableCell className="py-3.5 text-right">
+                  <Button asChild variant="outline" size="sm" className="h-7 text-xs rounded-lg border-[#DCE3EF] hover:bg-[#F0F3F9] hover:text-[#7186AD] hover:border-[#DCE3EF]">
                       <Link href={`/dashboard/calls/${call.id}`}>Inspect Call →</Link>
                     </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

@@ -1,6 +1,12 @@
 'use client';
 
-import { FileText, RefreshCw, Search, Trash2 } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  FileTextIcon,
+  RefreshCwIcon,
+  Search01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -156,7 +162,7 @@ export default function DocumentList({ refreshTrigger }: DocumentListProps) {
       {/* Search and Refresh */}
       <div className="flex items-center gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <HugeiconsIcon icon={Search01Icon} className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#737373]" />
           <Input
             placeholder="Search documents..."
             value={searchQuery}
@@ -170,15 +176,15 @@ export default function DocumentList({ refreshTrigger }: DocumentListProps) {
           onClick={fetchDocuments}
           disabled={isLoading}
         >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <HugeiconsIcon icon={RefreshCwIcon} className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
         </Button>
       </div>
 
       {/* Document List */}
       {filteredDocuments.length === 0 ? (
         <div className="text-center py-12">
-          <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">
+          <HugeiconsIcon icon={FileTextIcon} className="w-12 h-12 text-[#737373] mx-auto mb-4" />
+          <p className="text-[#737373]">
             {searchQuery
               ? 'No documents match your search'
               : 'No documents uploaded yet'}
@@ -189,11 +195,11 @@ export default function DocumentList({ refreshTrigger }: DocumentListProps) {
           {filteredDocuments.map((doc) => (
             <div
               key={doc.document_uuid}
-              className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+              className="flex items-center justify-between p-4 border rounded-lg hover:bg-[#F7F7F7] transition-colors"
             >
               <div className="flex items-center gap-4 flex-1">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-primary" />
+                  <HugeiconsIcon icon={FileTextIcon} className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
@@ -205,7 +211,7 @@ export default function DocumentList({ refreshTrigger }: DocumentListProps) {
                       <Badge variant="outline" className="text-xs">Chunked</Badge>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-4 text-sm text-[#737373]">
                     <span>{formatFileSize(doc.file_size_bytes)}</span>
                     {doc.processing_status === 'completed' && doc.retrieval_mode !== 'full_document' && (
                       <span>{doc.total_chunks} chunks</span>
@@ -220,7 +226,7 @@ export default function DocumentList({ refreshTrigger }: DocumentListProps) {
                   {doc.docling_metadata &&
                    typeof doc.docling_metadata === 'object' &&
                    'duplicate_of' in doc.docling_metadata && (
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs text-[#737373] mt-1">
                       Duplicate of another document
                     </p>
                   )}
@@ -232,7 +238,7 @@ export default function DocumentList({ refreshTrigger }: DocumentListProps) {
                 onClick={() => handleDelete(doc.document_uuid, doc.filename)}
                 className="text-destructive hover:text-destructive/90"
               >
-                <Trash2 className="w-4 h-4" />
+                <HugeiconsIcon icon={Delete02Icon} className="w-4 h-4" />
               </Button>
             </div>
           ))}

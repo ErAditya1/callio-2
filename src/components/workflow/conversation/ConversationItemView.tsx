@@ -31,7 +31,7 @@ export function ConversationItemView({ item, actions }: ConversationItemViewProp
             return (
                 <div className="group flex w-full justify-end">
                     <div className="flex w-full items-end justify-end gap-2">
-                        <div className="flex shrink-0 items-center gap-1 rounded-lg border border-border/60 bg-background/95 px-1 py-0.5 shadow-sm">
+                        <div className="flex shrink-0 items-center gap-1 rounded-lg border border-[#E5E5E5] bg-background/95 px-1 py-0.5 shadow-sm">
                             {actions}
                         </div>
                         {bubble}

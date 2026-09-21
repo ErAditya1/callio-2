@@ -1,6 +1,10 @@
 "use client";
 
-import { Loader2, Square } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+  SquareIcon,
+} from "@hugeicons/core-free-icons";;
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -87,7 +91,7 @@ export function ManualTextChatPanel({
                     </div>
                 ) : turns.length === 0 ? (
                     <div className="flex h-full items-center justify-center px-4 py-10 text-center">
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-[#737373]">
                             {disabled
                                 ? (disabledReason ?? "Testing is paused.")
                                 : "Send a message to start the conversation."}
@@ -137,8 +141,8 @@ export function ManualTextChatPanel({
             </div>
 
             {session ? (
-                <div className="flex items-center justify-between gap-3 border-t border-border/70 pt-3">
-                    <p className="text-xs text-muted-foreground">
+                <div className="flex items-center justify-between gap-3 border-t border-[#E5E5E5] pt-3">
+                    <p className="text-xs text-[#737373]">
                         {session.is_completed
                             ? "This conversation has ended."
                             : "End the conversation and run its completion integrations."}
@@ -157,9 +161,9 @@ export function ManualTextChatPanel({
                             className="shrink-0"
                         >
                             {endingSession ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                <HugeiconsIcon icon={Loading02Icon} className="h-3.5 w-3.5 animate-spin" />
                             ) : (
-                                <Square className="h-3.5 w-3.5" />
+                                <HugeiconsIcon icon={SquareIcon} className="h-3.5 w-3.5" />
                             )}
                             {endingSession ? "Ending" : "End chat"}
                         </Button>

@@ -1,6 +1,12 @@
 'use client';
 
-import { Bot, ChevronDown, LayoutTemplate, PlusIcon } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  BotIcon,
+  ChevronDownIcon,
+  LayoutTemplateIcon,
+  PlusIcon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -85,24 +91,24 @@ export function CreateWorkflowButton() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button disabled={isCreating}>
-                    <PlusIcon className="w-4 h-4" />
+                    <HugeiconsIcon icon={PlusIcon} className="w-4 h-4" />
                     {isCreating ? 'Creating...' : 'Create Agent'}
-                    <ChevronDown className="w-4 h-4" />
+                    <HugeiconsIcon icon={ChevronDownIcon} className="w-4 h-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={handleAgentBuilder} className="cursor-pointer">
-                    <Bot className="w-4 h-4 mr-2" />
+                    <HugeiconsIcon icon={BotIcon} className="w-4 h-4 mr-2" />
                     <div>
                         <div className="font-medium">Use Agent Builder</div>
-                        <div className="text-xs text-muted-foreground">AI generates a workflow from your description</div>
+                        <div className="text-xs text-[#737373]">AI generates a workflow from your description</div>
                     </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleBlankCanvas} disabled={isCreating} className="cursor-pointer">
-                    <LayoutTemplate className="w-4 h-4 mr-2" />
+                    <HugeiconsIcon icon={LayoutTemplateIcon} className="w-4 h-4 mr-2" />
                     <div>
                         <div className="font-medium">Blank Canvas</div>
-                        <div className="text-xs text-muted-foreground">Start from scratch with an empty workflow</div>
+                        <div className="text-xs text-[#737373]">Start from scratch with an empty workflow</div>
                     </div>
                 </DropdownMenuItem>
             </DropdownMenuContent>

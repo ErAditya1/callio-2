@@ -1,19 +1,20 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Activity,
-  CheckCircle2,
-  Cpu,
-  Globe,
-  Layers,
-  Mic,
-  Phone,
-  Play,
-  Settings,
-  ShieldCheck,
-  Sparkles,
-  Zap
-} from 'lucide-react';
+  Activity01Icon,
+  CheckmarkCircle02Icon,
+  CpuIcon,
+  GlobeIcon,
+  Layers01Icon,
+  Mic01Icon,
+  PhoneIcon,
+  PlayIcon,
+  Settings01Icon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  ZapIcon,
+} from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -29,7 +30,7 @@ export function ProductSimulator() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <Badge variant="outline" className="mb-3 border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3 py-1">
-            <Zap className="w-3.5 h-3.5 mr-1.5 inline" />
+            <HugeiconsIcon icon={ZapIcon} className="w-3.5 h-3.5 mr-1.5 inline" />
             Simple 4-Step Lifecycle
           </Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
@@ -43,10 +44,10 @@ export function ProductSimulator() {
         {/* Tab Navigation */}
         <div className="flex items-center justify-center gap-2 max-w-xl mx-auto mb-10 p-1.5 rounded-2xl bg-card border border-border/80 shadow-md">
           {[
-            { key: 'build', label: '1. Build', icon: Sparkles },
-            { key: 'test', label: '2. Test', icon: Mic },
-            { key: 'deploy', label: '3. Deploy', icon: Globe },
-            { key: 'monitor', label: '4. Monitor', icon: Activity }
+            { key: 'build', label: '1. Build', icon: SparklesIcon },
+            { key: 'test', label: '2. Test', icon: Mic01Icon },
+            { key: 'deploy', label: '3. Deploy', icon: GlobeIcon },
+            { key: 'monitor', label: '4. Monitor', icon: Activity01Icon }
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
@@ -60,7 +61,7 @@ export function ProductSimulator() {
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <HugeiconsIcon icon={Icon} className="w-3.5 h-3.5" />
                 {tab.label}
               </button>
             );
@@ -144,7 +145,7 @@ export function ProductSimulator() {
 
               <div className="p-6 rounded-2xl bg-muted/20 border border-border/50 text-center space-y-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-indigo-500/30">
-                  <Mic className="w-8 h-8 animate-pulse" />
+                  <HugeiconsIcon icon={Mic01Icon} className="w-8 h-8 animate-pulse" />
                 </div>
                 <div>
                   <div className="font-bold text-foreground text-base">Sarah is listening...</div>
@@ -188,7 +189,7 @@ export function ProductSimulator() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-5 rounded-2xl border border-indigo-500/40 bg-indigo-500/5 space-y-2">
                   <div className="flex items-center gap-2 font-semibold text-foreground text-sm">
-                    <Phone className="w-4 h-4 text-indigo-400" />
+                    <HugeiconsIcon icon={PhoneIcon} className="w-4 h-4 text-indigo-400" />
                     Dedicated Phone Number
                   </div>
                   <div className="text-xl font-mono font-bold text-indigo-400">+1 (888) 492-3021</div>
@@ -197,7 +198,7 @@ export function ProductSimulator() {
 
                 <div className="p-5 rounded-2xl border border-border/60 bg-muted/20 space-y-2">
                   <div className="flex items-center gap-2 font-semibold text-foreground text-sm">
-                    <Globe className="w-4 h-4 text-emerald-400" />
+                    <HugeiconsIcon icon={GlobeIcon} className="w-4 h-4 text-emerald-400" />
                     Website Calling Widget
                   </div>
                   <div className="text-sm font-mono text-muted-foreground truncate">

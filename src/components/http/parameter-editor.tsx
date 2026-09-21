@@ -1,6 +1,10 @@
 "use client";
 
-import { PlusIcon, Trash2Icon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  PlusIcon,
+} from "@hugeicons/core-free-icons";;
 
 import type { ToolParameter as ApiToolParameter } from "@/client/types.gen";
 import { Button } from "@/components/ui/button";
@@ -87,7 +91,7 @@ export function ParameterEditor({
                             disabled={disabled}
                             className="h-8 w-8"
                         >
-                            <Trash2Icon className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                            <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4 text-muted-foreground hover:text-destructive" />
                         </Button>
                     </div>
 
@@ -170,7 +174,7 @@ export function ParameterEditor({
                 className="w-fit"
                 disabled={disabled}
             >
-                <PlusIcon className="h-4 w-4 mr-1" /> Add Parameter
+                <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-1" /> Add Parameter
             </Button>
         </div>
     );
@@ -232,7 +236,7 @@ export function PresetParameterEditor({
                             disabled={disabled}
                             className="h-8 w-8"
                         >
-                            <Trash2Icon className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                            <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4 text-muted-foreground hover:text-destructive" />
                         </Button>
                     </div>
 
@@ -315,7 +319,7 @@ export function PresetParameterEditor({
                 className="w-fit"
                 disabled={disabled}
             >
-                <PlusIcon className="h-4 w-4 mr-1" /> Add Preset Parameter
+                <HugeiconsIcon icon={PlusIcon} className="h-4 w-4 mr-1" /> Add Preset Parameter
             </Button>
         </div>
     );

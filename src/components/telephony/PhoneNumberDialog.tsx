@@ -229,13 +229,13 @@ export function PhoneNumberDialog({
               <p className="text-xs text-destructive">{addressError}</p>
             )}
             {isEdit && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[#737373]">
                 Address cannot be changed. Delete this number and create a new one to
                 change it.
               </p>
             )}
             {isEdit && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[#737373]">
                 Stored as <code>{existing?.address_normalized}</code> ({existing?.address_type})
               </p>
             )}
@@ -278,7 +278,7 @@ export function PhoneNumberDialog({
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[#737373]">
               Used when per-number inbound routing is enabled. Today, inbound calls still
               route by the workflow_id in the webhook URL.
             </p>
@@ -301,7 +301,7 @@ export function PhoneNumberDialog({
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[#737373]">
                 {trunks.length > 1
                   ? "Calls from this number leave on this trunk. Pick the one whose carrier authorised the number — carriers reject a caller ID they do not own."
                   : "Calls from this number leave on this trunk. With a single trunk Callio AI falls back to it anyway."}
@@ -318,7 +318,7 @@ export function PhoneNumberDialog({
             <div className="flex items-center justify-between rounded border p-3">
               <div>
                 <Label className="text-sm">Default caller ID for this configuration</Label>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-[#737373]">
                   Used as the from-number for test calls when set.
                 </p>
               </div>

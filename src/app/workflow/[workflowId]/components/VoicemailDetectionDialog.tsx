@@ -120,7 +120,7 @@ export const VoicemailDetectionDialog = ({
                 </DialogHeader>
 
                 <div className="space-y-4">
-                    <div className="flex items-center space-x-2 p-2 border rounded-md bg-muted/20">
+                    <div className="flex items-center space-x-2 p-2 border rounded-md bg-[#F7F7F7]">
                         <Switch
                             id="voicemail-enabled"
                             checked={enabled}
@@ -133,14 +133,14 @@ export const VoicemailDetectionDialog = ({
                         <>
                             {/* LLM Configuration */}
                             <div className="space-y-3">
-                                <div className="flex items-center space-x-2 p-2 border rounded-md bg-muted/20">
+                                <div className="flex items-center space-x-2 p-2 border rounded-md bg-[#F7F7F7]">
                                     <Switch
                                         id="voicemail-use-workflow-llm"
                                         checked={useWorkflowLlm}
                                         onCheckedChange={setUseWorkflowLlm}
                                     />
                                     <Label htmlFor="voicemail-use-workflow-llm">Use Workflow LLM</Label>
-                                    <Label className="text-xs text-muted-foreground ml-2">
+                                    <Label className="text-xs text-[#737373] ml-2">
                                         Use the LLM configured in your account settings.
                                     </Label>
                                 </div>
@@ -160,7 +160,7 @@ export const VoicemailDetectionDialog = ({
                             {/* System Prompt */}
                             <div className="grid gap-2">
                                 <Label>System Prompt</Label>
-                                <Label className="text-xs text-muted-foreground">
+                                <Label className="text-xs text-[#737373]">
                                     Prompt for voicemail classification.
                                     The LLM must respond with either &quot;CONVERSATION&quot; or &quot;VOICEMAIL&quot;.
                                 </Label>
@@ -172,11 +172,11 @@ export const VoicemailDetectionDialog = ({
                             </div>
 
                             {/* Timing Configuration */}
-                            <div className="grid gap-4 p-3 border rounded-md bg-muted/10">
+                            <div className="grid gap-4 p-3 border rounded-md bg-[#F7F7F7]/10">
                                 <Label className="font-medium">Timing</Label>
                                 <div className="space-y-2">
                                     <Label className="text-sm">Speech Cutoff (seconds)</Label>
-                                    <Label className="text-xs text-muted-foreground">
+                                    <Label className="text-xs text-[#737373]">
                                         Trigger classification early if first turn speech exceeds this duration.
                                     </Label>
                                     <Input

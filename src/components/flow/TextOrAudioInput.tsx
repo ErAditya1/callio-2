@@ -1,4 +1,12 @@
-import { AlertCircle, Check, ChevronDown, Pause, Play, Search } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  PauseIcon,
+  PlayIcon,
+  Search01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useMemo, useState } from "react";
 
 import type { RecordingResponseSchema } from "@/client/types.gen";
@@ -20,7 +28,7 @@ import { cn } from "@/lib/utils";
 export function StaticTextWarning() {
     return (
         <div className="flex items-start gap-2 rounded-md bg-amber-50 p-2 text-xs text-amber-700 border border-amber-200">
-            <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+            <HugeiconsIcon icon={AlertCircleIcon} className="h-3.5 w-3.5 mt-0.5 shrink-0" />
             <span>
                 This text is spoken as-is. For multilingual workflows, choose your phrasing carefully.
                 Realtime (speech-to-speech) models can&apos;t play static text.
@@ -121,7 +129,7 @@ export function RecordingSelect({ value, onChange, recordings }: RecordingSelect
 
     return (
         <div className="space-y-2">
-            <Label className="text-xs text-muted-foreground">
+            <Label className="text-xs text-[#737373]">
                 Select a pre-recorded audio file to play.
             </Label>
             <Popover modal open={open} onOpenChange={(v) => { if (!v) { stop(); setSearch(""); } setOpen(v); }}>
@@ -134,7 +142,7 @@ export function RecordingSelect({ value, onChange, recordings }: RecordingSelect
                     >
                         {selected ? (
                             <span className="flex items-center gap-2 text-left">
-                                <code className="text-xs bg-muted px-1 py-0.5 rounded font-mono shrink-0">
+                                <code className="text-xs bg-[#F7F7F7] px-1 py-0.5 rounded font-mono shrink-0">
                                     {selected.recording_id}
                                 </code>
                                 <span className="text-sm">
@@ -144,9 +152,9 @@ export function RecordingSelect({ value, onChange, recordings }: RecordingSelect
                                 </span>
                             </span>
                         ) : (
-                            <span className="text-muted-foreground">Select a recording</span>
+                            <span className="text-[#737373]">Select a recording</span>
                         )}
-                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        <HugeiconsIcon icon={ChevronDownIcon} className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </PopoverTrigger>
                 <PopoverContentInline
@@ -154,14 +162,14 @@ export function RecordingSelect({ value, onChange, recordings }: RecordingSelect
                     align="start"
                 >
                     {recordings.length === 0 ? (
-                        <div className="p-3 text-sm text-muted-foreground text-center">
+                        <div className="p-3 text-sm text-[#737373] text-center">
                             No recordings available
                         </div>
                     ) : (
                         <div>
                             <div className="p-2 border-b">
                                 <div className="relative">
-                                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                                    <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#737373]" />
                                     <Input
                                         placeholder="Search by ID, transcript, or filename..."
                                         value={search}
@@ -173,7 +181,7 @@ export function RecordingSelect({ value, onChange, recordings }: RecordingSelect
                             </div>
                             <div className="max-h-56 overflow-y-auto">
                             {filtered.length === 0 ? (
-                                <div className="p-3 text-sm text-muted-foreground text-center">
+                                <div className="p-3 text-sm text-[#737373] text-center">
                                     No recordings match &ldquo;{search}&rdquo;
                                 </div>
                             ) : filtered.map((r) => {
@@ -190,19 +198,19 @@ export function RecordingSelect({ value, onChange, recordings }: RecordingSelect
                                         )}
                                         onClick={() => handleSelect(r)}
                                     >
-                                        <Check className={cn(
+                                        <HugeiconsIcon icon={CheckIcon} className={cn(
                                             "h-4 w-4 shrink-0",
                                             isSelected ? "opacity-100" : "opacity-0"
                                         )} />
-                                        <code className="text-xs bg-muted px-1 py-0.5 rounded font-mono shrink-0">
+                                        <code className="text-xs bg-[#F7F7F7] px-1 py-0.5 rounded font-mono shrink-0">
                                             {r.recording_id}
                                         </code>
                                         {filename && (
-                                            <span className="text-xs text-muted-foreground shrink-0 max-w-[100px] truncate">
+                                            <span className="text-xs text-[#737373] shrink-0 max-w-[100px] truncate">
                                                 {filename}
                                             </span>
                                         )}
-                                        <span className="text-xs text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded truncate flex-1 min-w-0">
+                                        <span className="text-xs text-[#737373] bg-[#F7F7F7] px-1.5 py-0.5 rounded truncate flex-1 min-w-0">
                                             {r.transcript}
                                         </span>
                                         <Button
@@ -213,9 +221,9 @@ export function RecordingSelect({ value, onChange, recordings }: RecordingSelect
                                             onClick={(e) => handlePlay(e, r)}
                                         >
                                             {isPlaying ? (
-                                                <Pause className="h-3.5 w-3.5" />
+                                                <HugeiconsIcon icon={PauseIcon} className="h-3.5 w-3.5" />
                                             ) : (
-                                                <Play className="h-3.5 w-3.5" />
+                                                <HugeiconsIcon icon={PlayIcon} className="h-3.5 w-3.5" />
                                             )}
                                         </Button>
                                     </div>

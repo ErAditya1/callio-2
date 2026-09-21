@@ -1,6 +1,13 @@
 "use client";
 
-import { ExternalLink, Plus, RotateCcw, Search, Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  ExternalLinkIcon,
+  PlusIcon,
+  RotateCcwIcon,
+  Search01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -345,14 +352,14 @@ export default function ToolsPage() {
 
     return (
         <div className="min-h-screen">
-            <div className="container mx-auto px-4 py-8">
+            <div className="app-page">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold mb-2">Tools</h1>
-                        <p className="text-muted-foreground">
+                        <p className="text-[#737373]">
                             Manage reusable tools that can be used across your workflows.{" "}
                             <a href="https://docs.dograh.com/voice-agent/tools/introduction" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 underline">
-                                Learn more <ExternalLink className="h-3 w-3" />
+                                Learn more <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                             </a>
                         </p>
                     </div>
@@ -373,7 +380,7 @@ export default function ToolsPage() {
                                     </CardDescription>
                                 </div>
                                 <Button onClick={() => setIsCreateDialogOpen(true)}>
-                                    <Plus className="w-4 h-4 mr-2" />
+                                    <HugeiconsIcon icon={PlusIcon} className="w-4 h-4 mr-2" />
                                     Create Tool
                                 </Button>
                             </div>
@@ -381,7 +388,7 @@ export default function ToolsPage() {
                         <CardContent>
                             {/* Search */}
                             <div className="relative mb-4">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <HugeiconsIcon icon={Search01Icon} className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#737373]" />
                                 <Input
                                     placeholder="Search tools..."
                                     value={searchQuery}
@@ -407,8 +414,8 @@ export default function ToolsPage() {
                                 </div>
                             ) : activeTools.length === 0 && archivedTools.length === 0 ? (
                                 <div className="text-center py-12">
-                                    {renderToolIcon("http_api", "w-12 h-12 text-muted-foreground mx-auto mb-4")}
-                                    <p className="text-muted-foreground mb-4">
+                                    {renderToolIcon("http_api", "w-12 h-12 text-[#737373] mx-auto mb-4")}
+                                    <p className="text-[#737373] mb-4">
                                         {searchQuery
                                             ? "No tools match your search"
                                             : "No tools found"}
@@ -427,7 +434,7 @@ export default function ToolsPage() {
                                             {activeTools.map((tool) => (
                                                 <div
                                                     key={tool.tool_uuid}
-                                                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                                                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-[#F7F7F7] cursor-pointer transition-colors"
                                                     onClick={() =>
                                                         router.push(`/tools/${tool.tool_uuid}`)
                                                     }
@@ -450,7 +457,7 @@ export default function ToolsPage() {
                                                                 {getCategoryBadge(tool.category)}
                                                             </div>
                                                             {tool.description && (
-                                                                <p className="text-sm text-muted-foreground mt-1">
+                                                                <p className="text-sm text-[#737373] mt-1">
                                                                     {tool.description}
                                                                 </p>
                                                             )}
@@ -464,14 +471,14 @@ export default function ToolsPage() {
                                                         }
                                                         className="text-destructive hover:text-destructive/90"
                                                     >
-                                                        <Trash2 className="w-4 h-4" />
+                                                        <HugeiconsIcon icon={Delete02Icon} className="w-4 h-4" />
                                                     </Button>
                                                 </div>
                                             ))}
                                         </div>
                                     ) : !searchQuery ? (
                                         <div className="text-center py-8">
-                                            <p className="text-muted-foreground mb-4">
+                                            <p className="text-[#737373] mb-4">
                                                 No active tools
                                             </p>
                                             <Button onClick={() => setIsCreateDialogOpen(true)}>
@@ -483,14 +490,14 @@ export default function ToolsPage() {
                                     {/* Archived Tools */}
                                     {archivedTools.length > 0 && (
                                         <div className="mt-8">
-                                            <h3 className="text-lg font-semibold text-muted-foreground mb-4">
+                                            <h3 className="text-lg font-semibold text-[#737373] mb-4">
                                                 Archived Tools
                                             </h3>
                                             <div className="space-y-4">
                                                 {archivedTools.map((tool) => (
                                                     <div
                                                         key={tool.tool_uuid}
-                                                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors opacity-60"
+                                                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-[#F7F7F7] cursor-pointer transition-colors opacity-60"
                                                         onClick={() =>
                                                             router.push(`/tools/${tool.tool_uuid}`)
                                                         }
@@ -514,7 +521,7 @@ export default function ToolsPage() {
                                                                     {getStatusBadge(tool.status)}
                                                                 </div>
                                                                 {tool.description && (
-                                                                    <p className="text-sm text-muted-foreground mt-1">
+                                                                    <p className="text-sm text-[#737373] mt-1">
                                                                         {tool.description}
                                                                     </p>
                                                                 )}
@@ -529,7 +536,7 @@ export default function ToolsPage() {
                                                             className="text-primary hover:text-primary/90"
                                                             title="Restore tool"
                                                         >
-                                                            <RotateCcw className="w-4 h-4" />
+                                                            <HugeiconsIcon icon={RotateCcwIcon} className="w-4 h-4" />
                                                         </Button>
                                                     </div>
                                                 ))}
@@ -593,13 +600,13 @@ export default function ToolsPage() {
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-[#737373]">
                                 {getCategoryConfig(newToolCategory)?.description}
                             </p>
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="name">Tool Name</Label>
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Use a descriptive name, like &quot;Get Weather using API&quot; for a tool that fetches weather
                             </Label>
                             <Input
@@ -611,7 +618,7 @@ export default function ToolsPage() {
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="description">Description (Optional)</Label>
-                            <Label className="text-xs text-muted-foreground">
+                            <Label className="text-xs text-[#737373]">
                                 Provide a description which makes it easy for LLM to understand what this tool does
                             </Label>
                             <Input
@@ -627,7 +634,7 @@ export default function ToolsPage() {
                                 <Label htmlFor="transfer-agent-workflow">
                                     Transfer to agent
                                 </Label>
-                                <Label className="text-xs text-muted-foreground">
+                                <Label className="text-xs text-[#737373]">
                                     The agent this tool hands the caller to. For more
                                     than one destination, create a tool per agent.
                                 </Label>
@@ -685,7 +692,7 @@ export default function ToolsPage() {
                                         onChange={(e) => setMcpToolsFilter(e.target.value)}
                                         placeholder="e.g., tool_one, tool_two"
                                     />
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-[#737373]">
                                         Comma-separated list of tool names to allow. Leave empty to expose all tools from the server.
                                     </p>
                                 </div>

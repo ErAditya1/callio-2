@@ -81,7 +81,7 @@ async function WorkflowList() {
                         <AgentFolderView workflows={activeWorkflows} folders={folders} />
                     ) : (
                         <Card>
-                            <CardContent className="p-8 text-center text-muted-foreground">
+                            <CardContent className="p-8 text-center text-[#737373]">
                                 No active workflows found. Create your first workflow to get started.
                             </CardContent>
                         </Card>
@@ -110,7 +110,7 @@ async function PageContent() {
     const workflowList = await WorkflowList();
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="app-page">
             {/* Pre-Built Templates Section */}
             <WorkflowTemplateGallery />
 
@@ -132,16 +132,16 @@ async function PageContent() {
 
 function WorkflowsLoading() {
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="app-page">
             {/* Your Workflows Section Loading */}
             <div className="mb-6">
                 <div className="flex justify-between items-center mb-6">
-                    <div className="h-8 w-48 bg-muted rounded"></div>
-                    <div className="h-10 w-32 bg-muted rounded"></div>
+                    <div className="h-8 w-48 bg-[#F7F7F7] rounded"></div>
+                    <div className="h-10 w-32 bg-[#F7F7F7] rounded"></div>
                 </div>
                 <Card>
                     <CardContent className="p-0">
-                        <div className="h-96 bg-muted/70" />
+                        <div className="h-96 bg-[#F7F7F7]" />
                     </CardContent>
                 </Card>
             </div>

@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ExternalLink, Plus, Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowDown01Icon,
+  ArrowUp01Icon,
+  Delete02Icon,
+  ExternalLinkIcon,
+  PlusIcon,
+} from "@hugeicons/core-free-icons";;
 
 import type { RecordingResponseSchema } from "@/client/types.gen";
 import { RecordingSelect, StaticTextWarning } from "@/components/flow/TextOrAudioInput";
@@ -138,7 +145,7 @@ export function TransferCallToolConfig({
             <CardContent className="space-y-6">
                 <div className="grid gap-2">
                     <Label>Tool Name</Label>
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         A descriptive name for this tool
                     </Label>
                     <Input
@@ -150,7 +157,7 @@ export function TransferCallToolConfig({
 
                 <div className="grid gap-2">
                     <Label>Description</Label>
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         Helps the LLM understand when to use this tool
                     </Label>
                     <Textarea
@@ -163,7 +170,7 @@ export function TransferCallToolConfig({
 
                 <div className="grid gap-4 pt-4 border-t">
                     <Label>Pre-Transfer Message</Label>
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         Choose whether to play a configured message before transferring. In dynamic mode, resolver custom_message overrides this when returned.
                     </Label>
                     <RadioGroup
@@ -173,21 +180,21 @@ export function TransferCallToolConfig({
                     >
                         <label
                             htmlFor="none"
-                            className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
+                            className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-[#F7F7F7] cursor-pointer"
                         >
                             <RadioGroupItem value="none" id="none" />
                             <div className="flex-1">
                                 <span className="font-medium">No Message</span>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Transfer the call immediately without any message
                                 </p>
                             </div>
                         </label>
-                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-muted/50">
+                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-[#F7F7F7]">
                             <RadioGroupItem value="custom" id="custom" className="mt-1" />
                             <label htmlFor="custom" className="flex-1 space-y-2 cursor-pointer">
                                 <span className="font-medium">Custom Message</span>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Play a custom message before transferring
                                 </p>
                             </label>
@@ -203,11 +210,11 @@ export function TransferCallToolConfig({
                                 />
                             </div>
                         )}
-                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-muted/50">
+                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-[#F7F7F7]">
                             <RadioGroupItem value="audio" id="audio" className="mt-1" />
                             <label htmlFor="audio" className="flex-1 space-y-2 cursor-pointer">
                                 <span className="font-medium">Pre-recorded Audio</span>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Play a pre-recorded audio file before transferring
                                 </p>
                             </label>
@@ -226,7 +233,7 @@ export function TransferCallToolConfig({
 
                 <div className="grid gap-2 pt-4 border-t">
                     <Label>Transfer Timeout</Label>
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         Maximum time to wait for destination to answer after the transfer starts (5-120 seconds)
                     </Label>
                     <Input
@@ -241,7 +248,7 @@ export function TransferCallToolConfig({
                         max="120"
                         className="w-32"
                     />
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         Default: 30 seconds
                     </Label>
                 </div>
@@ -250,7 +257,7 @@ export function TransferCallToolConfig({
                     <Label htmlFor="transfer-call-disposition">
                         Call Disposition After Successful Transfer
                     </Label>
-                    <Label className="text-xs text-muted-foreground">
+                    <Label className="text-xs text-[#737373]">
                         Optional. This value is recorded only when the transfer succeeds. Leave blank to use the default transfer disposition.
                     </Label>
                     <Input
@@ -265,7 +272,7 @@ export function TransferCallToolConfig({
                 <div className="grid gap-4 pt-4 border-t">
                     <div>
                         <Label>Destination Source</Label>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-[#737373]">
                             Choose a configured destination, ordered context rules, or an HTTP resolver.
                         </p>
                     </div>
@@ -283,7 +290,7 @@ export function TransferCallToolConfig({
                         <TabsContent value="static" className="space-y-4 mt-4">
                             <div className="grid gap-2">
                                 <Label>Transfer Destination</Label>
-                                <div className="text-xs text-muted-foreground space-y-1">
+                                <div className="text-xs text-[#737373] space-y-1">
                                     <p>Use a fixed number, SIP endpoint, or context template.</p>
                                     <ul className="list-disc pl-4 space-y-1">
                                         <li>SIP endpoint, e.g. PJSIP/1234</li>
@@ -306,7 +313,7 @@ export function TransferCallToolConfig({
                                 <div className="flex items-center gap-2">
                                     <Label>Dynamic Transfer Resolver</Label>
                                 </div>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     CallioAI sends the resolved argument dictionary to this endpoint. The endpoint must return transfer_context.destination and may return transfer_context.custom_message.{" "}
                                     <a
                                         href={`${DOCS_BASE}/voice-agent/tools/call-transfer#dynamic-resolver-response`}
@@ -314,7 +321,7 @@ export function TransferCallToolConfig({
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
                                     >
-                                        Docs <ExternalLink className="h-3 w-3" />
+                                        Docs <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                                     </a>
                                 </p>
                             </div>
@@ -327,7 +334,7 @@ export function TransferCallToolConfig({
                                     placeholder="https://crm.example.com/resolve-transfer"
                                     showValidation
                                 />
-                                <Label className="text-xs text-muted-foreground">
+                                <Label className="text-xs text-[#737373]">
                                     CallioAI sends a POST request with the resolved argument dictionary.
                                 </Label>
                             </div>
@@ -345,7 +352,7 @@ export function TransferCallToolConfig({
                                     max="5000"
                                     className="w-36"
                                 />
-                                <Label className="text-xs text-muted-foreground">
+                                <Label className="text-xs text-[#737373]">
                                     Default: 3000 ms. Maximum: 5000 ms.
                                 </Label>
                             </div>
@@ -365,14 +372,14 @@ export function TransferCallToolConfig({
                                     placeholder="One moment while I find the right team."
                                     rows={2}
                                 />
-                                <Label className="text-xs text-muted-foreground">
+                                <Label className="text-xs text-[#737373]">
                                     Spoken while CallioAI waits for the resolver response.
                                 </Label>
                             </div>
 
                             <div className="grid gap-2 pt-4 border-t">
                                 <Label>LLM Parameters</Label>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Define values the agent should provide when calling this transfer tool, such as state, department, or reason.{" "}
                                     <a
                                         href={`${DOCS_BASE}/voice-agent/tools/call-transfer#dynamic-resolver-request`}
@@ -380,7 +387,7 @@ export function TransferCallToolConfig({
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
                                     >
-                                        Docs <ExternalLink className="h-3 w-3" />
+                                        Docs <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                                     </a>
                                 </p>
                                 <ParameterEditor
@@ -391,7 +398,7 @@ export function TransferCallToolConfig({
 
                             <div className="grid gap-2 pt-4 border-t">
                                 <Label>Preset Parameters</Label>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Add values CallioAI injects at runtime. These are not exposed to the LLM and can use templates like {`{{initial_context.state}}`} or {`{{gathered_context.state}}`}.{" "}
                                     <a
                                         href={`${DOCS_BASE}/voice-agent/tools/call-transfer#dynamic-resolver-request`}
@@ -399,7 +406,7 @@ export function TransferCallToolConfig({
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
                                     >
-                                        Docs <ExternalLink className="h-3 w-3" />
+                                        Docs <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                                     </a>
                                 </p>
                                 <PresetParameterEditor
@@ -410,7 +417,7 @@ export function TransferCallToolConfig({
 
                             <div className="grid gap-2 pt-4 border-t">
                                 <Label>Custom Headers</Label>
-                                <Label className="text-xs text-muted-foreground">
+                                <Label className="text-xs text-[#737373]">
                                     Add custom headers for authentication or routing metadata.
                                 </Label>
                                 <KeyValueEditor
@@ -425,17 +432,17 @@ export function TransferCallToolConfig({
                         <TabsContent value="context_mapping" className="space-y-5 mt-4">
                             <div className="space-y-2">
                                 <Label>Ordered Context Routing</Label>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Rules are evaluated top to bottom. The first matching value selects its
                                     destination; matching ignores case and surrounding whitespace.
                                 </p>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     An unprefixed field such as <code>department</code> checks{" "}
                                     <code>gathered_context.department</code> first, then{" "}
                                     <code>initial_context.department</code>. Use an explicit prefix to read only
                                     one context.
                                 </p>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-[#737373]">
                                     Destinations can be a SIP endpoint, E.164 PSTN number, another
                                     provider-supported destination, or a template such as{" "}
                                     <code>{"{{initial_context.transfer_destination}}"}</code>.{" "}
@@ -445,7 +452,7 @@ export function TransferCallToolConfig({
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
                                     >
-                                        Docs <ExternalLink className="h-3 w-3" />
+                                        Docs <HugeiconsIcon icon={ExternalLinkIcon} className="h-3 w-3" />
                                     </a>
                                 </p>
                             </div>
@@ -462,7 +469,7 @@ export function TransferCallToolConfig({
                                                     disabled={ruleIndex === 0}
                                                     onClick={() => moveRule(ruleIndex, -1)}
                                                 >
-                                                    <ArrowUp className="h-4 w-4" />
+                                                    <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" />
                                                 </Button>
                                                 <Button
                                                     type="button"
@@ -472,7 +479,7 @@ export function TransferCallToolConfig({
                                                     disabled={ruleIndex === contextDestinationRules.length - 1}
                                                     onClick={() => moveRule(ruleIndex, 1)}
                                                 >
-                                                    <ArrowDown className="h-4 w-4" />
+                                                    <HugeiconsIcon icon={ArrowDown01Icon} className="h-4 w-4" />
                                                 </Button>
                                                 <Button
                                                     type="button"
@@ -483,7 +490,7 @@ export function TransferCallToolConfig({
                                                         contextDestinationRules.filter((item) => item.id !== rule.id)
                                                     )}
                                                 >
-                                                    <Trash2 className="h-4 w-4" />
+                                                    <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
                                                 </Button>
                                             </div>
                                         </div>
@@ -518,7 +525,7 @@ export function TransferCallToolConfig({
                                                         ],
                                                     }))}
                                                 >
-                                                    <Plus className="mr-1 h-4 w-4" /> Add mapping
+                                                    <HugeiconsIcon icon={PlusIcon} className="mr-1 h-4 w-4" /> Add mapping
                                                 </Button>
                                             </div>
                                             {rule.routes.map((route, index) => (
@@ -561,12 +568,12 @@ export function TransferCallToolConfig({
                                                             ),
                                                         }))}
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
                                                     </Button>
                                                 </div>
                                             ))}
                                             {rule.routes.length === 0 && (
-                                                <p className="text-xs text-muted-foreground">
+                                                <p className="text-xs text-[#737373]">
                                                     Add at least one mapping.
                                                 </p>
                                             )}
@@ -583,10 +590,10 @@ export function TransferCallToolConfig({
                                         createContextDestinationRuleRow(),
                                     ])}
                                 >
-                                    <Plus className="mr-1 h-4 w-4" /> Add routing rule
+                                    <HugeiconsIcon icon={PlusIcon} className="mr-1 h-4 w-4" /> Add routing rule
                                 </Button>
                                 {contextDestinationRules.length === 0 && (
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-[#737373]">
                                         Add at least one routing rule.
                                     </p>
                                 )}
@@ -598,7 +605,7 @@ export function TransferCallToolConfig({
                                         onChange={(event) => onFallbackDestinationChange(event.target.value)}
                                         placeholder="Provider destination or {{initial_context.destination}}"
                                     />
-                                    <Label className="text-xs text-muted-foreground">
+                                    <Label className="text-xs text-[#737373]">
                                         Used only when no rule above matched.
                                     </Label>
                                 </div>

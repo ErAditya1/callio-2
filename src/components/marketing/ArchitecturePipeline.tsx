@@ -1,13 +1,14 @@
 'use client';
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Activity,
-  Cpu,
-  Database,
-  Mic,
-  Network,
-  Radio,
-} from 'lucide-react';
+  Activity01Icon,
+  CpuIcon,
+  Database01Icon,
+  Mic01Icon,
+  NetworkIcon,
+  RadioIcon,
+} from "@hugeicons/core-free-icons";;
 import React, { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -21,7 +22,7 @@ export function ArchitecturePipeline() {
       title: 'Carrier Ingestion',
       metric: '35ms',
       metricLabel: 'Packet Ingestion',
-      icon: Network,
+      icon: NetworkIcon,
       color: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
       description: 'Carrier-grade SIP trunking via Smartflo & Twilio with WebRTC fallback. Dual-jitter buffer and acoustic echo cancellation ensure pristine audio stream.',
       techStack: 'Smartflo • Twilio SIP • WebRTC Opus • FreeSWITCH'
@@ -31,7 +32,7 @@ export function ArchitecturePipeline() {
       title: 'Streaming STT',
       metric: '85ms',
       metricLabel: 'Transcription Latency',
-      icon: Mic,
+      icon: Mic01Icon,
       color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
       description: 'Continuous dual-channel speech recognition with custom vocabulary boosting for medical codes, acronyms, and regional dialects. Instant speech detection interrupts AI without stutter.',
       techStack: 'Deepgram Nova-2 • Whisper Streaming • VAD 2.0'
@@ -41,7 +42,7 @@ export function ArchitecturePipeline() {
       title: 'Cognitive Reasoning',
       metric: '130ms',
       metricLabel: 'First Token Latency',
-      icon: Cpu,
+      icon: CpuIcon,
       color: 'text-violet-400 bg-violet-500/10 border-violet-500/30',
       description: 'Ultra-low latency LLM inference with strict business guardrails. Executes parallel tool calls to check calendar availability, fetch customer records, or verify product stock.',
       techStack: 'Groq Llama 3.3 / OpenAI GPT-4o Mini • Function Calling'
@@ -51,7 +52,7 @@ export function ArchitecturePipeline() {
       title: 'Neural Speech Generation',
       metric: '95ms',
       metricLabel: 'Audio Synthesis',
-      icon: Radio,
+      icon: RadioIcon,
       color: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
       description: 'Human-grade acoustic synthesis streaming back over UDP chunks. Accents, pauses, filler words, and natural pitch inflection make callers feel truly understood.',
       techStack: 'Cartesia Sonic • ElevenLabs Flash • PlayHT'
@@ -61,7 +62,7 @@ export function ArchitecturePipeline() {
       title: 'Autonomous Action',
       metric: '<100ms',
       metricLabel: 'Webhook Dispatch',
-      icon: Database,
+      icon: Database01Icon,
       color: 'text-rose-400 bg-rose-500/10 border-rose-500/30',
       description: 'Immediately updates CRM records, triggers SMS appointment confirmations, and can trigger warm transfer with spoken context briefing to your human team.',
       techStack: 'HubSpot • Cal.com • Twilio SMS • Custom Webhooks'
@@ -72,7 +73,7 @@ export function ArchitecturePipeline() {
     <div className="rounded-3xl border border-border/80 bg-card/60 p-6 sm:p-10 shadow-2xl relative overflow-hidden marketing-glow-card">
       <div className="text-center max-w-2xl mx-auto mb-10">
         <Badge variant="outline" className="mb-3 border-indigo-500/30 text-indigo-400 bg-indigo-500/10 px-3 py-1">
-          <Activity className="w-3.5 h-3.5 mr-1.5 inline" />
+          <HugeiconsIcon icon={Activity01Icon} className="w-3.5 h-3.5 mr-1.5 inline" />
           Sub-350ms Voice Engine
         </Badge>
         <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground">
@@ -147,7 +148,7 @@ export function ArchitecturePipeline() {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className={`p-2 rounded-lg border ${step.color}`}>
-                  <Icon className="w-4 h-4" />
+                  <HugeiconsIcon icon={Icon} className="w-4 h-4" />
                 </div>
                 <span className="text-[11px] font-mono font-bold text-foreground/80 px-2 py-0.5 rounded bg-background/60 border border-border/40">
                   {step.metric}

@@ -1,4 +1,8 @@
-import { ChevronDown, Search } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ChevronDownIcon,
+  Search01Icon,
+} from "@hugeicons/core-free-icons";;
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -71,14 +75,14 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
             )}
           >
             <span className="truncate">{getDisplayText()}</span>
-            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <HugeiconsIcon icon={ChevronDownIcon} className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <div className="p-2 space-y-2">
             {searchable && (
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <HugeiconsIcon icon={Search01Icon} className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search options..."
                   value={searchTerm}

@@ -1,5 +1,10 @@
 import { BaseEdge, type Edge, EdgeLabelRenderer, type EdgeProps, getSmoothStepPath, useReactFlow } from '@xyflow/react';
-import { AlertCircle, Pencil, Trash2 } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AlertCircleIcon,
+  Delete02Icon,
+  PencilIcon,
+} from "@hugeicons/core-free-icons";;
 import { useCallback, useEffect, useState } from 'react';
 
 import { useWorkflow, useWorkflowOptional } from "@/app/workflow/[workflowId]/contexts/WorkflowContext";
@@ -77,7 +82,7 @@ const EdgeDetailsDialog = ({ open, onOpenChange, data, onSave }: EdgeDetailsDial
                     <DialogTitle>Edit Condition</DialogTitle>
                     {data?.invalid && data.validationMessage && (
                         <div className="mt-2 flex items-center gap-2 rounded-md bg-red-50 p-2 text-sm text-red-500 border border-red-200">
-                            <AlertCircle className="h-4 w-4" />
+                            <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
                             <span>{data.validationMessage}</span>
                         </div>
                     )}
@@ -85,7 +90,7 @@ const EdgeDetailsDialog = ({ open, onOpenChange, data, onSave }: EdgeDetailsDial
                 <div className="grid gap-4 py-4 overflow-y-auto">
                     <div className="grid gap-2">
                         <Label>Condition Label</Label>
-                        <Label className="text-xs text-muted-foreground">
+                        <Label className="text-xs text-[#737373]">
                             Enter a short label which helps identify this pathway in logs
                         </Label>
                         <Input
@@ -94,13 +99,13 @@ const EdgeDetailsDialog = ({ open, onOpenChange, data, onSave }: EdgeDetailsDial
                             maxLength={64}
                             onChange={(e) => setLabel(e.target.value)}
                         />
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-xs text-[#737373]">
                             {label.length}/64 characters
                         </div>
                     </div>
                     <div className="grid gap-2">
                         <Label>Condition</Label>
-                        <Label className="text-xs text-muted-foreground">
+                        <Label className="text-xs text-[#737373]">
                             Describe a condition that will be evaluated to determine if this pathway should be taken
                         </Label>
                         <Textarea
@@ -110,7 +115,7 @@ const EdgeDetailsDialog = ({ open, onOpenChange, data, onSave }: EdgeDetailsDial
                     </div>
                     <div className="grid gap-2">
                         <Label>Transition Speech</Label>
-                        <Label className="text-xs text-muted-foreground">
+                        <Label className="text-xs text-[#737373]">
                             Optional text or audio the assistant will play right before transitioning to the node.
                             This will not be attached in Conversation Context. Use this as simple filler to reduce latency.
                         </Label>
@@ -307,38 +312,38 @@ export default function CustomEdge(props: CustomEdgeProps) {
                     {/* Show full EdgeLabel when selected or hovered, otherwise show simple label */}
                     {(selected || isHovered) ? (
                         <div className={cn(
-                            "flex flex-col gap-2 bg-card rounded-lg border min-w-[220px]",
+                            "flex flex-col gap-2 bg-[#FFFFFF] rounded-lg border min-w-[220px]",
                             "animate-in fade-in zoom-in duration-200",
                             data?.invalid
                                 ? "border-destructive/50 shadow-[0_0_15px_rgba(239,68,68,0.3)]"
                                 : selected
                                     ? "border-primary ring-2 ring-primary/40 shadow-[0_0_20px_rgba(59,130,246,0.5)]"
-                                    : "border-border shadow-xl"
+                                    : "border-[#E5E5E5] shadow-xl"
                         )}>
                             {/* Header with label */}
                             <div className={cn(
                                 "flex items-center justify-between px-3 py-2 border-b",
-                                data?.invalid ? "bg-destructive/10 border-destructive/30" : "bg-muted/50 border-border"
+                                data?.invalid ? "bg-destructive/10 border-destructive/30" : "bg-[#F7F7F7] border-[#E5E5E5]"
                             )}>
-                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                <span className="text-xs font-medium text-[#737373] uppercase tracking-wide">
                                     Condition
                                 </span>
                                 <div className="flex items-center gap-1">
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
+                                        className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive text-[#737373]"
                                         onClick={handleDeleteEdge}
                                     >
-                                        <Trash2 className="h-3 w-3" />
+                                        <HugeiconsIcon icon={Delete02Icon} className="h-3 w-3" />
                                     </Button>
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-6 w-6 p-0 hover:bg-muted text-muted-foreground"
+                                        className="h-6 w-6 p-0 hover:bg-[#F7F7F7] text-[#737373]"
                                         onClick={() => setOpen(true)}
                                     >
-                                        <Pencil className="h-3 w-3" />
+                                        <HugeiconsIcon icon={PencilIcon} className="h-3 w-3" />
                                     </Button>
                                 </div>
                             </div>
@@ -356,7 +361,7 @@ export default function CustomEdge(props: CustomEdgeProps) {
                             "transition-all duration-200",
                             data?.invalid
                                 ? "bg-destructive text-destructive-foreground"
-                                : "bg-amber-500 text-amber-950"
+                                : "bg-[#E5E5E5] text-amber-950"
                         )}>
                             {data?.label || data?.condition || 'No condition'}
                         </div>
