@@ -278,12 +278,8 @@ export function RechargeWalletModal({
                                         type="button"
                                         onClick={() => handleSelectPreset(pkg.usd)}
                                         className={`relative flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center ${isSelected
-                                            ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 shadow-sm ring-1 ring-emerald-500"
+                                            ? "border-indigo-500 bg-indigo-500/10 text-indigo-950 dark:text-indigo-100 shadow-sm ring-1 ring-indigo-500"
                                             : "border-border/70 hover:border-border hover:bg-muted/40"
-                                            }`}
-                                        className={`relative flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all text-center ${isSelected
-                                                ? "border-[#DCE3EF] bg-[#F0F3F9] text-[#171717] dark:text-[#7186AD] shadow-sm ring-1 ring-[#DCE3EF]"
-                                                : "border-[#E5E5E5] hover:border-[#E5E5E5] hover:bg-[#F7F7F7]"
                                             }`}
                                     >
                                         {pkg.popular && (

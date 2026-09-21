@@ -148,6 +148,26 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   }
 
 
+  // Superadmin routes use their own dedicated layout and sidebar
+  if (pathname.startsWith("/superadmin")) {
+    return (
+      <div className="min-h-screen w-full bg-background text-foreground">
+        {children}
+      </div>
+    );
+  }
+
+  // Standalone pages render with zero console chrome — just the page itself.
+  if (
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/handler") ||
+    pathname.startsWith("/create-agent") ||
+    pathname.startsWith("/payment") ||
+    pathname.startsWith("/activation")
+  ) {
+    return <>{children}</>;
+  }
+
   // Check if current route should have sidebar
   // Hide sidebar for /handler routes (Stack Auth routes) and /auth routes
   const shouldShowSidebar = !pathname.startsWith("/handler") && !pathname.startsWith("/auth");
