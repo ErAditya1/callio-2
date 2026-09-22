@@ -6,6 +6,7 @@ import {
   Banknote,
   CheckCircle2,
   DollarSign,
+  Inbox,
   Key,
   Layers,
   List,
@@ -67,6 +68,14 @@ export default function SuperadminOverviewPage() {
   }, []);
 
   const navTiles = [
+    {
+      title: "Inbound Enquiries & Strategy Calls",
+      description: "Manage 'Done-for-you' voice agent build requests and enterprise strategy calls",
+      href: "/superadmin/leads",
+      icon: Inbox,
+      iconColor: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20",
+      badge: "Leads & Bookings",
+    },
     {
       title: "Master API Keys",
       description: "Manage LLM, STT, and TTS provider master credentials & rates",

@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   Banknote,
   DollarSign,
+  Inbox,
   Key,
   Layers,
   List,
@@ -40,6 +41,13 @@ export const SUPERADMIN_NAV_ITEMS: SuperadminNavItem[] = [
     icon: Activity,
     exact: true,
     description: "System health & active calls",
+  },
+  {
+    title: "Enquiries & Strategy Calls",
+    href: "/superadmin/leads",
+    icon: Inbox,
+    badge: "Leads",
+    description: "Done-for-you & enterprise requests",
   },
   {
     title: "Master API Keys",

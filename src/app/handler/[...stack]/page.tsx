@@ -23,6 +23,8 @@ const FULL_PAGE_ROUTES = new Set([
   "error",
 ]);
 
+export const dynamic = "force-dynamic";
+
 export default async function Handler(props: unknown) {
   const authProvider = await getAuthProvider();
 

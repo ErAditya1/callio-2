@@ -10,16 +10,18 @@ let stackClientAppInstance: StackClientApp<true, string> | null = null;
 
 function getStackClientApp(
   projectId: string,
-  publishableClientKey: string,
+  publishableClientKey?: string,
+  apiUrl?: string,
 ): StackClientApp<true, string> {
   if (!stackClientAppInstance) {
-    // projectId / publishableClientKey are passed explicitly (fetched from the
+    // projectId / publishableClientKey / apiUrl are passed explicitly (fetched from the
     // backend at runtime) instead of being read from inlined NEXT_PUBLIC_* env,
     // so the prebuilt image works without build-time configuration.
     stackClientAppInstance = new StackClientApp({
       tokenStore: "nextjs-cookie",
       projectId,
-      publishableClientKey,
+      publishableClientKey: publishableClientKey || "",
+      baseUrl: apiUrl,
       urls: {
         afterSignIn: "/after-sign-in"
       }
@@ -31,7 +33,8 @@ function getStackClientApp(
 interface StackProviderWrapperProps {
   children: React.ReactNode;
   projectId: string;
-  publishableClientKey: string;
+  publishableClientKey?: string;
+  apiUrl?: string;
 }
 
 function StackAuthContextProvider({
@@ -115,8 +118,8 @@ function StackAuthContextProvider({
   );
 }
 
-export function StackProviderWrapper({ children, projectId, publishableClientKey }: StackProviderWrapperProps) {
-  const stackClientApp = getStackClientApp(projectId, publishableClientKey);
+export function StackProviderWrapper({ children, projectId, publishableClientKey, apiUrl }: StackProviderWrapperProps) {
+  const stackClientApp = getStackClientApp(projectId, publishableClientKey, apiUrl);
 
   return (
     <StackProvider app={stackClientApp}>

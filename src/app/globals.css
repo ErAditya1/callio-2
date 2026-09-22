@@ -506,22 +506,24 @@
   background-color: oklch(0.215 0 0);
   border-color: rgb(255 255 255 / 0.1);
 }
-/* Muted, compact labels — the big white default labels read amateurish. */
+/* Clean, crisp labels */
 .lead-form-underline label {
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--muted-foreground);
+  color: var(--foreground);
+  opacity: 0.85;
 }
-/* Ghost placeholders: present on every field, but barely-there. */
+/* Clearly visible placeholders with good contrast */
 .lead-form-underline :is(input, textarea)::placeholder {
   color: var(--muted-foreground);
-  opacity: 0.14;
+  opacity: 0.65;
 }
 .lead-form-underline [data-slot="select-trigger"][data-placeholder] {
-  color: color-mix(in oklab, var(--muted-foreground) 17%, transparent);
+  color: var(--muted-foreground);
+  opacity: 0.75;
 }
 /* Underline-only fields: transparent box, hairline bottom border, amber
-   underline on the focused control. Compact heights keep rows tight. */
+   underline on the focused control. */
 .lead-form-underline :is(input, textarea, [data-slot="select-trigger"]) {
   background-color: transparent;
   border-top: 0;
@@ -530,14 +532,15 @@
   border-bottom: 1px solid var(--border);
   border-radius: 0;
   box-shadow: none;
-  padding-left: 2px;
-  padding-right: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  width: 100%;
 }
 .lead-form-underline :is(input, [data-slot="select-trigger"]) {
-  height: 2.125rem;
+  height: 2.25rem;
 }
 .lead-form-underline textarea {
-  min-height: 3.25rem;
+  min-height: 3.5rem;
 }
 /* The phone country selector ships its own box — flatten it to match. */
 .lead-form-underline .react-international-phone-country-selector-button {

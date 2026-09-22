@@ -47,16 +47,12 @@ const LoadingFallback = (
 
 interface ResolvedAuthConfig {
   provider: string;
-  // Public Stack client config, fetched from the backend at runtime. Null unless
-  // the provider is 'stack' and the backend supplied both values.
-  stack: { projectId: string; publishableClientKey: string } | null;
+  // Public Stack client config, fetched from the backend at runtime.
+  stack: { projectId: string; publishableClientKey: string; apiUrl?: string } | null;
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [config, setConfig] = useState<ResolvedAuthConfig>({
-    provider: 'local',
-    stack: null,
-  });
+  const [config, setConfig] = useState<ResolvedAuthConfig | null>(null);
 
   useEffect(() => {
     fetch('/api/config/auth')
@@ -66,10 +62,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setConfig({
           provider: data.provider || 'local',
           stack:
-            data.stackProjectId && data.stackPublishableClientKey
+            data.stackProjectId
               ? {
                   projectId: data.stackProjectId,
-                  publishableClientKey: data.stackPublishableClientKey,
+                  publishableClientKey: data.stackPublishableClientKey || '',
+                  apiUrl: data.stackApiUrl || undefined,
                 }
               : null,
         });
@@ -80,12 +77,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
   }, []);
 
+  if (!config) {
+    return LoadingFallback;
+  }
+
   // For Stack provider, use the dedicated wrapper
   if (config.provider === 'stack') {
     if (!config.stack) {
       logger.error(
         'Auth provider is "stack" but the backend returned no Stack client config. ' +
-        'Ensure STACK_AUTH_PROJECT_ID and STACK_PUBLISHABLE_CLIENT_KEY are set on the API service.'
+        'Ensure STACK_AUTH_PROJECT_ID is set on the API service.'
       );
       return LoadingFallback;
     }
@@ -94,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         <StackProviderWrapper
           projectId={config.stack.projectId}
           publishableClientKey={config.stack.publishableClientKey}
+          apiUrl={config.stack.apiUrl}
         >
           {children}
         </StackProviderWrapper>

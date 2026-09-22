@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Mail,
@@ -11,6 +12,7 @@ import {
   ArrowRight,
   Loader2,
   Sparkles,
+  Fingerprint,
 } from "lucide-react";
 
 import { loginApiV1AuthLoginPost } from "@/client/sdk.gen";
@@ -20,8 +22,45 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useAuth } from "@/lib/auth";
 
+/* ── Stack-provider redirect variant ─────────────────────────── */
+function StackSignInRedirect() {
+  return (
+    <AuthShell enterpriseSlot={<AuthEnterpriseCTA />}>
+      <div className="space-y-6 text-center">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-indigo-500/20 bg-indigo-500/10 shadow-lg shadow-indigo-500/10">
+          <Fingerprint className="size-7 text-indigo-400" />
+        </div>
+        <div className="space-y-1.5">
+          <h1 className="text-2xl font-bold tracking-tight text-white">Sign in to workspace</h1>
+          <p className="text-sm text-zinc-400">
+            Your workspace uses enterprise authentication.
+          </p>
+        </div>
+        <Button
+          asChild
+          className="h-11 w-full rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 font-semibold text-white shadow-lg shadow-indigo-500/20 hover:from-indigo-500 hover:to-violet-500 transition-all"
+        >
+          <Link href="/handler/sign-in">
+            Open Sign In Portal
+            <ArrowRight className="ml-2 size-4" />
+          </Link>
+        </Button>
+      </div>
+    </AuthShell>
+  );
+}
+
+/* ── Main Login Form ──────────────────────────────────────────── */
 export function LoginForm({ signupEnabled }: { signupEnabled: boolean }) {
+  const { provider } = useAuth();
+
+  // Stack auth — redirect to handler
+  if (provider === "stack") {
+    return <StackSignInRedirect />;
+  }
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -68,102 +107,107 @@ export function LoginForm({ signupEnabled }: { signupEnabled: boolean }) {
 
   return (
     <AuthShell enterpriseSlot={<AuthEnterpriseCTA />}>
-      {/* Header with icon badge */}
+      {/* Header */}
       <div className="space-y-3 text-center">
-        <div className="mx-auto flex size-12 items-center justify-center rounded-2xl border border-indigo-500/20 bg-indigo-500/10 text-indigo-500 shadow-xs dark:bg-indigo-500/15">
-          <Sparkles className="size-6" />
+        <div className="mx-auto flex size-12 items-center justify-center rounded-2xl border border-indigo-100 bg-indigo-50 shadow-sm">
+          <Sparkles className="size-6 text-indigo-600" />
         </div>
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-[1.65rem]">
             Welcome back
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-slate-500">
             Enter your credentials to access your voice agents
           </p>
         </div>
       </div>
 
+      {/* Form */}
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        {/* Email Field */}
+        {/* Email */}
         <div className="space-y-1.5">
-          <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Label
+            htmlFor="email"
+            className="text-[11px] font-semibold uppercase tracking-wider text-slate-500"
+          >
             Work Email
           </Label>
           <div className="relative">
-            <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/70" />
+            <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
             <Input
               id="email"
               type="email"
               placeholder="alex@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-11 rounded-xl pl-10 pr-3 transition-colors focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/20"
+              className="h-11 rounded-xl border-slate-200 bg-white pl-10 pr-3 text-slate-900 placeholder:text-slate-400 transition-colors focus-visible:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-500/20"
               autoComplete="email"
               required
             />
           </div>
         </div>
 
-        {/* Password Field */}
+        {/* Password */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="password"
+              className="text-[11px] font-semibold uppercase tracking-wider text-slate-500"
+            >
               Password
             </Label>
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-500 hover:underline dark:text-indigo-400 cursor-pointer"
+              className="text-xs font-medium text-indigo-600 hover:text-indigo-500 hover:underline underline-offset-4 cursor-pointer transition-colors"
             >
               Forgot password?
             </button>
           </div>
           <div className="relative">
-            <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/70" />
+            <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="h-11 rounded-xl pl-10 pr-10 transition-colors focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/20"
+              className="h-11 rounded-xl border-slate-200 bg-white pl-10 pr-10 text-slate-900 placeholder:text-slate-400 transition-colors focus-visible:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-500/20"
               autoComplete="current-password"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-foreground transition-colors cursor-pointer"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? (
-                <EyeOff className="size-4" />
-              ) : (
-                <Eye className="size-4" />
-              )}
+              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
           </div>
         </div>
 
-        {/* Remember me row */}
+        {/* Remember me */}
         <div className="flex items-center space-x-2 pt-0.5">
           <Checkbox
             id="remember"
             checked={rememberMe}
             onCheckedChange={(checked) => setRememberMe(Boolean(checked))}
+            className="border-slate-300 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
           />
           <Label
             htmlFor="remember"
-            className="text-xs font-normal text-muted-foreground cursor-pointer select-none"
+            className="text-xs font-normal text-slate-500 cursor-pointer select-none"
           >
             Remember this device for 30 days
           </Label>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <Button
           type="submit"
-          className="group relative h-11 w-full rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 font-semibold text-white shadow-lg shadow-indigo-500/20 transition-all hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/30 active:scale-[0.99] disabled:opacity-70 cursor-pointer"
+          id="login-submit-btn"
+          className="group relative mt-1 h-11 w-full rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/35 active:scale-[0.99] disabled:opacity-60 cursor-pointer"
           disabled={loading}
         >
           {loading ? (
@@ -180,19 +224,26 @@ export function LoginForm({ signupEnabled }: { signupEnabled: boolean }) {
         </Button>
       </form>
 
-      {/* Switch to Sign Up */}
+      {/* Divider with gradient */}
       {signupEnabled && (
-        <div className="mt-6 border-t border-border/50 pt-5 text-center">
-          <p className="text-xs text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/auth/signup"
-              className="font-semibold text-indigo-600 underline-offset-4 hover:text-indigo-500 hover:underline dark:text-indigo-400"
-            >
-              Create free account
-            </Link>
-          </p>
-        </div>
+        <>
+          <div className="relative my-5 flex items-center gap-3">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+          </div>
+
+          {/* Sign up link */}
+          <div className="text-center">
+            <p className="text-xs text-slate-500">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/auth/signup"
+                className="font-semibold text-indigo-600 underline-offset-4 hover:text-indigo-500 hover:underline transition-colors"
+              >
+                Create free account
+              </Link>
+            </p>
+          </div>
+        </>
       )}
     </AuthShell>
   );

@@ -7,10 +7,10 @@ import { OSS_TOKEN_COOKIE } from '@/lib/auth/cookies';
 // DEMO FLOW (frontend-only prototype): every route is open without login so the
 // full click-through (auth → create-agent → payment → dashboard) can be built
 // and reviewed with no backend running. Set to false to restore the login gate.
-const DEMO_OPEN_ROUTES = true;
+const DEMO_OPEN_ROUTES = false;
 
 // Paths that don't require authentication in OSS mode.
-// Marketing pages, demo simulators, voices showcase, pricing, and auth endpoints.
+// Marketing pages, demo simulators, voices showcase, pricing, and all auth routes.
 const PUBLIC_PATHS = [
   '/',
   '/ai-voice-agents',
@@ -34,8 +34,13 @@ const PUBLIC_PATHS = [
   '/privacy',
   '/cookies',
   '/status',
+  '/login',
+  '/signup',
   '/auth/login',
   '/auth/signup',
+  '/auth/signin',
+  '/after-sign-in',
+  '/handler',
   '/embed'
 ];
 
@@ -46,18 +51,31 @@ async function fetchAuthProvider(): Promise<string> {
     return cachedAuthProvider;
   }
 
-  try {
-    const backendUrl = getServerBackendUrl();
-    const res = await fetch(`${backendUrl}/api/v1/health`, {
-      signal: AbortSignal.timeout(1500),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      cachedAuthProvider = (data.auth_provider as string) || 'local';
-      return cachedAuthProvider;
+  const backendUrl = getServerBackendUrl();
+  const candidateUrls: string[] = [];
+  if (backendUrl.includes("localhost")) {
+    candidateUrls.push(backendUrl.replace("localhost", "127.0.0.1") + "/api/v1/health");
+    candidateUrls.push(backendUrl + "/api/v1/health");
+  } else if (backendUrl.includes("127.0.0.1")) {
+    candidateUrls.push(backendUrl + "/api/v1/health");
+    candidateUrls.push(backendUrl.replace("127.0.0.1", "localhost") + "/api/v1/health");
+  } else {
+    candidateUrls.push(backendUrl + "/api/v1/health");
+  }
+
+  for (const url of candidateUrls) {
+    try {
+      const res = await fetch(url, {
+        signal: AbortSignal.timeout(5000),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        cachedAuthProvider = (data.auth_provider as string) || 'local';
+        return cachedAuthProvider;
+      }
+    } catch {
+      // Try next candidate URL
     }
-  } catch {
-    // Backend not reachable — fall through without caching so we retry next request.
   }
 
   return 'local'; // Default to local in dev/OSS mode

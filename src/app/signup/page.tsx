@@ -3,11 +3,11 @@ import { getAuthProvider } from "@/lib/auth/config";
 
 export const dynamic = "force-dynamic";
 
-export default async function SigninPage() {
+export default async function SignupPage() {
   const provider = await getAuthProvider();
   if (provider === "stack") {
-    redirect("/handler/sign-in");
+    redirect("/handler/sign-up");
   }
-  redirect("/auth/login");
+  redirect("/auth/signup");
 }
 

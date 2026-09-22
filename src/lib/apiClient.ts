@@ -51,7 +51,7 @@ export const createClientConfig: CreateClientConfig = (config) => {
     return {
         throwOnError: false,
         ...config,
-        baseUrl: (config as any).baseUrl ?? baseUrl,
+        baseUrl: baseUrl || (config as any)?.baseUrl,
     };
 };
 

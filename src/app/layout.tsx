@@ -14,6 +14,7 @@ import { SentryErrorBoundary } from "@/components/SentryErrorBoundary";
 import SpinLoader from "@/components/SpinLoader";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppConfigProvider } from "@/context/AppConfigContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 import { OrgConfigProvider } from "@/context/OrgConfigContext";
@@ -101,11 +102,13 @@ export default function RootLayout({
                       <OnboardingProvider>
                         <PostHogIdentify />
                         {reoClientId ? <ReoProvider clientId={reoClientId} /> : null}
-                        <AppLayout>
-                          {children}
-                        </AppLayout>
-                        <Toaster />
-                        <ChatwootWidget />
+                        <TooltipProvider delayDuration={0}>
+                          <AppLayout>
+                            {children}
+                          </AppLayout>
+                          <Toaster />
+                          <ChatwootWidget />
+                        </TooltipProvider>
                       </OnboardingProvider>
                     </TelephonyConfigWarningsProvider>
                   </OrgConfigProvider>

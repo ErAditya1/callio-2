@@ -77,7 +77,7 @@ export function LeadModalShell({
       >
         {/* Header: a slightly darker band, separated by a hairline. */}
         <DialogHeader className="space-y-0 border-b border-border/40 bg-black/[0.04] px-8 pb-5 pt-6 text-left dark:bg-black/25">
-          <div className="min-w-0">
+          <div className="min-w-0 pr-10">
             {eyebrow && (
               <span className="block text-[0.7rem] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                 {eyebrow}

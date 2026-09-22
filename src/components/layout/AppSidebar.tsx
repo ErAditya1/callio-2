@@ -5,6 +5,7 @@ import {
   AudioWaveformIcon,
   BotIcon,
   ChartColumnIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CreditCardIcon,
@@ -15,7 +16,6 @@ import {
   Logout01Icon,
   Megaphone01Icon,
   PhoneCallIcon,
-  RadioIcon,
   Settings01Icon,
   ShieldCheckIcon,
   SlidersHorizontalIcon,
@@ -35,6 +35,11 @@ import { SidebarTeamSwitcher } from "@/components/layout/SidebarTeamSwitcher";
 // import ThemeToggle from "@/components/ThemeSwitcher";
 import { Button } from "@/components/ui/button";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -53,6 +58,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarSeparator,
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
@@ -75,37 +81,36 @@ type SidebarNavItem = {
 };
 
 type SidebarNavSection = {
-  label?: string;
+  id: string;
+  label: string;
   items: SidebarNavItem[];
 };
 
 const TELEPHONY_WARNING_COPY = "Configuration required";
 
-const NAV_SECTIONS: SidebarNavSection[] = [
-  // PARKED (2026-09-20): Overview entry commented out per user request — not deleted.
-  // To restore, uncomment the block below.
-  // PARKED (2026-09-20): old standalone /overview entry removed per user request —
-  // replaced by "Home" (→ /dashboard/overview) inside VOICE STUDIO. Not deleted:
-  // restore by re-adding { title: "Overview", url: "/dashboard/overview",
-  // icon: LayoutDashboardIcon } here.
+const TOP_NAV_ITEMS: SidebarNavItem[] = [
   {
-    label: "VOICE STUDIO",
+    title: "Home",
+    url: "/dashboard/overview",
+    icon: Home01Icon,
+  },
+  {
+    title: "Voice Agents",
+    url: "/workflow",
+    icon: BotIcon,
+  },
+  {
+    title: "Campaigns",
+    url: "/campaigns",
+    icon: Megaphone01Icon,
+  },
+];
+
+const COLLAPSIBLE_NAV_SECTIONS: SidebarNavSection[] = [
+  {
+    id: "ai-voice",
+    label: "AI & Voice",
     items: [
-      {
-        title: "Home",
-        url: "/dashboard/overview",
-        icon: Home01Icon,
-      },
-      {
-        title: "Voice Agents",
-        url: "/workflow",
-        icon: BotIcon,
-      },
-      {
-        title: "Campaigns",
-        url: "/campaigns",
-        icon: Megaphone01Icon,
-      },
       {
         title: "AI Models & Voices",
         url: "/model-configurations",
@@ -123,30 +128,26 @@ const NAV_SECTIONS: SidebarNavSection[] = [
         icon: ZapIcon,
       },
       {
-        title: "Knowledge Files",
+        title: "Knowledge Base",
         url: "/files",
         icon: Database01Icon,
       },
       {
-        title: "Call Recordings",
+        title: "Recordings",
         url: "/recordings",
         icon: AudioWaveformIcon,
       },
       {
-        title: "Developer Keys",
-        url: "/api-keys",
-        icon: KeyRoundIcon,
+        title: "Call Analysis",
+        url: "/usage",
+        icon: ChartColumnIcon,
       },
     ],
   },
   {
-    label: "OPERATIONS",
+    id: "finance-reporting",
+    label: "Finance & Reporting",
     items: [
-      {
-        title: "Call Analytics",
-        url: "/usage",
-        icon: ChartColumnIcon,
-      },
       {
         title: "Billing & Plans",
         url: "/billing",
@@ -157,11 +158,23 @@ const NAV_SECTIONS: SidebarNavSection[] = [
         url: "/reports",
         icon: FileTextIcon,
       },
+    ],
+  },
+  {
+    id: "automation",
+    label: "Automation",
+    items: [
       {
         title: "Automations",
         url: "/automation",
         icon: WorkflowIcon,
       },
+    ],
+  },
+  {
+    id: "administration",
+    label: "Administration",
+    items: [
       {
         title: "Platform Admin",
         url: "/superadmin",
@@ -172,6 +185,11 @@ const NAV_SECTIONS: SidebarNavSection[] = [
         title: "Workspace Settings",
         url: "/settings",
         icon: SlidersHorizontalIcon,
+      },
+      {
+        title: "Developer Keys",
+        url: "/api-keys",
+        icon: KeyRoundIcon,
       },
     ],
   },
@@ -193,14 +211,52 @@ export function AppSidebar() {
     vonageMissingSignatureSecretCount > 0;
   const isCollapsed = !isMobile && state === "collapsed";
 
-  const filteredNavSections = React.useMemo(() => {
-    return NAV_SECTIONS.map((section) => ({
+  const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
+    "ai-voice": true,
+    "finance-reporting": true,
+    "automation": true,
+    "administration": true,
+  });
+
+  const toggleSection = (id: string) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [id]: prev[id] === undefined ? false : !prev[id],
+    }));
+  };
+
+  const filteredTopNavItems = React.useMemo(() => {
+    return TOP_NAV_ITEMS.filter((item) => !item.requiresSuperuser || isSuperuser);
+  }, [isSuperuser]);
+
+  const filteredCollapsibleSections = React.useMemo(() => {
+    return COLLAPSIBLE_NAV_SECTIONS.map((section) => ({
       ...section,
       items: section.items.filter((item) => !item.requiresSuperuser || isSuperuser),
     })).filter((section) => section.items.length > 0);
   }, [isSuperuser]);
 
-  const isActive = (path: string) => pathname.startsWith(path);
+  const isActive = (path: string) => {
+    if (path === "/dashboard/overview" && pathname === "/dashboard") {
+      return true;
+    }
+    return pathname === path || pathname.startsWith(`${path}/`);
+  };
+
+  // Automatically keep a section open if an item within it is active
+  React.useEffect(() => {
+    filteredCollapsibleSections.forEach((section) => {
+      const hasActiveChild = section.items.some((item) => isActive(item.url));
+      if (hasActiveChild) {
+        setOpenSections((prev) => {
+          if (prev[section.id] === false) {
+            return { ...prev, [section.id]: true };
+          }
+          return prev;
+        });
+      }
+    });
+  }, [pathname, filteredCollapsibleSections]);
 
   const handleMobileNavClick = () => {
     if (isMobile) {
@@ -365,31 +421,64 @@ export function AppSidebar() {
 
       {/* Navigation Groups */}
       <SidebarContent className={cn("notranslate px-1.5 space-y-1", isCollapsed && "px-0")} translate="no">
-        {filteredNavSections.map((section, index) => (
-          <SidebarGroup
-            key={section.label ?? "overview"}
-            className={index === 0 ? "mt-1" : "mt-4"}
-          >
-            {section.label && (
-              <SidebarGroupLabel
-                className={cn(
-                  "notranslate text-xs font-semibold uppercase tracking-wider text-muted-foreground/75 px-3 py-1.5",
-                  isCollapsed && "hidden"
+        {/* Top Direct Navigation Items */}
+        <SidebarGroup className="py-0 mt-1">
+          <SidebarMenu className="gap-1">
+            {filteredTopNavItems.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarLink item={item} />
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Divider */}
+        <div className={cn("px-2 py-1.5", isCollapsed && "px-1")}>
+          <SidebarSeparator className="bg-border/60" />
+        </div>
+
+        {/* Collapsible Sections */}
+        {filteredCollapsibleSections.map((section) => {
+          const isOpen = isCollapsed ? true : (openSections[section.id] ?? true);
+
+          return (
+            <Collapsible
+              key={section.id}
+              open={isOpen}
+              onOpenChange={() => toggleSection(section.id)}
+              className="group/collapsible"
+            >
+              <SidebarGroup className="py-0 mt-2">
+                {!isCollapsed && (
+                  <SidebarGroupLabel asChild className="h-7 px-1">
+                    <CollapsibleTrigger
+                      className="flex w-full items-center justify-between rounded-lg px-2 py-1 text-xs font-semibold text-muted-foreground/75 hover:text-foreground hover:bg-accent/40 transition-colors select-none group/trigger cursor-pointer"
+                    >
+                      <span className="truncate">{section.label}</span>
+                      <HugeiconsIcon
+                        icon={ChevronDownIcon}
+                        className={cn(
+                          "h-3.5 w-3.5 text-muted-foreground/60 group-hover/trigger:text-foreground transition-transform duration-200",
+                          !isOpen && "-rotate-90"
+                        )}
+                      />
+                    </CollapsibleTrigger>
+                  </SidebarGroupLabel>
                 )}
-                translate="no"
-              >
-                {section.label}
-              </SidebarGroupLabel>
-            )}
-            <SidebarMenu className="gap-1">
-              {section.items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarLink item={item} />
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        ))}
+
+                <CollapsibleContent className="transition-all">
+                  <SidebarMenu className="gap-1 pt-0.5">
+                    {section.items.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarLink item={item} />
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </CollapsibleContent>
+              </SidebarGroup>
+            </Collapsible>
+          );
+        })}
       </SidebarContent>
 
       {/* Sidebar Footer */}

@@ -716,46 +716,85 @@ export default function WorkflowRunPage() {
             const runId = Number(params.runId);
 
             try {
-                const [runResponse, workflowResponse] = await Promise.all([
-                    getWorkflowRunApiV1WorkflowWorkflowIdRunsRunIdGet({
-                        path: {
-                            workflow_id: workflowId,
-                            run_id: runId,
-                        },
-                    }),
-                    getWorkflowApiV1WorkflowFetchWorkflowIdGet({
-                        path: {
-                            workflow_id: workflowId,
-                        },
-                    }),
-                ]);
+                // Fetch run data - try same-origin proxy first, fallback to SDK
+                let rawRunData: any = null;
+                try {
+                    const proxyRunRes = await fetch(`/api/v1/workflow/${workflowId}/runs/${runId}`, {
+                        headers: { Accept: 'application/json' },
+                    });
+                    if (proxyRunRes.ok) {
+                        rawRunData = await proxyRunRes.json();
+                    }
+                } catch {
+                    // Fallback to SDK
+                }
 
-                setWorkflowName(workflowResponse.data?.name ?? null);
-                const runData = {
-                    mode: runResponse.data?.mode ?? '',
-                    created_at: runResponse.data?.created_at ?? null,
-                    is_completed: runResponse.data?.is_completed ?? false,
-                    transcript_url: runResponse.data?.transcript_url ?? null,
-                    recording_url: runResponse.data?.recording_url ?? null,
-                    user_recording_url: runResponse.data?.user_recording_url ?? null,
-                    bot_recording_url: runResponse.data?.bot_recording_url ?? null,
-                    cost_info: runResponse.data?.cost_info ?? null,
-                    usage_info: runResponse.data?.usage_info as WorkflowRunResponse['usage_info'] ?? null,
-                    initial_context: runResponse.data?.initial_context as Record<string, string> | null ?? null,
-                    gathered_context: runResponse.data?.gathered_context as Record<string, string> | null ?? null,
-                    logs: runResponse.data?.logs as WorkflowRunLogs | null ?? null,
-                    annotations: runResponse.data?.annotations as Record<string, unknown> | null ?? null,
-                };
-                setWorkflowRun(runData);
-                posthog.capture(PostHogEvent.WORKFLOW_RUN_DETAILS_VIEWED, {
-                    workflow_id: workflowId,
-                    workflow_name: workflowResponse.data?.name ?? null,
-                    run_id: runId,
-                    is_completed: runData.is_completed,
-                    has_recording: !!runData.recording_url,
-                    has_split_recordings: !!runData.user_recording_url && !!runData.bot_recording_url,
-                    has_transcript: !!runData.transcript_url,
-                });
+                if (!rawRunData) {
+                    const runResponse = await getWorkflowRunApiV1WorkflowWorkflowIdRunsRunIdGet({
+                        path: { workflow_id: workflowId, run_id: runId },
+                    });
+                    rawRunData = runResponse.data ?? null;
+                }
+
+                // Fetch workflow data - try same-origin proxy first, fallback to SDK
+                let rawWorkflowData: any = null;
+                try {
+                    const proxyWfRes = await fetch(`/api/v1/workflow/fetch/${workflowId}`, {
+                        headers: { Accept: 'application/json' },
+                    });
+                    if (proxyWfRes.ok) {
+                        rawWorkflowData = await proxyWfRes.json();
+                    }
+                } catch {
+                    // Fallback to SDK
+                }
+
+                if (!rawWorkflowData) {
+                    const workflowResponse = await getWorkflowApiV1WorkflowFetchWorkflowIdGet({
+                        path: { workflow_id: workflowId },
+                    });
+                    rawWorkflowData = workflowResponse.data ?? null;
+                }
+
+                setWorkflowName(rawWorkflowData?.name ?? null);
+
+                if (rawRunData && rawRunData.id) {
+                    const runData: WorkflowRunResponse = {
+                        mode: rawRunData.mode ?? '',
+                        created_at: rawRunData.created_at ?? null,
+                        is_completed: Boolean(rawRunData.is_completed),
+                        transcript_url: rawRunData.transcript_url ?? null,
+                        recording_url: rawRunData.recording_url ?? null,
+                        user_recording_url: rawRunData.user_recording_url ?? null,
+                        bot_recording_url: rawRunData.bot_recording_url ?? null,
+                        cost_info: rawRunData.cost_info ?? null,
+                        usage_info: (rawRunData.usage_info as WorkflowRunResponse['usage_info']) ?? null,
+                        initial_context: (rawRunData.initial_context as Record<string, string>) ?? null,
+                        gathered_context: (rawRunData.gathered_context as Record<string, string>) ?? null,
+                        logs: (rawRunData.logs as WorkflowRunLogs) ?? null,
+                        annotations: (rawRunData.annotations as Record<string, unknown>) ?? null,
+                    };
+                    setWorkflowRun(runData);
+
+                    try {
+                        posthog.capture(PostHogEvent.WORKFLOW_RUN_DETAILS_VIEWED, {
+                            workflow_id: workflowId,
+                            workflow_name: rawWorkflowData?.name ?? null,
+                            run_id: runId,
+                            is_completed: runData.is_completed,
+                            has_recording: !!runData.recording_url,
+                            has_split_recordings: !!runData.user_recording_url && !!runData.bot_recording_url,
+                            has_transcript: !!runData.transcript_url,
+                        });
+                    } catch {
+                        // Best effort analytics
+                    }
+                } else {
+                    setWorkflowRun(null);
+                }
+            } catch (err) {
+                console.error('Failed to load workflow run:', err);
+                setWorkflowRun(null);
             } finally {
                 setIsLoading(false);
             }
@@ -765,7 +804,7 @@ export default function WorkflowRunPage() {
 
     let returnValue = null;
     const isTextChatRun = workflowRun?.mode === WORKFLOW_RUN_MODES.TEXTCHAT;
-    const showRunDetailsView = Boolean(workflowRun?.is_completed || isTextChatRun);
+    const showRunDetailsView = Boolean(workflowRun);
     const userSplitRecordingUrl = workflowRun?.user_recording_url ?? null;
     const botSplitRecordingUrl = workflowRun?.bot_recording_url ?? null;
     const hasSplitTracks = Boolean(userSplitRecordingUrl && botSplitRecordingUrl);
@@ -823,17 +862,34 @@ export default function WorkflowRunPage() {
                                 </div>
                                 <div className="flex min-w-0 items-center gap-4 pt-1">
                                     <CardTitle className="min-w-0 text-2xl">
-                                        {isTextChatRun ? 'Text Chat Session' : 'Agent Run Completed'}
+                                        {isTextChatRun
+                                            ? 'Text Chat Session'
+                                            : workflowRun?.is_completed
+                                            ? 'Agent Run Completed'
+                                            : `Agent Run (${workflowRun?.mode ? workflowRun.mode.toUpperCase() : 'Initialized'})`}
                                     </CardTitle>
-                                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${isTextChatRun ? 'bg-[#7186AD]/15' : 'bg-[#171717]/20'}`}>
+                                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                                        isTextChatRun
+                                            ? 'bg-[#7186AD]/15'
+                                            : workflowRun?.is_completed
+                                            ? 'bg-emerald-500/15'
+                                            : 'bg-amber-500/15'
+                                    }`}>
                                         {isTextChatRun ? (
                                             <HugeiconsIcon icon={FileTextIcon} className="h-5 w-5 text-sky-500" />
-                                        ) : (
-                                            <svg className="h-5 w-5 text-[#7186AD]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        ) : workflowRun?.is_completed ? (
+                                            <svg className="h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                                             </svg>
+                                        ) : (
+                                            <HugeiconsIcon icon={Clock01Icon} className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                                         )}
                                     </div>
+                                    {!workflowRun?.is_completed && !isTextChatRun && (
+                                        <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                                            Initialized / Incomplete
+                                        </span>
+                                    )}
                                 </div>
                                 {workflowRun?.created_at && (
                                     <p className="flex items-center gap-1.5 text-sm text-[#737373]">
@@ -860,7 +916,9 @@ export default function WorkflowRunPage() {
                             <p className="text-[#737373] mb-8">
                                 {isTextChatRun
                                     ? 'Review the conversation history, metrics, and context captured for this text session.'
-                                    : 'Your voice agent run has been completed successfully. You can preview or download the transcript and recording.'}
+                                    : workflowRun?.is_completed
+                                    ? 'Your voice agent run has been completed successfully. You can preview or download the transcript and recording.'
+                                    : 'This run was initialized but did not complete normally. You can inspect the recorded parameters, runtime context, and diagnostics below.'}
                             </p>
 
                             <div className="flex flex-wrap gap-4">

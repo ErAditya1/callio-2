@@ -4,7 +4,9 @@ import { getServerBackendUrl } from "@/lib/apiClient";
 
 export interface StackConfig {
   projectId: string;
-  publishableClientKey: string;
+  publishableClientKey?: string;
+  apiUrl?: string;
+  secretServerKey?: string;
 }
 
 interface ResolvedAuthConfig {
@@ -13,56 +15,51 @@ interface ResolvedAuthConfig {
   signupEnabled: boolean;
 }
 
-let cachedConfig: ResolvedAuthConfig | null = null;
 
-/**
- * Fetches the auth configuration from the backend health endpoint and caches it.
- *
- * The backend reports the active auth provider and — when it is `stack` — the
- * public Stack client config (project id + publishable client key). The UI uses
- * these at runtime to initialize Stack Auth, so they no longer need to be baked
- * into the browser bundle at build time. Falls back to local auth on error.
- */
 async function resolveAuthConfig(): Promise<ResolvedAuthConfig> {
-  if (cachedConfig) {
-    return cachedConfig;
+  const backendUrl = getServerBackendUrl();
+  const candidateUrls: string[] = [];
+  if (backendUrl.includes("localhost")) {
+    candidateUrls.push(backendUrl.replace("localhost", "127.0.0.1") + "/api/v1/health");
+    candidateUrls.push(backendUrl + "/api/v1/health");
+  } else if (backendUrl.includes("127.0.0.1")) {
+    candidateUrls.push(backendUrl + "/api/v1/health");
+    candidateUrls.push(backendUrl.replace("127.0.0.1", "localhost") + "/api/v1/health");
+  } else {
+    candidateUrls.push(backendUrl + "/api/v1/health");
   }
 
-  try {
-    const backendUrl = getServerBackendUrl();
-    const res = await fetch(`${backendUrl}/api/v1/health`, {
-      next: { revalidate: 300 },
-      signal: AbortSignal.timeout(1500),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      const authProvider = (data.auth_provider as string) || "local";
-      const stackConfig =
-        authProvider === "stack" &&
-        data.stack_project_id &&
-        data.stack_publishable_client_key
-          ? {
-              projectId: data.stack_project_id as string,
-              publishableClientKey:
-                data.stack_publishable_client_key as string,
-            }
-          : null;
-      // Default to signup-enabled when the backend omits the field (older api
-      // versions before the flag existed) — matches the backend's own default.
-      const signupEnabled = data.signup_enabled !== false;
-      cachedConfig = { authProvider, stackConfig, signupEnabled };
-      return cachedConfig;
+  for (const url of candidateUrls) {
+    try {
+      const res = await fetch(url, {
+        // Re-validate every 60 s so a backend restart is picked up quickly.
+        // No module-level cache — avoids stale provider surviving forever.
+        next: { revalidate: 60 },
+        signal: AbortSignal.timeout(5000),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const authProvider = (data.auth_provider as string) || "local";
+        const stackConfig =
+          authProvider === "stack" && data.stack_project_id
+            ? {
+                projectId: data.stack_project_id as string,
+                publishableClientKey: (data.stack_publishable_client_key || "") as string,
+                apiUrl: (data.stack_api_url || undefined) as string | undefined,
+                secretServerKey: (data.stack_secret_server_key || undefined) as string | undefined,
+              }
+            : null;
+        const signupEnabled = data.signup_enabled !== false;
+        return { authProvider, stackConfig, signupEnabled };
+      }
+    } catch {
+      // Try next candidate URL
     }
-  } catch {
-    // Backend not reachable — fall through without caching so we retry next request.
   }
 
-  // Unknown (backend unreachable). Return the local fallback for THIS request but
-  // do NOT cache it: caching here would pin the entire UI to local auth until a
-  // container restart if the first resolution loses the startup race with the api
-  // service. Leaving it uncached means the next request retries and self-heals.
   return { authProvider: "local", stackConfig: null, signupEnabled: true };
 }
+
 
 /**
  * Returns the active auth provider ('local' or 'stack'). Falls back to 'local'.

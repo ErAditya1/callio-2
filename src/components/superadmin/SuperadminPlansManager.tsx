@@ -66,10 +66,15 @@ interface PlanItem {
   price_inr: number;
   billing_interval: string;
   included_minutes: number;
+  monthly_credits_usd?: number;
+  included_phone_numbers?: number;
   max_concurrent_calls: number;
   max_agents: number;
   overage_rate_per_minute_usd: number;
+  byok_platform_fee_per_minute_usd?: number;
   allow_byok: boolean;
+  allow_live_transfer?: boolean;
+  allow_sip_trunking?: boolean;
   is_active: boolean;
   is_public: boolean;
   features: string[];
@@ -108,12 +113,25 @@ interface OrgSubscriptionDetails {
     allow_byok: boolean;
     wallet_balance_usd: number;
     current_agents_count: number;
+    plan_credits_monthly_usd?: number;
+    plan_credits_remaining_usd?: number;
+    included_phone_numbers?: number;
+    byok_platform_fee_per_minute_usd?: number;
+    allow_live_transfer?: boolean;
+    allow_sip_trunking?: boolean;
+    custom_monthly_price_usd?: number | null;
   };
   enterprise_overrides: {
     custom_concurrent_limit?: number | null;
     custom_monthly_minutes?: number | null;
     custom_max_agents?: number | null;
     custom_allow_byok?: boolean | null;
+    custom_monthly_price_usd?: number | null;
+    custom_monthly_credits_usd?: number | null;
+    custom_included_phone_numbers?: number | null;
+    custom_byok_platform_fee_usd?: number | null;
+    custom_allow_live_transfer?: boolean | null;
+    custom_allow_sip_trunking?: boolean | null;
     price_per_second_usd?: number | null;
   };
   billing_cycle: {
@@ -164,6 +182,12 @@ export function SuperadminPlansManager() {
   const [customMinutes, setCustomMinutes] = useState<string>('');
   const [customMaxAgents, setCustomMaxAgents] = useState<string>('');
   const [customPriceSec, setCustomPriceSec] = useState<string>('');
+  const [customMonthlyPrice, setCustomMonthlyPrice] = useState<string>('');
+  const [customMonthlyCredits, setCustomMonthlyCredits] = useState<string>('');
+  const [customIncludedPhoneNumbers, setCustomIncludedPhoneNumbers] = useState<string>('');
+  const [customByokFee, setCustomByokFee] = useState<string>('');
+  const [customLiveTransfer, setCustomLiveTransfer] = useState<boolean | null>(null);
+  const [customSipTrunking, setCustomSipTrunking] = useState<boolean | null>(null);
   const [customByok, setCustomByok] = useState<boolean | null>(null);
   const [resetMinutesUsed, setResetMinutesUsed] = useState<boolean>(false);
 
@@ -239,6 +263,28 @@ export function SuperadminPlansManager() {
             : ''
         );
         setCustomByok(data.enterprise_overrides.custom_allow_byok ?? null);
+        setCustomMonthlyPrice(
+          data.enterprise_overrides.custom_monthly_price_usd != null
+            ? String(data.enterprise_overrides.custom_monthly_price_usd)
+            : ''
+        );
+        setCustomMonthlyCredits(
+          data.enterprise_overrides.custom_monthly_credits_usd != null
+            ? String(data.enterprise_overrides.custom_monthly_credits_usd)
+            : ''
+        );
+        setCustomIncludedPhoneNumbers(
+          data.enterprise_overrides.custom_included_phone_numbers != null
+            ? String(data.enterprise_overrides.custom_included_phone_numbers)
+            : ''
+        );
+        setCustomByokFee(
+          data.enterprise_overrides.custom_byok_platform_fee_usd != null
+            ? String(data.enterprise_overrides.custom_byok_platform_fee_usd)
+            : ''
+        );
+        setCustomLiveTransfer(data.enterprise_overrides.custom_allow_live_transfer ?? null);
+        setCustomSipTrunking(data.enterprise_overrides.custom_allow_sip_trunking ?? null);
         setResetMinutesUsed(false);
       } else {
         toast.error('Failed to load organization subscription');
@@ -350,6 +396,12 @@ export function SuperadminPlansManager() {
         custom_monthly_minutes: customMinutes.trim() ? parseInt(customMinutes, 10) : null,
         custom_max_agents: customMaxAgents.trim() ? parseInt(customMaxAgents, 10) : null,
         custom_allow_byok: customByok,
+        custom_monthly_price_usd: customMonthlyPrice.trim() ? parseFloat(customMonthlyPrice) : null,
+        custom_monthly_credits_usd: customMonthlyCredits.trim() ? parseFloat(customMonthlyCredits) : null,
+        custom_included_phone_numbers: customIncludedPhoneNumbers.trim() ? parseInt(customIncludedPhoneNumbers, 10) : null,
+        custom_byok_platform_fee_usd: customByokFee.trim() ? parseFloat(customByokFee) : null,
+        custom_allow_live_transfer: customLiveTransfer,
+        custom_allow_sip_trunking: customSipTrunking,
         custom_price_per_second_usd: customPriceSec.trim() ? parseFloat(customPriceSec) : null,
         reset_minutes_used: resetMinutesUsed,
       };
@@ -501,7 +553,7 @@ export function SuperadminPlansManager() {
                   <TableHead>Included Mins</TableHead>
                   <TableHead>Concurrency</TableHead>
                   <TableHead>Agents Limit</TableHead>
-                  <TableHead>Overage Rate</TableHead>
+                  <TableHead>Overage / Extra Calls</TableHead>
                   <TableHead>BYOK</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Action</TableHead>
@@ -525,18 +577,37 @@ export function SuperadminPlansManager() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col text-sm">
-                          <span className="font-semibold">${p.price_usd} / {p.billing_interval}</span>
-                          <span className="text-xs text-muted-foreground">₹{p.price_inr} / {p.billing_interval}</span>
+                          {p.slug === 'enterprise' || p.price_usd === 0 ? (
+                            <>
+                              <span className="font-semibold text-amber-600 dark:text-amber-400">Custom Contract</span>
+                              <span className="text-[11px] text-muted-foreground">Org-level Pricing</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="font-semibold">${p.price_usd} / {p.billing_interval}</span>
+                              <span className="text-xs text-muted-foreground">₹{p.price_inr} / {p.billing_interval}</span>
+                            </>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        {p.included_minutes > 0 ? (
-                          <Badge variant="outline" className="font-mono bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200">
-                            {p.included_minutes.toLocaleString()} mins
-                          </Badge>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">Pay-per-sec</span>
-                        )}
+                        <div className="flex flex-col gap-1">
+                          {(p.monthly_credits_usd ?? 0) > 0 ? (
+                            <Badge variant="outline" className="font-mono bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200">
+                              ${p.monthly_credits_usd?.toFixed(0)} Credits
+                            </Badge>
+                          ) : p.slug === 'enterprise' ? (
+                            <Badge variant="outline" className="font-mono bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200">
+                              Custom Credits
+                            </Badge>
+                          ) : p.included_minutes > 0 ? (
+                            <Badge variant="outline" className="font-mono bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200">
+                              {p.included_minutes.toLocaleString()} mins
+                            </Badge>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Pay-per-sec</span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="font-mono text-sm">
                         {p.max_concurrent_calls} lines
@@ -544,8 +615,21 @@ export function SuperadminPlansManager() {
                       <TableCell className="font-mono text-sm">
                         {p.max_agents >= 9999 ? 'Unlimited' : `${p.max_agents} agents`}
                       </TableCell>
-                      <TableCell className="font-mono text-sm">
-                        ${p.overage_rate_per_minute_usd.toFixed(2)}/min
+                      <TableCell>
+                        {p.slug === 'pay_as_you_go' ? (
+                          <Badge variant="outline" className="text-[11px] text-muted-foreground font-normal">
+                            Direct Wallet (Pay-per-sec)
+                          </Badge>
+                        ) : (
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-xs text-emerald-600 dark:text-emerald-400">
+                              Dynamic (Model Stack)
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">
+                              Wallet overflow at active model rates
+                            </span>
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell>
                         {p.allow_byok ? (
@@ -679,17 +763,39 @@ export function SuperadminPlansManager() {
             ) : orgDetails ? (
               <form onSubmit={handleSaveOrgPlanAndOverrides} className="space-y-6">
                 {/* Active Effective Status Cards */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
                   <div className="p-3 bg-muted/40 rounded-lg border">
                     <span className="text-[11px] text-muted-foreground uppercase font-semibold">Tier</span>
-                    <p className="text-sm font-bold text-primary mt-0.5">{orgDetails.tier_name}</p>
-                    <span className="text-[10px] text-muted-foreground">Status: {orgDetails.subscription_status}</span>
+                    <p className="text-sm font-bold text-primary mt-0.5 truncate">{orgDetails.tier_name}</p>
+                    <span className="text-[10px] text-muted-foreground">
+                      {orgDetails.effective_limits.custom_monthly_price_usd != null
+                        ? `Custom: $${orgDetails.effective_limits.custom_monthly_price_usd}/mo`
+                        : orgDetails.subscription_status}
+                    </span>
+                  </div>
+
+                  <div className="p-3 bg-muted/40 rounded-lg border">
+                    <span className="text-[11px] text-muted-foreground uppercase font-semibold">Calling Credits</span>
+                    <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
+                      ${(orgDetails.effective_limits.plan_credits_remaining_usd ?? 0).toFixed(2)}
+                    </p>
+                    <span className="text-[10px] text-muted-foreground">
+                      of ${(orgDetails.effective_limits.plan_credits_monthly_usd ?? 0).toFixed(2)} monthly
+                    </span>
                   </div>
 
                   <div className="p-3 bg-muted/40 rounded-lg border">
                     <span className="text-[11px] text-muted-foreground uppercase font-semibold">Concurrency</span>
                     <p className="text-sm font-bold mt-0.5">{orgDetails.effective_limits.max_concurrent_calls} Lines</p>
                     <span className="text-[10px] text-muted-foreground">Simultaneous Calls</span>
+                  </div>
+
+                  <div className="p-3 bg-muted/40 rounded-lg border">
+                    <span className="text-[11px] text-muted-foreground uppercase font-semibold">Phone Numbers</span>
+                    <p className="text-sm font-bold mt-0.5">
+                      {orgDetails.effective_limits.included_phone_numbers ?? 0} Free
+                    </p>
+                    <span className="text-[10px] text-muted-foreground">Extra: $2.50/mo</span>
                   </div>
 
                   <div className="p-3 bg-muted/40 rounded-lg border">
@@ -701,14 +807,12 @@ export function SuperadminPlansManager() {
                   </div>
 
                   <div className="p-3 bg-muted/40 rounded-lg border">
-                    <span className="text-[11px] text-muted-foreground uppercase font-semibold">Plan Minutes</span>
-                    <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-                      {orgDetails.effective_limits.included_minutes > 0
-                        ? `${orgDetails.effective_limits.minutes_remaining.toFixed(0)} left`
-                        : 'Pay-As-You-Go'}
+                    <span className="text-[11px] text-muted-foreground uppercase font-semibold">BYOK Fee</span>
+                    <p className="text-sm font-bold mt-0.5">
+                      {((orgDetails.effective_limits.byok_platform_fee_per_minute_usd ?? 0.04) * 100).toFixed(0)}¢/min
                     </p>
                     <span className="text-[10px] text-muted-foreground">
-                      Used: {orgDetails.effective_limits.monthly_minutes_used.toFixed(1)}m
+                      BYOT: $0.00 tel
                     </span>
                   </div>
                 </div>
@@ -735,7 +839,7 @@ export function SuperadminPlansManager() {
                             {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
                           </div>
                           <p className="text-[11px] text-muted-foreground mt-1">
-                            ${p.price_usd}/mo • {p.max_concurrent_calls} lines
+                            {p.slug === 'enterprise' ? 'Custom Contract' : `$${p.price_usd}/mo`} • {p.max_concurrent_calls} lines
                           </p>
                         </button>
                       );
@@ -757,15 +861,76 @@ export function SuperadminPlansManager() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Row 1: Enterprise Custom Contract Pricing & Credits */}
+                  <div className="p-3.5 rounded-lg border bg-amber-500/5 border-amber-500/20 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                        <Sparkles className="h-3.5 w-3.5" />
+                        Enterprise Contract Pricing &amp; Credits (Organization Level)
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">Overrides public plan price</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="space-y-1">
+                        <Label htmlFor="custom-monthly-price" className="text-xs font-medium">
+                          Custom Monthly Price ($ USD / mo)
+                        </Label>
+                        <Input
+                          id="custom-monthly-price"
+                          type="number"
+                          step="0.01"
+                          placeholder="e.g. 499.00"
+                          value={customMonthlyPrice}
+                          onChange={(e) => setCustomMonthlyPrice(e.target.value)}
+                          className="text-sm bg-background"
+                        />
+                        <p className="text-[10px] text-muted-foreground">Organization custom contract fee</p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <Label htmlFor="custom-monthly-credits" className="text-xs font-medium">
+                          Monthly Plan Credits ($ USD / mo)
+                        </Label>
+                        <Input
+                          id="custom-monthly-credits"
+                          type="number"
+                          step="0.01"
+                          placeholder="e.g. 550.00"
+                          value={customMonthlyCredits}
+                          onChange={(e) => setCustomMonthlyCredits(e.target.value)}
+                          className="text-sm bg-background"
+                        />
+                        <p className="text-[10px] text-muted-foreground">Credited every billing cycle</p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <Label htmlFor="custom-included-numbers" className="text-xs font-medium">
+                          Included Platform Phone Numbers
+                        </Label>
+                        <Input
+                          id="custom-included-numbers"
+                          type="number"
+                          placeholder="e.g. 5"
+                          value={customIncludedPhoneNumbers}
+                          onChange={(e) => setCustomIncludedPhoneNumbers(e.target.value)}
+                          className="text-sm bg-background"
+                        />
+                        <p className="text-[10px] text-muted-foreground">Free before $2.50/mo rent</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row 2: Concurrency, Agents, BYOK Rate & Custom Rate */}
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                     <div className="space-y-1.5">
                       <Label htmlFor="custom-concurrency" className="text-xs">
-                        Custom Concurrent Line Limit (Simultaneous Calls)
+                        Custom Concurrent Lines
                       </Label>
                       <Input
                         id="custom-concurrency"
                         type="number"
-                        placeholder="Leave blank to use plan default"
+                        placeholder="Plan default"
                         value={customConcurrency}
                         onChange={(e) => setCustomConcurrency(e.target.value)}
                         className="text-sm"
@@ -773,27 +938,13 @@ export function SuperadminPlansManager() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="custom-minutes" className="text-xs">
-                        Custom Monthly Minutes Allocation
-                      </Label>
-                      <Input
-                        id="custom-minutes"
-                        type="number"
-                        placeholder="Leave blank to use plan default"
-                        value={customMinutes}
-                        onChange={(e) => setCustomMinutes(e.target.value)}
-                        className="text-sm"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
                       <Label htmlFor="custom-agents" className="text-xs">
-                        Custom Maximum Voice Agents
+                        Custom Max Voice Agents
                       </Label>
                       <Input
                         id="custom-agents"
                         type="number"
-                        placeholder="Leave blank to use plan default"
+                        placeholder="Plan default"
                         value={customMaxAgents}
                         onChange={(e) => setCustomMaxAgents(e.target.value)}
                         className="text-sm"
@@ -801,14 +952,29 @@ export function SuperadminPlansManager() {
                     </div>
 
                     <div className="space-y-1.5">
+                      <Label htmlFor="custom-byok-fee" className="text-xs">
+                        BYOK Platform Fee ($/min)
+                      </Label>
+                      <Input
+                        id="custom-byok-fee"
+                        type="number"
+                        step="0.001"
+                        placeholder="Default $0.04"
+                        value={customByokFee}
+                        onChange={(e) => setCustomByokFee(e.target.value)}
+                        className="text-sm"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
                       <Label htmlFor="custom-rate" className="text-xs">
-                        Custom Call Rate ($ USD / Second)
+                        Custom Call Rate ($/sec)
                       </Label>
                       <Input
                         id="custom-rate"
                         type="number"
                         step="0.0001"
-                        placeholder="e.g. 0.0010 for $0.06/min"
+                        placeholder="e.g. 0.0010"
                         value={customPriceSec}
                         onChange={(e) => setCustomPriceSec(e.target.value)}
                         className="text-sm"
@@ -816,42 +982,66 @@ export function SuperadminPlansManager() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                    <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/20">
+                  {/* Row 3: Feature Permissions & Cycle Reset */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                    <div className="flex items-center justify-between p-2.5 border rounded-lg bg-muted/20">
                       <div className="space-y-0.5">
-                        <Label className="text-xs font-semibold">Allow BYOK (Custom Keys)</Label>
-                        <p className="text-[11px] text-muted-foreground">
-                          Force allow or disallow Bring-Your-Own-Key model keys
-                        </p>
+                        <Label className="text-xs font-semibold">Allow BYOK</Label>
+                        <p className="text-[10px] text-muted-foreground">Custom Model Keys</p>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         <Button
                           type="button"
                           variant={customByok === true ? 'default' : 'outline'}
                           size="sm"
-                          className="h-7 text-xs px-2"
+                          className="h-6 text-[11px] px-2"
                           onClick={() => setCustomByok(customByok === true ? null : true)}
                         >
-                          Allow
+                          Yes
                         </Button>
                         <Button
                           type="button"
                           variant={customByok === false ? 'destructive' : 'outline'}
                           size="sm"
-                          className="h-7 text-xs px-2"
+                          className="h-6 text-[11px] px-2"
                           onClick={() => setCustomByok(customByok === false ? null : false)}
                         >
-                          Disallow
+                          No
                         </Button>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/20">
+                    <div className="flex items-center justify-between p-2.5 border rounded-lg bg-muted/20">
                       <div className="space-y-0.5">
-                        <Label className="text-xs font-semibold">Reset Current Month Minutes</Label>
-                        <p className="text-[11px] text-muted-foreground">
-                          Zero out monthly_minutes_used to give fresh allowance
-                        </p>
+                        <Label className="text-xs font-semibold">Live Transfer &amp; SIP</Label>
+                        <p className="text-[10px] text-muted-foreground">Warm transfer &amp; BYOT</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          type="button"
+                          variant={customLiveTransfer === true ? 'default' : 'outline'}
+                          size="sm"
+                          className="h-6 text-[11px] px-2"
+                          onClick={() => setCustomLiveTransfer(customLiveTransfer === true ? null : true)}
+                        >
+                          Transfer
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={customSipTrunking === true ? 'default' : 'outline'}
+                          size="sm"
+                          className="h-6 text-[11px] px-2"
+                          onClick={() => setCustomSipTrunking(customSipTrunking === true ? null : true)}
+                        >
+                          SIP
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2.5 border rounded-lg bg-muted/20">
+                      <div className="space-y-0.5">
+                        <Label className="text-xs font-semibold">Reset Cycle Credits</Label>
+                        <p className="text-[10px] text-muted-foreground">Refill plan credits immediately</p>
                       </div>
                       <Switch
                         checked={resetMinutesUsed}
@@ -1008,18 +1198,37 @@ export function SuperadminPlansManager() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="overage-rate" className="text-xs font-semibold">Overage Rate ($ USD / Min)</Label>
+                <Label htmlFor="overage-rate" className="text-xs font-semibold">
+                  Overage Rate ($ USD / Min) {planForm.slug === 'pay_as_you_go' && '(N/A for PAYG)'}
+                </Label>
                 <Input
                   id="overage-rate"
                   type="number"
                   step="0.001"
-                  value={planForm.overage_rate_per_minute_usd ?? 0.10}
-                  onChange={(e) => setPlanForm({ ...planForm, overage_rate_per_minute_usd: parseFloat(e.target.value) || 0.10 })}
+                  disabled={planForm.slug === 'pay_as_you_go'}
+                  value={planForm.slug === 'pay_as_you_go' ? 0 : (planForm.overage_rate_per_minute_usd ?? 0.10)}
+                  onChange={(e) => setPlanForm({ ...planForm, overage_rate_per_minute_usd: parseFloat(e.target.value) || 0 })}
                   required
                 />
               </div>
 
-              <div className="flex items-center justify-between p-3 border rounded-lg mt-4 bg-muted/10">
+              <div className="space-y-1.5">
+                <Label htmlFor="byok-platform-fee" className="text-xs font-semibold">
+                  BYOK Platform Fee ($ USD / Min)
+                </Label>
+                <Input
+                  id="byok-platform-fee"
+                  type="number"
+                  step="0.001"
+                  value={planForm.byok_platform_fee_per_minute_usd ?? 0.04}
+                  onChange={(e) => setPlanForm({ ...planForm, byok_platform_fee_per_minute_usd: parseFloat(e.target.value) || 0.04 })}
+                  placeholder="e.g. 0.04"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/10">
                 <Label htmlFor="allow-byok-switch" className="text-xs font-semibold cursor-pointer">
                   Allow Custom Keys (BYOK)
                 </Label>

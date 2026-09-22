@@ -14,6 +14,7 @@ export async function GET() {
     provider,
     stackProjectId: stackConfig?.projectId ?? null,
     stackPublishableClientKey: stackConfig?.publishableClientKey ?? null,
+    stackApiUrl: stackConfig?.apiUrl ?? null,
     signupEnabled,
   });
 }

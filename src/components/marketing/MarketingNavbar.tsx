@@ -216,7 +216,7 @@ export function MarketingNavbar() {
                   asChild
                   className="h-10 rounded-full border-neutral-200 bg-white px-5 text-[14px] font-medium text-neutral-900 shadow-none hover:bg-neutral-50"
                 >
-                  <Link href="/auth/login">Log in</Link>
+                  <Link href="/login">Log in</Link>
                 </Button>
                 <Button
                   size="sm"
@@ -299,7 +299,7 @@ export function MarketingNavbar() {
             ) : (
               <>
                 <Button variant="outline" asChild className="w-full border-neutral-200 bg-white text-neutral-900 rounded-full">
-                  <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                     Log in
                   </Link>
                 </Button>

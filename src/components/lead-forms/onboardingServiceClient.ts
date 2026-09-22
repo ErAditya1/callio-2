@@ -3,11 +3,9 @@
 // (no auth token); identity is the email carried in the body. Every call is
 // BEST-EFFORT: failures are swallowed so a down/erroring service never blocks the user.
 
-// Base URL of the user_onboarding service. Unset (the default for self-hosted OSS —
-// .env.example ships this commented out) → fall back to our cloud leads backend so we
-// still receive OSS form submissions. Override the env var to point elsewhere (or to a
-// local backend) to stop sending leads to us.
-const BASE_URL = process.env.NEXT_PUBLIC_ONBOARDING_API_URL || "https://api-leads.dograh.com";
+// Base URL of the leads service. Defaults to empty string so it hits the
+// local Next.js proxy -> CallioAI backend (/api/v1/leads/*).
+const BASE_URL = process.env.NEXT_PUBLIC_ONBOARDING_API_URL || "";
 
 // Bound every call so a slow/hung service can never freeze the UI. Best-effort:
 // failures are surfaced via console.error (Sentry breadcrumbs) but never thrown.

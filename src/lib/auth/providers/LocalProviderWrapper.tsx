@@ -10,7 +10,7 @@ import { AuthContext } from './AuthProvider';
 // DEMO FLOW (frontend-only prototype): skip the bounce to /auth/login so every
 // page is visitable without login. Mirrors DEMO_OPEN_ROUTES in src/middleware.ts.
 // Set to false to restore the login gate.
-const DEMO_OPEN_ROUTES = true;
+const DEMO_OPEN_ROUTES = false;
 
 export function LocalProviderWrapper({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<LocalUser | null>(null);
@@ -46,6 +46,14 @@ export function LocalProviderWrapper({ children }: { children: React.ReactNode }
           logger.info('OSS auth initialized', { user: data.user });
         } else if (response.status === 401) {
           // No token - redirect to login only if on private dashboard pages
+          const pathname = window.location.pathname;
+          const isAuthOrHandlerPath =
+            pathname.startsWith('/auth/') ||
+            pathname.startsWith('/handler') ||
+            pathname === '/login' ||
+            pathname === '/signup' ||
+            pathname === '/after-sign-in';
+
           const isPublicPath = [
             '/',
             '/ai-voice-agents',
@@ -70,9 +78,9 @@ export function LocalProviderWrapper({ children }: { children: React.ReactNode }
             '/cookies',
             '/status',
             '/embed',
-          ].some((p) => window.location.pathname === p || window.location.pathname.startsWith(`${p}/`));
+          ].some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
-          if (!isPublicPath && !window.location.pathname.startsWith('/auth/')) {
+          if (!isAuthOrHandlerPath && !isPublicPath) {
             window.location.href = '/auth/login';
             return;
           }

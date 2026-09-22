@@ -57,6 +57,13 @@ interface CurrentSubscription {
   overage_rate_per_minute_usd: number;
   allow_byok: boolean;
   wallet_balance_usd: number;
+  plan_credits_monthly_usd?: number;
+  plan_credits_remaining_usd?: number;
+  included_phone_numbers?: number;
+  byok_platform_fee_per_minute_usd?: number;
+  allow_live_transfer?: boolean;
+  allow_sip_trunking?: boolean;
+  custom_monthly_price_usd?: number | null;
   billing_cycle_start: string | null;
   billing_cycle_end: string | null;
 }
@@ -70,10 +77,15 @@ interface AvailablePlan {
   price_inr: number;
   billing_interval: string;
   included_minutes: number;
+  monthly_credits_usd?: number;
+  included_phone_numbers?: number;
   max_concurrent_calls: number;
   max_agents: number;
   overage_rate_per_minute_usd: number;
+  byok_platform_fee_per_minute_usd?: number;
   allow_byok: boolean;
+  allow_live_transfer?: boolean;
+  allow_sip_trunking?: boolean;
   features: string[] | string;
 }
 
@@ -381,57 +393,86 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
         <CardContent className="pt-6 space-y-6">
           {/* Plan Quotas Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Minutes Progress */}
+            {/* Credits Progress */}
             <div className="p-4 rounded-xl border bg-background space-y-3">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-emerald-500" />
-                  Monthly Calling Minutes
+                  <Wallet className="h-4 w-4 text-emerald-500" />
+                  Monthly Plan Credits
                 </span>
-                {totalMins > 0 ? (
+                {(current.plan_credits_monthly_usd || 0) > 0 ? (
                   <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                    {remainingMins.toFixed(1)} mins left
+                    ${(current.plan_credits_remaining_usd ?? current.plan_credits_monthly_usd ?? 0).toFixed(2)} USD left
                   </span>
                 ) : (
                   <Badge variant="outline" className="text-[11px]">Pay-As-You-Go</Badge>
                 )}
               </div>
 
-              {totalMins > 0 ? (
+              {(current.plan_credits_monthly_usd || 0) > 0 ? (
                 <>
-                  <Progress value={minutesPct} className="h-2" />
-                  <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono">
-                    <span>{usedMins.toFixed(1)} used</span>
-                    <span>{totalMins} total included ({minutesPct}%)</span>
-                  </div>
-                  {usedMins >= totalMins && (
-                    <div className="text-[11px] text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-1">
-                      <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                      Plan minutes exhausted. Calls billed from wallet overage.
-                    </div>
-                  )}
+                  {(() => {
+                    const monthly = current.plan_credits_monthly_usd || 1;
+                    const remaining = current.plan_credits_remaining_usd ?? monthly;
+                    const used = Math.max(0, monthly - remaining);
+                    const pct = Math.min(100, Math.round((used / monthly) * 100));
+                    const approxMins = Math.round(remaining / 0.12);
+                    return (
+                      <>
+                        <Progress value={pct} className="h-2" />
+                        <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono">
+                          <span>${used.toFixed(2)} used ({pct}%)</span>
+                          <span>${monthly.toFixed(2)} included</span>
+                        </div>
+                        <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center justify-between pt-0.5">
+                          <span>~{approxMins.toLocaleString()} standard mins remaining</span>
+                          {remaining <= 0 && (
+                            <span className="text-amber-600 dark:text-amber-400 font-semibold">Overflown to Wallet</span>
+                          )}
+                        </div>
+                      </>
+                    );
+                  })()}
                 </>
               ) : (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Calls are billed per second directly from your Platform Wallet balance at standard rates.
-                </p>
+                <div className="space-y-1">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-xs text-muted-foreground">Platform Wallet:</span>
+                    <span className="font-mono font-bold text-foreground">
+                      ${(current.wallet_balance_usd || 0).toFixed(2)} USD
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Calls billed per second from platform wallet balance. Recharge as needed.
+                  </p>
+                </div>
               )}
             </div>
 
-            {/* Concurrent Call Lines */}
+            {/* Concurrent Call Lines & Numbers */}
             <div className="p-4 rounded-xl border bg-background space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
                   <PhoneCall className="h-4 w-4 text-blue-500" />
-                  Simultaneous Concurrency
+                  Lines &amp; Numbers
                 </span>
                 <span className="font-mono font-bold text-foreground">
-                  {current.max_concurrent_calls} Channels
+                  {current.max_concurrent_calls} Lines / {current.included_phone_numbers || 0} No.
                 </span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Maximum concurrent phone calls your AI agents can handle at any split second without queuing.
+                Maximum concurrent calling capacity and included dedicated platform phone numbers.
               </p>
+              <div className="flex items-center gap-1.5 pt-1">
+                <Badge variant="secondary" className="text-[10px] font-mono">
+                  {current.included_phone_numbers || 0} Free Numbers Included
+                </Badge>
+                {current.allow_live_transfer && (
+                  <Badge variant="outline" className="text-[10px] text-blue-600 border-blue-500/20 bg-blue-500/10">
+                    Live Transfer
+                  </Badge>
+                )}
+              </div>
             </div>
 
             {/* AI Agents & BYOK */}
@@ -445,22 +486,25 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                   {current.current_agents_count} / {current.max_agents >= 9999 ? 'Unlimited' : current.max_agents}
                 </span>
               </div>
-              <div className="flex items-center gap-2 pt-1">
+              <div className="flex flex-wrap items-center gap-1.5 pt-1">
                 {current.allow_byok ? (
                   <Badge variant="outline" className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-                    <CheckCircle2 className="h-3 w-3 mr-1" /> BYOK Supported
+                    <CheckCircle2 className="h-3 w-3 mr-1" /> BYOK (${(current.byok_platform_fee_per_minute_usd || 0.04).toFixed(2)}/min)
                   </Badge>
                 ) : (
                   <Badge variant="outline" className="text-[10px] text-muted-foreground">
                     Managed Keys Only
                   </Badge>
                 )}
-                {current.overage_rate_per_minute_usd > 0 && (
-                  <Badge variant="secondary" className="text-[10px] font-mono">
-                    Overage: ${current.overage_rate_per_minute_usd.toFixed(2)}/min
+                {current.allow_sip_trunking && (
+                  <Badge variant="outline" className="text-[10px] text-purple-600 border-purple-500/20 bg-purple-500/10">
+                    SIP Trunking
                   </Badge>
                 )}
               </div>
+              <p className="text-[11px] text-muted-foreground">
+                Wallet balance: ${(current.wallet_balance_usd || 0).toFixed(2)} USD
+              </p>
             </div>
           </div>
         </CardContent>
@@ -475,7 +519,7 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
               Upgrade or Switch Your Plan
             </h3>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Choose the ideal calling capacity, concurrent line limit, and agent allocation for your business.
+              Unified credit-based plans. Deducts per-second based on your exact AI model stack and carrier.
             </p>
           </div>
 
@@ -507,7 +551,7 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
           {plans.map((plan) => {
             const isCurrent = current.tier === plan.slug;
             const isEnterprise = plan.slug === 'enterprise';
@@ -516,7 +560,8 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
             return (
               <Card
                 key={plan.slug}
-                className={`relative flex flex-col justify-between transition-all rounded-2xl border ${
+                style={{ overflow: 'visible' }}
+                className={`relative flex flex-col justify-between transition-all rounded-2xl border overflow-visible ${
                   isCurrent
                     ? 'border-primary shadow-md ring-2 ring-primary/20 bg-primary/[0.02]'
                     : isEnterprise
@@ -525,15 +570,23 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                 }`}
               >
                 {isCurrent && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground text-[11px] font-bold px-3 py-0.5 shadow-sm">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap pointer-events-none">
+                    <Badge className="bg-primary text-primary-foreground text-[11px] font-bold px-3.5 py-1 shadow-md border border-primary-foreground/20 tracking-wide uppercase flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
                       Current Active Plan
                     </Badge>
                   </div>
                 )}
 
-                <CardHeader className="pt-6">
-                  <CardTitle className="text-lg font-bold">{plan.name}</CardTitle>
+                <CardHeader className="pt-7">
+                  <div className="flex items-center justify-between gap-2">
+                    <CardTitle className="text-lg font-bold">{plan.name}</CardTitle>
+                    {isCurrent && (
+                      <Badge variant="outline" className="text-[10px] font-semibold text-primary border-primary/30 bg-primary/10">
+                        Active
+                      </Badge>
+                    )}
+                  </div>
                   <CardDescription className="text-xs min-h-[34px] leading-relaxed mt-1">
                     {plan.description}
                   </CardDescription>
@@ -541,16 +594,27 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                   <div className="pt-4">
                     <div className="flex items-baseline gap-1">
                       <span className="text-3xl font-extrabold font-mono tracking-tight text-foreground">
-                        {price}
+                        {isEnterprise ? 'Custom' : price}
                       </span>
-                      <span className="text-xs text-muted-foreground font-medium">
-                        / {plan.billing_interval}
-                      </span>
+                      {!isEnterprise && (
+                        <span className="text-xs text-muted-foreground font-medium">
+                          / {plan.billing_interval}
+                        </span>
+                      )}
                     </div>
-                    {plan.included_minutes > 0 ? (
-                      <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
-                        Includes {plan.included_minutes.toLocaleString()} mins/month
+                    {isEnterprise ? (
+                      <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mt-1">
+                        Custom contract configured per organization
                       </p>
+                    ) : (plan.monthly_credits_usd || 0) > 0 ? (
+                      <div className="mt-1">
+                        <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                          ${plan.monthly_credits_usd}.00 Calling Credits Included
+                        </p>
+                        <p className="text-[11px] text-muted-foreground font-mono">
+                          ~{Math.round((plan.monthly_credits_usd || 0) / 0.12).toLocaleString()} standard mins/mo
+                        </p>
+                      </div>
                     ) : (
                       <p className="text-xs text-muted-foreground mt-1">
                         Pay-per-second from wallet
@@ -566,15 +630,21 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                       <span className="font-semibold font-mono">{plan.max_concurrent_calls} lines</span>
                     </div>
                     <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Phone Numbers:</span>
+                      <span className="font-semibold font-mono">
+                        {plan.included_phone_numbers ? `${plan.included_phone_numbers} Included` : 'Extra ($2.50/mo)'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Active Agents:</span>
                       <span className="font-semibold font-mono">
                         {plan.max_agents >= 9999 ? 'Unlimited' : `${plan.max_agents} agents`}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Overage Rate:</span>
+                      <span className="text-muted-foreground">BYOK Platform Fee:</span>
                       <span className="font-semibold font-mono">
-                        ${plan.overage_rate_per_minute_usd.toFixed(2)}/min
+                        ${(plan.byok_platform_fee_per_minute_usd || 0.04).toFixed(2)}/min
                       </span>
                     </div>
                   </div>
@@ -627,6 +697,70 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
             );
           })}
         </div>
+
+        {/* Interactive Model Stack & Minute Estimator Card */}
+        <div className="mt-8 p-5 rounded-2xl border bg-muted/20 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <h4 className="text-sm font-bold flex items-center gap-2">
+                <Zap className="h-4 w-4 text-amber-500" />
+                How Do Included Credits Convert into Calling Minutes?
+              </h4>
+              <p className="text-xs text-muted-foreground">
+                Your credits deduct dynamically per second. Choosing cost-effective AI models yields far more calling minutes:
+              </p>
+            </div>
+            <Badge variant="outline" className="text-xs font-mono self-start sm:self-auto">
+              Per-Second Deduction
+            </Badge>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-2 text-xs">
+            <div className="p-3.5 rounded-xl border bg-background space-y-1.5">
+              <div className="flex items-center justify-between font-semibold">
+                <span className="text-emerald-600">Ultra-Light Stack</span>
+                <span className="font-mono text-muted-foreground">~$0.06/min</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">GPT-4o-mini + Deepgram + Cartesia</p>
+              <div className="pt-1 font-mono font-bold text-foreground">
+                Starter ($49) = <span className="text-emerald-600">~816 Mins</span>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-xl border bg-background space-y-1.5">
+              <div className="flex items-center justify-between font-semibold">
+                <span className="text-blue-600">Standard Platform</span>
+                <span className="font-mono text-muted-foreground">~$0.12/min</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">Claude-3.5-Haiku + Deepgram + ElevenLabs</p>
+              <div className="pt-1 font-mono font-bold text-foreground">
+                Starter ($49) = <span className="text-blue-600">~408 Mins</span>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-xl border bg-background space-y-1.5">
+              <div className="flex items-center justify-between font-semibold">
+                <span className="text-purple-600">Premium Conversational</span>
+                <span className="font-mono text-muted-foreground">~$0.22/min</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">GPT-4o / Claude Sonnet + Custom Voice</p>
+              <div className="pt-1 font-mono font-bold text-foreground">
+                Starter ($49) = <span className="text-purple-600">~222 Mins</span>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-xl border bg-background space-y-1.5">
+              <div className="flex items-center justify-between font-semibold">
+                <span className="text-indigo-600">BYOK (Own Keys)</span>
+                <span className="font-mono text-muted-foreground">$0.04/min fee</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">You pay model providers directly</p>
+              <div className="pt-1 font-mono font-bold text-foreground">
+                Starter ($49) = <span className="text-indigo-600">~1,225 Mins</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Plan Switch Confirmation Dialog */}
@@ -643,41 +777,57 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
             </DialogDescription>
           </DialogHeader>
 
-          {selectedPlanForUpgrade && (
-            <div className="space-y-4 py-2 text-sm">
-              <div className="p-3 bg-muted/40 rounded-lg border space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Monthly Plan Price:</span>
-                  <span className="font-bold font-mono text-foreground">
-                    ${selectedPlanForUpgrade.price_usd} USD / month (₹{selectedPlanForUpgrade.price_inr})
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Included Calling Minutes:</span>
-                  <span className="font-semibold font-mono text-emerald-600 dark:text-emerald-400">
-                    {selectedPlanForUpgrade.included_minutes.toLocaleString()} mins
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Concurrent Lines:</span>
-                  <span className="font-semibold font-mono">{selectedPlanForUpgrade.max_concurrent_calls} simultaneous lines</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Max Voice Agents:</span>
-                  <span className="font-semibold font-mono">{selectedPlanForUpgrade.max_agents} agents</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Overage Rate:</span>
-                  <span className="font-semibold font-mono">${selectedPlanForUpgrade.overage_rate_per_minute_usd.toFixed(2)}/min</span>
-                </div>
-              </div>
+          {selectedPlanForUpgrade && (() => {
+            const plan = selectedPlanForUpgrade;
+            const currentBal = data?.current_subscription.wallet_balance_usd ?? 0;
+            const canPayFromWallet = currentBal >= plan.price_usd;
 
-              {/* Payment Method Selector for Paid Plans */}
-              {selectedPlanForUpgrade.price_usd > 0 && (() => {
-                const currentBal = data?.current_subscription.wallet_balance_usd ?? 0;
-                const canPayFromWallet = currentBal >= selectedPlanForUpgrade.price_usd;
+            return (
+              <div className="space-y-4 py-2 text-sm">
+                <div className="p-3 bg-muted/40 rounded-lg border space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Monthly Plan Price:</span>
+                    <span className="font-bold font-mono text-foreground">
+                      ${plan.price_usd} USD / month (₹{plan.price_inr})
+                    </span>
+                  </div>
+                  {plan.monthly_credits_usd ? (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Included Calling Credits:</span>
+                      <span className="font-semibold font-mono text-emerald-600 dark:text-emerald-400">
+                        ${plan.monthly_credits_usd}.00 USD (~{Math.round(plan.monthly_credits_usd / 0.12)} mins)
+                      </span>
+                    </div>
+                  ) : plan.included_minutes > 0 ? (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Included Calling Minutes:</span>
+                      <span className="font-semibold font-mono text-emerald-600 dark:text-emerald-400">
+                        {plan.included_minutes.toLocaleString()} mins
+                      </span>
+                    </div>
+                  ) : null}
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Concurrent Lines:</span>
+                    <span className="font-semibold font-mono">{plan.max_concurrent_calls} simultaneous lines</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Phone Numbers:</span>
+                    <span className="font-semibold font-mono">
+                      {plan.included_phone_numbers ? `${plan.included_phone_numbers} Included` : 'Extra ($2.50/mo)'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Max Voice Agents:</span>
+                    <span className="font-semibold font-mono">{plan.max_agents} agents</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">BYOK Platform Fee:</span>
+                    <span className="font-semibold font-mono">${(plan.byok_platform_fee_per_minute_usd || 0.04).toFixed(2)}/min</span>
+                  </div>
+                </div>
 
-                return (
+                {/* Payment Method Selector for Paid Plans */}
+                {plan.price_usd > 0 && (
                   <div className="space-y-2.5">
                     <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       Select Payment Method
@@ -711,7 +861,7 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                           </div>
                           <div className="text-[11px] text-muted-foreground">
                             Balance: ${currentBal.toFixed(2)} USD
-                            {!canPayFromWallet && ` (Short by $${(selectedPlanForUpgrade.price_usd - currentBal).toFixed(2)})`}
+                            {!canPayFromWallet && ` (Short by $${(plan.price_usd - currentBal).toFixed(2)})`}
                           </div>
                         </div>
                       </div>
@@ -738,7 +888,7 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                             Razorpay Checkout (UPI, Cards, Netbanking)
                           </div>
                           <div className="text-[11px] text-muted-foreground">
-                            Direct payment: ₹{selectedPlanForUpgrade.price_inr} + 18% GST
+                            Direct payment: ₹{plan.price_inr} + 18% GST
                           </div>
                         </div>
                       </div>
@@ -747,16 +897,16 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                       </div>
                     </div>
                   </div>
-                );
-              })()}
+                )}
 
-              {selectedPlanForUpgrade.price_usd === 0 && (
-                <p className="text-xs text-muted-foreground">
-                  Your existing wallet balance remains intact. You will be billed pay-as-you-go from your wallet.
-                </p>
-              )}
-            </div>
-          )}
+                {plan.price_usd === 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    Your existing wallet balance remains intact. You will be billed pay-as-you-go from your wallet.
+                  </p>
+                )}
+              </div>
+            );
+          })()}
 
           <DialogFooter className="pt-2">
             <Button variant="outline" onClick={() => setConfirmModalOpen(false)}>

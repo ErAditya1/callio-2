@@ -1,14 +1,20 @@
-import { getSignupEnabled } from "@/lib/auth/config";
+import { redirect } from "next/navigation";
 
-import { OnboardingFlow } from "@/components/auth/flow/OnboardingFlow";
+import { getAuthProvider, getSignupEnabled } from "@/lib/auth/config";
 
-// Resolve the backend health check before rendering so the "Sign up" link is
-// correct on first paint — no client-side fetch, no flicker on locked-down
-// installs. force-dynamic keeps the page off the build-time prerender, which
-// would bake in the flag's build-environment value.
+import { LoginForm } from "./LoginForm";
+
+// Resolve the backend health check before rendering so the auth route is
+// correct on first paint — redirects to Stack Auth when enabled.
 export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
+  const provider = await getAuthProvider();
+  if (provider === "stack") {
+    redirect("/handler/sign-in");
+  }
+
   const signupEnabled = await getSignupEnabled();
-  return <OnboardingFlow signupEnabled={signupEnabled} />;
+  return <LoginForm signupEnabled={signupEnabled} />;
 }
+

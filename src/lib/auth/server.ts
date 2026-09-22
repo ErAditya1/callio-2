@@ -30,13 +30,27 @@ export async function getStackServerApp(): Promise<StackServerApp<boolean, strin
       }
       const stackModule = await import('@stackframe/stack');
       const { StackServerApp } = stackModule;
-      // projectId / publishableClientKey come from the backend at runtime. The
-      // secret server key stays a server-only runtime env var
-      // (STACK_SECRET_SERVER_KEY), read by the SDK directly.
+
+      if (stackConfig.secretServerKey) {
+        process.env.HEXCLAVE_SECRET_SERVER_KEY = stackConfig.secretServerKey;
+        process.env.STACK_SECRET_SERVER_KEY = stackConfig.secretServerKey;
+      }
+      if (stackConfig.apiUrl) {
+        process.env.HEXCLAVE_API_URL = stackConfig.apiUrl;
+        process.env.STACK_API_URL = stackConfig.apiUrl;
+        process.env.NEXT_PUBLIC_HEXCLAVE_API_URL = stackConfig.apiUrl;
+      }
+      if (stackConfig.projectId) {
+        process.env.HEXCLAVE_PROJECT_ID = stackConfig.projectId;
+        process.env.STACK_PROJECT_ID = stackConfig.projectId;
+        process.env.NEXT_PUBLIC_HEXCLAVE_PROJECT_ID = stackConfig.projectId;
+      }
+
       stackServerApp = new StackServerApp({
         tokenStore: "nextjs-cookie",
         projectId: stackConfig.projectId,
-        publishableClientKey: stackConfig.publishableClientKey,
+        publishableClientKey: stackConfig.publishableClientKey || undefined,
+        baseUrl: stackConfig.apiUrl,
         urls: {
           afterSignIn: "/after-sign-in"
         }
