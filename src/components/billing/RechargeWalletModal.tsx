@@ -20,7 +20,7 @@ import {
   ShieldCheckIcon,
   SparklesIcon,
   Wallet01Icon,
-} from "@hugeicons/core-free-icons";;
+} from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 

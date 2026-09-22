@@ -121,7 +121,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                 mode="single"
                 selected={value.from || undefined}
                 onSelect={handleFromChange}
-                initialFocus
+                autoFocus
               />
               {value.from && (
                 <div className="p-3 border-t">
@@ -160,7 +160,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                 mode="single"
                 selected={value.to || undefined}
                 onSelect={handleToChange}
-                initialFocus
+                autoFocus
                 disabled={(date) => value.from ? date < value.from : false}
               />
               {value.to && (
