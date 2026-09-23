@@ -145,7 +145,7 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
     try {
       setLoading(true);
       const token = await getAccessToken();
-      const res = await fetch('/api/v1/organizations/subscription', {
+      const res = await fetch('/api/v1/organizations/subscription?category=developer', {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
       if (res.ok) {

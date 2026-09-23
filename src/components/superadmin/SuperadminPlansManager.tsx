@@ -23,6 +23,7 @@ import {
   Calendar,
   Sparkles,
   Info,
+  Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -150,6 +151,8 @@ export function SuperadminPlansManager() {
   const [planModalOpen, setPlanModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [savingPlan, setSavingPlan] = useState(false);
+  const [planCategoryFilter, setPlanCategoryFilter] = useState<'all' | 'simple' | 'developer'>('all');
+  const [modalPlanCategory, setModalPlanCategory] = useState<'simple' | 'developer'>('simple');
   const [planForm, setPlanForm] = useState<Partial<PlanItem>>({
     slug: '',
     name: '',
@@ -158,15 +161,26 @@ export function SuperadminPlansManager() {
     price_inr: 0,
     billing_interval: 'month',
     included_minutes: 0,
+    monthly_credits_usd: 0,
+    included_phone_numbers: 0,
     max_concurrent_calls: 2,
     max_agents: 2,
     overage_rate_per_minute_usd: 0.10,
+    byok_platform_fee_per_minute_usd: 0.04,
     allow_byok: true,
+    allow_live_transfer: false,
+    allow_sip_trunking: false,
     is_active: true,
     is_public: true,
     features: [],
   });
   const [featuresText, setFeaturesText] = useState('');
+
+  const filteredPlans = plans.filter((p) => {
+    if (planCategoryFilter === 'simple') return p.slug.startsWith('simple_');
+    if (planCategoryFilter === 'developer') return !p.slug.startsWith('simple_');
+    return true;
+  });
 
   // Organization Tier & Overrides state
   const [orgs, setOrgs] = useState<OrgListItem[]>([]);
@@ -297,9 +311,62 @@ export function SuperadminPlansManager() {
     }
   }, [getAccessToken]);
 
+  const handleCategorySwitch = (category: 'simple' | 'developer') => {
+    setModalPlanCategory(category);
+    if (!isEditing) {
+      if (category === 'simple') {
+        setPlanForm((prev) => ({
+          ...prev,
+          slug: prev.slug?.startsWith('simple_') ? prev.slug : `simple_${prev.slug || 'minute_pack'}`,
+          name: prev.name || 'Custom Minute Pack',
+          description: prev.description || 'All-inclusive calling minutes for business outbound campaigns.',
+          price_usd: prev.price_usd || 49.0,
+          price_inr: prev.price_inr || 3999.0,
+          included_minutes: prev.included_minutes || 500,
+          monthly_credits_usd: 0,
+          included_phone_numbers: prev.included_phone_numbers || 1,
+          max_concurrent_calls: prev.max_concurrent_calls || 3,
+          max_agents: prev.max_agents || 3,
+          overage_rate_per_minute_usd: 0.08,
+          byok_platform_fee_per_minute_usd: 0.03,
+          allow_byok: false,
+          allow_live_transfer: true,
+          allow_sip_trunking: false,
+        }));
+        setFeaturesText(
+          '500 Calling Minutes per month\n3 Simultaneous Concurrent Lines\nUp to 3 Active AI Voice Agents\n1 Dedicated Platform Phone Number\nCSV Campaign Runner & Scheduler\nFull Call Recordings & Transcripts'
+        );
+      } else {
+        setPlanForm((prev) => ({
+          ...prev,
+          slug: prev.slug?.startsWith('simple_') ? prev.slug.replace(/^simple_/, '') : (prev.slug || 'custom_pro_tier'),
+          name: prev.name || 'Developer Pro Tier',
+          description: prev.description || 'Full API, BYOK custom keys, and high-concurrency developer tier.',
+          price_usd: prev.price_usd || 69.0,
+          price_inr: prev.price_inr || 5999.0,
+          included_minutes: prev.included_minutes || 600,
+          monthly_credits_usd: 50.0,
+          included_phone_numbers: prev.included_phone_numbers || 2,
+          max_concurrent_calls: prev.max_concurrent_calls || 5,
+          max_agents: prev.max_agents || 5,
+          overage_rate_per_minute_usd: 0.08,
+          byok_platform_fee_per_minute_usd: 0.04,
+          allow_byok: true,
+          allow_live_transfer: true,
+          allow_sip_trunking: true,
+        }));
+        setFeaturesText(
+          '$50.00 Included Call Credits / month\n5 Simultaneous Concurrent Lines\n5 Active AI Voice Agents\n2 Included Dedicated Phone Numbers\nBYOK Supported ($0.04/min platform fee)\nWebhooks & REST API Access'
+        );
+      }
+    }
+  };
+
   const handleOpenEditPlan = (plan?: PlanItem) => {
     if (plan) {
       setIsEditing(true);
+      const isSimple = plan.slug.startsWith('simple_');
+      setModalPlanCategory(isSimple ? 'simple' : 'developer');
       setPlanForm({ ...plan });
       const initialFeatures = Array.isArray(plan.features)
         ? plan.features.join('\n')
@@ -316,23 +383,59 @@ export function SuperadminPlansManager() {
       setFeaturesText(initialFeatures);
     } else {
       setIsEditing(false);
-      setPlanForm({
-        slug: '',
-        name: '',
-        description: '',
-        price_usd: 49.0,
-        price_inr: 3999.0,
-        billing_interval: 'month',
-        included_minutes: 400,
-        max_concurrent_calls: 3,
-        max_agents: 3,
-        overage_rate_per_minute_usd: 0.09,
-        allow_byok: true,
-        is_active: true,
-        is_public: true,
-        features: [],
-      });
-      setFeaturesText('Included Calling Minutes\nConcurrent Lines\nActive AI Agents\nBYOK Supported');
+      const targetCategory = planCategoryFilter === 'developer' ? 'developer' : 'simple';
+      setModalPlanCategory(targetCategory);
+      if (targetCategory === 'simple') {
+        setPlanForm({
+          slug: 'simple_custom_pack',
+          name: 'Custom Minute Pack',
+          description: 'All-inclusive calling minutes for business outbound campaigns.',
+          price_usd: 49.0,
+          price_inr: 3999.0,
+          billing_interval: 'month',
+          included_minutes: 500,
+          monthly_credits_usd: 0,
+          included_phone_numbers: 1,
+          max_concurrent_calls: 3,
+          max_agents: 3,
+          overage_rate_per_minute_usd: 0.08,
+          byok_platform_fee_per_minute_usd: 0.03,
+          allow_byok: false,
+          allow_live_transfer: true,
+          allow_sip_trunking: false,
+          is_active: true,
+          is_public: true,
+          features: [],
+        });
+        setFeaturesText(
+          '500 Calling Minutes per month\n3 Simultaneous Concurrent Lines\nUp to 3 Active AI Voice Agents\n1 Dedicated Platform Phone Number\nCSV Campaign Runner & Scheduler\nFull Call Recordings & Transcripts'
+        );
+      } else {
+        setPlanForm({
+          slug: 'custom_pro_tier',
+          name: 'Developer Pro Tier',
+          description: 'Full API, BYOK custom keys, and high-concurrency developer tier.',
+          price_usd: 69.0,
+          price_inr: 5999.0,
+          billing_interval: 'month',
+          included_minutes: 600,
+          monthly_credits_usd: 50.0,
+          included_phone_numbers: 2,
+          max_concurrent_calls: 5,
+          max_agents: 5,
+          overage_rate_per_minute_usd: 0.08,
+          byok_platform_fee_per_minute_usd: 0.04,
+          allow_byok: true,
+          allow_live_transfer: true,
+          allow_sip_trunking: true,
+          is_active: true,
+          is_public: true,
+          features: [],
+        });
+        setFeaturesText(
+          '$50.00 Included Call Credits / month\n5 Simultaneous Concurrent Lines\n5 Active AI Voice Agents\n2 Included Dedicated Phone Numbers\nBYOK Supported ($0.04/min platform fee)\nWebhooks & REST API Access'
+        );
+      }
     }
     setPlanModalOpen(true);
   };
@@ -379,6 +482,29 @@ export function SuperadminPlansManager() {
       toast.error('Error saving plan');
     } finally {
       setSavingPlan(false);
+    }
+  };
+
+  const handleDeletePlan = async (slug: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete or deactivate plan '${name}' (${slug})?`)) {
+      return;
+    }
+    try {
+      const token = await getAccessToken();
+      const res = await fetch(`/api/v1/superuser/plans/${slug}`, {
+        method: 'DELETE',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        toast.success(data.message || `Plan '${name}' deleted successfully`);
+        fetchData();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.detail || 'Failed to delete plan');
+      }
+    } catch (e) {
+      toast.error('Network error deleting plan');
     }
   };
 
@@ -451,10 +577,6 @@ export function SuperadminPlansManager() {
           <Button variant="outline" size="sm" onClick={fetchData} disabled={refreshing}>
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh Fleet
-          </Button>
-          <Button size="sm" onClick={() => handleOpenEditPlan()} className="bg-primary hover:bg-primary/90">
-            <Plus className="h-4 w-4 mr-1.5" />
-            Create Plan
           </Button>
         </div>
       </div>
@@ -531,15 +653,63 @@ export function SuperadminPlansManager() {
       {/* Section 1: Subscription Plans Catalog */}
       <Card className="border-border/60 shadow-xs">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Layers className="h-5 w-5 text-primary" />
                 Available Subscription Plans
               </CardTitle>
               <CardDescription>
-                Public and private pricing tiers, included minutes, line limits, and overage billing rates.
+                Manage public and private pricing tiers, minute packs, concurrency limits, and overage billing rates.
               </CardDescription>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              {/* Filter Tabs */}
+              <div className="flex items-center bg-muted/60 p-1 rounded-lg border">
+                <button
+                  type="button"
+                  onClick={() => setPlanCategoryFilter('all')}
+                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
+                    planCategoryFilter === 'all'
+                      ? 'bg-background text-foreground shadow-xs'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  All ({plans.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlanCategoryFilter('simple')}
+                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
+                    planCategoryFilter === 'simple'
+                      ? 'bg-background text-foreground shadow-xs'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Simple Minute Packs ({plans.filter((p) => p.slug.startsWith('simple_')).length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlanCategoryFilter('developer')}
+                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
+                    planCategoryFilter === 'developer'
+                      ? 'bg-background text-foreground shadow-xs'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Developer Tiers ({plans.filter((p) => !p.slug.startsWith('simple_')).length})
+                </button>
+              </div>
+
+              <Button
+                onClick={() => handleOpenEditPlan()}
+                className="gap-1.5 shadow-xs font-semibold"
+                size="sm"
+              >
+                <Plus className="h-4 w-4" />
+                Create Plan
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -560,18 +730,29 @@ export function SuperadminPlansManager() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {plans.length === 0 ? (
+                {filteredPlans.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="text-center py-6 text-muted-foreground">
-                      No subscription plans found. Click &quot;Create Plan&quot; to define one.
+                      No subscription plans found matching current filter. Click &quot;Create Plan&quot; to define one.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  plans.map((p) => (
+                  filteredPlans.map((p) => (
                     <TableRow key={p.slug} className="hover:bg-muted/30">
                       <TableCell className="font-medium">
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-sm">{p.name}</span>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-semibold text-sm">{p.name}</span>
+                            {p.slug.startsWith('simple_') ? (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-300">
+                                ⚡ Simple Pack
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border-indigo-300">
+                                🛠️ Developer
+                              </Badge>
+                            )}
+                          </div>
                           <span className="text-xs font-mono text-muted-foreground">{p.slug}</span>
                         </div>
                       </TableCell>
@@ -579,8 +760,12 @@ export function SuperadminPlansManager() {
                         <div className="flex flex-col text-sm">
                           {p.slug === 'enterprise' || p.price_usd === 0 ? (
                             <>
-                              <span className="font-semibold text-amber-600 dark:text-amber-400">Custom Contract</span>
-                              <span className="text-[11px] text-muted-foreground">Org-level Pricing</span>
+                              <span className="font-semibold text-amber-600 dark:text-amber-400">
+                                {p.slug === 'simple_trial' ? '₹0 (Free Trial)' : 'Custom Contract'}
+                              </span>
+                              <span className="text-[11px] text-muted-foreground">
+                                {p.slug === 'simple_trial' ? 'Self-Service' : 'Org-level Pricing'}
+                              </span>
                             </>
                           ) : (
                             <>
@@ -620,6 +805,10 @@ export function SuperadminPlansManager() {
                           <Badge variant="outline" className="text-[11px] text-muted-foreground font-normal">
                             Direct Wallet (Pay-per-sec)
                           </Badge>
+                        ) : p.slug.startsWith('simple_') ? (
+                          <Badge variant="outline" className="text-[11px] text-emerald-600 border-emerald-200 font-normal">
+                            Minute Quota Billing
+                          </Badge>
                         ) : (
                           <div className="flex flex-col">
                             <span className="font-semibold text-xs text-emerald-600 dark:text-emerald-400">
@@ -651,14 +840,26 @@ export function SuperadminPlansManager() {
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleOpenEditPlan(p)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleOpenEditPlan(p)}
+                            className="h-8 w-8 p-0"
+                            title="Edit Plan"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeletePlan(p.slug, p.name)}
+                            className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            title="Delete / Deactivate Plan"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
@@ -818,32 +1019,82 @@ export function SuperadminPlansManager() {
                 </div>
 
                 {/* Plan Assignment Selection */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Base Subscription Plan</Label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {plans.map((p) => {
-                      const isSelected = targetPlanSlug === p.slug;
-                      return (
-                        <button
-                          key={p.slug}
-                          type="button"
-                          onClick={() => setTargetPlanSlug(p.slug)}
-                          className={`p-3 rounded-lg border text-left transition-all ${
-                            isSelected
-                              ? 'border-primary bg-primary/10 shadow-xs ring-1 ring-primary'
-                              : 'border-border hover:bg-muted/50'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold">{p.name}</span>
-                            {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
-                          </div>
-                          <p className="text-[11px] text-muted-foreground mt-1">
-                            {p.slug === 'enterprise' ? 'Custom Contract' : `$${p.price_usd}/mo`} • {p.max_concurrent_calls} lines
-                          </p>
-                        </button>
-                      );
-                    })}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-semibold">Assign Subscription Tier</Label>
+                    <span className="text-xs text-muted-foreground">
+                      Selected: <strong className="text-primary font-mono">{targetPlanSlug}</strong>
+                    </span>
+                  </div>
+
+                  {/* Simple Minute Packs Group */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                      <Zap className="h-3.5 w-3.5" />
+                      Simple Minute Packs (Business Client App)
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {plans
+                        .filter((p) => p.slug.startsWith('simple_'))
+                        .map((p) => {
+                          const isSelected = targetPlanSlug === p.slug;
+                          return (
+                            <button
+                              key={p.slug}
+                              type="button"
+                              onClick={() => setTargetPlanSlug(p.slug)}
+                              className={`p-3 rounded-lg border text-left transition-all ${
+                                isSelected
+                                  ? 'border-emerald-600 bg-emerald-500/10 shadow-xs ring-1 ring-emerald-600'
+                                  : 'border-border hover:bg-muted/50'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-foreground">{p.name}</span>
+                                {isSelected && <Check className="h-3.5 w-3.5 text-emerald-600" />}
+                              </div>
+                              <p className="text-[11px] text-muted-foreground mt-1">
+                                {p.price_usd === 0 ? '₹0 Free' : `₹${p.price_inr} ($${p.price_usd})`} • {p.included_minutes} mins
+                              </p>
+                            </button>
+                          );
+                        })}
+                    </div>
+                  </div>
+
+                  {/* Developer Tiers Group */}
+                  <div className="space-y-2 pt-1">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-400">
+                      <Layers className="h-3.5 w-3.5" />
+                      Developer Tiers (Advanced Dev Portal)
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {plans
+                        .filter((p) => !p.slug.startsWith('simple_'))
+                        .map((p) => {
+                          const isSelected = targetPlanSlug === p.slug;
+                          return (
+                            <button
+                              key={p.slug}
+                              type="button"
+                              onClick={() => setTargetPlanSlug(p.slug)}
+                              className={`p-3 rounded-lg border text-left transition-all ${
+                                isSelected
+                                  ? 'border-primary bg-primary/10 shadow-xs ring-1 ring-primary'
+                                  : 'border-border hover:bg-muted/50'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold">{p.name}</span>
+                                {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
+                              </div>
+                              <p className="text-[11px] text-muted-foreground mt-1">
+                                {p.slug === 'enterprise' ? 'Custom Contract' : `$${p.price_usd}/mo`} • {p.max_concurrent_calls} lines
+                              </p>
+                            </button>
+                          );
+                        })}
+                    </div>
                   </div>
                 </div>
 
@@ -1078,29 +1329,114 @@ export function SuperadminPlansManager() {
 
       {/* Plan Edit / Create Modal */}
       <Dialog open={planModalOpen} onOpenChange={setPlanModalOpen}>
-        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[92vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-lg">
-              {isEditing ? `Edit Plan: ${planForm.name}` : 'Create New Subscription Plan'}
+            <DialogTitle className="text-lg flex items-center justify-between">
+              <span>{isEditing ? `Edit Plan: ${planForm.name}` : 'Create Subscription Plan'}</span>
+              <Badge variant={modalPlanCategory === 'simple' ? 'default' : 'secondary'} className={modalPlanCategory === 'simple' ? 'bg-emerald-600 hover:bg-emerald-600' : ''}>
+                {modalPlanCategory === 'simple' ? '⚡ Simple Minute Pack' : '🛠️ Developer Tier'}
+              </Badge>
             </DialogTitle>
             <DialogDescription>
-              Configure pricing, calling minutes quota, line concurrency, and marketing feature bullets.
+              {isEditing
+                ? `Updating configuration for plan '${planForm.slug}'. Changes take effect immediately across portals.`
+                : 'Choose the plan type and configure calling limits, pricing, and features.'}
             </DialogDescription>
           </DialogHeader>
+
+          {/* Category Switcher (only when creating new plan) */}
+          {!isEditing && (
+            <div className="space-y-2 pt-1 pb-2">
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Select Plan Target &amp; Category
+              </Label>
+              <div className="grid grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => handleCategorySwitch('simple')}
+                  className={`p-3 rounded-lg border text-left transition-all ${
+                    modalPlanCategory === 'simple'
+                      ? 'border-emerald-600 bg-emerald-500/10 ring-1 ring-emerald-500'
+                      : 'border-border hover:bg-muted/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-sm text-emerald-700 dark:text-emerald-400">
+                    <Zap className="h-4 w-4" />
+                    Simple Minute Pack
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    Published in <strong>Business Client Portal (web-app)</strong>. Fixed minute bundle, no BYOK, uses master platform telephony.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleCategorySwitch('developer')}
+                  className={`p-3 rounded-lg border text-left transition-all ${
+                    modalPlanCategory === 'developer'
+                      ? 'border-primary bg-primary/10 ring-1 ring-primary'
+                      : 'border-border hover:bg-muted/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-sm text-primary">
+                    <Layers className="h-4 w-4" />
+                    Developer Tier
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    Published in <strong>Developer Portal (frontend)</strong>. Supports BYOK custom keys, wallet credits, and API integrations.
+                  </p>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Banner explaining target portal */}
+          <div className={`p-3 rounded-lg border text-xs flex items-start gap-2.5 ${
+            modalPlanCategory === 'simple'
+              ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50 text-emerald-900 dark:text-emerald-200'
+              : 'bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/50 text-indigo-900 dark:text-indigo-200'
+          }`}>
+            <Info className="h-4 w-4 shrink-0 mt-0.5" />
+            <div>
+              {modalPlanCategory === 'simple' ? (
+                <>
+                  <strong>Business Client Application:</strong> This plan will be available for purchase and upgrade in the simplified calling dashboard (port 3001). Slug will start with <code className="font-mono font-bold">simple_</code>.
+                </>
+              ) : (
+                <>
+                  <strong>Advanced Developer Portal:</strong> This plan will be available in the developer console (port 3000) with LLM/Voice provider switching and BYOK support.
+                </>
+              )}
+            </div>
+          </div>
 
           <form onSubmit={handleSavePlan} className="space-y-4 py-2">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="plan-slug" className="text-xs font-semibold">Plan Slug (Unique Key)</Label>
+                <Label htmlFor="plan-slug" className="text-xs font-semibold">
+                  Plan Slug (Unique Key)
+                </Label>
                 <Input
                   id="plan-slug"
                   value={planForm.slug || ''}
-                  onChange={(e) => setPlanForm({ ...planForm, slug: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
-                  placeholder="e.g. growth_tier"
+                  onChange={(e) => {
+                    let val = e.target.value.toLowerCase().replace(/\s+/g, '_');
+                    if (modalPlanCategory === 'simple' && !val.startsWith('simple_')) {
+                      // ensure simple_ prefix if typed
+                      val = `simple_${val}`;
+                    }
+                    setPlanForm({ ...planForm, slug: val });
+                  }}
+                  placeholder={modalPlanCategory === 'simple' ? 'simple_starter_plus' : 'growth_pro_tier'}
                   disabled={isEditing}
                   className="font-mono text-sm"
                   required
                 />
+                <p className="text-[10px] text-muted-foreground">
+                  {modalPlanCategory === 'simple'
+                    ? 'Simple plans must start with simple_ for auto-discovery in client app.'
+                    : 'Developer plan identifier (e.g. starter, pro, enterprise).'}
+                </p>
               </div>
 
               <div className="space-y-1.5">
@@ -1109,7 +1445,7 @@ export function SuperadminPlansManager() {
                   id="plan-name"
                   value={planForm.name || ''}
                   onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })}
-                  placeholder="e.g. Growth Pro"
+                  placeholder={modalPlanCategory === 'simple' ? 'Starter Minute Pack' : 'Growth Pro'}
                   required
                 />
               </div>
@@ -1125,9 +1461,10 @@ export function SuperadminPlansManager() {
               />
             </div>
 
+            {/* Pricing Row */}
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="price-usd" className="text-xs font-semibold">Price (USD)</Label>
+                <Label htmlFor="price-usd" className="text-xs font-semibold">Price (USD $)</Label>
                 <Input
                   id="price-usd"
                   type="number"
@@ -1161,9 +1498,12 @@ export function SuperadminPlansManager() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            {/* Quota & Limits Row */}
+            <div className="grid grid-cols-4 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="included-minutes" className="text-xs font-semibold">Included Mins / mo</Label>
+                <Label htmlFor="included-minutes" className="text-xs font-semibold">
+                  Included Minutes
+                </Label>
                 <Input
                   id="included-minutes"
                   type="number"
@@ -1174,7 +1514,9 @@ export function SuperadminPlansManager() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="max-concurrency" className="text-xs font-semibold">Max Concurrent Calls</Label>
+                <Label htmlFor="max-concurrency" className="text-xs font-semibold">
+                  Concurrent Lines
+                </Label>
                 <Input
                   id="max-concurrency"
                   type="number"
@@ -1185,7 +1527,9 @@ export function SuperadminPlansManager() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="max-agents" className="text-xs font-semibold">Max Agents Limit</Label>
+                <Label htmlFor="max-agents" className="text-xs font-semibold">
+                  Max AI Agents
+                </Label>
                 <Input
                   id="max-agents"
                   type="number"
@@ -1194,19 +1538,32 @@ export function SuperadminPlansManager() {
                   required
                 />
               </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="phone-numbers" className="text-xs font-semibold">
+                  Free Numbers
+                </Label>
+                <Input
+                  id="phone-numbers"
+                  type="number"
+                  value={planForm.included_phone_numbers ?? 0}
+                  onChange={(e) => setPlanForm({ ...planForm, included_phone_numbers: parseInt(e.target.value, 10) || 0 })}
+                />
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            {/* Overage and Platform Rates */}
+            <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label htmlFor="overage-rate" className="text-xs font-semibold">
-                  Overage Rate ($ USD / Min) {planForm.slug === 'pay_as_you_go' && '(N/A for PAYG)'}
+                  Overage ($/min)
                 </Label>
                 <Input
                   id="overage-rate"
                   type="number"
                   step="0.001"
                   disabled={planForm.slug === 'pay_as_you_go'}
-                  value={planForm.slug === 'pay_as_you_go' ? 0 : (planForm.overage_rate_per_minute_usd ?? 0.10)}
+                  value={planForm.slug === 'pay_as_you_go' ? 0 : (planForm.overage_rate_per_minute_usd ?? 0.08)}
                   onChange={(e) => setPlanForm({ ...planForm, overage_rate_per_minute_usd: parseFloat(e.target.value) || 0 })}
                   required
                 />
@@ -1214,42 +1571,80 @@ export function SuperadminPlansManager() {
 
               <div className="space-y-1.5">
                 <Label htmlFor="byok-platform-fee" className="text-xs font-semibold">
-                  BYOK Platform Fee ($ USD / Min)
+                  BYOK Fee ($/min)
                 </Label>
                 <Input
                   id="byok-platform-fee"
                   type="number"
                   step="0.001"
-                  value={planForm.byok_platform_fee_per_minute_usd ?? 0.04}
-                  onChange={(e) => setPlanForm({ ...planForm, byok_platform_fee_per_minute_usd: parseFloat(e.target.value) || 0.04 })}
-                  placeholder="e.g. 0.04"
+                  value={planForm.byok_platform_fee_per_minute_usd ?? 0.03}
+                  onChange={(e) => setPlanForm({ ...planForm, byok_platform_fee_per_minute_usd: parseFloat(e.target.value) || 0.03 })}
+                  placeholder="0.03"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="monthly-credits" className="text-xs font-semibold">
+                  Call Credits ($ USD)
+                </Label>
+                <Input
+                  id="monthly-credits"
+                  type="number"
+                  step="1"
+                  disabled={modalPlanCategory === 'simple'}
+                  value={modalPlanCategory === 'simple' ? 0 : (planForm.monthly_credits_usd ?? 0)}
+                  onChange={(e) => setPlanForm({ ...planForm, monthly_credits_usd: parseFloat(e.target.value) || 0 })}
+                  placeholder="0"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/10">
+            {/* Feature Switches */}
+            <div className="grid grid-cols-3 gap-3 p-3 border rounded-lg bg-muted/20">
+              <div className="flex items-center justify-between">
                 <Label htmlFor="allow-byok-switch" className="text-xs font-semibold cursor-pointer">
-                  Allow Custom Keys (BYOK)
+                  Allow BYOK Keys
                 </Label>
                 <Switch
                   id="allow-byok-switch"
-                  checked={planForm.allow_byok ?? true}
+                  checked={planForm.allow_byok ?? false}
                   onCheckedChange={(checked) => setPlanForm({ ...planForm, allow_byok: checked })}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Label htmlFor="allow-transfer-switch" className="text-xs font-semibold cursor-pointer">
+                  Live Call Transfers
+                </Label>
+                <Switch
+                  id="allow-transfer-switch"
+                  checked={planForm.allow_live_transfer ?? true}
+                  onCheckedChange={(checked) => setPlanForm({ ...planForm, allow_live_transfer: checked })}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Label htmlFor="allow-sip-switch" className="text-xs font-semibold cursor-pointer">
+                  SIP Trunking
+                </Label>
+                <Switch
+                  id="allow-sip-switch"
+                  checked={planForm.allow_sip_trunking ?? false}
+                  onCheckedChange={(checked) => setPlanForm({ ...planForm, allow_sip_trunking: checked })}
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="features-text" className="text-xs font-semibold">
-                Feature Bullets (one per line)
+                Marketing Feature Bullets (one bullet per line)
               </Label>
               <Textarea
                 id="features-text"
                 rows={4}
                 value={featuresText}
                 onChange={(e) => setFeaturesText(e.target.value)}
-                placeholder="400 Calling Minutes included&#10;3 Concurrent call lines&#10;BYOK Supported"
+                placeholder="500 Calling Minutes per month&#10;3 Simultaneous Concurrent Lines&#10;1 Dedicated Phone Number"
                 className="text-xs font-mono"
               />
             </div>
@@ -1261,7 +1656,7 @@ export function SuperadminPlansManager() {
                   checked={planForm.is_active ?? true}
                   onCheckedChange={(checked) => setPlanForm({ ...planForm, is_active: checked })}
                 />
-                <Label htmlFor="is-active" className="text-xs cursor-pointer">Active Plan</Label>
+                <Label htmlFor="is-active" className="text-xs cursor-pointer font-medium">Active Plan</Label>
               </div>
 
               <div className="flex items-center gap-2">
@@ -1270,7 +1665,7 @@ export function SuperadminPlansManager() {
                   checked={planForm.is_public ?? true}
                   onCheckedChange={(checked) => setPlanForm({ ...planForm, is_public: checked })}
                 />
-                <Label htmlFor="is-public" className="text-xs cursor-pointer">Public in Customer Billing Page</Label>
+                <Label htmlFor="is-public" className="text-xs cursor-pointer font-medium">Public in Billing Pages</Label>
               </div>
             </div>
 
@@ -1278,8 +1673,8 @@ export function SuperadminPlansManager() {
               <Button type="button" variant="outline" onClick={() => setPlanModalOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={savingPlan} className="bg-primary hover:bg-primary/90">
-                {savingPlan ? 'Saving...' : 'Save Plan'}
+              <Button type="submit" disabled={savingPlan} className="bg-primary hover:bg-primary/90 font-semibold">
+                {savingPlan ? 'Saving...' : isEditing ? 'Update Plan' : 'Create Plan'}
               </Button>
             </DialogFooter>
           </form>
