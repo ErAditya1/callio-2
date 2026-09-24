@@ -295,7 +295,10 @@ export default function SuperadminAICallersPage() {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err?.detail || "Failed to create built-in agent");
+        const msg = Array.isArray(err?.detail)
+          ? err.detail.map((e: any) => e.msg || e.message).join(", ")
+          : (typeof err?.detail === "string" ? err.detail : (err?.message || "Failed to create built-in agent"));
+        throw new Error(msg);
       }
 
       toast.success(`Platform AI Caller "${name}" created and published!`);
@@ -371,7 +374,10 @@ export default function SuperadminAICallersPage() {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err?.detail || "Failed to publish agent to platform catalog");
+        const msg = Array.isArray(err?.detail)
+          ? err.detail.map((e: any) => e.msg || e.message).join(", ")
+          : (typeof err?.detail === "string" ? err.detail : (err?.message || "Failed to publish agent to platform catalog"));
+        throw new Error(msg);
       }
 
       toast.success(`"${selectedWorkspaceAgent.name}" successfully published as Platform Built-in Agent!`);
