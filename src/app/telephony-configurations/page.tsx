@@ -284,7 +284,7 @@ export default function TelephonyConfigurationsPage() {
             </div>
             {platformNumbers.length > 0 && (
               <Badge variant="secondary" className="self-start md:self-auto font-mono text-xs px-2.5 py-1">
-                {platformNumbers.filter(n => n.pool_type === 'shared_trial' || !n.in_use).length} Available in Inventory
+                {platformNumbers.filter(n => n.pool_type === 'shared_trial' || !n.is_claimed_by_you).length} Available in Inventory
               </Badge>
             )}
           </div>
@@ -307,8 +307,10 @@ export default function TelephonyConfigurationsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {platformNumbers.map((num) => {
                 const isShared = num.pool_type === "shared_trial";
+                const isMultiOrg = num.pool_type === "shared_multi_org";
                 const isClaiming = claimingNumberId === num.id;
-                const isAlreadyInUse = !isShared && num.in_use;
+                const isClaimedByCurrent = Boolean(num.is_claimed_by_you);
+                const isAlreadyInUse = !isShared && !isMultiOrg && num.in_use;
 
                 return (
                   <div
@@ -325,10 +327,12 @@ export default function TelephonyConfigurationsPage() {
                           className={`text-xs ${
                             isShared
                               ? "bg-neutral-950 hover:bg-neutral-800 text-white font-semibold"
+                              : isMultiOrg
+                              ? "border-teal-500/40 bg-teal-500/10 text-teal-600 dark:text-teal-400 font-semibold"
                               : "border-[#DCE3EF] text-[#737373] dark:text-[#7186AD]"
                           }`}
                         >
-                          {isShared ? "Shared Trial" : "Dedicated"}
+                          {isShared ? "Shared Trial" : isMultiOrg ? "Multi-Org Shared" : "Dedicated"}
                         </Badge>
                       </div>
 
@@ -345,12 +349,18 @@ export default function TelephonyConfigurationsPage() {
                           <span>Sandbox testing only. Live campaigns are prevented from using this number.</span>
                         </div>
                       )}
+
+                      {isMultiOrg && (
+                        <div className="mb-3 text-[11px] leading-tight text-teal-700 dark:text-teal-300 bg-teal-50/70 border border-teal-200/60 rounded p-1.5 flex items-start gap-1">
+                          <span>Shared pool number. Multiple workspaces can claim and use this number for live campaigns.</span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="pt-2 border-t flex items-center justify-between">
                       <span className="text-xs text-[#737373] flex items-center gap-1">
                         <HugeiconsIcon icon={ShieldCheckIcon} className="h-3.5 w-3.5 text-[#7186AD]" />
-                        {isShared ? "Instant Sandbox" : "Dedicated Caller ID"}
+                        {isShared ? "Instant Sandbox" : isMultiOrg ? "Multi-Org Caller ID" : "Dedicated Caller ID"}
                       </span>
 
                       {isShared ? (
@@ -365,6 +375,10 @@ export default function TelephonyConfigurationsPage() {
                         >
                           <HugeiconsIcon icon={Copy01Icon} className="h-3.5 w-3.5" /> Copy Test Number
                         </Button>
+                      ) : isClaimedByCurrent ? (
+                        <Badge variant="secondary" className="text-xs bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-medium">
+                          Claimed by Workspace
+                        </Badge>
                       ) : isAlreadyInUse ? (
                         <Badge variant="secondary" className="text-xs opacity-75">
                           Claimed

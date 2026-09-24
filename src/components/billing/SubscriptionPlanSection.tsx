@@ -489,7 +489,7 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
               <div className="flex flex-wrap items-center gap-1.5 pt-1">
                 {current.allow_byok ? (
                   <Badge variant="outline" className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-                    <CheckCircle2 className="h-3 w-3 mr-1" /> BYOK (${(current.byok_platform_fee_per_minute_usd || 0.04).toFixed(2)}/min)
+                    <CheckCircle2 className="h-3 w-3 mr-1" /> BYOK Allowed
                   </Badge>
                 ) : (
                   <Badge variant="outline" className="text-[10px] text-muted-foreground">
@@ -502,8 +502,8 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                   </Badge>
                 )}
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Wallet balance: ${(current.wallet_balance_usd || 0).toFixed(2)} USD
+              <p className="text-[11px] text-muted-foreground font-mono">
+                Wallet balance: {(current.wallet_balance_usd || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} Cr
               </p>
             </div>
           </div>
@@ -519,43 +519,19 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
               Upgrade or Switch Your Plan
             </h3>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Unified credit-based plans. Deducts per-second based on your exact AI model stack and carrier.
+              Unified credit-based plans in Indian Rupees (₹). Deducts per-second based on your exact AI model stack and carrier.
             </p>
-          </div>
-
-          {/* Currency Toggle */}
-          <div className="flex items-center bg-muted/60 p-1 rounded-lg border w-fit">
-            <button
-              type="button"
-              onClick={() => setCurrency('USD')}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
-                currency === 'USD'
-                  ? 'bg-background text-foreground shadow-xs'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              USD ($)
-            </button>
-            <button
-              type="button"
-              onClick={() => setCurrency('INR')}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
-                currency === 'INR'
-                  ? 'bg-background text-foreground shadow-xs'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              INR (₹)
-            </button>
           </div>
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
           {plans.map((plan) => {
             const isCurrent = current.tier === plan.slug;
             const isEnterprise = plan.slug === 'enterprise';
-            const price = currency === 'USD' ? `$${plan.price_usd}` : `₹${plan.price_inr.toLocaleString()}`;
+            const price = plan.price_inr === 0 ? '₹0' : `₹${plan.price_inr.toLocaleString()}`;
+            const isUnlimitedCredits = plan.monthly_credits_usd === -1 || (plan.monthly_credits_usd || 0) >= 999999;
+            const isUnlimitedAgents = plan.max_agents === -1 || plan.max_agents >= 9999;
 
             return (
               <Card
@@ -606,13 +582,22 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                       <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mt-1">
                         Custom contract configured per organization
                       </p>
+                    ) : isUnlimitedCredits ? (
+                      <div className="mt-1">
+                        <p className="text-xs font-semibold text-purple-600 dark:text-purple-400">
+                          Unlimited (∞) Calling Credits Included
+                        </p>
+                        <p className="text-[11px] text-muted-foreground font-mono">
+                          Enterprise high-throughput calling
+                        </p>
+                      </div>
                     ) : (plan.monthly_credits_usd || 0) > 0 ? (
                       <div className="mt-1">
                         <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                          ${plan.monthly_credits_usd}.00 Calling Credits Included
+                          {plan.monthly_credits_usd?.toLocaleString()} Cr Included
                         </p>
                         <p className="text-[11px] text-muted-foreground font-mono">
-                          ~{Math.round((plan.monthly_credits_usd || 0) / 0.12).toLocaleString()} standard mins/mo
+                          Refills automatically every cycle
                         </p>
                       </div>
                     ) : (
@@ -632,19 +617,19 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Phone Numbers:</span>
                       <span className="font-semibold font-mono">
-                        {plan.included_phone_numbers ? `${plan.included_phone_numbers} Included` : 'Extra ($2.50/mo)'}
+                        {plan.included_phone_numbers ? `${plan.included_phone_numbers} Included` : 'Extra'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Active Agents:</span>
                       <span className="font-semibold font-mono">
-                        {plan.max_agents >= 9999 ? 'Unlimited' : `${plan.max_agents} agents`}
+                        {isUnlimitedAgents ? 'Unlimited (∞)' : `${plan.max_agents} agents`}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">BYOK Platform Fee:</span>
+                      <span className="text-muted-foreground">BYOK Keys:</span>
                       <span className="font-semibold font-mono">
-                        ${(plan.byok_platform_fee_per_minute_usd || 0.04).toFixed(2)}/min
+                        {plan.allow_byok ? 'Allowed' : 'Master Only'}
                       </span>
                     </div>
                   </div>

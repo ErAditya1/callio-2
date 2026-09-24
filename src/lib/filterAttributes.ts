@@ -22,6 +22,37 @@ export const baseFilterAttributes: Record<string, Omit<FilterAttribute, "id">> =
       showSelectAll: true,
     },
   },
+  leadScore: {
+    type: "numberRange",
+    label: "Lead Score",
+    config: {
+      min: 0,
+      max: 100,
+      step: 1,
+      unit: "pts",
+      numberPresets: [
+        { label: "🔥 Hot (≥ 70)", min: 70, max: 100 },
+        { label: "⚡ Warm (40-69)", min: 40, max: 69 },
+        { label: "❄️ Cold (< 40)", min: 0, max: 39 },
+      ],
+    },
+  },
+  intentCategory: {
+    type: "multiSelect",
+    label: "Intent Category",
+    config: {
+      options: [
+        "interested",
+        "appointment",
+        "call-back",
+        "not-interested",
+        "wrong-number",
+        "needs-review",
+      ],
+      searchable: false,
+      showSelectAll: true,
+    },
+  },
   duration: {
     type: "numberRange",
     label: "Call Duration",
@@ -185,6 +216,8 @@ export function withDispositionCodeOptions(
 export const workflowFilterAttributes = createFilterAttributes([
   "dateRange",
   "dispositionCode",
+  "intentCategory",
+  "leadScore",
   "duration",
   "status",
   "tokenUsage",
@@ -198,6 +231,8 @@ export const superadminFilterAttributes = createFilterAttributes([
   "callerNumber",
   "calledNumber",
   "dispositionCode",
+  "intentCategory",
+  "leadScore",
   "status",
   "duration",
   "tokenUsage",

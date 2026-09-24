@@ -176,6 +176,13 @@ const COLLAPSIBLE_NAV_SECTIONS: SidebarNavSection[] = [
     label: "Administration",
     items: [
       {
+        title: "Platform AI Callers",
+        url: "/superadmin/ai-callers",
+        icon: BotIcon,
+        badge: "Platform",
+        requiresSuperuser: true,
+      },
+      {
         title: "Platform Admin",
         url: "/superadmin",
         icon: ShieldCheckIcon,

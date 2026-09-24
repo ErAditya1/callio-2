@@ -18,9 +18,9 @@ interface AgentFolderViewProps {
  * flat table so the feature stays invisible until someone creates a folder.
  */
 export function AgentFolderView({ workflows, folders }: AgentFolderViewProps) {
-    // No folders → keep the original flat list (no folder chrome, nowhere to move to).
+    // No folders yet → render flat table with folder actions enabled
     if (folders.length === 0) {
-        return <WorkflowTable workflows={workflows} showArchived={false} />;
+        return <WorkflowTable workflows={workflows} showArchived={false} folders={folders} />;
     }
 
     // Group agents by folder. Agents whose folder_id is null — or points at a

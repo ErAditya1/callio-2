@@ -29,11 +29,11 @@ export function WalletBalanceBadge() {
         >
           <HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 opacity-80" />
 
-          <span className="font-mono font-semibold tracking-tight">
-            ${balance.toFixed(2)}
+          <span className="font-mono font-bold tracking-tight">
+            {balance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} Cr
           </span>
           <span className="text-[10px] uppercase font-bold tracking-wider opacity-75 hidden sm:inline">
-            Credits
+            Balance
           </span>
 
           <span className="hidden group-hover:flex items-center justify-center w-3.5 h-3.5 rounded-full bg-background border text-[10px] text-muted-foreground ml-0.5">
@@ -48,14 +48,14 @@ export function WalletBalanceBadge() {
               <HugeiconsIcon icon={AlertCircleIcon} className="h-3.5 w-3.5" /> Insufficient Platform Credits
             </p>
             <p className="text-muted-foreground">
-              Your balance is $0.00. Recharge to place calls with platform voice agents.
+              Your balance is 0 Cr. Recharge to place calls with platform voice agents.
             </p>
           </div>
         ) : (
           <div className="space-y-1">
-            <p className="font-semibold">Platform Wallet Balance</p>
+            <p className="font-semibold">Platform Wallet Credits</p>
             <p className="text-muted-foreground">
-              Calls are automatically rated per-minute against this balance. Click to recharge.
+              Calls are automatically rated per-second against your credits balance (Cr). Click to recharge.
             </p>
           </div>
         )}

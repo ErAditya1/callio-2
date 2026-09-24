@@ -4,6 +4,7 @@ import {
   Activity,
   ArrowLeft,
   Banknote,
+  Bot,
   DollarSign,
   Inbox,
   Key,
@@ -78,6 +79,13 @@ export const SUPERADMIN_NAV_ITEMS: SuperadminNavItem[] = [
     href: "/superadmin/rates",
     icon: Banknote,
     description: "USD to INR exchange rate & GST",
+  },
+  {
+    title: "AI Callers",
+    href: "/superadmin/ai-callers",
+    icon: Bot,
+    badge: "Platform",
+    description: "Create & manage platform AI callers",
   },
   {
     title: "Showcase Agents",

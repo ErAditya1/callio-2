@@ -48,7 +48,7 @@ export function SuperadminWalletManager() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedOrg, setSelectedOrg] = useState<OrgWalletItem | null>(null);
   const [grantModalOpen, setGrantModalOpen] = useState(false);
-  const [amountUsd, setAmountUsd] = useState('20.00');
+  const [amountCredits, setAmountCredits] = useState('1000');
   const [description, setDescription] = useState('Platform trial credit grant');
   const [submitting, setSubmitting] = useState(false);
 
@@ -81,7 +81,7 @@ export function SuperadminWalletManager() {
     e.preventDefault();
     if (!selectedOrg) return;
 
-    const parsedAmount = parseFloat(amountUsd);
+    const parsedAmount = parseFloat(amountCredits);
     if (isNaN(parsedAmount) || parsedAmount === 0) {
       toast.error('Enter a valid non-zero amount');
       return;
@@ -107,7 +107,7 @@ export function SuperadminWalletManager() {
         throw new Error(data.detail || 'Failed to grant credits');
       }
 
-      toast.success(data.message || `Granted $${parsedAmount.toFixed(2)} to Org #${selectedOrg.id}`);
+      toast.success(data.message || `Granted ${parsedAmount.toLocaleString()} Credits to Org #${selectedOrg.id}`);
       setGrantModalOpen(false);
       setSelectedOrg(null);
       await fetchOrgs();
@@ -139,12 +139,12 @@ export function SuperadminWalletManager() {
             <CardTitle className="text-xl">Organization Wallets &amp; Credit Grants</CardTitle>
           </div>
           <CardDescription>
-            View customer credit balances and manually grant or adjust calling credits. Calls require a positive balance to initiate.
+            View customer credit balances and manually grant or adjust calling credits (Cr). Calls require a positive credit balance to initiate.
           </CardDescription>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 py-1.5 px-3 text-xs font-mono">
-            Total Circulating: ${totalPlatformBalance.toFixed(2)} USD
+            Total Circulating: {totalPlatformBalance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} Cr
           </Badge>
         </div>
       </CardHeader>
@@ -208,7 +208,7 @@ export function SuperadminWalletManager() {
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <div className={`font-mono text-base font-bold ${isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'}`}>
-                        ${balance.toFixed(4)}
+                        {balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Cr
                       </div>
                       <div className="text-[10px] text-muted-foreground">
                         {isPositive ? 'Active Balance' : 'Insufficient Credits'}
@@ -234,73 +234,73 @@ export function SuperadminWalletManager() {
         )}
       </CardContent>
 
-      {/* Grant Credits Dialog */}
+      {/* Grant Credits Dialog (Responsive & Cr only) */}
       <Dialog open={grantModalOpen} onOpenChange={setGrantModalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[95vw] sm:max-w-md rounded-2xl p-6">
           {selectedOrg && (
             <form onSubmit={handleGrantCredits} className="space-y-4">
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
+                <DialogTitle className="flex items-center gap-2 text-lg">
                   <HugeiconsIcon icon={SparklesIcon} className="h-5 w-5 text-emerald-500" />
                   Grant Platform Credits to Org #{selectedOrg.id}
                 </DialogTitle>
                 <DialogDescription>
-                  Current Wallet Balance: <strong className="text-foreground">${(selectedOrg.wallet_balance_usd || 0).toFixed(4)} USD</strong>
+                  Current Wallet Balance: <strong className="text-foreground">{(selectedOrg.wallet_balance_usd || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Cr</strong>
                 </DialogDescription>
               </DialogHeader>
 
               <div className="space-y-2">
-                <Label htmlFor="creditAmount">Amount to Add (USD)</Label>
+                <Label htmlFor="creditAmount" className="text-xs font-semibold">Credits to Add (Cr)</Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-sm text-muted-foreground">$</span>
                   <Input
                     id="creditAmount"
                     type="number"
-                    step="1"
+                    step="100"
                     min="1"
-                    value={amountUsd}
-                    onChange={(e) => setAmountUsd(e.target.value)}
-                    className="pl-7 font-mono text-base font-semibold"
+                    value={amountCredits}
+                    onChange={(e) => setAmountCredits(e.target.value)}
+                    className="font-mono text-base font-semibold pr-12"
                     required
                   />
+                  <span className="absolute right-3 top-2.5 text-xs font-bold text-muted-foreground">Cr</span>
                 </div>
-                <div className="flex gap-2 pt-1">
-                  {[10, 25, 50, 100].map((preset) => (
+                <div className="grid grid-cols-4 gap-1.5 pt-1">
+                  {['500', '1000', '2500', '5000'].map((preset) => (
                     <Button
                       key={preset}
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="text-xs h-7 flex-1"
-                      onClick={() => setAmountUsd(preset.toString())}
+                      className="text-xs h-7 px-1 font-mono"
+                      onClick={() => setAmountCredits(preset)}
                     >
-                      +${preset}
+                      +{preset}
                     </Button>
                   ))}
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="creditDesc">Reason / Description</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="creditDesc" className="text-xs font-semibold">Reason / Description</Label>
                 <Input
                   id="creditDesc"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="e.g. Platform trial credit grant"
+                  placeholder="e.g. Platform credit grant or bonus"
                 />
               </div>
 
-              <DialogFooter className="pt-2">
+              <DialogFooter className="pt-2 flex flex-col sm:flex-row gap-2">
                 <Button type="button" variant="outline" onClick={() => setGrantModalOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={submitting} className="bg-emerald-600 hover:bg-emerald-500 text-white">
+                <Button type="submit" disabled={submitting} className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold">
                   {submitting ? (
                     <>
                       <HugeiconsIcon icon={Loading02Icon} className="mr-2 h-4 w-4 animate-spin" /> Adding...
                     </>
                   ) : (
-                    `Add $${parseFloat(amountUsd || '0').toFixed(2)} Credits`
+                    `Add ${parseFloat(amountCredits || '0').toLocaleString()} Cr`
                   )}
                 </Button>
               </DialogFooter>

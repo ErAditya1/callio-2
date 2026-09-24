@@ -6,6 +6,7 @@ import {
   CheckIcon,
   Folder01Icon,
   FolderInputIcon,
+  FolderPlusIcon,
   InboxIcon,
   PencilIcon,
   RotateCcwIcon,
@@ -15,12 +16,14 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import {
+    createFolderApiV1FolderPost,
     moveWorkflowToFolderApiV1WorkflowWorkflowIdFolderPut,
     updateWorkflowStatusApiV1WorkflowWorkflowIdStatusPut,
 } from '@/client/sdk.gen';
 import type { FolderResponse } from '@/client/types.gen';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { FolderFormDialog } from './folders/FolderFormDialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -72,6 +75,26 @@ export function WorkflowTable({
     const [isPending, startTransition] = useTransition();
     const [loadingWorkflowId, setLoadingWorkflowId] = useState<number | null>(null);
     const [movingWorkflowId, setMovingWorkflowId] = useState<number | null>(null);
+    const [createFolderOpen, setCreateFolderOpen] = useState(false);
+    const [targetWorkflowIdForFolder, setTargetWorkflowIdForFolder] = useState<number | null>(null);
+
+    const handleCreateFolderAndMove = async (name: string) => {
+        if (!targetWorkflowIdForFolder) return;
+        const response = await createFolderApiV1FolderPost({ body: { name } });
+        if (response.error) {
+            const detail =
+                (response.error as { detail?: string })?.detail ??
+                'Failed to create folder';
+            toast.error(detail);
+            throw new Error(detail);
+        }
+        const createdFolder = response.data;
+        if (createdFolder?.id) {
+            await handleMove(targetWorkflowIdForFolder, createdFolder.id);
+        }
+        setCreateFolderOpen(false);
+        setTargetWorkflowIdForFolder(null);
+    };
 
     const handleEdit = (id: number) => {
         router.push(`/workflow/${id}`);
@@ -175,7 +198,7 @@ export function WorkflowTable({
                                             <HugeiconsIcon icon={PencilIcon} size={16} />
                                             Edit
                                         </Button>
-                                        {folders && (
+                                        {!showArchived && (
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
@@ -183,6 +206,7 @@ export function WorkflowTable({
                                                         size="sm"
                                                         disabled={movingWorkflowId === workflow.id || isPending}
                                                         className="flex items-center gap-2"
+                                                        title="Move agent to a folder"
                                                     >
                                                         {movingWorkflowId === workflow.id ? (
                                                             <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -192,7 +216,7 @@ export function WorkflowTable({
                                                         Move
                                                     </Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="w-52">
+                                                <DropdownMenuContent align="end" className="w-56">
                                                     <DropdownMenuLabel>Move to folder</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
@@ -205,7 +229,7 @@ export function WorkflowTable({
                                                             <HugeiconsIcon icon={CheckIcon} size={14} className="ml-auto" />
                                                         )}
                                                     </DropdownMenuItem>
-                                                    {folders.map((folder) => (
+                                                    {folders && folders.length > 0 && folders.map((folder) => (
                                                         <DropdownMenuItem
                                                             key={folder.id}
                                                             disabled={folder.id === currentFolderId}
@@ -218,6 +242,22 @@ export function WorkflowTable({
                                                             )}
                                                         </DropdownMenuItem>
                                                     ))}
+                                                    {(!folders || folders.length === 0) && (
+                                                        <div className="px-2 py-1.5 text-xs text-muted-foreground italic">
+                                                            No folders created yet
+                                                        </div>
+                                                    )}
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem
+                                                        onClick={() => {
+                                                            setTargetWorkflowIdForFolder(workflow.id);
+                                                            setCreateFolderOpen(true);
+                                                        }}
+                                                        className="cursor-pointer text-indigo-600 focus:text-indigo-600 font-medium"
+                                                    >
+                                                        <HugeiconsIcon icon={FolderPlusIcon} size={14} className="mr-2 text-indigo-500" />
+                                                        <span>Create new folder...</span>
+                                                    </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         )}
@@ -256,6 +296,13 @@ export function WorkflowTable({
                     </TableBody>
                 </Table>
             </CardContent>
+            <FolderFormDialog
+                open={createFolderOpen}
+                onOpenChange={setCreateFolderOpen}
+                title="Create folder & move agent"
+                submitLabel="Create & Move"
+                onSubmit={handleCreateFolderAndMove}
+            />
         </Card>
     );
 }

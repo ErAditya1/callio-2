@@ -69,9 +69,10 @@ interface InventoryNumber {
   provider?: string;
   configuration_id?: number;
   configuration_name?: string;
-  pool_type: 'shared_trial' | 'dedicated';
+  pool_type: 'shared_trial' | 'dedicated' | 'shared_multi_org';
   monthly_price_cents: number;
   assigned_organization_id: number | null;
+  claimed_count?: number;
   is_active?: boolean;
   created_at?: string;
 }
@@ -94,7 +95,7 @@ export function SuperadminTelephonyInventoryManager() {
 
   // Stock Form State
   const [selectedConfigId, setSelectedConfigId] = useState<string>('');
-  const [poolType, setPoolType] = useState<'shared_trial' | 'dedicated'>('shared_trial');
+  const [poolType, setPoolType] = useState<'shared_trial' | 'dedicated' | 'shared_multi_org'>('shared_trial');
   const [phoneNumbers, setPhoneNumbers] = useState<string>('');
   const [countryCode, setCountryCode] = useState<string>('US');
   const [label, setLabel] = useState<string>('');
@@ -247,7 +248,8 @@ export function SuperadminTelephonyInventoryManager() {
 
   const sharedCount = numbers.filter((n) => n.pool_type === 'shared_trial').length;
   const dedicatedCount = numbers.filter((n) => n.pool_type === 'dedicated').length;
-  const claimedCount = numbers.filter((n) => n.assigned_organization_id !== null).length;
+  const multiOrgCount = numbers.filter((n) => n.pool_type === 'shared_multi_org').length;
+  const claimedCount = numbers.filter((n) => n.assigned_organization_id !== null || (n.claimed_count && n.claimed_count > 0)).length;
 
   return (
     <Card className="border-border shadow-sm">
@@ -297,6 +299,10 @@ export function SuperadminTelephonyInventoryManager() {
             <Badge variant="outline" className="gap-1.5 py-1 px-2.5 border-blue-500/30 text-blue-600 dark:text-blue-400">
               <HugeiconsIcon icon={UsersIcon} className="h-3.5 w-3.5" />
               Shared Trial: <span className="font-bold">{sharedCount}</span>
+            </Badge>
+            <Badge variant="outline" className="gap-1.5 py-1 px-2.5 border-teal-500/30 text-teal-600 dark:text-teal-400">
+              <HugeiconsIcon icon={UsersIcon} className="h-3.5 w-3.5" />
+              Multi-Org Shared: <span className="font-bold">{multiOrgCount}</span>
             </Badge>
             <Badge variant="outline" className="gap-1.5 py-1 px-2.5 border-purple-500/30 text-purple-600 dark:text-purple-400">
               <HugeiconsIcon icon={LockIcon} className="h-3.5 w-3.5" />
@@ -419,29 +425,43 @@ export function SuperadminTelephonyInventoryManager() {
                         </div>
                       </TableCell>
                       <TableCell className="py-3.5">
-                        <Badge
-                          variant={isShared ? 'default' : 'outline'}
-                          className={`text-[11px] font-medium py-0.5 px-2 ${
-                            isShared
-                              ? 'bg-blue-600 text-white hover:bg-blue-600'
-                              : 'border-purple-500/40 text-purple-600 dark:text-purple-400'
-                          }`}
-                        >
-                          {isShared ? 'Shared Trial' : 'Dedicated'}
-                        </Badge>
+                        {num.pool_type === 'shared_trial' && (
+                          <Badge variant="default" className="text-[11px] font-medium py-0.5 px-2 bg-blue-600 text-white hover:bg-blue-600">
+                            Shared Trial
+                          </Badge>
+                        )}
+                        {num.pool_type === 'dedicated' && (
+                          <Badge variant="outline" className="text-[11px] font-medium py-0.5 px-2 border-purple-500/40 text-purple-600 dark:text-purple-400">
+                            Dedicated
+                          </Badge>
+                        )}
+                        {num.pool_type === 'shared_multi_org' && (
+                          <Badge variant="outline" className="text-[11px] font-medium py-0.5 px-2 border-teal-500/40 bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                            Multi-Org Shared
+                          </Badge>
+                        )}
                       </TableCell>
                       <TableCell className="py-3.5 text-xs font-medium">
-                        {isShared ? (
+                        {num.pool_type === 'shared_trial' ? (
                           <span className="text-blue-600 dark:text-blue-400 font-semibold">Free Testing</span>
                         ) : (
                           <span>${(num.monthly_price_cents / 100).toFixed(2)}/mo</span>
                         )}
                       </TableCell>
                       <TableCell className="py-3.5 text-xs">
-                        {isShared ? (
+                        {num.pool_type === 'shared_trial' ? (
                           <div className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-medium bg-blue-500/10 px-2 py-1 rounded-md text-[11px]">
                             <HugeiconsIcon icon={UsersIcon} className="h-3 w-3 shrink-0" />
                             <span>Public Testing (All Orgs)</span>
+                          </div>
+                        ) : num.pool_type === 'shared_multi_org' ? (
+                          <div className="inline-flex items-center gap-1.5 text-teal-600 dark:text-teal-400 font-medium bg-teal-500/10 px-2 py-1 rounded-md text-[11px]">
+                            <HugeiconsIcon icon={UsersIcon} className="h-3 w-3 shrink-0" />
+                            <span>
+                              {num.claimed_count && num.claimed_count > 0
+                                ? `Claimed by ${num.claimed_count} Org(s)`
+                                : 'Available (Multi-Org)'}
+                            </span>
                           </div>
                         ) : isClaimed ? (
                           <div className="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2 py-1 rounded-md text-[11px]">
@@ -504,14 +524,16 @@ export function SuperadminTelephonyInventoryManager() {
                         </Button>
                       </div>
                       <Badge
-                        variant={isShared ? 'default' : 'outline'}
+                        variant={num.pool_type === 'shared_trial' ? 'default' : 'outline'}
                         className={`text-[10px] ${
-                          isShared
+                          num.pool_type === 'shared_trial'
                             ? 'bg-blue-600 text-white'
+                            : num.pool_type === 'shared_multi_org'
+                            ? 'border-teal-500/40 bg-teal-500/10 text-teal-600 dark:text-teal-400'
                             : 'border-purple-500/40 text-purple-600 dark:text-purple-400'
                         }`}
                       >
-                        {isShared ? 'Shared Trial' : 'Dedicated'}
+                        {num.pool_type === 'shared_trial' ? 'Shared Trial' : num.pool_type === 'shared_multi_org' ? 'Multi-Org Shared' : 'Dedicated'}
                       </Badge>
                     </div>
 
@@ -540,15 +562,24 @@ export function SuperadminTelephonyInventoryManager() {
                       )}
                       <span>•</span>
                       <span>
-                        {isShared ? 'Free Testing' : `$${(num.monthly_price_cents / 100).toFixed(2)}/mo`}
+                        {num.pool_type === 'shared_trial' ? 'Free Testing' : `$${(num.monthly_price_cents / 100).toFixed(2)}/mo`}
                       </span>
                     </div>
 
                     <div className="space-y-1 text-xs">
-                      {isShared ? (
+                      {num.pool_type === 'shared_trial' ? (
                         <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-medium bg-blue-500/10 p-2 rounded-lg text-[11px]">
                           <HugeiconsIcon icon={UsersIcon} className="h-3.5 w-3.5 shrink-0" />
                           <span>Usable by all users for agent testing. Live bulk campaigns blocked.</span>
+                        </div>
+                      ) : num.pool_type === 'shared_multi_org' ? (
+                        <div className="flex items-center gap-1.5 text-teal-600 dark:text-teal-400 font-medium bg-teal-500/10 p-2 rounded-lg text-[11px]">
+                          <HugeiconsIcon icon={UsersIcon} className="h-3.5 w-3.5 shrink-0" />
+                          <span>
+                            {num.claimed_count && num.claimed_count > 0
+                              ? `Claimed by ${num.claimed_count} workspace(s). Open for multiple orgs.`
+                              : 'Available for multi-organization claiming.'}
+                          </span>
                         </div>
                       ) : isClaimed ? (
                         <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 p-2 rounded-lg text-[11px]">
@@ -703,7 +734,8 @@ export function SuperadminTelephonyInventoryManager() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="shared_trial">Shared Trial (Free Sandbox Testing)</SelectItem>
-                        <SelectItem value="dedicated">Dedicated (Marketplace Claimable)</SelectItem>
+                        <SelectItem value="dedicated">Dedicated (Marketplace - 1 Org Exclusive)</SelectItem>
+                        <SelectItem value="shared_multi_org">Multi-Org Shared (Multiple Orgs Can Claim)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

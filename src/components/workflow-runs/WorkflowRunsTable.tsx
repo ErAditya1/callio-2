@@ -223,13 +223,26 @@ export function WorkflowRunsTable({
                                                 {cost !== null ? `$${cost.toFixed(4)}` : "-"}
                                             </TableCell>
                                             <TableCell>
-                                                {run.gathered_context?.mapped_call_disposition ? (
-                                                    <Badge variant="default">
-                                                        {run.gathered_context.mapped_call_disposition as string}
-                                                    </Badge>
-                                                ) : (
-                                                    <span className="text-sm text-muted-foreground">-</span>
-                                                )}
+                                                <div className="flex flex-col gap-1 items-start">
+                                                    {run.gathered_context?.mapped_call_disposition ? (
+                                                        <Badge variant="default">
+                                                            {run.gathered_context.mapped_call_disposition as string}
+                                                        </Badge>
+                                                    ) : (
+                                                        <span className="text-sm text-muted-foreground">-</span>
+                                                    )}
+                                                    {typeof run.gathered_context?.lead_score === "number" && (
+                                                        <span className={`inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                                                            (run.gathered_context.lead_score as number) >= 70
+                                                                ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400"
+                                                                : (run.gathered_context.lead_score as number) >= 40
+                                                                ? "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-400"
+                                                                : "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400"
+                                                        }`}>
+                                                            {(run.gathered_context.lead_score as number) >= 70 ? "🔥" : (run.gathered_context.lead_score as number) >= 40 ? "⚡" : "❄️"} Score: {run.gathered_context.lead_score as number}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
