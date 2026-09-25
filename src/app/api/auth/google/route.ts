@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 function getPublicBackend() {
-  const publicUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL;
-  if (publicUrl && !publicUrl.includes("dograh-api")) {
-    return publicUrl;
+  const envUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && !envUrl.includes("dograh-api") && !envUrl.includes("127.0.0.1") && !envUrl.includes("localhost")) {
+    return envUrl;
   }
   return "https://calling.cheetahagi.com";
 }
