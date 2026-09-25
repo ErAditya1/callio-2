@@ -1,33 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
-function getPublicBackend() {
-  const envUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL;
-  if (envUrl && !envUrl.includes("dograh-api") && !envUrl.includes("127.0.0.1") && !envUrl.includes("localhost")) {
-    return envUrl;
-  }
-  return "https://calling.cheetahagi.com";
-}
-
-function getOrigin(req: NextRequest) {
-  const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+export async function GET(req: NextRequest) {
+  const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "calling.cheetahagi.com";
   const proto = req.headers.get("x-forwarded-proto") || "https";
 
-  if (host && !host.includes("0.0.0.0") && !host.includes("127.0.0.1") && !host.includes("localhost")) {
-    return `${proto}://${host}`;
+  let origin = `${proto}://${host}`;
+  if (origin.includes("0.0.0.0") || origin.includes("127.0.0.1") || origin.includes("localhost")) {
+    origin = "https://calling.cheetahagi.com";
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
-  if (siteUrl && !siteUrl.includes("localhost") && !siteUrl.includes("127.0.0.1") && !siteUrl.includes("0.0.0.0")) {
-    return siteUrl;
-  }
-
-  return req.nextUrl.origin;
-}
-
-export async function GET(req: NextRequest) {
-  const origin = getOrigin(req);
-  const publicBackend = getPublicBackend();
   const redirectUri = `${origin}/api/auth/google/callback`;
+  const publicBackend = "https://calling.cheetahagi.com";
 
   return NextResponse.redirect(
     `${publicBackend}/api/v1/auth/google?redirect_uri=${encodeURIComponent(redirectUri)}`
