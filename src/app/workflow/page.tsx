@@ -8,7 +8,7 @@ import { AgentFolderView } from '@/components/workflow/folders/AgentFolderView';
 import { CreateFolderButton } from '@/components/workflow/folders/CreateFolderButton';
 import { FolderSection } from '@/components/workflow/folders/FolderSection';
 import { UploadWorkflowButton } from '@/components/workflow/UploadWorkflowButton';
-import { WorkflowTemplateGallery } from '@/components/workflow/WorkflowTemplateGallery';
+import { WorkflowTemplateSheet } from '@/components/workflow/WorkflowTemplateSheet';
 import { getServerAccessToken, getServerAuthProvider } from '@/lib/auth/server';
 import logger from '@/lib/logger';
 
@@ -111,14 +111,12 @@ async function PageContent() {
 
     return (
         <div className="app-page">
-            {/* Pre-Built Templates Section */}
-            <WorkflowTemplateGallery />
-
             {/* Your Workflows Section */}
             <div className="mb-6">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <h1 className="text-2xl font-bold">Your Agents</h1>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <WorkflowTemplateSheet />
                         <UploadWorkflowButton />
                         <CreateFolderButton />
                         <CreateWorkflowButton />
