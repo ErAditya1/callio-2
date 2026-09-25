@@ -2,23 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { OSS_TOKEN_COOKIE, OSS_USER_COOKIE } from "@/lib/auth/cookies";
 
 function getOrigin(req: NextRequest) {
-  if (process.env.GOOGLE_REDIRECT_URI) {
-    try {
-      const u = new URL(process.env.GOOGLE_REDIRECT_URI);
-      if (u.origin && !u.origin.includes("localhost") && !u.origin.includes("127.0.0.1")) {
-        return u.origin;
-      }
-    } catch {}
-  }
-  const configured = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
-  if (configured && !configured.includes("localhost") && !configured.includes("127.0.0.1") && !configured.includes("0.0.0.0")) {
-    return configured;
-  }
   const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
   const proto = req.headers.get("x-forwarded-proto") || "https";
+
   if (host && !host.includes("0.0.0.0") && !host.includes("127.0.0.1") && !host.includes("localhost")) {
     return `${proto}://${host}`;
   }
+
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+  if (siteUrl && !siteUrl.includes("localhost") && !siteUrl.includes("127.0.0.1") && !siteUrl.includes("0.0.0.0")) {
+    return siteUrl;
+  }
+
   return req.nextUrl.origin;
 }
 
