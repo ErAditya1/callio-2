@@ -9,6 +9,14 @@ function getPublicBackend() {
 }
 
 function getOrigin(req: NextRequest) {
+  if (process.env.GOOGLE_REDIRECT_URI) {
+    try {
+      const u = new URL(process.env.GOOGLE_REDIRECT_URI);
+      if (u.origin && !u.origin.includes("localhost") && !u.origin.includes("127.0.0.1")) {
+        return u.origin;
+      }
+    } catch {}
+  }
   const configured = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
   if (configured && !configured.includes("localhost") && !configured.includes("127.0.0.1") && !configured.includes("0.0.0.0")) {
     return configured;
