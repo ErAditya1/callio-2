@@ -104,6 +104,11 @@ const TOP_NAV_ITEMS: SidebarNavItem[] = [
     url: "/campaigns",
     icon: Megaphone01Icon,
   },
+  {
+    title: "Contacts & Groups",
+    url: "/contacts",
+    icon: UserRoundIcon,
+  },
 ];
 
 const COLLAPSIBLE_NAV_SECTIONS: SidebarNavSection[] = [

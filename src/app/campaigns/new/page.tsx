@@ -43,11 +43,35 @@ export default function NewCampaignPage() {
     // Form state
     const [campaignName, setCampaignName] = useState('');
     const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>('');
-    const [sourceType, setSourceType] = useState<'csv'>('csv');
+    const [sourceType, setSourceType] = useState<'group' | 'manual' | 'csv'>('group');
     const [sourceId, setSourceId] = useState('');
     const [selectedFileName, setSelectedFileName] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [createError, setCreateError] = useState<string | null>(null);
+
+    // Contact Groups state
+    interface ContactGroupItem {
+        id: number;
+        name: string;
+        description?: string;
+        color?: string;
+        member_count: number;
+    }
+    const [groups, setGroups] = useState<ContactGroupItem[]>([]);
+    const [isLoadingGroups, setIsLoadingGroups] = useState(false);
+    const [selectedGroupId, setSelectedGroupId] = useState<string>('');
+
+    // Manual contacts state
+    interface SimpleContact {
+        id: number;
+        name: string;
+        phone: string;
+        company?: string;
+    }
+    const [manualContacts, setManualContacts] = useState<SimpleContact[]>([]);
+    const [isLoadingManualContacts, setIsLoadingManualContacts] = useState(false);
+    const [selectedManualContactIds, setSelectedManualContactIds] = useState<Set<number>>(new Set());
+    const [manualSearch, setManualSearch] = useState('');
 
     // Workflows state
     const [workflows, setWorkflows] = useState<WorkflowSummaryResponse[]>([]);
@@ -221,14 +245,58 @@ export default function NewCampaignPage() {
         }
     }, [user, getAccessToken]);
 
+    // Fetch contact groups
+    const fetchGroups = useCallback(async () => {
+        if (!user) return;
+        setIsLoadingGroups(true);
+        try {
+            const accessToken = await getAccessToken();
+            const res = await fetch('/api/v1/contacts/groups', {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setGroups(Array.isArray(data) ? data : []);
+                if (data && data.length > 0 && !selectedGroupId && data[0]) {
+                    setSelectedGroupId(String(data[0].id));
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch contact groups:', err);
+        } finally {
+            setIsLoadingGroups(false);
+        }
+    }, [user, getAccessToken, selectedGroupId]);
+
+    const fetchManualContacts = useCallback(async () => {
+        if (!user) return;
+        setIsLoadingManualContacts(true);
+        try {
+            const accessToken = await getAccessToken();
+            const res = await fetch('/api/v1/contacts/?limit=300', {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const list = Array.isArray(data) ? data : data?.contacts || [];
+                setManualContacts(list);
+            }
+        } catch {
+            setManualContacts([]);
+        } finally {
+            setIsLoadingManualContacts(false);
+        }
+    }, [user, getAccessToken]);
+
     // Initial load
     useEffect(() => {
         if (user) {
             fetchWorkflows();
             fetchCampaignDefaults();
             fetchTelephonyConfigs();
+            fetchGroups();
         }
-    }, [fetchWorkflows, fetchCampaignDefaults, fetchTelephonyConfigs, user]);
+    }, [fetchWorkflows, fetchCampaignDefaults, fetchTelephonyConfigs, fetchGroups, user]);
 
     // Phone-number count for the selected telephony config drives concurrency
     // bounds. Falls back to the campaign-defaults endpoint's count (org default
@@ -248,8 +316,28 @@ export default function NewCampaignPage() {
         e.preventDefault();
         setCreateError(null);
 
-        if (!campaignName || !selectedWorkflowId || !sourceId || !selectedTelephonyConfigId) {
-            toast.error('Please fill in all fields');
+        let effectiveSourceId = sourceId;
+        if (sourceType === 'group') {
+            effectiveSourceId = selectedGroupId;
+            if (!selectedGroupId) {
+                toast.error('Please select a contact group');
+                return;
+            }
+        } else if (sourceType === 'manual') {
+            effectiveSourceId = 'manual';
+            if (selectedManualContactIds.size === 0) {
+                toast.error('Please select at least one contact from directory');
+                return;
+            }
+        } else {
+            if (!sourceId) {
+                toast.error('Please upload a CSV file');
+                return;
+            }
+        }
+
+        if (!campaignName || !selectedWorkflowId || !effectiveSourceId || !selectedTelephonyConfigId) {
+            toast.error('Please fill in all required fields');
             return;
         }
 
@@ -313,20 +401,22 @@ export default function NewCampaignPage() {
                 min_calls_in_window: parseInt(circuitBreakerMinCalls) || 5,
             };
 
-
             const response = await createCampaignApiV1CampaignCreatePost({
                 body: {
                     name: campaignName,
                     workflow_id: parseInt(selectedWorkflowId),
                     source_type: sourceType,
-                    source_id: sourceId,
+                    source_id: effectiveSourceId,
+                    group_id: sourceType === 'group' ? parseInt(effectiveSourceId) : undefined,
+                    group_ids: sourceType === 'group' ? [parseInt(effectiveSourceId)] : undefined,
+                    contact_ids: sourceType === 'manual' ? Array.from(selectedManualContactIds) : undefined,
                     telephony_configuration_id: parseInt(selectedTelephonyConfigId),
                     retry_config: retryConfig,
                     max_concurrency: maxConcurrencyValue,
                     rate_limit_per_second: dialRate,
                     schedule_config: scheduleConfig,
                     circuit_breaker: circuitBreakerConfig,
-                },
+                } as any,
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                 }
@@ -515,9 +605,13 @@ export default function NewCampaignPage() {
                                 <Select
                                     value={sourceType}
                                     onValueChange={(value) => {
-                                        setSourceType(value as 'csv');
+                                        const st = value as 'group' | 'manual' | 'csv';
+                                        setSourceType(st);
                                         setSourceId('');
                                         setSelectedFileName('');
+                                        if (st === 'manual' && manualContacts.length === 0) {
+                                            void fetchManualContacts();
+                                        }
                                     }}
                                     required
                                 >
@@ -525,18 +619,209 @@ export default function NewCampaignPage() {
                                         <SelectValue placeholder="Select source type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="csv">CSV File</SelectItem>
+                                        <SelectItem value="group">Contact Group (Recommended)</SelectItem>
+                                        <SelectItem value="manual">Pick Contacts from Directory</SelectItem>
+                                        <SelectItem value="csv">CSV File Upload</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <p className="text-sm text-[#737373]">
-                                    Choose where your contact data is stored
+                                    Choose where your contact data is sourced from
                                 </p>
                             </div>
 
-                            <CsvUploadSelector
-                                onFileUploaded={handleFileUploaded}
-                                selectedFileName={selectedFileName}
-                            />
+                            {sourceType === 'csv' ? (
+                                <CsvUploadSelector
+                                    onFileUploaded={handleFileUploaded}
+                                    selectedFileName={selectedFileName}
+                                />
+                            ) : sourceType === 'manual' ? (
+                                <div className="space-y-3 rounded-lg border border-border/80 bg-card/60 p-4">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <Label className="font-semibold text-sm">Select Contacts from Directory</Label>
+                                            <p className="text-xs text-muted-foreground mt-0.5">
+                                                Search and check off contacts to include in this campaign.
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const allIds = new Set(manualContacts.map((c) => c.id));
+                                                    setSelectedManualContactIds(allIds);
+                                                }}
+                                                className="text-primary hover:underline font-semibold"
+                                            >
+                                                Select All
+                                            </button>
+                                            <span className="text-muted-foreground">·</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setSelectedManualContactIds(new Set())}
+                                                className="text-muted-foreground hover:underline"
+                                            >
+                                                Clear
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <Input
+                                        placeholder="Search contacts by name or phone..."
+                                        value={manualSearch}
+                                        onChange={(e) => setManualSearch(e.target.value)}
+                                        className="h-8 text-xs"
+                                    />
+
+                                    {isLoadingManualContacts ? (
+                                        <div className="py-6 text-center text-xs text-muted-foreground">
+                                            Loading directory contacts…
+                                        </div>
+                                    ) : manualContacts.length === 0 ? (
+                                        <div className="rounded-md border border-dashed p-4 text-center space-y-2">
+                                            <p className="text-xs font-medium text-muted-foreground">No contacts found in directory</p>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                type="button"
+                                                onClick={() => router.push('/contacts')}
+                                                className="text-xs"
+                                            >
+                                                Add contacts in Directory
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="max-h-56 overflow-y-auto rounded-md border border-border divide-y divide-border">
+                                            {manualContacts
+                                                .filter((c) => !manualSearch || `${c.name} ${c.phone} ${c.company || ''}`.toLowerCase().includes(manualSearch.toLowerCase()))
+                                                .map((c) => {
+                                                    const isChecked = selectedManualContactIds.has(c.id);
+                                                    return (
+                                                        <label
+                                                            key={c.id}
+                                                            className="flex items-center justify-between p-2 hover:bg-muted/40 cursor-pointer text-xs select-none"
+                                                        >
+                                                            <div className="flex items-center gap-2.5">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={isChecked}
+                                                                    onChange={() => {
+                                                                        setSelectedManualContactIds((prev) => {
+                                                                            const next = new Set(prev);
+                                                                            if (next.has(c.id)) next.delete(c.id);
+                                                                            else next.add(c.id);
+                                                                            return next;
+                                                                        });
+                                                                    }}
+                                                                    className="h-3.5 w-3.5 accent-primary rounded"
+                                                                />
+                                                                <div>
+                                                                    <span className="font-semibold block">{c.name}</span>
+                                                                    <span className="text-[11px] text-muted-foreground font-mono">{c.phone}</span>
+                                                                </div>
+                                                            </div>
+                                                            {isChecked && (
+                                                                <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                                                                    Selected
+                                                                </span>
+                                                            )}
+                                                        </label>
+                                                    );
+                                                })}
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center justify-between pt-1 text-xs">
+                                        <span className="font-semibold text-foreground">
+                                            {selectedManualContactIds.size} contact(s) selected
+                                        </span>
+                                        <Link href="/contacts" className="text-primary hover:underline font-semibold">
+                                            Manage Contacts
+                                        </Link>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-3 rounded-lg border border-border/80 bg-card/60 p-4">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <Label className="font-semibold text-sm">Select Contact Group</Label>
+                                            <p className="text-xs text-muted-foreground mt-0.5">
+                                                All contacts in this group will be queued for this campaign.
+                                            </p>
+                                        </div>
+                                        <Link
+                                            href="/contacts"
+                                            className="text-xs font-semibold text-primary hover:underline"
+                                        >
+                                            Manage Groups
+                                        </Link>
+                                    </div>
+
+                                    {isLoadingGroups ? (
+                                        <div className="py-4 text-center text-xs text-muted-foreground">
+                                            Loading contact groups…
+                                        </div>
+                                    ) : groups.length === 0 ? (
+                                        <div className="rounded-md border border-dashed p-4 text-center space-y-2">
+                                            <p className="text-xs font-medium text-muted-foreground">No contact groups found</p>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                type="button"
+                                                onClick={() => router.push('/contacts')}
+                                                className="text-xs"
+                                            >
+                                                Create your first contact group
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            <Select
+                                                value={selectedGroupId}
+                                                onValueChange={(val) => {
+                                                    setSelectedGroupId(val);
+                                                    setSourceId(val);
+                                                }}
+                                                required
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Choose a group" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {groups.map((g) => (
+                                                        <SelectItem key={g.id} value={String(g.id)}>
+                                                            <div className="flex items-center gap-2">
+                                                                <span
+                                                                    className="h-2 w-2 rounded-full shrink-0"
+                                                                    style={{ backgroundColor: g.color || '#0F6E6E' }}
+                                                                />
+                                                                <span className="font-medium">{g.name}</span>
+                                                                <span className="text-muted-foreground text-xs">
+                                                                    ({g.member_count} contacts)
+                                                                </span>
+                                                            </div>
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+
+                                            {selectedGroupId && (() => {
+                                                const selGroup = groups.find((g) => String(g.id) === selectedGroupId);
+                                                if (!selGroup) return null;
+                                                return (
+                                                    <div className="flex items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-xs">
+                                                        <span className="text-muted-foreground">
+                                                            {selGroup.description || 'Target contact group'}
+                                                        </span>
+                                                        <span className="font-bold text-foreground">
+                                                            {selGroup.member_count} contacts ready to dial
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })()}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             {/* Advanced Settings */}
                             <Collapsible

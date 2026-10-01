@@ -125,7 +125,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     pathname.startsWith("/customer-stories") ||
     pathname.startsWith("/security") ||
     pathname.startsWith("/about") ||
-    pathname.startsWith("/contact") ||
+    (pathname === "/contact" || pathname.startsWith("/contact/")) ||
     pathname.startsWith("/resources") ||
     pathname.startsWith("/blog") ||
     pathname.startsWith("/faq") ||
