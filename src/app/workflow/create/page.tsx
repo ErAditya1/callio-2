@@ -277,7 +277,8 @@ export default function CreateWorkflowPage() {
             });
 
             if (!res.ok) {
-                throw new Error('Failed to create workflow');
+                const errorData = await res.json().catch(() => null);
+                throw new Error(errorData?.detail || `Failed to create workflow (HTTP ${res.status})`);
             }
 
             const data = await res.json();
