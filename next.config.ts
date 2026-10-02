@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
   experimental: {
     serverSourceMaps: true,
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', '@radix-ui/react-slot', '@hugeicons/react', '@hugeicons/core-free-icons'],
+    reactCompiler: process.env.NODE_ENV === "production" ? false : undefined,
   },
   async rewrites() {
     return [

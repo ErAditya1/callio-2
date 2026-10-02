@@ -4,6 +4,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   AudioWaveformIcon,
   BotIcon,
+  Calendar01Icon,
   ChartColumnIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -15,6 +16,7 @@ import {
   KeyRoundIcon,
   Logout01Icon,
   Megaphone01Icon,
+  MessageSquareIcon,
   PhoneCallIcon,
   Settings01Icon,
   ShieldCheckIcon,
@@ -105,6 +107,11 @@ const TOP_NAV_ITEMS: SidebarNavItem[] = [
     icon: Megaphone01Icon,
   },
   {
+    title: "Calendar & Bookings",
+    url: "/calendar",
+    icon: Calendar01Icon,
+  },
+  {
     title: "Contacts & Groups",
     url: "/contacts",
     icon: UserRoundIcon,
@@ -126,6 +133,11 @@ const COLLAPSIBLE_NAV_SECTIONS: SidebarNavSection[] = [
         url: "/telephony-configurations",
         icon: PhoneCallIcon,
         showsTelephonyWarning: true,
+      },
+      {
+        title: "Messaging Channels",
+        url: "/messaging-configurations",
+        icon: MessageSquareIcon,
       },
       {
         title: "Tools & Actions",

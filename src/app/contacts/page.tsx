@@ -21,9 +21,11 @@ import {
   UserCheck01Icon,
   UserGroupIcon,
   UserRoundIcon,
+  SentIcon,
 } from "@hugeicons/core-free-icons";
 
 import { useAuth } from "@/lib/auth";
+import { SendFollowUpModal } from "@/components/followup/SendFollowUpModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -89,6 +91,7 @@ export default function ContactsPage() {
   const [searchQ, setSearchQ] = useState("");
   const [filterMode, setFilterMode] = useState<"all" | "uncalled" | "called">("all");
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
+  const [followUpModalOpen, setFollowUpModalOpen] = useState(false);
 
   // Modals state
   const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
@@ -943,6 +946,16 @@ export default function ContactsPage() {
 
           <div className="flex items-center gap-2">
             <Button
+              variant="default"
+              size="sm"
+              onClick={() => setFollowUpModalOpen(true)}
+              className="h-7 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+            >
+              <HugeiconsIcon icon={SentIcon} className="h-3 w-3 mr-1" />
+              Send Follow-Up
+            </Button>
+
+            <Button
               variant="secondary"
               size="sm"
               onClick={() => {
@@ -1697,6 +1710,17 @@ export default function ContactsPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* ── Multi-Channel Lead Follow-Up Modal ── */}
+      <SendFollowUpModal
+        isOpen={followUpModalOpen}
+        onClose={() => setFollowUpModalOpen(false)}
+        selectedLeads={contacts.filter((c) => selectedIds.has(c.id))}
+        onDispatchSuccess={(count) => {
+          toast.success(`Dispatched multi-channel follow-up to ${count} leads!`);
+          clearSelection();
+        }}
+      />
     </div>
   );
 }

@@ -17,7 +17,7 @@ import {
   SparklesIcon,
   StarIcon,
   VolumeHighIcon,
-} from "@hugeicons/core-free-icons";;
+} from "@hugeicons/core-free-icons";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -788,7 +788,7 @@ export function SuperadminMasterKeysManager() {
             <CardTitle className="text-xl">Platform Master API Keys &amp; Model Pricing</CardTitle>
           </div>
           <CardDescription>
-            Configure database-backed master credentials for LLM, Voice (TTS), and Transcriber (STT) services. New users can immediately run voice agents without providing BYOK credentials.
+            Configure database-backed master credentials for LLM, Voice (TTS), and Transcriber (STT). Users can immediately run voice agents without providing BYOK credentials.
           </CardDescription>
         </div>
         <Button
@@ -810,7 +810,7 @@ export function SuperadminMasterKeysManager() {
       <CardContent className="space-y-4">
         {/* Service Type Tabs */}
         <div className="flex items-center justify-between border-b pb-3 text-sm">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Button
               variant={activeTab === 'all' ? 'default' : 'ghost'}
               size="sm"
