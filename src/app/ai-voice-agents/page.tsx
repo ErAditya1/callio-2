@@ -101,7 +101,7 @@ export default function AIVoiceAgentsPage() {
         </div>
         <div className="pt-4">
           <Button asChild className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-6">
-            <Link href="/dashboard/agents/create">
+            <Link href="/workflow/create">
               Create Your First Agent in 2 Minutes →
             </Link>
           </Button>

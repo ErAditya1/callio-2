@@ -83,7 +83,7 @@ export default function VoiceDetailPage() {
               asChild
               className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/25 font-semibold text-sm"
             >
-              <Link href={`/dashboard/agents/create?voice=${voice.id}`}>
+              <Link href="/workflow/create">
                 Use this Voice
                 <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1.5" />
               </Link>

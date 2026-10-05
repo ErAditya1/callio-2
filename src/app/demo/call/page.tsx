@@ -305,7 +305,7 @@ export default function LiveCallDemoPage() {
               asChild
               className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl shadow-lg shadow-indigo-600/20 font-semibold text-xs h-10"
             >
-              <Link href="/dashboard/agents/create">
+              <Link href="/workflow/create">
                 Build this Agent for Your Business →
               </Link>
             </Button>
@@ -348,7 +348,7 @@ export default function LiveCallDemoPage() {
                 asChild
                 className="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl h-11 font-semibold text-sm shadow-lg shadow-indigo-600/30"
               >
-                <Link href="/dashboard/agents/create">
+                <Link href="/workflow/create">
                   Build Your Own Agent Now
                   <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1.5" />
                 </Link>

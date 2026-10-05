@@ -257,7 +257,7 @@ export function UseCaseExplorer() {
                 asChild
                 className="bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 rounded-xl font-semibold px-5"
               >
-                <Link href="/dashboard/agents/create">
+                <Link href="/workflow/create">
                   Build this Agent
                   <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1.5" />
                 </Link>

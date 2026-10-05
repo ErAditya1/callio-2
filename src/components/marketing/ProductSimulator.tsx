@@ -259,7 +259,7 @@ export function ProductSimulator() {
                   ← Back to Deploy
                 </Button>
                 <Button asChild className="bg-indigo-600 hover:bg-indigo-500 text-white">
-                  <Link href="/dashboard/agents/create">
+                  <Link href="/workflow/create">
                     Build Your Real Agent Now →
                   </Link>
                 </Button>

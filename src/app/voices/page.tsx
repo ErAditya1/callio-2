@@ -246,7 +246,7 @@ export default function VoicesPage() {
                   asChild
                   className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs rounded-xl h-8 px-3"
                 >
-                  <Link href={`/dashboard/agents/create?voice=${voice.id}`}>
+                  <Link href="/workflow/create">
                     Use this Voice
                   </Link>
                 </Button>

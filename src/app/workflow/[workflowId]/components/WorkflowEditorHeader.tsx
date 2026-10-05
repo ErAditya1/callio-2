@@ -11,6 +11,7 @@ import {
   Download01Icon,
   EyeIcon,
   HistoryIcon,
+  InfoIcon,
   Loading02Icon,
   Menu01Icon,
   MoreVerticalIcon,
@@ -465,6 +466,46 @@ export const WorkflowEditorHeader = ({
                     <HugeiconsIcon icon={BotIcon} className="w-4 h-4" />
                     Test Agent
                 </Button>
+
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-[#737373] hover:text-foreground h-9 w-9 rounded-lg"
+                            title="Canvas Shortcuts & Quick Guide"
+                        >
+                            <HugeiconsIcon icon={InfoIcon} className="w-4 h-4" />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                        align="end"
+                        className="w-80 p-4 shadow-xl border-[#E5E5E5] text-xs space-y-3 bg-[#FFFFFF]"
+                    >
+                        <div className="font-semibold text-sm flex items-center gap-1.5 text-foreground pb-2 border-b border-[#E5E5E5]">
+                            <HugeiconsIcon icon={SparklesIcon} className="w-4 h-4 text-primary" />
+                            Canvas Quick Guide
+                        </div>
+                        <div className="space-y-2 text-[#737373]">
+                            <div className="flex items-start gap-2">
+                                <span className="font-bold text-foreground shrink-0">➕ Add Nodes:</span>
+                                <span>Click the <strong>+</strong> button on top right to add Agent, Webhook, QA or Global nodes.</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                                <span className="font-bold text-foreground shrink-0">🔗 Connect:</span>
+                                <span>Drag lines from node bottom handles to connect dialogue transitions.</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                                <span className="font-bold text-foreground shrink-0">🧪 Test Live:</span>
+                                <span>Click <strong>Test Agent</strong> to speak to your agent live via microphone audio or text chat.</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                                <span className="font-bold text-foreground shrink-0">🧹 Tidy Up:</span>
+                                <span>Use the brush icon in bottom-left controls to auto-arrange your node graph cleanly.</span>
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
 
                 {/* Save button (only shown when editing the draft) */}
                 {!isViewingHistoricalVersion && (

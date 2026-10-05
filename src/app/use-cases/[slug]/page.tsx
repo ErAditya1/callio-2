@@ -55,7 +55,7 @@ export default function IndustryUseCasePage() {
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <Button asChild size="lg" className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/25">
-            <Link href={`/dashboard/agents/create?category=${useCase.recommendedAgentCategory}`}>
+            <Link href="/workflow/create">
               Build {useCase.industry} Agent
               <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-2" />
             </Link>
@@ -159,7 +159,7 @@ export default function IndustryUseCasePage() {
           Launch a pre-trained agent tailored to your workflow in less than 5 minutes.
         </p>
         <Button asChild size="lg" className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-8">
-          <Link href={`/dashboard/agents/create?category=${useCase.recommendedAgentCategory}`}>
+          <Link href="/workflow/create">
             Build Your Agent Now →
           </Link>
         </Button>

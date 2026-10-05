@@ -45,7 +45,7 @@ export default function AICallingPage() {
             size="lg"
             className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl shadow-lg shadow-indigo-600/25 px-8 h-12 text-sm font-semibold"
           >
-            <Link href="/dashboard/agents/create">
+            <Link href="/workflow/create">
               Get Started with AI Calling
               <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-2" />
             </Link>
@@ -171,7 +171,7 @@ export default function AICallingPage() {
         </p>
         <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
           <Button asChild size="lg" className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl px-8 shadow-lg shadow-indigo-600/25">
-            <Link href="/dashboard/agents/create">
+            <Link href="/workflow/create">
               Build Your Agent Free
               <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-2" />
             </Link>

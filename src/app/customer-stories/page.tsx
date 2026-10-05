@@ -117,7 +117,7 @@ export default function CustomerStoriesPage() {
           Start automating calls today and measure the immediate impact on customer satisfaction and revenue.
         </p>
         <Button asChild size="lg" className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl">
-          <Link href="/dashboard/agents/create">Build Your Agent →</Link>
+          <Link href="/workflow/create">Build Your Agent →</Link>
         </Button>
       </div>
     </div>

@@ -58,7 +58,7 @@ export function ClientSidebar() {
             asChild
             className="w-full bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl shadow-md shadow-sm text-xs font-semibold h-10"
           >
-            <Link href="/dashboard/agents/create">
+            <Link href="/workflow/create">
               <HugeiconsIcon icon={SparklesIcon} className="w-3.5 h-3.5 mr-2" />
               + Create Agent
             </Link>

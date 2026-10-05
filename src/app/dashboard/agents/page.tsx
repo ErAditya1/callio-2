@@ -47,7 +47,7 @@ export default function AgentsDashboardPage() {
         </div>
 
         <Button asChild className="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl text-xs h-10 px-4 shadow-lg shadow-sm">
-          <Link href="/dashboard/agents/create">
+          <Link href="/workflow/create">
             <HugeiconsIcon icon={PlusIcon} className="w-4 h-4 mr-1.5" />
             Create Agent
           </Link>
