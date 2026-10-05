@@ -59,7 +59,7 @@ interface WorkflowDraft {
     workflow_definition?: Record<string, any>;
 }
 
-export interface IndustryPreset {
+interface IndustryPreset {
     id: string;
     title: string;
     icon: string;
@@ -72,7 +72,7 @@ export interface IndustryPreset {
     suggestedExtraction: string[];
 }
 
-export const COMMON_EXTRACTION_OPTIONS = [
+const COMMON_EXTRACTION_OPTIONS = [
     'Full Name',
     'Phone Number',
     'Email Address',
@@ -84,7 +84,7 @@ export const COMMON_EXTRACTION_OPTIONS = [
     'Address / Location',
 ];
 
-export const INDUSTRY_PRESETS: IndustryPreset[] = [
+const INDUSTRY_PRESETS: IndustryPreset[] = [
     {
         id: 'clinic',
         title: 'Clinic & Healthcare',
