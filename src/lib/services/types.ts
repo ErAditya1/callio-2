@@ -59,6 +59,27 @@ export interface Voice {
   }[];
 }
 
+/** Shape returned by dograh's GET /api/v1/user/configurations/voices/default */
+export interface ApiVoice {
+  voice_id: string;
+  name: string;
+  description?: string | null;
+  accent?: string | null;
+  gender?: string | null;
+  language?: string | null;
+  preview_url?: string | null;
+}
+
+export interface ApiVoicesResponse {
+  provider: string;
+  voices: ApiVoice[];
+  facets?: {
+    genders: string[];
+    accents: string[];
+    languages: string[];
+  } | null;
+}
+
 export interface CallRecord {
   id: string;
   customerName: string;

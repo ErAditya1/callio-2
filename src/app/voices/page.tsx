@@ -9,12 +9,13 @@ import {
   Search01Icon,
 } from "@hugeicons/core-free-icons";;
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MOCK_VOICES } from '@/lib/services/mockData';
+import { getVoices } from '@/lib/services';
+import type { Voice } from '@/lib/services';
 
 /** Inline SVG initials avatar — zero external image requests, no 500 errors */
 function VoiceAvatar({ name, gender }: { name: string; gender: string }) {
@@ -54,13 +55,27 @@ function VoiceAvatar({ name, gender }: { name: string; gender: string }) {
 }
 
 export default function VoicesPage() {
+  const [voices, setVoices] = useState<Voice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGender, setSelectedGender] = useState<string>('all');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('all');
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoading(true);
+    getVoices().then((data) => {
+      if (!cancelled) {
+        setVoices(data);
+        setIsLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+
   const filteredVoices = useMemo(() => {
-    return MOCK_VOICES.filter((voice) => {
+    return voices.filter((voice) => {
       const matchesSearch =
         voice.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         voice.accent.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -153,6 +168,26 @@ export default function VoicesPage() {
       </div>
 
       {/* Voice Cards Grid */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-2xl border border-border/70 bg-card/60 p-6 animate-pulse">
+              <div className="flex items-start gap-3.5 mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-muted/60 shrink-0" />
+                <div className="flex-1 space-y-2 pt-1">
+                  <div className="h-4 bg-muted/60 rounded w-3/4" />
+                  <div className="h-3 bg-muted/40 rounded w-1/2" />
+                </div>
+              </div>
+              <div className="h-12 bg-muted/40 rounded-xl mb-4" />
+              <div className="flex gap-2 mb-4">
+                <div className="h-5 bg-muted/40 rounded w-16" />
+                <div className="h-5 bg-muted/40 rounded w-20" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredVoices.map((voice) => {
           const isPlaying = playingVoiceId === voice.id;
@@ -255,6 +290,7 @@ export default function VoicesPage() {
           );
         })}
       </div>
+      )}
     </div>
   );
 }

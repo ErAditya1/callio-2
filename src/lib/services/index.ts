@@ -1,16 +1,63 @@
 import { INDUSTRY_USE_CASES, MOCK_AGENTS, MOCK_CALLS, MOCK_CAMPAIGNS, MOCK_VOICES } from './mockData';
-import { Agent, CallRecord, Campaign, IndustryUseCase, Voice } from './types';
+import { Agent, ApiVoice, ApiVoicesResponse, CallRecord, Campaign, IndustryUseCase, Voice } from './types';
 
 export * from './types';
 export * from './mockData';
 
+const BACKEND_URL =
+  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_BACKEND_URL) ||
+  'http://localhost:8000';
+
+/** Map a dograh ApiVoice into the frontend Voice shape. */
+function apiVoiceToVoice(v: ApiVoice, provider: string): Voice {
+  const capitalize = (s?: string | null) =>
+    s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+
+  const rawGender = (v.gender || 'female').toLowerCase();
+  const gender: 'Female' | 'Male' = rawGender === 'male' ? 'Male' : 'Female';
+
+  const accentLabel = capitalize(v.accent) || 'Neutral';
+  const langLabel = v.language || 'en';
+
+  return {
+    id: v.voice_id,
+    name: v.name,
+    accent: `${accentLabel} (${langLabel.toUpperCase()})`,
+    language: langLabel,
+    gender,
+    age: 'Middle-Aged',
+    style: v.description
+      ? v.description.split(/[,.]/).slice(0, 3).map((s) => s.trim()).filter(Boolean)
+      : ['Professional'],
+    useCase: v.description || 'Conversational AI voice',
+    avatar: '',
+    provider: provider as Voice['provider'],
+    audioSampleUrl: v.preview_url || '',
+    scenarios: [],
+  };
+}
+
 // Voice Services
 export async function getVoices(): Promise<Voice[]> {
+  try {
+    const res = await fetch(
+      `${BACKEND_URL}/api/v1/user/configurations/voices/default`,
+      { cache: 'no-store' },
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: ApiVoicesResponse = await res.json();
+    if (Array.isArray(data.voices) && data.voices.length > 0) {
+      return data.voices.map((v) => apiVoiceToVoice(v, data.provider));
+    }
+  } catch (err) {
+    console.warn('[voices] API fetch failed, using mock data:', err);
+  }
   return MOCK_VOICES;
 }
 
 export async function getVoiceById(id: string): Promise<Voice | undefined> {
-  return MOCK_VOICES.find((v) => v.id === id);
+  const all = await getVoices();
+  return all.find((v) => v.id === id);
 }
 
 // Agent Services
