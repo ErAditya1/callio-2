@@ -12,6 +12,7 @@ import {
   Clock01Icon,
   Copy01Icon,
   CreditCardIcon,
+  Download01Icon,
   ExternalLinkIcon,
   InfoIcon,
   PhoneCallIcon,
@@ -530,6 +531,7 @@ export default function BillingPage() {
                                         <TableHead className="font-semibold">Credits & Amount Paid</TableHead>
                                         <TableHead className="font-semibold">Payment / Order ID</TableHead>
                                         <TableHead className="font-semibold">Status</TableHead>
+                                        <TableHead className="font-semibold text-right">Receipt / Tax Invoice</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -593,6 +595,22 @@ export default function BillingPage() {
                                                     >
                                                         {isPaid ? "Paid & Credited" : isFailed ? "Failed" : "Pending"}
                                                     </Badge>
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={async () => {
+                                                            const token = await auth.getAccessToken();
+                                                            const url = `/api/v1/payments/transactions/${tx.id}/receipt${token ? `?token=${encodeURIComponent(token)}` : ""}`;
+                                                            window.open(url, "_blank", "noopener,noreferrer,width=900,height=900");
+                                                        }}
+                                                        className="h-8 gap-1.5 border-[#DCE3EF] text-xs font-semibold hover:bg-[#F0F3F9]"
+                                                        title="Download or Print Official Payment Receipt & Tax Invoice"
+                                                    >
+                                                        <HugeiconsIcon icon={Download01Icon} className="h-3.5 w-3.5 text-[#171717] dark:text-[#7186AD]" />
+                                                        <span>Download</span>
+                                                    </Button>
                                                 </TableCell>
                                             </TableRow>
                                         );
