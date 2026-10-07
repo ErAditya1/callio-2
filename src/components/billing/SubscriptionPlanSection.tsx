@@ -19,7 +19,12 @@ import {
   Wallet,
   CreditCard,
   Loader2,
+  Mail,
+  MessageSquare,
+  Building2,
+  Phone,
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -66,6 +71,9 @@ interface CurrentSubscription {
   custom_monthly_price_usd?: number | null;
   billing_cycle_start: string | null;
   billing_cycle_end: string | null;
+  razorpay_subscription_id?: string | null;
+  subscription_payment_method?: string | null;
+  subscription_cancel_at_period_end?: boolean;
 }
 
 interface AvailablePlan {
@@ -139,7 +147,24 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
   const [upgrading, setUpgrading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'razorpay'>('wallet');
 
+  const [cancellingSubscription, setCancellingSubscription] = useState(false);
+  const [contactSalesModalOpen, setContactSalesModalOpen] = useState(false);
+  const [contactSalesPlan, setContactSalesPlan] = useState<AvailablePlan | null>(null);
+  const [callbackPhone, setCallbackPhone] = useState('');
+  const [callbackNotes, setCallbackNotes] = useState('');
+  const [submittingInquiry, setSubmittingInquiry] = useState(false);
+
   const { getAccessToken, user } = useAuth();
+
+  const isContactSalesPlan = (plan: AvailablePlan) => {
+    return (
+      plan.slug === 'enterprise' ||
+      plan.slug === 'simple_agency' ||
+      plan.slug.toLowerCase().includes('agency') ||
+      plan.name.toLowerCase().includes('agency') ||
+      plan.name.toLowerCase().includes('enterprise')
+    );
+  };
 
   const fetchSubscription = useCallback(async () => {
     try {
@@ -159,17 +184,83 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
     }
   }, [getAccessToken]);
 
+  const handleCancelAutoRenewal = async () => {
+    if (!confirm('Are you sure you want to cancel monthly auto-renewal? You will retain all your plan features and included minutes until the end of your billing cycle.')) {
+      return;
+    }
+    try {
+      setCancellingSubscription(true);
+      const token = await getAccessToken();
+      const res = await fetch('/api/v1/organizations/subscription/cancel', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      if (res.ok) {
+        const json = await res.json();
+        toast.success(json.message || 'Auto-renewal cancelled.');
+        fetchSubscription();
+        if (onSubscriptionUpdated) onSubscriptionUpdated();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.detail || 'Failed to cancel auto-renewal.');
+      }
+    } catch (e) {
+      toast.error('An error occurred while cancelling auto-renewal.');
+    } finally {
+      setCancellingSubscription(false);
+    }
+  };
+
+  const handleSubmitCallbackRequest = async () => {
+    if (!contactSalesPlan) return;
+    try {
+      setSubmittingInquiry(true);
+      const token = await getAccessToken();
+      const res = await fetch('/api/v1/organizations/contact-sales', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          plan_slug: contactSalesPlan.slug,
+          contact_name: (user as any)?.name || '',
+          contact_email: (user as any)?.primaryEmail || (user as any)?.email || '',
+          contact_phone: callbackPhone,
+          notes: callbackNotes,
+        }),
+      });
+      if (res.ok) {
+        toast.success(`Inquiry received for ${contactSalesPlan.name}!`, {
+          description: 'Our enterprise team will reach out to your phone/email within 2 hours.',
+        });
+        setContactSalesModalOpen(false);
+        setCallbackPhone('');
+        setCallbackNotes('');
+      } else {
+        toast.info('Inquiry noted! Please also connect with us on WhatsApp or email for instant support.');
+        setContactSalesModalOpen(false);
+      }
+    } catch {
+      toast.info('Inquiry noted! Our sales team will get in touch with your organization.');
+      setContactSalesModalOpen(false);
+    } finally {
+      setSubmittingInquiry(false);
+    }
+  };
+
   useEffect(() => {
     fetchSubscription();
   }, [fetchSubscription]);
 
   const handlePlanClick = (plan: AvailablePlan) => {
     if (data?.current_subscription.tier === plan.slug) return;
-    if (plan.slug === 'enterprise') {
-      toast.info('Enterprise Custom Plans', {
-        description:
-          'Please contact support@dograh.com or your account executive for dedicated SIP trunking, SLA, and custom concurrency allocations.',
-      });
+    if (isContactSalesPlan(plan)) {
+      setContactSalesPlan(plan);
+      setContactSalesModalOpen(true);
       return;
     }
     const currentBal = data?.current_subscription.wallet_balance_usd ?? 0;
@@ -259,14 +350,11 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
         }
 
         const logoUrl = typeof window !== 'undefined' ? `${window.location.origin}/icon.png` : '';
-        const options = {
+        const options: any = {
           key: orderData.key_id,
-          amount: orderData.amount,
-          currency: orderData.currency,
           name: 'CallioAI',
           image: logoUrl,
           description: `Subscription: ${selectedPlanForUpgrade.name}`,
-          order_id: orderData.order_id,
           prefill: {
             name: (user as any)?.name || '',
             email: (user as any)?.primaryEmail || (user as any)?.email || '',
@@ -278,7 +366,8 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
           },
           theme: { color: '#6366f1' },
           handler: async (response: {
-            razorpay_order_id: string;
+            razorpay_order_id?: string;
+            razorpay_subscription_id?: string;
             razorpay_payment_id: string;
             razorpay_signature: string;
           }) => {
@@ -291,7 +380,8 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                 },
                 body: JSON.stringify({
                   plan_slug: selectedPlanForUpgrade.slug,
-                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_order_id: response.razorpay_order_id || orderData.order_id,
+                  razorpay_subscription_id: response.razorpay_subscription_id || orderData.subscription_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                 }),
@@ -319,6 +409,14 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
             },
           },
         };
+
+        if (orderData.subscription_id) {
+          options.subscription_id = orderData.subscription_id;
+        } else {
+          options.order_id = orderData.order_id;
+          options.amount = orderData.amount;
+          options.currency = orderData.currency;
+        }
 
         const rzp = new (window as any).Razorpay(options);
         rzp.open();
@@ -379,13 +477,35 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="secondary" className="text-xs font-mono">
                 Line Concurrency: {current.max_concurrent_calls} Lines
               </Badge>
               <Badge variant="secondary" className="text-xs font-mono">
                 Agents: {current.current_agents_count} / {current.max_agents >= 9999 ? '∞' : current.max_agents} Active
               </Badge>
+              {current.razorpay_subscription_id && (
+                current.subscription_cancel_at_period_end ? (
+                  <Badge variant="outline" className="text-xs bg-amber-500/10 text-amber-600 border-amber-500/30">
+                    Auto-Renewal: Cancelling at cycle end
+                  </Badge>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 border-blue-500/30">
+                      Auto-Pay Active (e-Mandate)
+                    </Badge>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleCancelAutoRenewal}
+                      disabled={cancellingSubscription}
+                      className="text-xs text-muted-foreground hover:text-destructive h-7 px-2"
+                    >
+                      {cancellingSubscription ? 'Cancelling...' : 'Cancel Auto-Renewal'}
+                    </Button>
+                  </div>
+                )
+              )}
             </div>
           </div>
         </CardHeader>
@@ -529,6 +649,7 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
           {plans.map((plan) => {
             const isCurrent = current.tier === plan.slug;
             const isEnterprise = plan.slug === 'enterprise';
+            const isContactSales = isContactSalesPlan(plan);
             const price = plan.price_inr === 0 ? '₹0' : `₹${plan.price_inr.toLocaleString()}`;
             const isUnlimitedCredits = plan.monthly_credits_usd === -1 || (plan.monthly_credits_usd || 0) >= 999999;
             const isUnlimitedAgents = plan.max_agents === -1 || plan.max_agents >= 9999;
@@ -540,7 +661,7 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                 className={`relative flex flex-col justify-between transition-all rounded-2xl border overflow-visible ${
                   isCurrent
                     ? 'border-primary shadow-md ring-2 ring-primary/20 bg-primary/[0.02]'
-                    : isEnterprise
+                    : isContactSales
                     ? 'border-indigo-500/40 bg-gradient-to-b from-indigo-500/[0.03] to-transparent hover:border-indigo-500/70 shadow-xs'
                     : 'border-border/70 hover:border-border shadow-xs'
                 }`}
@@ -661,13 +782,14 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                       <CheckCircle2 className="h-4 w-4 mr-1.5 text-emerald-500" />
                       Active Plan
                     </Button>
-                  ) : isEnterprise ? (
+                  ) : isContactSales ? (
                     <Button
                       onClick={() => handlePlanClick(plan)}
-                      className="w-full text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white"
+                      className="w-full text-xs font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-xs flex items-center justify-center gap-1.5"
                     >
-                      Contact Enterprise Sales
-                      <ArrowUpRight className="h-3.5 w-3.5 ml-1.5" />
+                      <Building2 className="h-3.5 w-3.5" />
+                      {isEnterprise ? 'Contact Enterprise Sales' : 'Contact Sales (Agency Pack)'}
+                      <ArrowUpRight className="h-3.5 w-3.5 ml-0.5" />
                     </Button>
                   ) : (
                     <Button
@@ -870,10 +992,10 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                         </div>
                         <div>
                           <div className="text-xs font-semibold text-foreground">
-                            Razorpay Checkout (UPI, Cards, Netbanking)
+                            Razorpay Auto-Pay (UPI Autopay, Cards, Netbanking)
                           </div>
                           <div className="text-[11px] text-muted-foreground">
-                            Direct payment: ₹{plan.price_inr} + 18% GST
+                            Recurring monthly e-Mandate: ₹{plan.price_inr} + 18% GST (auto-renews, cancel anytime)
                           </div>
                         </div>
                       </div>
@@ -913,6 +1035,136 @@ export function SubscriptionPlanSection({ onSubscriptionUpdated }: SubscriptionP
                 `Pay $${selectedPlanForUpgrade?.price_usd} & Upgrade`
               ) : (
                 `Proceed to Pay ₹${selectedPlanForUpgrade?.price_inr}`
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Contact Sales Modal for Agency Scale Pack / Enterprise */}
+      <Dialog open={contactSalesModalOpen} onOpenChange={setContactSalesModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <div className="flex items-center gap-2.5">
+              <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-base font-bold text-foreground">
+                  Connect with Sales & Custom Setup
+                </DialogTitle>
+                <DialogDescription className="text-xs">
+                  {contactSalesPlan?.name || 'Agency Scale Pack'} • High Concurrency & Dedicated Account Management
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="space-y-4 pt-1">
+            {/* Plan Quick Summary Pill */}
+            {contactSalesPlan && (
+              <div className="p-3.5 rounded-xl border bg-muted/40 flex items-center justify-between text-xs">
+                <div>
+                  <div className="font-semibold text-foreground flex items-center gap-1.5">
+                    <span>{contactSalesPlan.name}</span>
+                    <Badge variant="outline" className="text-[10px] font-mono">
+                      {contactSalesPlan.billing_interval || 'monthly'}
+                    </Badge>
+                  </div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">
+                    {contactSalesPlan.max_concurrent_calls} Concurrency Lines • {contactSalesPlan.monthly_credits_usd?.toLocaleString() || 'Custom'} Calling Credits
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-base font-bold font-mono text-foreground">
+                    {contactSalesPlan.price_inr ? `₹${contactSalesPlan.price_inr.toLocaleString()}` : 'Custom'}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">excl. taxes</div>
+                </div>
+              </div>
+            )}
+
+            {/* Direct Instant Channels */}
+            <div className="space-y-2">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                Direct Channels (Instant Response)
+              </span>
+              <div className="grid grid-cols-2 gap-2.5">
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(
+                    `Hello Callio Team, I am interested in subscribing to the ${contactSalesPlan?.name || 'Agency Scale Pack'} plan. Please connect with me for activation and setup.`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex flex-col items-center justify-center gap-1.5 text-center transition-all group cursor-pointer"
+                >
+                  <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-semibold">WhatsApp Sales</span>
+                  <span className="text-[10px] text-muted-foreground">Immediate chat</span>
+                </a>
+
+                <a
+                  href={`mailto:sales@callio.ai?subject=${encodeURIComponent(
+                    `Inquiry: ${contactSalesPlan?.name || 'Agency Scale Pack'}`
+                  )}&body=${encodeURIComponent(
+                    `Hi Callio Sales Team,\n\nI want to discuss activation and onboarding for ${contactSalesPlan?.name || 'Agency Scale Pack'}.\n\nOrganization: \nPhone Number: \nUse Case: `
+                  )}`}
+                  className="p-3 rounded-xl border border-indigo-500/30 bg-indigo-500/5 hover:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 flex flex-col items-center justify-center gap-1.5 text-center transition-all group cursor-pointer"
+                >
+                  <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-semibold">Email Sales Desk</span>
+                  <span className="text-[10px] text-muted-foreground">sales@callio.ai</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Request Callback Form */}
+            <div className="border-t pt-3 space-y-2.5">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                Or Request a Direct Callback
+              </span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <Input
+                    placeholder="Your Phone Number / WhatsApp (+91 ...)"
+                    value={callbackPhone}
+                    onChange={(e) => setCallbackPhone(e.target.value)}
+                    className="text-xs h-9"
+                  />
+                </div>
+                <Input
+                  placeholder="Requirements (e.g. Expected daily calls, custom SIP/telephony)"
+                  value={callbackNotes}
+                  onChange={(e) => setCallbackNotes(e.target.value)}
+                  className="text-xs h-9"
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="pt-2 flex sm:justify-between items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setContactSalesModalOpen(false)}
+              className="text-xs"
+            >
+              Close
+            </Button>
+            <Button
+              size="sm"
+              disabled={submittingInquiry || !callbackPhone.trim()}
+              onClick={handleSubmitCallbackRequest}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs"
+            >
+              {submittingInquiry ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                'Request Callback'
               )}
             </Button>
           </DialogFooter>
