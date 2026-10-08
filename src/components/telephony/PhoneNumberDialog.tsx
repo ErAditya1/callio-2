@@ -35,6 +35,8 @@ interface PhoneNumberDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   configId: number;
+  /** Provider name (e.g. 'smartflo', 'twilio', etc.) to tailor provider-specific fields. */
+  provider?: string;
   /** Carrier paths on this configuration; empty for providers without trunks. */
   trunks?: TrunkResponse[];
   /** Preselected trunk when creating — set when the dialog is opened from a
@@ -71,6 +73,7 @@ export function PhoneNumberDialog({
   open,
   onOpenChange,
   configId,
+  provider,
   trunks = [],
   defaultTrunkId = null,
   existing,
@@ -86,6 +89,8 @@ export function PhoneNumberDialog({
   const [isDefaultCallerId, setIsDefaultCallerId] = useState(false);
   const [inboundWorkflowId, setInboundWorkflowId] = useState<string>(NO_WORKFLOW);
   const [trunkId, setTrunkId] = useState<string>(NO_TRUNK);
+  const [smartfloApiKey, setSmartfloApiKey] = useState("");
+  const [smartfloJwtToken, setSmartfloJwtToken] = useState("");
   const [workflows, setWorkflows] = useState<{ id: number; name: string }[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [addressTouched, setAddressTouched] = useState(false);
@@ -98,6 +103,16 @@ export function PhoneNumberDialog({
     setLabel(existing?.label ?? "");
     setIsActive(existing?.is_active ?? true);
     setIsDefaultCallerId(existing?.is_default_caller_id ?? false);
+    setSmartfloApiKey(
+      (existing?.extra_metadata?.click_to_call_api_key as string) ||
+        (existing?.extra_metadata?.api_key as string) ||
+        "",
+    );
+    setSmartfloJwtToken(
+      (existing?.extra_metadata?.smartflo_jwt_token as string) ||
+        (existing?.extra_metadata?.jwt_token as string) ||
+        "",
+    );
     setInboundWorkflowId(
       existing?.inbound_workflow_id ? String(existing.inbound_workflow_id) : NO_WORKFLOW,
     );
@@ -147,6 +162,25 @@ export function PhoneNumberDialog({
       const selectedTrunkId = trunkId === NO_TRUNK ? null : Number(trunkId);
 
       let providerSync: PhoneNumberResponse["provider_sync"] | undefined;
+
+      const extraMetadata: Record<string, unknown> = {
+        ...(existing?.extra_metadata || {}),
+      };
+      if (provider === "smartflo") {
+        if (smartfloApiKey.trim()) {
+          extraMetadata.click_to_call_api_key = smartfloApiKey.trim();
+        } else {
+          delete extraMetadata.click_to_call_api_key;
+          delete extraMetadata.api_key;
+        }
+        if (smartfloJwtToken.trim()) {
+          extraMetadata.smartflo_jwt_token = smartfloJwtToken.trim();
+        } else {
+          delete extraMetadata.smartflo_jwt_token;
+          delete extraMetadata.jwt_token;
+        }
+      }
+
       if (isEdit && existing) {
         const res = await updatePhoneNumberApiV1OrganizationsTelephonyConfigsConfigIdPhoneNumbersPhoneNumberIdPut(
           {
@@ -160,6 +194,7 @@ export function PhoneNumberDialog({
               clear_inbound_workflow: inboundId === null,
               telephony_trunk_id: selectedTrunkId ?? undefined,
               clear_trunk: selectedTrunkId === null,
+              extra_metadata: extraMetadata,
             },
           },
         );
@@ -179,6 +214,7 @@ export function PhoneNumberDialog({
               is_default_caller_id: isDefaultCallerId,
               inbound_workflow_id: inboundId ?? undefined,
               telephony_trunk_id: selectedTrunkId ?? undefined,
+              extra_metadata: extraMetadata,
             },
           },
         );
@@ -306,6 +342,45 @@ export function PhoneNumberDialog({
                   ? "Calls from this number leave on this trunk. Pick the one whose carrier authorised the number — carriers reject a caller ID they do not own."
                   : "Calls from this number leave on this trunk. With a single trunk Callio AI falls back to it anyway."}
               </p>
+            </div>
+          )}
+
+          {provider === "smartflo" && (
+            <div className="space-y-3 rounded-lg border border-border p-3.5 bg-muted/20">
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="pn-smartflo-apikey" className="text-sm font-semibold">
+                    Smartflo Click-to-Call API Key
+                  </Label>
+                  <span className="text-[11px] text-muted-foreground font-normal">Optional Override</span>
+                </div>
+                <Input
+                  id="pn-smartflo-apikey"
+                  type="password"
+                  placeholder="Dedicated API key (leave empty to use config default)"
+                  value={smartfloApiKey}
+                  onChange={(e) => setSmartfloApiKey(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  If this DID number has its own Click-to-Call API Key in the Tata Smartflo portal, enter it here.
+                </p>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="pn-smartflo-jwt" className="text-sm font-semibold">
+                    Smartflo Bearer JWT Token
+                  </Label>
+                  <span className="text-[11px] text-muted-foreground font-normal">Optional</span>
+                </div>
+                <Input
+                  id="pn-smartflo-jwt"
+                  type="password"
+                  placeholder="Dedicated Bearer token (optional)"
+                  value={smartfloJwtToken}
+                  onChange={(e) => setSmartfloJwtToken(e.target.value)}
+                />
+              </div>
             </div>
           )}
 

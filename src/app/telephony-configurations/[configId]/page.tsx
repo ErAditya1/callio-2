@@ -492,6 +492,11 @@ export default function TelephonyConfigurationDetailPage() {
                             <HugeiconsIcon icon={StarIcon} className="h-3 w-3 fill-current" /> Default caller
                           </Badge>
                         )}
+                        {Boolean(n.extra_metadata?.click_to_call_api_key) && (
+                          <Badge variant="outline" className="text-[10px] text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800">
+                            Dedicated API Key
+                          </Badge>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell className="text-[#737373]">
@@ -585,6 +590,7 @@ export default function TelephonyConfigurationDetailPage() {
         open={phoneDialogOpen}
         onOpenChange={setPhoneDialogOpen}
         configId={configId}
+        provider={config?.provider}
         trunks={config?.trunks}
         defaultTrunkId={phoneDefaultTrunkId}
         existing={phoneEditTarget}
