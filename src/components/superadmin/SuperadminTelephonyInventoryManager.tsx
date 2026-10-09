@@ -75,6 +75,7 @@ interface InventoryNumber {
   claimed_count?: number;
   is_active?: boolean;
   created_at?: string;
+  extra_metadata?: Record<string, any>;
 }
 
 export function SuperadminTelephonyInventoryManager() {
@@ -100,6 +101,8 @@ export function SuperadminTelephonyInventoryManager() {
   const [countryCode, setCountryCode] = useState<string>('US');
   const [label, setLabel] = useState<string>('');
   const [monthlyPriceCents, setMonthlyPriceCents] = useState<number>(200);
+  const [smartfloBatchApiKey, setSmartfloBatchApiKey] = useState<string>('');
+  const [smartfloBatchJwt, setSmartfloBatchJwt] = useState<string>('');
 
   // Load Inventory list
   const fetchInventory = useCallback(async () => {
@@ -150,6 +153,44 @@ export function SuperadminTelephonyInventoryManager() {
   const activeSelectedConfig = configs.find(
     (c) => String(c.id) === String(selectedConfigId),
   );
+  const isSmartflo = activeSelectedConfig?.provider === 'smartflo';
+
+  // Automatically switch country code to IN if Smartflo is selected
+  useEffect(() => {
+    if (isSmartflo && countryCode === 'US') {
+      setCountryCode('IN');
+    }
+  }, [isSmartflo, countryCode]);
+
+  // Compute live parsed preview of phone numbers + credentials
+  const parsedPreview = React.useMemo(() => {
+    if (!phoneNumbers.trim()) return [];
+    const lines = phoneNumbers
+      .split('\n')
+      .flatMap((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return [];
+        if (!trimmed.includes('|') && trimmed.includes(',')) {
+          return trimmed.split(',').map((s) => s.trim()).filter(Boolean);
+        }
+        return [trimmed];
+      });
+
+    return lines.map((line) => {
+      const parts = line.split('|').map((p) => p.trim());
+      const address = parts[0];
+      const lineApiKey = parts[1] || '';
+      const lineJwt = parts[2] || '';
+      const effectiveApiKey = lineApiKey || (isSmartflo ? smartfloBatchApiKey.trim() : '');
+      const effectiveJwt = lineJwt || (isSmartflo ? smartfloBatchJwt.trim() : '');
+      return {
+        address,
+        apiKey: effectiveApiKey,
+        jwt: effectiveJwt,
+        isPerLineKey: Boolean(lineApiKey),
+      };
+    });
+  }, [phoneNumbers, isSmartflo, smartfloBatchApiKey, smartfloBatchJwt]);
 
   const handleStockNumbers = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -159,27 +200,65 @@ export function SuperadminTelephonyInventoryManager() {
       return;
     }
 
-    const rawNumbers = phoneNumbers
-      .split(/[\n,]+/)
-      .map((s) => s.trim())
-      .filter(Boolean);
+    const rawLines = phoneNumbers
+      .split('\n')
+      .flatMap((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return [];
+        if (!trimmed.includes('|') && trimmed.includes(',')) {
+          return trimmed.split(',').map((s) => s.trim()).filter(Boolean);
+        }
+        return [trimmed];
+      });
 
-    if (rawNumbers.length === 0) {
+    if (rawLines.length === 0) {
       toast.error('Please enter at least one phone number (E.164 format)');
       return;
+    }
+
+    const numberItems = rawLines.map((line) => {
+      const parts = line.split('|').map((p) => p.trim());
+      const addr = parts[0];
+      const lineApiKey = parts[1] || '';
+      const lineJwt = parts[2] || '';
+
+      const extraMetadata: Record<string, any> = {};
+      if (isSmartflo) {
+        const effectiveApiKey = lineApiKey || smartfloBatchApiKey.trim();
+        const effectiveJwt = lineJwt || smartfloBatchJwt.trim();
+        if (effectiveApiKey) {
+          extraMetadata.click_to_call_api_key = effectiveApiKey;
+        }
+        if (effectiveJwt) {
+          extraMetadata.smartflo_jwt_token = effectiveJwt;
+        }
+      }
+
+      return {
+        address: addr,
+        country_code: countryCode.trim().toUpperCase() || (isSmartflo ? 'IN' : 'US'),
+        pool_type: poolType,
+        monthly_price_cents: poolType === 'shared_trial' ? 0 : Number(monthlyPriceCents),
+        label: label.trim() || undefined,
+        extra_metadata: Object.keys(extraMetadata).length > 0 ? extraMetadata : undefined,
+      };
+    });
+
+    if (isSmartflo) {
+      const missingKeyItem = numberItems.find(
+        (item) => !item.extra_metadata?.click_to_call_api_key
+      );
+      if (missingKeyItem) {
+        toast.error(
+          `Number ${missingKeyItem.address} is missing a Smartflo Click-to-Call API Key. Enter a batch API key or use: +91XXXXXXXXXX | API_KEY`
+        );
+        return;
+      }
     }
 
     setSubmitting(true);
     try {
       const token = await getAccessToken();
-      const numberItems = rawNumbers.map((addr) => ({
-        address: addr,
-        country_code: countryCode.trim().toUpperCase() || 'US',
-        pool_type: poolType,
-        monthly_price_cents: poolType === 'shared_trial' ? 0 : Number(monthlyPriceCents),
-        label: label.trim() || undefined,
-      }));
-
       const res = await fetch('/api/v1/superuser/telephony/inventory', {
         method: 'POST',
         headers: {
@@ -212,6 +291,8 @@ export function SuperadminTelephonyInventoryManager() {
       setStockModalOpen(false);
       setPhoneNumbers('');
       setLabel('');
+      setSmartfloBatchApiKey('');
+      setSmartfloBatchJwt('');
       await fetchInventory();
     } catch (err: any) {
       toast.error(err.message || 'Error stocking inventory number');
@@ -400,6 +481,18 @@ export function SuperadminTelephonyInventoryManager() {
                             <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3" />
                           </Button>
                         </div>
+                        {num.extra_metadata?.click_to_call_api_key && (
+                          <div className="flex items-center gap-1 mt-1 font-sans">
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 gap-1 font-mono font-normal py-0 h-4"
+                              title={`Dedicated Key: ...${String(num.extra_metadata.click_to_call_api_key).slice(-4)}`}
+                            >
+                              <HugeiconsIcon icon={LockIcon} className="h-2.5 w-2.5" />
+                              Dedicated Key
+                            </Badge>
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell className="py-3.5 text-xs">
                         <div className="flex flex-col gap-0.5">
@@ -522,6 +615,16 @@ export function SuperadminTelephonyInventoryManager() {
                         >
                           <HugeiconsIcon icon={Copy01Icon} className="h-3 w-3" />
                         </Button>
+                        {num.extra_metadata?.click_to_call_api_key && (
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 gap-1 font-mono font-normal py-0 h-4"
+                            title={`Dedicated Key: ...${String(num.extra_metadata.click_to_call_api_key).slice(-4)}`}
+                          >
+                            <HugeiconsIcon icon={LockIcon} className="h-2.5 w-2.5" />
+                            Dedicated Key
+                          </Badge>
+                        )}
                       </div>
                       <Badge
                         variant={num.pool_type === 'shared_trial' ? 'default' : 'outline'}
@@ -756,22 +859,126 @@ export function SuperadminTelephonyInventoryManager() {
                   </div>
                 </div>
 
+                {isSmartflo && (
+                  <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3.5 space-y-3 text-xs">
+                    <div className="flex items-start gap-2">
+                      <span className="flex h-5 w-5 items-center justify-center rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                        <HugeiconsIcon icon={LockIcon} className="h-3.5 w-3.5" />
+                      </span>
+                      <div>
+                        <p className="font-semibold text-blue-600 dark:text-blue-400 text-xs">
+                          Tata Smartflo Per-Number Click-to-Call API Keys
+                        </p>
+                        <p className="text-muted-foreground text-[11px] mt-0.5 leading-relaxed">
+                          Tata Smartflo Click-to-Call API keys are tied to individual DID numbers. You can set a <strong>Batch API Key</strong> below to apply to all numbers, OR provide unique keys per number in the text box using the format:
+                          <code className="block mt-1 font-mono text-[11px] bg-background p-1.5 rounded border text-foreground">
+                            +91XXXXXXXXXX | CLICK_TO_CALL_API_KEY [| OPTIONAL_JWT_TOKEN]
+                          </code>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="smartflo-batch-key" className="text-xs font-medium">
+                          Batch Click-to-Call API Key (Fallback)
+                        </Label>
+                        <Input
+                          id="smartflo-batch-key"
+                          type="password"
+                          placeholder="e.g. 3d8f1e94-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                          value={smartfloBatchApiKey}
+                          onChange={(e) => setSmartfloBatchApiKey(e.target.value)}
+                          className="font-mono text-xs h-8"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="smartflo-batch-jwt" className="text-xs font-medium">
+                          Batch Smartflo JWT Token (Optional)
+                        </Label>
+                        <Input
+                          id="smartflo-batch-jwt"
+                          type="password"
+                          placeholder="Optional JWT bearer token"
+                          value={smartfloBatchJwt}
+                          onChange={(e) => setSmartfloBatchJwt(e.target.value)}
+                          className="font-mono text-xs h-8"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="stock-phone-numbers">Phone Number(s) (E.164)</Label>
+                    <Label htmlFor="stock-phone-numbers">
+                      Phone Number(s) (E.164)
+                    </Label>
                     <span className="text-[11px] text-muted-foreground">
-                      Comma or newline separated for multiple
+                      {isSmartflo
+                        ? 'Format: +91XXXXXXXXXX | API_KEY or one per line'
+                        : 'Comma or newline separated for multiple'}
                     </span>
                   </div>
                   <Textarea
                     id="stock-phone-numbers"
-                    placeholder="+12025550143&#10;+12025550198"
+                    placeholder={
+                      isSmartflo
+                        ? "+918047361201 | 3d8f1e94-xxxx-xxxx-xxxx-xxxxxxxxxxxx\n+918047361202 | 9a4b2c11-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                        : "+12025550143\n+12025550198"
+                    }
                     value={phoneNumbers}
                     onChange={(e) => setPhoneNumbers(e.target.value)}
-                    rows={3}
+                    rows={isSmartflo ? 4 : 3}
                     className="font-mono text-sm resize-y"
                     required
                   />
+
+                  {parsedPreview.length > 0 && (
+                    <div className="rounded-lg border bg-muted/30 p-2.5 text-xs space-y-1.5 mt-2">
+                      <div className="flex items-center justify-between text-[11px] font-medium text-muted-foreground">
+                        <span>Parsed Inventory Numbers ({parsedPreview.length})</span>
+                        {isSmartflo && (
+                          <span
+                            className={
+                              parsedPreview.every((p) => p.apiKey)
+                                ? 'text-emerald-600 dark:text-emerald-400 font-semibold'
+                                : 'text-amber-600 dark:text-amber-400 font-semibold'
+                            }
+                          >
+                            {parsedPreview.filter((p) => p.apiKey).length}/{parsedPreview.length} with API Key
+                          </span>
+                        )}
+                      </div>
+                      <div className="max-h-28 overflow-y-auto space-y-1 pr-1 font-mono text-[11px]">
+                        {parsedPreview.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between bg-background/80 px-2 py-1 rounded border"
+                          >
+                            <span className="font-semibold">{item.address}</span>
+                            {isSmartflo && (
+                              item.apiKey ? (
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono py-0 h-4"
+                                >
+                                  {item.isPerLineKey ? `Key: ...${item.apiKey.slice(-4)}` : 'Batch Key'}
+                                </Badge>
+                              ) : (
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] border-destructive/40 bg-destructive/10 text-destructive font-sans py-0 h-4"
+                                >
+                                  Missing Key
+                                </Badge>
+                              )
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
