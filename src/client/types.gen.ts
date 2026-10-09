@@ -6206,6 +6206,9 @@ export type TelephonyConfigurationDetail = {
      * Trunks
      */
     trunks?: Array<TrunkResponse>;
+    is_shared_trial?: boolean;
+    is_platform_inventory?: boolean;
+    is_claimed?: boolean;
     /**
      * Created At
      */
@@ -6243,6 +6246,8 @@ export type TelephonyConfigurationListItem = {
      */
     is_default_outbound: boolean;
     is_shared_trial?: boolean;
+    is_platform_inventory?: boolean;
+    is_claimed?: boolean;
     /**
      * Inactive
      */

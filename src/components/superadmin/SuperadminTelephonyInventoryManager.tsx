@@ -133,7 +133,9 @@ export function SuperadminTelephonyInventoryManager() {
       const res = await listTelephonyConfigurationsApiV1OrganizationsTelephonyConfigsGet({
         headers: { Authorization: `Bearer ${token}` },
       });
-      const items = res.data?.configurations ?? [];
+      const items = (res.data?.configurations ?? []).filter(
+        (c) => !c.name.startsWith("Platform - ") && !c.is_claimed
+      );
       setConfigs(items);
       if (items.length > 0 && !selectedConfigId) {
         setSelectedConfigId(String(items[0].id));
