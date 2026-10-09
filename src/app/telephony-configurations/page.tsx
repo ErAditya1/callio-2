@@ -928,18 +928,33 @@ export default function TelephonyConfigurationsPage() {
                         <div>
                           <p className="text-muted-foreground text-[11px]">Phone Numbers</p>
                           <p className="font-semibold text-foreground text-sm">
-                            {item.active_phone_number_count}
+                            {item.phone_number_count ?? 0}
                           </p>
                         </div>
-                        {item.supports_trunks && (
-                          <div>
-                            <p className="text-muted-foreground text-[11px]">SIP Trunks</p>
-                            <p className="font-semibold text-foreground text-sm">
-                              {item.enabled_trunk_count}
-                            </p>
-                          </div>
-                        )}
+                        <div>
+                          <p className="text-muted-foreground text-[11px]">Status</p>
+                          <p className="font-semibold text-foreground text-sm">
+                            {item.inactive ? (
+                              <span className="text-destructive font-medium">Inactive</span>
+                            ) : item.is_ready_for_outbound === false ? (
+                              <span className="text-amber-600 dark:text-amber-400 font-medium">Incomplete</span>
+                            ) : (
+                              <span className="text-emerald-600 dark:text-emerald-400 font-medium">Ready</span>
+                            )}
+                          </p>
+                        </div>
                       </div>
+
+                      {item.inactive && item.inactive_reason && (
+                        <p className="text-[11px] text-destructive">
+                          {item.inactive_reason}
+                        </p>
+                      )}
+                      {!item.inactive && item.outbound_blocked_reason && (
+                        <p className="text-[11px] text-amber-600 dark:text-amber-400">
+                          {item.outbound_blocked_reason}
+                        </p>
+                      )}
 
                       <div className="pt-2 border-t flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1">
