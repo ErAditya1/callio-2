@@ -176,7 +176,26 @@ export const AudioControls = ({
                 </>
             )}
             {permissionError && (
-                <p className="text-sm text-destructive text-center">{permissionError}</p>
+                <div className="flex flex-col items-center gap-2 mt-2">
+                    <p className="text-sm text-destructive text-center">{permissionError}</p>
+                    {permissionError.toLowerCase().includes("concurrent") && (
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-xs h-7 border-destructive/30 hover:bg-destructive/10"
+                            onClick={async () => {
+                                try {
+                                    await fetch('/api/v1/telephony/concurrency/reset', { method: 'POST' });
+                                    start();
+                                } catch (e) {
+                                    console.error("Failed to reset concurrency:", e);
+                                }
+                            }}
+                        >
+                            Reset Lines & Retry
+                        </Button>
+                    )}
+                </div>
             )}
         </div>
     );

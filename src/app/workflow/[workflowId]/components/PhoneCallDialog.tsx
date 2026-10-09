@@ -77,6 +77,7 @@ export const PhoneCallDialog = ({
     const [callLoading, setCallLoading] = useState(false);
     const [callError, setCallError] = useState<string | null>(null);
     const [callSuccessMsg, setCallSuccessMsg] = useState<string | null>(null);
+    const [resettingConcurrency, setResettingConcurrency] = useState(false);
     const [phoneChanged, setPhoneChanged] = useState(false);
     const [checkingConfig, setCheckingConfig] = useState(false);
     const [needsConfiguration, setNeedsConfiguration] = useState<boolean | null>(null);
@@ -87,6 +88,26 @@ export const PhoneCallDialog = ({
     const [selectedFromPhoneNumberId, setSelectedFromPhoneNumberId] = useState<string>("");
     const [loadingPhoneNumbers, setLoadingPhoneNumbers] = useState(false);
     const [apiProviderNames, setApiProviderNames] = useState<string[]>([]);
+
+    const handleResetConcurrency = async () => {
+        setResettingConcurrency(true);
+        try {
+            const res = await fetch('/api/v1/telephony/concurrency/reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.detail || 'Failed to reset active lines');
+            }
+            setCallError(null);
+            setCallSuccessMsg("Active call slots have been cleared. You can try initiating your call now!");
+        } catch (err: unknown) {
+            setCallError(err instanceof Error ? err.message : 'Failed to reset active lines');
+        } finally {
+            setResettingConcurrency(false);
+        }
+    };
 
     const fetchPreferences = useCallback(async () => {
         const result =
@@ -312,6 +333,11 @@ export const PhoneCallDialog = ({
                     errMsg = response.error;
                 } else if (response.error && typeof response.error === "object") {
                     errMsg = (response.error as unknown as { detail: string }).detail || JSON.stringify(response.error);
+                }
+                if (errMsg === "telephony_configuration_not_found") {
+                    errMsg = "Selected telephony configuration was not found. Please check your provider settings.";
+                } else if (errMsg === "telephony_not_configured") {
+                    errMsg = "No active telephony provider configured. Please set up a provider in Telephony Configurations.";
                 }
                 setCallError(errMsg);
             } else {
@@ -594,7 +620,25 @@ export const PhoneCallDialog = ({
                     )}
                 </div>
             </DialogFooter>
-            {callError && <div className="text-red-500 text-sm mt-2">{callError}</div>}
+            {callError && (
+                <div className="flex flex-col gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-sm mt-2">
+                    <div>{callError}</div>
+                    {callError.toLowerCase().includes("concurrent") && (
+                        <div className="flex items-center justify-between pt-1 border-t border-destructive/20 text-xs text-muted-foreground">
+                            <span>Stuck active call slot?</span>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-7 text-xs border-destructive/30 hover:bg-destructive/10"
+                                onClick={handleResetConcurrency}
+                                disabled={resettingConcurrency}
+                            >
+                                {resettingConcurrency ? "Resetting..." : "Reset Active Lines"}
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            )}
             {callSuccessMsg && <div className="text-green-600 text-sm mt-2">{callSuccessMsg}</div>}
         </>
     );
