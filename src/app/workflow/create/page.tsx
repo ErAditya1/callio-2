@@ -242,7 +242,9 @@ Key information to collect:
 Rules:
 - Maintain patient confidentiality and professional empathy.
 - For medical emergencies (severe pain, breathing difficulty), advise them immediately to dial emergency services (911/112).
-- Confirm appointment date and time before concluding the call.`
+- When a patient asks to book, always use the check_available_slots and book_appointment tools.
+- When a patient asks about an existing appointment status or gives their phone number, always check using the lookup_appointment tool.
+- NEVER claim an appointment is booked or confirmed until the booking tool explicitly confirms it, and never promise WhatsApp/SMS if not sent.`
     },
     {
         id: 'customer-support',
