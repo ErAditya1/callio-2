@@ -104,19 +104,29 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
         }
     }, [provider, fetchVoices]);
 
-    // Check if the current value exists in the voices list
+    // Check if the current value exists in the voices list, or auto-select default voice
     useEffect(() => {
-        if (value && voices.length > 0) {
+        if (voices.length > 0) {
+            const defVoice = voices.find((v) => v.is_default)?.voice_id || voices[0]?.voice_id;
+            if (!value) {
+                if (defVoice) {
+                    onChange(defVoice);
+                }
+                return;
+            }
             const voiceExists = voices.some((v) => v.voice_id === value);
-            if (!voiceExists && allowManualInput) {
-                // If the value doesn't exist in the list, switch to manual input mode
-                setIsManualInput(true);
-                setManualVoiceId(value);
-            } else if (voiceExists) {
+            if (!voiceExists) {
+                if (allowManualInput) {
+                    setIsManualInput(true);
+                    setManualVoiceId(value);
+                } else if (defVoice) {
+                    onChange(defVoice);
+                }
+            } else {
                 setIsManualInput(false);
             }
         }
-    }, [value, voices, allowManualInput]);
+    }, [value, voices, allowManualInput, onChange]);
 
     // Cleanup audio on unmount or when popover closes
     useEffect(() => {

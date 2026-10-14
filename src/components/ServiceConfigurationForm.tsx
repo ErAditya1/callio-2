@@ -122,7 +122,7 @@ export interface ServiceConfigurationFormProps {
      * Leave undefined to keep the user-controllable toggle (legacy + overrides).
      */
     forceRealtime?: boolean;
-    platformMasterKeys?: Record<string, Record<string, { is_default?: boolean; models_pricing?: Record<string, any> }>>;
+    platformMasterKeys?: Record<string, Record<string, { is_default?: boolean; default_model?: string; default_voice?: string; models_pricing?: Record<string, any> }>>;
     masterMode?: boolean;
 }
 
@@ -260,14 +260,16 @@ export function ServiceConfigurationForm({
             }
 
             const realtimeSchemas = (defaultsData.realtime || {}) as Record<string, ProviderSchema>;
+            const effectiveMasterKeys = platformMasterKeys || (defaultsData as any)?.platform_master_keys;
+
             const pickDefaultProvider = (
                 service: ServiceSegment,
                 schemaMap: Record<string, ProviderSchema>,
             ) => {
-                if (platformMasterKeys?.[service]) {
-                    const masterEntry = Object.entries(platformMasterKeys[service]).find(([_, v]) => v.is_default);
+                if (effectiveMasterKeys?.[service]) {
+                    const masterEntry = Object.entries(effectiveMasterKeys[service]).find(([_, v]: [string, any]) => v.is_default);
                     if (masterEntry && schemaMap[masterEntry[0]]) return masterEntry[0];
-                    const anyMaster = Object.keys(platformMasterKeys[service]).find(p => schemaMap[p]);
+                    const anyMaster = Object.keys(effectiveMasterKeys[service]).find(p => schemaMap[p]);
                     if (anyMaster) return anyMaster;
                 }
                 const preferred = defaultsData.default_providers?.[service];
@@ -320,6 +322,10 @@ export function ServiceConfigurationForm({
                     ? realtimeSchemas
                     : defaultsData[service as "llm" | "tts" | "stt" | "embeddings"] as Record<string, ProviderSchema> | undefined;
 
+                const prov = src?.provider ? (src.provider as string) : selectedProviders[service];
+                const masterModel = effectiveMasterKeys?.[service]?.[prov]?.default_model;
+                const masterVoice = service === "tts" ? effectiveMasterKeys?.tts?.[prov]?.default_voice : undefined;
+
                 if (src?.provider) {
                     Object.entries(src).forEach(([field, value]) => {
                         if (field === "api_key") {
@@ -357,6 +363,12 @@ export function ServiceConfigurationForm({
                             }
                         });
                     }
+                    if (masterModel && !defaultValues[`${service}_model`]) {
+                        defaultValues[`${service}_model`] = masterModel;
+                    }
+                    if (masterVoice && !defaultValues[`${service}_voice`]) {
+                        defaultValues[`${service}_voice`] = masterVoice;
+                    }
                 } else {
                     const properties = schemaSource?.[selectedProviders[service]]?.properties as Record<string, SchemaProperty>;
                     if (properties) {
@@ -365,6 +377,12 @@ export function ServiceConfigurationForm({
                                 defaultValues[`${service}_${field}`] = schema.default;
                             }
                         });
+                    }
+                    if (masterModel) {
+                        defaultValues[`${service}_model`] = masterModel;
+                    }
+                    if (masterVoice) {
+                        defaultValues[`${service}_voice`] = masterVoice;
                     }
                 }
             };
@@ -433,9 +451,12 @@ export function ServiceConfigurationForm({
         const currentVoice = getValues("tts_voice") as string;
         const isCustomVoice = !!isCustomInput.tts_voice;
         if (validVoices && currentVoice && !validVoices.includes(currentVoice) && !isCustomVoice) {
-            setValue("tts_voice", validVoices[0], { shouldDirty: true });
+            const effectiveMasterKeys = platformMasterKeys || (configurationDefaults as any)?.platform_master_keys;
+            const masterVoice = effectiveMasterKeys?.tts?.[serviceProviders.tts]?.default_voice;
+            const targetVoice = (masterVoice && validVoices.includes(masterVoice)) ? masterVoice : validVoices[0];
+            setValue("tts_voice", targetVoice, { shouldDirty: true });
         }
-    }, [ttsModel, serviceProviders.tts, setValue, getValues, schemas, isCustomInput.tts_voice]);
+    }, [ttsModel, serviceProviders.tts, setValue, getValues, schemas, isCustomInput.tts_voice, platformMasterKeys, configurationDefaults]);
 
     // Reset language when STT model changes if the provider has model-dependent language options
     const sttModel = watch("stt_model");
@@ -470,6 +491,18 @@ export function ServiceConfigurationForm({
                     preservedValues[`${service}_${field}`] = schema.default;
                 }
             });
+        }
+
+        const effectiveMasterKeys = platformMasterKeys || (configurationDefaults as any)?.platform_master_keys;
+        const masterModel = effectiveMasterKeys?.[service]?.[providerName]?.default_model;
+        if (masterModel) {
+            preservedValues[`${service}_model`] = masterModel;
+        }
+        if (service === "tts") {
+            const masterVoice = effectiveMasterKeys?.tts?.[providerName]?.default_voice;
+            if (masterVoice) {
+                preservedValues[`${service}_voice`] = masterVoice;
+            }
         }
 
         preservedValues[`${service}_provider`] = providerName;

@@ -7500,6 +7500,7 @@ export type VoiceInfo = {
      * Preview Url
      */
     preview_url?: string | null;
+    is_default?: boolean;
 };
 
 /**
@@ -7510,11 +7511,14 @@ export type VoicesResponse = {
      * Provider
      */
     provider: string;
+    default_model?: string | null;
+    default_voice?: string | null;
     /**
      * Voices
      */
     voices: Array<VoiceInfo>;
     facets?: VoiceFacets | null;
+    supported_languages?: Array<{ code: string; name: string; flag?: string }>;
 };
 
 /**

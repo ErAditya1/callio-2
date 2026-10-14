@@ -101,7 +101,7 @@ export interface ModelConfigurationDefaultsV2 {
             default_providers: ServiceConfigurationDefaults["default_providers"];
         };
     };
-    platform_master_keys?: Record<string, Record<string, { is_default?: boolean; default_model?: string; models_pricing?: Record<string, any> }>>;
+    platform_master_keys?: Record<string, Record<string, { is_default?: boolean; default_model?: string; default_voice?: string; models_pricing?: Record<string, any> }>>;
 }
 
 interface MasterKeysFormState {
@@ -514,7 +514,7 @@ function buildMasterFormState(
         ? existingTtsProvider
         : defaultTts;
     const ttsModel = (existingTts?.model as string) || ttsMap[ttsProvider]?.default_model || "sonic-english";
-    const ttsVoice = (existingTts?.voice as string) || (rawDograh?.voice as string) || defaults.dograh?.defaults?.voice || "default";
+    const ttsVoice = (existingTts?.voice as string) || (rawDograh?.voice as string) || ttsMap[ttsProvider]?.default_voice || defaults.dograh?.defaults?.voice || "default";
     const ttsSpeed = numberOrDefault(existingTts?.speed || rawDograh?.speed, 1.0);
     const initialTtsLangs = getProviderLanguages("tts", ttsProvider, ttsModel, defaults);
     let ttsLanguage = (existingTts?.language as string) || (rawDograh?.language as string) || (defaults.byok?.pipeline?.tts?.[ttsProvider]?.properties?.language as any)?.default || "en";
@@ -658,11 +658,12 @@ export function AIModelConfigurationV2Editor({
         const defModel = defaults.platform_master_keys?.tts?.[provider]?.default_model || models[0] || "sonic-english";
         const langs = getProviderLanguages("tts", provider, defModel, defaults);
         const defLang = (defaults.byok.pipeline.tts?.[provider]?.properties?.language as any)?.default || langs[0] || "en";
+        const defVoice = defaults.platform_master_keys?.tts?.[provider]?.default_voice || "default";
         setMasterForm((p) => ({
             ...p,
             ttsProvider: provider,
             ttsModel: defModel,
-            ttsVoice: "default",
+            ttsVoice: defVoice,
             ttsLanguage: langs.includes(p.ttsLanguage) ? p.ttsLanguage : defLang,
         }));
     };
