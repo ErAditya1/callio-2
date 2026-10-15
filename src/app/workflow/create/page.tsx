@@ -673,34 +673,19 @@ export default function CreateWorkflowPage() {
             {builderMode === 'studio' ? (
                 <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
                     {/* Header Banner */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#E5E5E5]">
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="text-xs bg-[#F0F3F9] text-[#7186AD] border-[#DCE3EF] font-medium">
-                                    ● Visual Studio Architect
-                                </Badge>
-                                <span className="text-xs text-[#737373]">Fast Visual Agent Configuration</span>
-                            </div>
-                            <h2 className="text-2xl font-bold tracking-tight text-foreground mt-1">
-                                Design Your Voice AI Agent
-                            </h2>
-                            <p className="text-sm text-[#737373] mt-0.5">
-                                Select a pre-tuned starter template, customize persona & instructions below, or import an existing workflow JSON.
-                            </p>
+                    <div className="pb-2 border-b border-[#E5E5E5]">
+                        <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs bg-[#F0F3F9] text-[#7186AD] border-[#DCE3EF] font-medium">
+                                ● Visual Studio Architect
+                            </Badge>
+                            <span className="text-xs text-[#737373]">Fast Visual Agent Configuration</span>
                         </div>
-
-                        <div className="flex items-center gap-2.5">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => fileInputRef.current?.click()}
-                                className="gap-2 text-xs font-medium border-border hover:bg-accent"
-                            >
-                                <Upload className="w-3.5 h-3.5 text-primary" />
-                                Import Workflow JSON
-                            </Button>
-                            <WorkflowTemplateSheet buttonSize="sm" />
-                        </div>
+                        <h2 className="text-2xl font-bold tracking-tight text-foreground mt-1">
+                            Design Your Voice AI Agent
+                        </h2>
+                        <p className="text-sm text-[#737373] mt-0.5">
+                            Select a pre-tuned starter template or customize persona & instructions below. You can also import any workflow JSON directly from the top bar.
+                        </p>
                     </div>
 
                     {/* Starter Templates Carousel/Grid */}
