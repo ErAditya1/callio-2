@@ -10,10 +10,12 @@ import {
 } from "@hugeicons/core-free-icons";;
 import { useEffect } from "react";
 
-import type { WorkflowVersionResponse } from "@/client/types.gen";
+import type { WorkflowVersionMetadataResponse, WorkflowVersionResponse } from "@/client/types.gen";
 import { Button } from "@/components/ui/button";
+import { EditVersionMetadataPopover } from "./EditVersionMetadataPopover";
 
 interface VersionHistoryPanelProps {
+    workflowId: number;
     isOpen: boolean;
     onClose: () => void;
     versions: WorkflowVersionResponse[];
@@ -25,6 +27,7 @@ interface VersionHistoryPanelProps {
     hasMore: boolean;
     loadingMore: boolean;
     onLoadMore: () => void;
+    onVersionUpdated?: (metadata: WorkflowVersionMetadataResponse) => void;
 }
 
 const statusLabel: Record<string, string> = {
@@ -40,6 +43,7 @@ const statusColor: Record<string, string> = {
 };
 
 export const VersionHistoryPanel = ({
+    workflowId,
     isOpen,
     onClose,
     versions,
@@ -51,6 +55,7 @@ export const VersionHistoryPanel = ({
     hasMore,
     loadingMore,
     onLoadMore,
+    onVersionUpdated,
 }: VersionHistoryPanelProps) => {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -133,6 +138,16 @@ export const VersionHistoryPanel = ({
                                                 </span>
                                             )}
                                         </div>
+                                        {version.version_name && (
+                                            <p className="mb-1 break-words text-sm font-medium text-foreground">
+                                                {version.version_name}
+                                            </p>
+                                        )}
+                                        {version.change_description && (
+                                            <p className="mb-2 whitespace-pre-wrap break-words text-xs leading-relaxed text-[#737373]">
+                                                {version.change_description}
+                                            </p>
+                                        )}
                                         <p className="text-xs text-[#737373]">
                                             {formatDistanceToNow(new Date(date), {
                                                 addSuffix: true,
@@ -140,23 +155,32 @@ export const VersionHistoryPanel = ({
                                         </p>
                                     </button>
 
-                                    {canCompare && (
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            aria-label={compareLabel}
-                                            disabled={comparingVersionId !== null}
-                                            onClick={() => onCompareVersion(version)}
-                                            className="mr-2 h-7 w-7 shrink-0 self-center rounded-md border border-[#E5E5E5] text-[#737373] hover:bg-[#F7F7F7] hover:text-foreground"
-                                        >
-                                            {comparingVersionId === version.id ? (
-                                                <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin" />
-                                            ) : (
-                                                <HugeiconsIcon icon={FileDiffIcon} className="h-4 w-4" />
-                                            )}
-                                        </Button>
-                                    )}
+                                    <div className="mr-2 flex shrink-0 flex-col items-center gap-1 self-start pt-3">
+                                        {isOpen && (version.status === "published" || version.status === "archived") && (
+                                            <EditVersionMetadataPopover
+                                                workflowId={workflowId}
+                                                version={version}
+                                                onUpdated={(metadata) => onVersionUpdated?.(metadata)}
+                                            />
+                                        )}
+                                        {canCompare && (
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label={compareLabel}
+                                                disabled={comparingVersionId !== null}
+                                                onClick={() => onCompareVersion(version)}
+                                                className="h-7 w-7 rounded-md border border-[#E5E5E5] text-[#737373] hover:bg-[#F7F7F7] hover:text-foreground"
+                                            >
+                                                {comparingVersionId === version.id ? (
+                                                    <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <HugeiconsIcon icon={FileDiffIcon} className="h-4 w-4" />
+                                                )}
+                                            </Button>
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })}

@@ -1,16 +1,6 @@
 "use client";
 
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  ArrowLeftRightIcon,
-  Calculator01Icon,
-  CogIcon,
-  GlobeIcon,
-  PhoneForwardedIcon,
-  PhoneOff01Icon,
-  PuzzleIcon,
-} from "@hugeicons/core-free-icons";
-import type { IconSvgElement } from "@hugeicons/react";;
+import { ArrowLeftRight, Calculator, Cog, Globe, type LucideIcon, PhoneForwarded, PhoneOff, Puzzle } from "lucide-react";
 import { type ReactNode } from "react";
 
 import type {
@@ -93,7 +83,7 @@ export interface ToolCategoryConfig {
     value: ToolCategory;
     label: string;
     description: string;
-    icon: IconSvgElement;
+    icon: LucideIcon;
     iconName: string; // String name for storing in database
     iconColor: string;
     disabled?: boolean;
@@ -108,7 +98,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "http_api",
         label: "External HTTP API",
         description: "Make HTTP requests to external APIs",
-        icon: GlobeIcon,
+        icon: Globe,
         iconName: "globe",
         iconColor: "#3B82F6",
     },
@@ -116,7 +106,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "end_call",
         label: "End Call",
         description: "End the call when conditions are met",
-        icon: PhoneOff01Icon,
+        icon: PhoneOff,
         iconName: "phone-off",
         iconColor: "#EF4444",
         autoFill: {
@@ -128,7 +118,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "transfer_call",
         label: "Transfer Call",
         description: "Transfer the call to another phone number (Twilio, Plivo)",
-        icon: PhoneForwardedIcon,
+        icon: PhoneForwarded,
         iconName: "phone-forwarded",
         iconColor: "#10B981",
         autoFill: {
@@ -140,7 +130,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "transfer_agent",
         label: "Transfer To Agent",
         description: "Hand the live call to another Dograh agent, without dropping the caller",
-        icon: ArrowLeftRightIcon,
+        icon: ArrowLeftRight,
         iconName: "arrow-left-right",
         iconColor: "#0EA5E9",
         autoFill: {
@@ -152,7 +142,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "calculator",
         label: "Calculator",
         description: "Built-in calculator for arithmetic operations",
-        icon: Calculator01Icon,
+        icon: Calculator,
         iconName: "calculator",
         iconColor: "#F59E0B",
         autoFill: {
@@ -164,7 +154,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "mcp",
         label: "MCP Server",
         description: "Connect a customer MCP server; its tools become available to the agent",
-        icon: PuzzleIcon,
+        icon: Puzzle,
         iconName: "puzzle",
         iconColor: "#8B5CF6",
     },
@@ -172,7 +162,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "native",
         label: "Native (Coming Soon)",
         description: "Built-in tools like call transfer, DTMF input",
-        icon: CogIcon,
+        icon: Cog,
         iconName: "cog",
         iconColor: "#6B7280",
         disabled: true,
@@ -181,7 +171,7 @@ export const TOOL_CATEGORIES: ToolCategoryConfig[] = [
         value: "integration",
         label: "Integration (Coming Soon)",
         description: "Third-party integrations like Google Calendar",
-        icon: PuzzleIcon,
+        icon: Puzzle,
         iconName: "puzzle",
         iconColor: "#8B5CF6",
         disabled: true,
@@ -192,9 +182,9 @@ export function getCategoryConfig(category: ToolCategory): ToolCategoryConfig | 
     return TOOL_CATEGORIES.find(c => c.value === category);
 }
 
-export function getToolIcon(category: string): IconSvgElement {
+export function getToolIcon(category: string): LucideIcon {
     const config = TOOL_CATEGORIES.find(c => c.value === category);
-    return config?.icon ?? GlobeIcon;
+    return config?.icon ?? Globe;
 }
 
 export function getToolIconColor(category: string, fallbackColor?: string): string {
@@ -204,7 +194,7 @@ export function getToolIconColor(category: string, fallbackColor?: string): stri
 
 export function renderToolIcon(category: string, className: string = "w-5 h-5 text-white"): ReactNode {
     const Icon = getToolIcon(category);
-    return <HugeiconsIcon icon={Icon} className={className} />;
+    return <Icon className={className} />;
 }
 
 export function getToolTypeLabel(category: string): string {
@@ -234,19 +224,23 @@ export const DEFAULT_END_CALL_REASON_DESCRIPTION =
     "The reason for ending the call (e.g., 'voicemail_detected', 'issue_resolved', 'customer_requested')";
 
 export const DEFAULT_END_CALL_CONFIG: EndCallConfig = {
-    messageType: "none",
-    customMessage: "",
     endCallReason: false,
 };
 
 export const DEFAULT_TRANSFER_AGENT_MESSAGE =
     "Let me connect you with the right person. One moment please.";
 
+export const DEFAULT_TRANSFER_INTRODUCTION_PROMPT =
+    "Briefly introduce this caller to the person receiving the transfer. " +
+    "Include their reason for calling, essential details, and any explicit " +
+    "language preference. Use the caller's preferred language. Keep it to one " +
+    "sentence, at most 25 words. Do not invent details.";
+
 export const DEFAULT_TRANSFER_CALL_CONFIG: TransferCallConfig = {
     destination: "",
-    messageType: "none",
-    customMessage: "",
     timeout: 30,
+    introduction_enabled: false,
+    introduction_prompt: DEFAULT_TRANSFER_INTRODUCTION_PROMPT,
 };
 
 export type ToolDefinition =
@@ -261,6 +255,7 @@ export function createEndCallDefinition(config: EndCallConfig): EndCallToolDefin
     return {
         schema_version: 1,
         type: "end_call",
+        messages: [],
         config,
     };
 }
@@ -269,6 +264,7 @@ export function createTransferCallDefinition(config: TransferCallConfig): Transf
     return {
         schema_version: 1,
         type: "transfer_call",
+        messages: [],
         config,
     };
 }
@@ -280,10 +276,14 @@ export function createTransferCallDefinition(config: TransferCallConfig): Transf
  */
 export function createTransferAgentDefinition(
     config: TransferAgentConfig,
+    messages: NonNullable<TransferAgentToolDefinition["messages"]> = [
+        { event: "start", type: "text", text: DEFAULT_TRANSFER_AGENT_MESSAGE },
+    ],
 ): TransferAgentToolDefinition {
     return {
         schema_version: 1,
         type: "transfer_agent",
+        messages,
         config,
     };
 }
@@ -292,6 +292,7 @@ export function createHttpApiDefinition(): HttpApiToolDefinition {
     return {
         schema_version: 1,
         type: "http_api",
+        messages: [],
         config: {
             method: "POST",
             url: "",
@@ -303,6 +304,7 @@ export function createCalculatorDefinition(): CalculatorToolDefinition {
     return {
         schema_version: 1,
         type: "calculator",
+        messages: [],
     };
 }
 
@@ -316,6 +318,7 @@ export function createMcpDefinition(
     return {
         schema_version: 1,
         type: "mcp" as const,
+        messages: [],
         config: {
             transport: "streamable_http" as const,
             url: url.trim(),

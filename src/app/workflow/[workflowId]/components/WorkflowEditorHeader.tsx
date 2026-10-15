@@ -45,6 +45,7 @@ import {
 } from "@/components/ui/popover";
 import { useSidebar } from "@/components/ui/sidebar";
 import { copyTextToClipboard } from "@/lib/clipboard";
+import { PublishWorkflowPopover } from "./PublishWorkflowPopover";
 
 interface WorkflowEditorHeaderProps {
     workflowName: string;
@@ -411,24 +412,12 @@ export const WorkflowEditorHeader = ({
 
                 {/* Publish button (only when on draft with no unsaved changes) */}
                 {!isViewingHistoricalVersion && hasDraft && (
-                    <Button
-                        onClick={handlePublish}
-                        disabled={isDirty || publishing || hasValidationErrors}
-                        variant="outline"
-                        className="border-[#E5E5E5] hover:bg-[#F7F7F7] text-foreground px-4"
-                    >
-                        {publishing ? (
-                            <>
-                                <HugeiconsIcon icon={Loading02Icon} className="w-4 h-4 mr-2 animate-spin" />
-                                Publishing...
-                            </>
-                        ) : (
-                            <>
-                                <HugeiconsIcon icon={Rocket01Icon} className="w-4 h-4 mr-2" />
-                                Publish
-                            </>
-                        )}
-                    </Button>
+                    <PublishWorkflowPopover
+                        key={workflowId}
+                        workflowId={workflowId}
+                        canPublish={!isDirty && !hasValidationErrors}
+                        onPublished={onPublished}
+                    />
                 )}
 
                 {!isViewingHistoricalVersion && (

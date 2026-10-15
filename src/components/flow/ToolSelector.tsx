@@ -1,10 +1,6 @@
 "use client";
 
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  ExternalLinkIcon,
-  RefreshCwIcon,
-} from "@hugeicons/core-free-icons";;
+import { ExternalLink, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -67,6 +63,23 @@ function withDiscoveredTools(
             },
         },
     };
+}
+
+/** Opens the tool's details page in a new tab without toggling the row it sits in. */
+function ToolDetailsLink({ tool }: { tool: ToolResponse }) {
+    return (
+        <Link
+            href={`/tools/${tool.tool_uuid}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${tool.name} details`}
+            title="Open tool details"
+            className="shrink-0 p-1 rounded text-muted-foreground hover:text-foreground"
+            onClick={(e) => e.stopPropagation()}
+        >
+            <ExternalLink className="h-3.5 w-3.5" />
+        </Link>
+    );
 }
 
 export function ToolSelector({
@@ -141,7 +154,7 @@ export function ToolSelector({
                 <>
                     <Label>{label}</Label>
                     {description && (
-                        <Label className="text-xs text-[#737373]">
+                        <Label className="text-xs text-muted-foreground">
                             {description}{" "}
                             <a
                                 href={TOOLS_INTRODUCTION_DOC_URL}
@@ -158,12 +171,12 @@ export function ToolSelector({
 
             {activeTools.length === 0 ? (
                 <div className="p-4 border rounded-md text-center">
-                    <p className="text-sm text-[#737373] mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">
                         No tools available.
                     </p>
                     <Button variant="outline" size="sm" asChild>
                         <Link href="/tools" target="_blank">
-                            <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4 mr-2" />
+                            <ExternalLink className="h-4 w-4 mr-2" />
                             Create a Tool
                         </Link>
                     </Button>
@@ -182,7 +195,7 @@ export function ToolSelector({
                     <TabsContent value="http">
                         <div className="border rounded-md divide-y">
                             {httpTools.length === 0 && (
-                                <div className="p-3 text-sm text-[#737373]">
+                                <div className="p-3 text-sm text-muted-foreground">
                                     No HTTP/native tools.
                                 </div>
                             )}
@@ -191,7 +204,7 @@ export function ToolSelector({
                                 return (
                                     <label
                                         key={tool.tool_uuid}
-                                        className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-[#F7F7F7] ${
+                                        className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-muted/50 ${
                                             disabled ? "opacity-50 cursor-not-allowed" : ""
                                         }`}
                                     >
@@ -215,11 +228,12 @@ export function ToolSelector({
                                                 {tool.name}
                                             </span>
                                             {tool.description && (
-                                                <span className="text-xs text-[#737373] break-words">
+                                                <span className="text-xs text-muted-foreground break-words">
                                                     {tool.description}
                                                 </span>
                                             )}
                                         </div>
+                                        <ToolDetailsLink tool={tool} />
                                     </label>
                                 );
                             })}
@@ -229,7 +243,7 @@ export function ToolSelector({
                     <TabsContent value="mcp">
                         <div className="border rounded-md divide-y">
                             {mcpTools.length === 0 && (
-                                <div className="p-3 text-sm text-[#737373]">
+                                <div className="p-3 text-sm text-muted-foreground">
                                     No MCP tools.
                                 </div>
                             )}
@@ -254,14 +268,15 @@ export function ToolSelector({
                                                     {tool.name}
                                                 </span>
                                                 {tool.description && (
-                                                    <span className="text-xs text-[#737373] break-words">
+                                                    <span className="text-xs text-muted-foreground break-words">
                                                         {tool.description}
                                                     </span>
                                                 )}
                                             </div>
-                                            <span className="text-xs text-[#737373] shrink-0">
+                                            <span className="text-xs text-muted-foreground shrink-0">
                                                 {selected.length}/{fns.length} tools
                                             </span>
+                                            <ToolDetailsLink tool={tool} />
                                         </summary>
 
                                         <div className="mt-3 pl-9 grid gap-2">
@@ -273,7 +288,7 @@ export function ToolSelector({
                                                     disabled={busy}
                                                     onClick={() => doRefresh(tool.tool_uuid)}
                                                 >
-                                                    <HugeiconsIcon icon={RefreshCwIcon}
+                                                    <RefreshCw
                                                         className={`h-3 w-3 mr-2 ${busy ? "animate-spin" : ""}`}
                                                     />
                                                     Refresh tools
@@ -283,7 +298,7 @@ export function ToolSelector({
                                                 <p className="text-xs text-destructive">{err}</p>
                                             )}
                                             {fns.length === 0 && !err && (
-                                                <p className="text-xs text-[#737373]">
+                                                <p className="text-xs text-muted-foreground">
                                                     No tools discovered - Refresh.
                                                 </p>
                                             )}
@@ -306,7 +321,7 @@ export function ToolSelector({
                                                                 {fn.name}
                                                             </span>
                                                             {fn.description && (
-                                                                <span className="text-xs text-[#737373] break-words">
+                                                                <span className="text-xs text-muted-foreground break-words">
                                                                     {fn.description}
                                                                 </span>
                                                             )}
@@ -340,13 +355,13 @@ export function ToolSelector({
                         </div>
                     </TabsContent>
 
-                    <div className="mt-2 p-2 bg-[#F7F7F7] rounded-md">
+                    <div className="mt-2 p-2 bg-muted/30 rounded-md">
                         <Link
                             href="/tools"
                             target="_blank"
-                            className="flex items-center gap-2 text-sm text-[#737373] hover:text-foreground"
+                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
                         >
-                            <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4" />
+                            <ExternalLink className="h-4 w-4" />
                             Manage Tools
                         </Link>
                     </div>
@@ -354,7 +369,7 @@ export function ToolSelector({
             )}
 
             {selectedCount > 0 && (
-                <p className="text-xs text-[#737373]">
+                <p className="text-xs text-muted-foreground">
                     {selectedCount} tool{selectedCount !== 1 ? "s" : ""} selected
                 </p>
             )}

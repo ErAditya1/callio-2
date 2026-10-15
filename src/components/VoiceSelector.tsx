@@ -23,7 +23,9 @@ import { cn } from "@/lib/utils";
 const ALL_FILTER_VALUE = "__all__";
 
 interface VoiceSelectorProps {
+    id?: string;
     provider: string;
+    providerConnectionUuid?: string;
     value: string;
     onChange: (voiceId: string) => void;
     model?: string;
@@ -34,7 +36,9 @@ interface VoiceSelectorProps {
 }
 
 export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
+    id,
     provider,
+    providerConnectionUuid,
     value,
     onChange,
     model,
@@ -78,9 +82,10 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
         setError(null);
 
         try {
-            const query: { model?: string; language?: string } = {};
+            const query: { model?: string; language?: string; provider_connection_uuid?: string } = {};
             if (model) query.model = model;
             if (language) query.language = language;
+            if (providerConnectionUuid) query.provider_connection_uuid = providerConnectionUuid;
             const response = await getVoicesApiV1UserConfigurationsVoicesProviderGet({
                 path: { provider: providerKey as never },
                 query: Object.keys(query).length > 0 ? query : undefined,
@@ -96,7 +101,7 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
         } finally {
             setIsLoading(false);
         }
-    }, [provider, model, language, getProviderKey]);
+    }, [provider, providerConnectionUuid, model, language, getProviderKey]);
 
     useEffect(() => {
         if (provider) {
@@ -107,7 +112,7 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
     // Check if the current value exists in the voices list, or auto-select default voice
     useEffect(() => {
         if (voices.length > 0) {
-            const defVoice = voices.find((v) => v.is_default)?.voice_id || voices[0]?.voice_id;
+            const defVoice = voices.find((v) => (v as unknown as { is_default?: boolean }).is_default)?.voice_id || voices[0]?.voice_id;
             if (!value) {
                 if (defVoice) {
                     onChange(defVoice);

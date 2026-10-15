@@ -124,6 +124,11 @@ const COLLAPSIBLE_NAV_SECTIONS: SidebarNavSection[] = [
     label: "AI & Voice",
     items: [
       {
+        title: "AI Providers",
+        url: "/provider-connections",
+        icon: SlidersHorizontalIcon,
+      },
+      {
         title: "AI Models & Voices",
         url: "/model-configurations",
         icon: SparklesIcon,
@@ -143,6 +148,11 @@ const COLLAPSIBLE_NAV_SECTIONS: SidebarNavSection[] = [
         title: "Tools & Actions",
         url: "/tools",
         icon: ZapIcon,
+      },
+      {
+        title: "Credentials",
+        url: "/credentials",
+        icon: ShieldCheckIcon,
       },
       {
         title: "Knowledge Base",

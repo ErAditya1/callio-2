@@ -10,6 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
 export interface TransferAgentWorkflowOption {
@@ -30,6 +31,9 @@ export interface TransferAgentToolConfigProps {
     workflowsLoading?: boolean;
     message: string;
     onMessageChange: (message: string) => void;
+    /** Whether the destination agent opens with its Start Call greeting. */
+    playGreeting: boolean;
+    onPlayGreetingChange: (playGreeting: boolean) => void;
 }
 
 export function TransferAgentToolConfig({
@@ -43,6 +47,8 @@ export function TransferAgentToolConfig({
     workflowsLoading = false,
     message,
     onMessageChange,
+    playGreeting,
+    onPlayGreetingChange,
 }: TransferAgentToolConfigProps) {
     return (
         <Card>
@@ -57,7 +63,7 @@ export function TransferAgentToolConfig({
             <CardContent className="space-y-6">
                 <div className="grid gap-2">
                     <Label htmlFor="transfer-agent-name">Tool Name</Label>
-                    <Label className="text-xs text-[#737373]">
+                    <Label className="text-xs text-muted-foreground">
                         Also becomes the function name the agent calls. Name it after
                         the destination, e.g. &ldquo;Transfer to Billing&rdquo;.
                     </Label>
@@ -71,7 +77,7 @@ export function TransferAgentToolConfig({
 
                 <div className="grid gap-2">
                     <Label htmlFor="transfer-agent-description">Description</Label>
-                    <Label className="text-xs text-[#737373]">
+                    <Label className="text-xs text-muted-foreground">
                         This is what the agent decides on. To offer more than one
                         destination, add a second transfer tool with its own
                         description.
@@ -107,16 +113,35 @@ export function TransferAgentToolConfig({
 
                 <div className="grid gap-2">
                     <Label htmlFor="transfer-agent-message">Handover message</Label>
-                    <Label className="text-xs text-[#737373]">
+                    <Label className="text-xs text-muted-foreground">
                         Spoken in the current agent&apos;s own voice, and waited for
                         before the caller is handed over. Leave empty to hand over
                         without saying anything.
                     </Label>
                     <Input
                         id="transfer-agent-message"
+                        maxLength={500}
                         value={message}
                         onChange={(e) => onMessageChange(e.target.value)}
                         placeholder="Let me connect you with the right person. One moment please."
+                    />
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                    <div className="grid gap-1">
+                        <Label htmlFor="transfer-agent-play-greeting">
+                            Play the destination agent&apos;s greeting
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                            Turn off to have the next agent continue the conversation instead
+                            of introducing itself. It then opens with a reply based on the
+                            handover note.
+                        </p>
+                    </div>
+                    <Switch
+                        id="transfer-agent-play-greeting"
+                        checked={playGreeting}
+                        onCheckedChange={onPlayGreetingChange}
                     />
                 </div>
             </CardContent>

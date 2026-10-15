@@ -1,12 +1,7 @@
 "use client";
 
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  InfoIcon,
-} from "@hugeicons/core-free-icons";;
+import { Info } from "lucide-react";
 
-import type { RecordingResponseSchema } from "@/client/types.gen";
-import { StaticTextWarning, TextOrAudioInput } from "@/components/flow/TextOrAudioInput";
 import {
     CredentialSelector,
     extractUrlHostnameParameters,
@@ -25,9 +20,18 @@ import { BodyTemplateEditor } from "@/components/http/body-template-editor";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+
+export type HttpBodyFormat = "json" | "form";
 
 export interface HttpApiToolConfigProps {
     name: string;
@@ -51,15 +55,10 @@ export interface HttpApiToolConfigProps {
     bodyTemplate: Record<string, unknown> | null;
     onBodyTemplateChange: (template: Record<string, unknown> | null) => void;
     onBodyTemplateValidityChange: (valid: boolean) => void;
+    bodyFormat: HttpBodyFormat;
+    onBodyFormatChange: (format: HttpBodyFormat) => void;
     timeoutMs: number;
     onTimeoutMsChange: (timeout: number) => void;
-    customMessage: string;
-    onCustomMessageChange: (message: string) => void;
-    customMessageType: 'text' | 'audio';
-    onCustomMessageTypeChange: (type: 'text' | 'audio') => void;
-    customMessageRecordingId: string;
-    onCustomMessageRecordingIdChange: (id: string) => void;
-    recordings?: RecordingResponseSchema[];
 }
 
 export function HttpApiToolConfig({
@@ -84,15 +83,10 @@ export function HttpApiToolConfig({
     bodyTemplate,
     onBodyTemplateChange,
     onBodyTemplateValidityChange,
+    bodyFormat,
+    onBodyFormatChange,
     timeoutMs,
     onTimeoutMsChange,
-    customMessage,
-    onCustomMessageChange,
-    customMessageType,
-    onCustomMessageTypeChange,
-    customMessageRecordingId,
-    onCustomMessageRecordingIdChange,
-    recordings = [],
 }: HttpApiToolConfigProps) {
     const urlHostnameParameters = extractUrlHostnameParameters(url);
     const urlPathParameters = extractUrlPathParameters(url);
@@ -116,7 +110,7 @@ export function HttpApiToolConfig({
                     <TabsContent value="settings" className="space-y-4 mt-4">
                         <div className="grid gap-2">
                             <Label>Tool Name</Label>
-                            <Label className="text-xs text-[#737373]">
+                            <Label className="text-xs text-muted-foreground">
                                 Use a descriptive name, like &quot;Get Weather using API&quot; for a tool that fetches weather
                             </Label>
                             <Input
@@ -128,7 +122,7 @@ export function HttpApiToolConfig({
 
                         <div className="grid gap-2">
                             <Label>Description</Label>
-                            <Label className="text-xs text-[#737373]">
+                            <Label className="text-xs text-muted-foreground">
                                 Provide a description which makes it easy for LLM to understand what this tool does
                             </Label>
                             <Textarea
@@ -170,45 +164,21 @@ export function HttpApiToolConfig({
                                 showValidation
                             />
                             {urlHostnameParameters.length > 0 && (
-                                <div className="rounded-lg border border-[#DCE3EF] bg-[#F0F3F9] p-3 text-sm text-[#7186AD] flex gap-2 items-start mt-2">
-                                    <HugeiconsIcon icon={InfoIcon} className="h-4 w-4 mt-0.5 shrink-0" />
+                                <div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-3 text-sm text-blue-600 flex gap-2 items-start mt-2">
+                                    <Info className="h-4 w-4 mt-0.5 shrink-0" />
                                     <span>
                                         Hostname parameters detected: {urlHostnameParameters.join(", ")}. Values resolve from tool call arguments or workflow context at runtime.
                                     </span>
                                 </div>
                             )}
                             {urlPathParameters.length > 0 && (
-                                <div className="rounded-lg border border-[#DCE3EF] bg-[#F0F3F9] p-3 text-sm text-[#7186AD] flex gap-2 items-start mt-2">
-                                    <HugeiconsIcon icon={InfoIcon} className="h-4 w-4 mt-0.5 shrink-0" />
+                                <div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-3 text-sm text-blue-600 flex gap-2 items-start mt-2">
+                                    <Info className="h-4 w-4 mt-0.5 shrink-0" />
                                     <span>
                                         Path parameters detected: {urlPathParameters.join(", ")}. Values resolve from tool call arguments or workflow context at runtime.
                                     </span>
                                 </div>
                             )}
-                        </div>
-
-                        <div className="grid gap-2 pt-4 border-t">
-                            <Label>Custom Message</Label>
-                            <Label className="text-xs text-[#737373]">
-                                Optional message the AI will speak or play before executing this tool.
-                            </Label>
-                            <TextOrAudioInput
-                                type={customMessageType}
-                                onTypeChange={onCustomMessageTypeChange}
-                                recordingId={customMessageRecordingId}
-                                onRecordingIdChange={onCustomMessageRecordingIdChange}
-                                recordings={recordings}
-                            >
-                                <>
-                                    <StaticTextWarning />
-                                    <Textarea
-                                        value={customMessage}
-                                        onChange={(e) => onCustomMessageChange(e.target.value)}
-                                        placeholder="e.g., Let me check that for you, one moment please."
-                                        rows={2}
-                                    />
-                                </>
-                            </TextOrAudioInput>
                         </div>
                     </TabsContent>
 
@@ -222,9 +192,9 @@ export function HttpApiToolConfig({
                     <TabsContent value="parameters" className="space-y-4 mt-4">
                         <div className="grid gap-2">
                             <Label>LLM Parameters</Label>
-                            <Label className="text-xs text-[#737373]">
+                            <Label className="text-xs text-muted-foreground">
                                 Define the parameters that the LLM will provide when calling this tool.
-                                These will be sent as JSON body for POST/PUT/PATCH or as URL query params for GET/DELETE.
+                                These will be sent in the request body for POST/PUT/PATCH or as URL query params for GET/DELETE.
                             </Label>
                             <ParameterEditor
                                 parameters={parameters}
@@ -234,8 +204,8 @@ export function HttpApiToolConfig({
 
                         <div className="grid gap-2 pt-4 border-t">
                             <Label>Preset Parameters</Label>
-                            <Label className="text-xs text-[#737373]">
-                                Add values that CallioAI should inject at runtime. These are not exposed to the LLM and can use
+                            <Label className="text-xs text-muted-foreground">
+                                Add values that Dograh should inject at runtime. These are not exposed to the LLM and can use
                                 workflow templates like {`{{initial_context.phone_number}}`} or fixed literals.
                             </Label>
                             <PresetParameterEditor
@@ -246,13 +216,34 @@ export function HttpApiToolConfig({
 
                         {["POST", "PUT", "PATCH"].includes(httpMethod) && (
                             <div className="grid gap-4 pt-4 border-t">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="body-format">Body Format</Label>
+                                    <p className="text-xs text-muted-foreground">
+                                        How the request body is encoded. Use form-encoded only for APIs that
+                                        reject JSON; lists repeat the field name and objects are sent as JSON strings.
+                                    </p>
+                                    <Select
+                                        value={bodyFormat}
+                                        onValueChange={(value) => onBodyFormatChange(value as HttpBodyFormat)}
+                                    >
+                                        <SelectTrigger id="body-format">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="json">JSON (application/json)</SelectItem>
+                                            <SelectItem value="form">
+                                                Form-encoded (application/x-www-form-urlencoded)
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                                 <div className="flex items-center justify-between gap-4">
                                     <div className="grid gap-1">
                                         <Label htmlFor="body-template-enabled">
                                             Tool Body Template
                                         </Label>
-                                        <p className="text-xs text-[#737373]">
-                                            Enable a custom JSON request body.
+                                        <p className="text-xs text-muted-foreground">
+                                            Shape the request body with a JSON template.
                                         </p>
                                     </div>
                                     <Switch
@@ -273,7 +264,7 @@ export function HttpApiToolConfig({
 
                         <div className="grid gap-2 pt-4 border-t">
                             <Label>Custom Headers</Label>
-                            <Label className="text-xs text-[#737373]">
+                            <Label className="text-xs text-muted-foreground">
                                 Add custom headers to include in the request (optional)
                             </Label>
                             <KeyValueEditor
