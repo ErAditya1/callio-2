@@ -1,33 +1,30 @@
-'use client';
-
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowLeft01Icon,
-  ArrowRight01Icon,
-  BotIcon,
-  Building01Icon,
-  Calendar01Icon,
-  CheckIcon,
-  CheckmarkCircle02Icon,
-  Copy01Icon,
-  InfoIcon,
-  Layers01Icon,
-  Mail01Icon,
-  MessageSquareIcon,
-  PhoneIcon,
-  PhoneIncomingIcon,
-  PhoneOutgoingIcon,
-  PlayIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  SendIcon,
-  SparklesIcon,
-  TrashIcon,
-  UserIcon,
-  WorkflowIcon,
+    ArrowLeft01Icon,
+    ArrowRight01Icon,
+    BotIcon,
+    Calendar01Icon,
+    CheckIcon,
+    CheckmarkCircle02Icon,
+    Copy01Icon,
+    InfoIcon,
+    Layers01Icon,
+    Mail01Icon,
+    MessageSquareIcon,
+    PhoneIcon,
+    PhoneIncomingIcon,
+    PhoneOutgoingIcon,
+    PlayIcon,
+    PlusIcon,
+    RefreshCwIcon,
+    SendIcon,
+    SparklesIcon,
+    TrashIcon,
+    UserIcon,
+    WorkflowIcon,
 } from "@hugeicons/core-free-icons";
 
 import { Badge } from '@/components/ui/badge';
@@ -38,10 +35,20 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { WorkflowTemplateSheet } from '@/components/workflow/WorkflowTemplateSheet';
 import { useAuth } from '@/lib/auth';
 import { resolveBrowserBackendUrl } from '@/lib/apiClient';
 import logger from '@/lib/logger';
+import { Upload, FileJson, CheckCircle2, RotateCw } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ChatMessage {
     role: 'user' | 'assistant';
@@ -58,130 +65,6 @@ interface WorkflowDraft {
     questions_to_ask: string[];
     workflow_definition?: Record<string, any>;
 }
-
-interface IndustryPreset {
-    id: string;
-    title: string;
-    icon: string;
-    description: string;
-    suggestedBusinessName: string;
-    suggestedAgentName: string;
-    suggestedGreeting: string;
-    suggestedHoursAndLocation: string;
-    suggestedServices: string;
-    suggestedExtraction: string[];
-}
-
-const COMMON_EXTRACTION_OPTIONS = [
-    'Full Name',
-    'Phone Number',
-    'Email Address',
-    'Preferred Date & Time',
-    'Reason for Visit / Query',
-    'Doctor / Department',
-    'Budget / Price Range',
-    'Property / Unit Type',
-    'Address / Location',
-];
-
-const INDUSTRY_PRESETS: IndustryPreset[] = [
-    {
-        id: 'clinic',
-        title: 'Clinic & Healthcare',
-        icon: '🩺',
-        description: 'Doctor appointments, patient triage, timings & fees',
-        suggestedBusinessName: 'Apex Health Clinic',
-        suggestedAgentName: 'Sarah',
-        suggestedGreeting: 'Namaste! Welcome to Apex Health Clinic. How may I assist you with your appointment today?',
-        suggestedHoursAndLocation: 'Monday to Saturday: 9:00 AM - 8:00 PM. Sunday: 10:00 AM - 2:00 PM. Located at 12th Main, Indiranagar, Bangalore.',
-        suggestedServices: 'General Physician Consultation: ₹500\nDental Cleaning & Scaling: ₹1,500\nRoot Canal Treatment: ₹3,500\nPediatric Checkup: ₹600',
-        suggestedExtraction: ['Full Name', 'Phone Number', 'Preferred Date & Time', 'Reason for Visit', 'Doctor / Department'],
-    },
-    {
-        id: 'real-estate',
-        title: 'Real Estate & Property',
-        icon: '🏢',
-        description: 'Buyer & tenant inquiries, budget qualification, site visits',
-        suggestedBusinessName: 'Prime Skyline Realty',
-        suggestedAgentName: 'Priya',
-        suggestedGreeting: 'Hello! Thank you for calling Prime Skyline Realty. Are you looking to buy, sell, or rent a property?',
-        suggestedHoursAndLocation: 'Office open daily from 9:30 AM to 7:00 PM. Site visits available 7 days a week with prior booking.',
-        suggestedServices: '2BHK Luxury Apartments starting at ₹85 Lakhs\n3BHK Penthouses starting at ₹1.4 Crores\nCommercial Office Spaces for Lease\nFree Property Valuation & Legal Consultation',
-        suggestedExtraction: ['Full Name', 'Phone Number', 'Budget Range', 'Preferred Location / Area', 'Property Size (1/2/3 BHK)', 'Target Move-in Date'],
-    },
-    {
-        id: 'salon',
-        title: 'Salon, Spa & Beauty',
-        icon: '💇',
-        description: 'Service bookings, stylist availability, package rates',
-        suggestedBusinessName: 'Glow & Grace Studio',
-        suggestedAgentName: 'Ananya',
-        suggestedGreeting: 'Hi there! Welcome to Glow & Grace Studio. Would you like to schedule a salon or spa treatment?',
-        suggestedHoursAndLocation: 'Tuesday to Sunday: 10:00 AM - 8:30 PM. Closed on Mondays. Located in Bandra West, Mumbai.',
-        suggestedServices: 'Haircut & Styling: ₹800\nKeratin Hair Treatment: ₹4,500\nHydra Facial: ₹2,500\nBridal Makeup Package: ₹15,000',
-        suggestedExtraction: ['Full Name', 'Phone Number', 'Service Needed', 'Preferred Stylist / Specialist', 'Preferred Date & Time Slot'],
-    },
-    {
-        id: 'restaurant',
-        title: 'Restaurant & Dining',
-        icon: '🍽️',
-        description: 'Table reservations, party bookings, opening hours & menu',
-        suggestedBusinessName: 'The Olive Bistro',
-        suggestedAgentName: 'Rohan',
-        suggestedGreeting: 'Hello and welcome to The Olive Bistro! Would you like to reserve a table or inquire about today\'s special menu?',
-        suggestedHoursAndLocation: 'Lunch: 12:30 PM - 3:30 PM. Dinner: 7:00 PM - 11:30 PM. Valet parking available on-site.',
-        suggestedServices: 'Table Reservation for Couples & Families\nPrivate Party & Birthday Hall (Up to 40 Guests)\nLive Music Weekends (Friday & Saturday 8 PM)\nCatering Services',
-        suggestedExtraction: ['Guest Name', 'Contact Number', 'Number of Guests', 'Date & Time of Reservation', 'Dietary Preferences'],
-    },
-    {
-        id: 'gym',
-        title: 'Gym & Fitness Center',
-        icon: '🏋️',
-        description: 'Membership plans, personal trainer slots, trial passes',
-        suggestedBusinessName: 'IronFit Arena',
-        suggestedAgentName: 'Vikram',
-        suggestedGreeting: 'Hey! Thanks for reaching out to IronFit Arena. Are you interested in a free trial workout or our membership plans?',
-        suggestedHoursAndLocation: 'Open 7 days a week: 5:30 AM to 10:30 PM. Located opposite City Mall, Sector 18.',
-        suggestedServices: 'Annual All-Access Membership: ₹18,000/yr\nMonthly Flexible Pass: ₹2,500/mo\n1-on-1 Personal Training Package: ₹6,000/mo\nComplimentary 1-Day Trial Workout',
-        suggestedExtraction: ['Full Name', 'Phone Number', 'Fitness Goal', 'Preferred Workout Slot (Morning/Evening)', 'Trial Date'],
-    },
-    {
-        id: 'ecommerce',
-        title: 'E-Commerce & Orders',
-        icon: '🛒',
-        description: 'Order tracking, returns, replacement & product inquiries',
-        suggestedBusinessName: 'LuxeCart Support',
-        suggestedAgentName: 'Maya',
-        suggestedGreeting: 'Hi! Thank you for contacting LuxeCart Customer Support. How can I help you with your order today?',
-        suggestedHoursAndLocation: 'Support lines open 24/7. Standard delivery takes 2-4 business days.',
-        suggestedServices: 'Order Tracking & Shipment Updates\n30-Day Free Return & Exchange Policy\nWarranty Claims & Damaged Item Replacement\nPayment & Refund Status Verification',
-        suggestedExtraction: ['Customer Name', 'Order ID / Tracking Number', 'Phone Number or Email', 'Reason for Query'],
-    },
-    {
-        id: 'services',
-        title: 'Professional Services',
-        icon: '💼',
-        description: 'Legal, CA, tax filing, consulting appointments & queries',
-        suggestedBusinessName: 'Vanguard Advisors',
-        suggestedAgentName: 'Kabir',
-        suggestedGreeting: 'Hello, welcome to Vanguard Advisory Services. How may we assist you with legal, tax, or compliance matters?',
-        suggestedHoursAndLocation: 'Monday to Friday: 9:30 AM - 6:30 PM. Virtual Zoom meetings available upon request.',
-        suggestedServices: 'ITR Filing & Tax Planning: ₹1,500+\nCompany Registration & GST Setup: ₹5,000\nLegal Contract Review: ₹3,000\n30-Minute Expert Consultation: Free First Session',
-        suggestedExtraction: ['Client Name', 'Business / Personal Contact Number', 'Email Address', 'Specific Service Required', 'Consultation Mode'],
-    },
-    {
-        id: 'other',
-        title: 'Custom Local Business',
-        icon: '📦',
-        description: 'Repairs, home services, cleaning, tuition & agencies',
-        suggestedBusinessName: 'QuickFix Services',
-        suggestedAgentName: 'Simran',
-        suggestedGreeting: 'Hello! Thank you for calling QuickFix Services. How can we assist you with your service booking today?',
-        suggestedHoursAndLocation: 'Available daily 8:00 AM - 8:00 PM for on-demand home visits.',
-        suggestedServices: 'AC Repair & Servicing: ₹499\nPlumbing & Electrical Work: Starting ₹299\nDeep Home Cleaning: ₹1,999\nSame-Day Emergency Visit Available',
-        suggestedExtraction: ['Customer Name', 'Contact Phone Number', 'Service Required', 'Service Address / Area', 'Preferred Date & Time'],
-    }
-];
 
 interface StarterTemplate {
     id: string;
@@ -253,39 +136,39 @@ Rules:
         badge: 'Inbound',
         callType: 'inbound',
         language: 'en',
-        tone: 'Friendly & Helpful',
-        useCase: 'CloudDesk 24/7 Support Desk',
-        description: 'Answer customer inquiries, resolve billing/account questions, and route tickets.',
-        prompt: `You are Alex, an empathetic customer care representative for CloudDesk.
-Goal: Troubleshoot user issues, answer billing questions, and assist with account access.
+        tone: 'Friendly & Solution-Oriented',
+        useCase: 'OmniDesk Customer Support',
+        description: 'Handle general product inquiries, troubleshoot common issues, and route complex cases.',
+        prompt: `You are Alex, an expert customer support specialist for OmniDesk.
+Goal: Provide rapid, helpful answers to user inquiries about subscriptions, billing, and troubleshooting.
 Key information to collect:
-1. Account ID or registered email address
-2. Specific issue description and error messages
-3. Urgency level
+1. Account email address or registered mobile number
+2. Exact product feature or error encountered
+3. Device or browser version if applicable
 Rules:
-- Acknowledge customer frustration with genuine empathy.
-- Provide step-by-step guidance clearly.
-- If unable to solve immediately, create an escalated support ticket with a callback time.`
+- Keep responses concise (under 3 sentences) to maintain a natural voice rhythm.
+- If a technical bug is detected, log a ticket and assure the customer of a response within 4 hours.
+- Escalate to human Tier-2 support whenever the customer asks to speak with a manager.`
     },
     {
         id: 'sales-outbound',
-        title: 'B2B Sales Demo Setter',
+        title: 'Outbound Sales Follow-Up',
         icon: '🚀',
         badge: 'Outbound',
         callType: 'outbound',
         language: 'en',
-        tone: 'Confident & Consultative',
-        useCase: 'GrowthPulse Outbound SDR',
-        description: 'Reach out to warm business prospects and book 15-min product demonstrations.',
-        prompt: `You are Jordan, a confident business development representative from GrowthPulse AI.
-Goal: Reach out to prospect leads, understand their current calling workflow pain points, and book a 15-minute screen-share demo.
-Key steps:
-1. Greet the prospect politely and introduce yourself and company.
-2. Ask if they currently manage high phone call volumes or inbound inquiries.
-3. Share a quick value metric (e.g., reduces agent wait times by 80%).
-4. Offer two specific time slots (e.g., Tuesday at 10 AM or Wednesday at 2 PM) for a demo.
+        tone: 'Confident & Persuasive',
+        useCase: 'SaaS Growth Outbound Outreach',
+        description: 'Follow up with webinar attendees or trial signups to secure demo bookings.',
+        prompt: `You are Jordan, a Business Development Executive at CloudScale Solutions.
+Goal: Reach out to prospects who recently downloaded our industry whitepaper or started a trial, and schedule a 15-minute executive demo.
+Key information to collect:
+1. Current team size and tech stack
+2. Primary operational bottleneck (e.g., latency, cloud cost, manual workflows)
+3. Best date and time for a Zoom meeting with our Solution Architect
 Rules:
-- Keep responses concise and conversational.
+- State the reason for your call within the first 10 seconds.
+- Respect objections: if the contact is busy, ask for a convenient time to callback.
 - If they are not interested, thank them respectfully and conclude the call gracefully.`
     },
     {
@@ -315,72 +198,139 @@ export default function CreateWorkflowPage() {
     const router = useRouter();
     const { user, getAccessToken } = useAuth();
 
-    // Mode Toggle: 'business' (default non-tech zero-code setup), 'classic' (developer studio form), 'copilot' (interactive Q&A)
-    const [builderMode, setBuilderMode] = useState<'business' | 'classic' | 'copilot'>('business');
+    // Mode Toggle: 'studio' (visual studio form), 'copilot' (interactive Q&A)
+    const [builderMode, setBuilderMode] = useState<'studio' | 'copilot'>('studio');
 
-    // Business Setup State
-    const [bizIndustry, setBizIndustry] = useState<string>('clinic');
-    const [bizName, setBizName] = useState<string>('Apex Health Clinic');
-    const [bizAgentName, setBizAgentName] = useState<string>('Sarah');
-    const [bizCallType, setBizCallType] = useState<'inbound' | 'outbound'>('inbound');
-    const [bizGreeting, setBizGreeting] = useState<string>('Namaste! Welcome to Apex Health Clinic. How may I assist you with your appointment today?');
-    const [bizHoursAndLocation, setBizHoursAndLocation] = useState<string>('Monday to Saturday: 9:00 AM - 8:00 PM. Sunday: 10:00 AM - 2:00 PM. Located at 12th Main, Indiranagar, Bangalore.');
-    const [bizServices, setBizServices] = useState<string>('General Physician Consultation: ₹500\nDental Cleaning & Scaling: ₹1,500\nRoot Canal Treatment: ₹3,500\nPediatric Checkup: ₹600');
-    const [bizExtractionFields, setBizExtractionFields] = useState<string[]>([
-        'Full Name',
-        'Phone Number',
-        'Preferred Date & Time',
-        'Reason for Visit',
-        'Doctor / Department',
-    ]);
-    const [newCustomField, setNewCustomField] = useState('');
+    // Workflow Import State
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [importModalOpen, setImportModalOpen] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
+    const [importName, setImportName] = useState('');
+    const [importJsonData, setImportJsonData] = useState<{
+        name?: string;
+        workflow_definition: any;
+    } | null>(null);
+    const [importStats, setImportStats] = useState<{
+        nodesCount: number;
+        edgesCount: number;
+        fileName: string;
+        fileSizeKb: number;
+    } | null>(null);
 
-    // Call Forwarding / Human Transfer
-    const [forwardingEnabled, setForwardingEnabled] = useState<boolean>(true);
-    const [forwardingPhone, setForwardingPhone] = useState<string>('+91 98765 43210');
-    const [forwardingCondition, setForwardingCondition] = useState<string>('When customer asks to speak with a doctor, specialist, or human receptionist');
-
-    // Messaging Channel & Alerts
-    const [smsAlertEnabled, setSmsAlertEnabled] = useState<boolean>(true);
-    const [alertMobile, setAlertMobile] = useState<string>('+91 98765 43210');
-    const [emailAlertEnabled, setEmailAlertEnabled] = useState<boolean>(true);
-    const [alertEmail, setAlertEmail] = useState<string>('reception@apexclinic.com');
-    const [webhookEnabled, setWebhookEnabled] = useState<boolean>(false);
-    const [webhookUrl, setWebhookUrl] = useState<string>('');
-
-    // Voice & Language
-    const [bizLanguage, setBizLanguage] = useState<string>('English / Hinglish Mix');
-    const [bizTone, setBizTone] = useState<string>('Warm, Polite & Empathetic');
-    const [bizError, setBizError] = useState<string | null>(null);
-
-    const handleSelectIndustry = (preset: IndustryPreset) => {
-        setBizIndustry(preset.id);
-        setBizName(preset.suggestedBusinessName);
-        setBizAgentName(preset.suggestedAgentName);
-        setBizGreeting(preset.suggestedGreeting);
-        setBizHoursAndLocation(preset.suggestedHoursAndLocation);
-        setBizServices(preset.suggestedServices);
-        setBizExtractionFields(preset.suggestedExtraction);
-    };
-
-    const handleToggleField = (field: string) => {
-        if (bizExtractionFields.includes(field)) {
-            setBizExtractionFields(bizExtractionFields.filter((f) => f !== field));
-        } else {
-            setBizExtractionFields([...bizExtractionFields, field]);
+    // Workflow JSON Import Handlers
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        await processImportFile(file);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
         }
     };
 
-    const handleAddCustomField = () => {
-        const trimmed = newCustomField.trim();
-        if (trimmed && !bizExtractionFields.includes(trimmed)) {
-            setBizExtractionFields([...bizExtractionFields, trimmed]);
-            setNewCustomField('');
+    const processImportFile = async (file: File) => {
+        try {
+            const text = await file.text();
+            let parsed: any;
+            try {
+                parsed = JSON.parse(text);
+            } catch {
+                toast.error('Invalid JSON file. Please select a valid workflow JSON file.');
+                return;
+            }
+
+            let wfDef: any = null;
+            let detectedName = file.name.replace(/\.[^/.]+$/, '');
+
+            if (parsed.workflow_definition && (parsed.workflow_definition.nodes || Array.isArray(parsed.workflow_definition))) {
+                wfDef = parsed.workflow_definition;
+                if (parsed.name) detectedName = parsed.name;
+            } else if (parsed.nodes) {
+                wfDef = {
+                    nodes: parsed.nodes,
+                    edges: parsed.edges || [],
+                    viewport: parsed.viewport || { x: 0, y: 0, zoom: 1 },
+                };
+                if (parsed.name) detectedName = parsed.name;
+            } else {
+                toast.error('Could not find valid workflow nodes/edges in this JSON file.');
+                return;
+            }
+
+            const nodesCount = Array.isArray(wfDef.nodes) ? wfDef.nodes.length : 0;
+            const edgesCount = Array.isArray(wfDef.edges) ? wfDef.edges.length : 0;
+
+            if (nodesCount === 0) {
+                toast.error('Workflow definition contains no nodes.');
+                return;
+            }
+
+            setImportJsonData({
+                name: detectedName,
+                workflow_definition: wfDef,
+            });
+            setImportStats({
+                nodesCount,
+                edgesCount,
+                fileName: file.name,
+                fileSizeKb: Math.max(1, Math.round(file.size / 1024)),
+            });
+            setImportName(detectedName);
+            setImportModalOpen(true);
+        } catch (err: any) {
+            toast.error('Failed to read file: ' + (err?.message || 'Unknown error'));
         }
     };
 
-    const handleRemoveField = (field: string) => {
-        setBizExtractionFields(bizExtractionFields.filter((f) => f !== field));
+    const handleConfirmImport = async () => {
+        if (!importJsonData || !importName.trim()) {
+            toast.error('Workflow name is required');
+            return;
+        }
+
+        try {
+            setIsImporting(true);
+            const token = await getAccessToken();
+            const baseUrl = resolveBrowserBackendUrl();
+
+            const res = await fetch(`${baseUrl}/api/v1/workflow/create/definition`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+                body: JSON.stringify({
+                    name: importName.trim(),
+                    workflow_definition: importJsonData.workflow_definition,
+                }),
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                const msg = Array.isArray(err?.detail)
+                    ? err.detail.map((e: any) => e.msg || e.message).join(', ')
+                    : (typeof err?.detail === 'string' ? err.detail : (err?.message || 'Failed to import workflow'));
+                throw new Error(msg);
+            }
+
+            const data = await res.json();
+            toast.success('Workflow imported successfully!');
+            setImportModalOpen(false);
+            if (data.id) {
+                router.push(`/workflow/${data.id}`);
+            }
+        } catch (err: any) {
+            toast.error(err?.message || 'Error importing workflow');
+        } finally {
+            setIsImporting(false);
+        }
+    };
+
+    const handleInsertPromptChip = (snippet: string) => {
+        setClassicActivityDescription((prev) => {
+            const trimmed = prev.trim();
+            if (!trimmed) return snippet;
+            return `${trimmed}\n\n${snippet}`;
+        });
     };
 
     // Chat State
@@ -409,7 +359,7 @@ export default function CreateWorkflowPage() {
     const [workflowId, setWorkflowId] = useState<number | null>(null);
     const [isReadyToTest, setIsReadyToTest] = useState(false);
 
-    // Classic Form State
+    // Studio Form State
     const [classicCallType, setClassicCallType] = useState<'inbound' | 'outbound'>('inbound');
     const [classicUseCase, setClassicUseCase] = useState('');
     const [classicActivityDescription, setClassicActivityDescription] = useState('');
@@ -469,46 +419,47 @@ export default function CreateWorkflowPage() {
                         role: m.role,
                         content: m.content,
                     })),
-                    current_workflow_id: workflowId,
-                    current_workflow_draft: workflowDraft,
-                    save_draft: true,
+                    current_draft: workflowDraft,
+                    workflow_id: workflowId,
                 }),
             });
 
             if (!res.ok) {
-                const errText = await res.text();
-                throw new Error(`Server returned ${res.status}: ${errText}`);
+                throw new Error(`Copilot service error: ${res.statusText}`);
             }
 
             const data = await res.json();
 
+            // Update assistant response
             setMessages((prev) => [
                 ...prev,
                 {
                     role: 'assistant',
-                    content: data.reply_message,
-                    quickReplies: data.suggested_quick_replies || [],
+                    content: data.reply,
+                    quickReplies: data.quick_replies || [],
                 },
             ]);
 
+            // If draft updated, refresh blueprint
             if (data.workflow_draft) {
                 setWorkflowDraft(data.workflow_draft);
             }
+
             if (data.workflow_id) {
                 setWorkflowId(data.workflow_id);
             }
+
             if (data.is_ready_to_test) {
                 setIsReadyToTest(true);
             }
         } catch (err: any) {
-            logger.error(`Copilot error: ${err}`);
-            const errorMsg = err?.message || String(err);
+            logger.error(`Error in copilot chat: ${err}`);
             setMessages((prev) => [
                 ...prev,
                 {
                     role: 'assistant',
-                    content: `Maaf kijiye, response process karne me issue aaya (${errorMsg.slice(0, 150)}). Kripya dobara koshish karein ya seedha Studio open karein.`,
-                    quickReplies: ['Dobara koshish karein', 'Open in Studio'],
+                    content:
+                        "Kshama karein, ek technical issue aa gaya. Kripya dobara try karein ya seedhe Studio form use karein.",
                 },
             ]);
         } finally {
@@ -516,44 +467,12 @@ export default function CreateWorkflowPage() {
         }
     };
 
-    // Quick Reply Pill click handler
-    const handleQuickReply = (reply: string) => {
-        const lower = reply.toLowerCase();
-        if (
-            lower.includes('run test') ||
-            lower.includes('start test') ||
-            lower.includes('open in studio')
-        ) {
-            handleOpenInStudio();
-            return;
-        }
-
-        if (lower.includes('export json') || lower.includes('export config')) {
-            if (workflowDraft) {
-                const blob = new Blob(
-                    [JSON.stringify(workflowDraft, null, 2)],
-                    { type: 'application/json' }
-                );
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${(workflowDraft.name || 'agent').replace(/\s+/g, '_')}_workflow.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-                return;
-            }
-        }
-
-        handleSendMessage(reply);
+    const handleQuickReply = (pill: string) => {
+        handleSendMessage(pill);
     };
 
-    // Save and redirect to workflow studio canvas
+    // Open workflow in studio canvas
     const handleOpenInStudio = async () => {
-        if (workflowId) {
-            router.push(`/workflow/${workflowId}`);
-            return;
-        }
-
         if (!workflowDraft) return;
 
         setIsSaving(true);
@@ -561,26 +480,29 @@ export default function CreateWorkflowPage() {
             const token = await getAccessToken();
             const baseUrl = resolveBrowserBackendUrl();
 
-            const res = await fetch(`${baseUrl}/api/v1/workflow/copilot/chat`, {
+            if (workflowId) {
+                router.push(`/workflow/${workflowId}?copilot=open`);
+                return;
+            }
+
+            const res = await fetch(`${baseUrl}/api/v1/workflow/copilot/finalize`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
                 body: JSON.stringify({
-                    messages: messages.map((m) => ({
-                        role: m.role,
-                        content: m.content,
-                    })),
-                    current_workflow_id: workflowId,
-                    current_workflow_draft: workflowDraft,
-                    save_draft: true,
+                    workflow_draft: workflowDraft,
                 }),
             });
 
+            if (!res.ok) {
+                throw new Error('Failed to finalize workflow');
+            }
+
             const data = await res.json();
             if (data.workflow_id) {
-                router.push(`/workflow/${data.workflow_id}`);
+                router.push(`/workflow/${data.workflow_id}?copilot=open`);
             }
         } catch (err) {
             logger.error(`Error finalizing workflow: ${err}`);
@@ -589,84 +511,10 @@ export default function CreateWorkflowPage() {
         }
     };
 
-    // Business Setup Submit Handler
-    const handleBusinessSubmit = async () => {
-        if (!bizName.trim()) {
-            setBizError('Please provide your business name');
-            return;
-        }
-
-        setIsLoading(true);
-        setBizError(null);
-
-        try {
-            const token = await getAccessToken();
-            const baseUrl = resolveBrowserBackendUrl();
-
-            // Construct rich prompt from non-tech business parameters
-            const promptParts = [
-                `You are ${bizAgentName.trim() || 'an AI Assistant'}, representing ${bizName.trim()}.`,
-                `Greeting / Opening Statement: "${bizGreeting.trim()}"`,
-                '',
-                '[Business Information & Knowledge Base]:',
-                bizHoursAndLocation ? `- Hours & Address/Location:\n${bizHoursAndLocation.trim()}` : '',
-                bizServices ? `- Services, Pricing & Offerings:\n${bizServices.trim()}` : '',
-                '',
-                '[Customer Information to Collect & Qualify]:',
-                bizExtractionFields.length > 0
-                    ? bizExtractionFields.map((f, i) => `${i + 1}. ${f}`).join('\n')
-                    : 'Collect customer name and reason for inquiry.',
-                '',
-                forwardingEnabled && forwardingPhone
-                    ? `[Call Forwarding / Live Human Transfer]:\n- Transfer Condition: ${forwardingCondition || 'When caller asks to speak with a human or doctor'}\n- Destination Phone Number: ${forwardingPhone}\n- Instructions: When transfer condition is triggered, inform the caller politely and execute transfer.`
-                    : '',
-                '',
-                `[Post-Call Alerts & Messaging Channels]:`,
-                smsAlertEnabled && alertMobile ? `- SMS / WhatsApp notification to: ${alertMobile}` : '',
-                emailAlertEnabled && alertEmail ? `- Email summary alert to: ${alertEmail}` : '',
-                webhookEnabled && webhookUrl ? `- CRM Webhook payload dispatched to: ${webhookUrl}` : '',
-                '',
-                `[Speaking Style & Tone]:`,
-                `- Language: ${bizLanguage}`,
-                `- Tone: ${bizTone}`,
-                `- Conversational Rules: Be polite, warm, and concise. Never fabricate business information not provided above. Confirm key collected details with the caller before ending the call.`
-            ];
-
-            const enrichedPrompt = promptParts.filter(Boolean).join('\n');
-
-            const res = await fetch(`${baseUrl}/api/v1/workflow/create/template`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                },
-                body: JSON.stringify({
-                    call_type: bizCallType,
-                    use_case: `${bizName.trim()} - ${bizAgentName.trim() || 'Agent'}`,
-                    activity_description: enrichedPrompt,
-                }),
-            });
-
-            if (!res.ok) {
-                const errorData = await res.json().catch(() => null);
-                throw new Error(errorData?.detail || `Failed to create agent (HTTP ${res.status})`);
-            }
-
-            const data = await res.json();
-            if (data.id) {
-                router.push(`/workflow/${data.id}`);
-            }
-        } catch (err: any) {
-            setBizError(err?.message || 'Failed to create business agent');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // Classic Submit Handler
+    // Studio Form Submit Handler
     const handleClassicSubmit = async () => {
         if (!classicUseCase || !classicActivityDescription) {
-            setClassicError('Please fill in all fields');
+            setClassicError('Please fill in both the Agent Name and Conversational Instructions');
             return;
         }
 
@@ -715,18 +563,26 @@ export default function CreateWorkflowPage() {
 
     return (
         <div
-            className={`bg-background text-foreground flex flex-col ${
-                builderMode === 'copilot'
-                    ? 'h-screen overflow-hidden'
-                    : 'min-h-screen overflow-y-auto'
-            }`}
+            className={`bg-background text-foreground flex flex-col ${builderMode === 'copilot'
+                ? 'h-screen overflow-hidden'
+                : 'min-h-screen overflow-y-auto'
+                }`}
         >
+            {/* Hidden JSON file input */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                accept=".json,application/json"
+                className="hidden"
+            />
+
             {/* Top Navigation Bar */}
             <header className="border-b bg-[#FFFFFF] backdrop-blur-md sticky top-0 z-20 px-4 lg:px-8 py-3.5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Link
                         href="/workflow"
-                        className="inline-flex items-center gap-1.5 text-sm font-medium text-[#737373] hover:text-foreground transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs text-[#737373] hover:text-foreground font-medium transition-colors"
                     >
                         <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" />
                         Back
@@ -741,9 +597,7 @@ export default function CreateWorkflowPage() {
                                 AI Voice Agent Creator
                             </h1>
                             <p className="text-xs text-[#737373]">
-                                {builderMode === 'business'
-                                    ? 'Zero-Code Business Setup'
-                                    : builderMode === 'classic'
+                                {builderMode === 'studio'
                                     ? 'Studio Configuration Form'
                                     : 'Interactive AI Copilot Architect'}
                             </p>
@@ -751,42 +605,39 @@ export default function CreateWorkflowPage() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="gap-1.5 text-xs font-medium border-border hover:bg-accent"
+                    >
+                        <Upload className="w-3.5 h-3.5 text-primary" />
+                        <span className="hidden sm:inline">Import Workflow</span>
+                        <span className="sm:hidden">Import</span>
+                    </Button>
+
                     <WorkflowTemplateSheet buttonSize="sm" />
 
                     <div className="flex bg-[#F7F7F7] p-0.5 rounded-lg border text-xs font-medium">
                         <button
                             type="button"
-                            onClick={() => setBuilderMode('business')}
-                            className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
-                                builderMode === 'business'
-                                    ? 'bg-background text-foreground shadow-sm font-semibold'
-                                    : 'text-[#737373] hover:text-foreground'
-                            }`}
+                            onClick={() => setBuilderMode('studio')}
+                            className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${builderMode === 'studio'
+                                ? 'bg-background text-foreground shadow-sm font-semibold'
+                                : 'text-[#737373] hover:text-foreground'
+                                }`}
                         >
-                            <HugeiconsIcon icon={Building01Icon} className="w-3.5 h-3.5 text-primary" />
-                            Business Setup
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setBuilderMode('classic')}
-                            className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
-                                builderMode === 'classic'
-                                    ? 'bg-background text-foreground shadow-sm font-semibold'
-                                    : 'text-[#737373] hover:text-foreground'
-                            }`}
-                        >
-                            <HugeiconsIcon icon={Layers01Icon} className="w-3.5 h-3.5" />
+                            <HugeiconsIcon icon={Layers01Icon} className="w-3.5 h-3.5 text-primary" />
                             Studio Form
                         </button>
                         <button
                             type="button"
                             onClick={() => setBuilderMode('copilot')}
-                            className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
-                                builderMode === 'copilot'
-                                    ? 'bg-background text-foreground shadow-sm font-semibold'
-                                    : 'text-[#737373] hover:text-foreground'
-                            }`}
+                            className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${builderMode === 'copilot'
+                                ? 'bg-background text-foreground shadow-sm font-semibold'
+                                : 'text-[#737373] hover:text-foreground'
+                                }`}
                         >
                             <HugeiconsIcon icon={BotIcon} className="w-3.5 h-3.5 text-primary" />
                             AI Copilot
@@ -816,623 +667,37 @@ export default function CreateWorkflowPage() {
                 </div>
             </header>
 
-            {/* Zero-Code Business Setup Mode */}
-            {builderMode === 'business' ? (
+            {/* Visual Studio Form Mode */}
+            {builderMode === 'studio' ? (
                 <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
                     {/* Header Banner */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#E5E5E5]">
                         <div>
                             <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
-                                    ● 100% Zero-Code Setup
+                                <Badge variant="outline" className="text-xs bg-[#F0F3F9] text-[#7186AD] border-[#DCE3EF] font-medium">
+                                    ● Visual Studio Architect
                                 </Badge>
-                                <span className="text-xs text-[#737373]">No technical knowledge required</span>
+                                <span className="text-xs text-[#737373]">Fast Visual Agent Configuration</span>
                             </div>
                             <h2 className="text-2xl font-bold tracking-tight text-foreground mt-1">
-                                Create Your Business Voice Agent
+                                Design Your Voice AI Agent
                             </h2>
                             <p className="text-sm text-[#737373] mt-0.5">
-                                Select your business type below, configure basic details, and test your live agent in 60 seconds.
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Step 1: Industry Category Grid */}
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                                <HugeiconsIcon icon={SparklesIcon} className="w-4 h-4 text-primary" />
-                                <span>Step 1: Choose Your Business Category</span>
-                            </div>
-                            <span className="text-xs text-[#737373]">
-                                Click to instantly auto-fill tailored settings
-                            </span>
-                        </div>
-
-                        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
-                            {INDUSTRY_PRESETS.map((preset) => {
-                                const isSelected = bizIndustry === preset.id;
-                                return (
-                                    <button
-                                        key={preset.id}
-                                        type="button"
-                                        onClick={() => handleSelectIndustry(preset)}
-                                        className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between h-28 relative ${
-                                            isSelected
-                                                ? 'border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm'
-                                                : 'border-border bg-card hover:border-[#7186AD]/50 hover:shadow-sm'
-                                        }`}
-                                    >
-                                        <div className="flex items-center justify-between w-full">
-                                            <span className="text-2xl">{preset.icon}</span>
-                                            {isSelected && (
-                                                <span className="w-2 h-2 rounded-full bg-primary" />
-                                            )}
-                                        </div>
-                                        <div>
-                                            <div className="font-semibold text-xs text-foreground line-clamp-1">
-                                                {preset.title}
-                                            </div>
-                                            <div className="text-[10px] text-[#737373] line-clamp-1 mt-0.5">
-                                                {preset.suggestedBusinessName}
-                                            </div>
-                                        </div>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Form & Live Preview Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                        {/* Left Form Column (8 cols) */}
-                        <div className="lg:col-span-8 space-y-6">
-                            {/* Card 1: Business Identity & Persona */}
-                            <Card className="border-border shadow-sm">
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-base flex items-center gap-2">
-                                        <HugeiconsIcon icon={Building01Icon} className="w-4 h-4 text-primary" />
-                                        Step 2: Business & Agent Identity
-                                    </CardTitle>
-                                    <CardDescription className="text-xs">
-                                        Tell us what your business is called and how your agent introduces itself.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4 pt-1">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="space-y-1.5">
-                                            <Label className="text-xs font-semibold">Business / Clinic Name</Label>
-                                            <Input
-                                                value={bizName}
-                                                onChange={(e) => setBizName(e.target.value)}
-                                                placeholder="e.g. Apex Health Clinic"
-                                                className="text-sm"
-                                            />
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <Label className="text-xs font-semibold">AI Assistant Name</Label>
-                                            <Input
-                                                value={bizAgentName}
-                                                onChange={(e) => setBizAgentName(e.target.value)}
-                                                placeholder="e.g. Sarah, Priya, Alex"
-                                                className="text-sm"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <Label className="text-xs font-semibold">Call Direction</Label>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <button
-                                                type="button"
-                                                onClick={() => setBizCallType('inbound')}
-                                                className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all ${
-                                                    bizCallType === 'inbound'
-                                                        ? 'border-primary bg-primary/5 ring-1 ring-primary/30 font-medium'
-                                                        : 'border-border hover:bg-neutral-50 text-[#737373]'
-                                                }`}
-                                            >
-                                                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                                                    <HugeiconsIcon icon={PhoneIncomingIcon} className="w-4 h-4" />
-                                                </div>
-                                                <div>
-                                                    <div className="text-xs font-semibold text-foreground">Inbound Calling</div>
-                                                    <div className="text-[11px] text-[#737373]">Customer dials your number</div>
-                                                </div>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setBizCallType('outbound')}
-                                                className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all ${
-                                                    bizCallType === 'outbound'
-                                                        ? 'border-primary bg-primary/5 ring-1 ring-primary/30 font-medium'
-                                                        : 'border-border hover:bg-neutral-50 text-[#737373]'
-                                                }`}
-                                            >
-                                                <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
-                                                    <HugeiconsIcon icon={PhoneOutgoingIcon} className="w-4 h-4" />
-                                                </div>
-                                                <div>
-                                                    <div className="text-xs font-semibold text-foreground">Outbound Calling</div>
-                                                    <div className="text-[11px] text-[#737373]">AI calls customers for follow-up</div>
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <Label className="text-xs font-semibold">Opening Greeting Message</Label>
-                                        <Textarea
-                                            value={bizGreeting}
-                                            onChange={(e) => setBizGreeting(e.target.value)}
-                                            rows={2}
-                                            placeholder="What the AI says immediately when the call connects"
-                                            className="text-xs resize-none"
-                                        />
-                                        <p className="text-[11px] text-[#737373]">
-                                            This is the first sentence spoken when the customer answers.
-                                        </p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Card 2: Business Profile & Knowledge Base */}
-                            <Card className="border-border shadow-sm">
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-base flex items-center gap-2">
-                                        <HugeiconsIcon icon={InfoIcon} className="w-4 h-4 text-primary" />
-                                        Step 3: Business Information & Knowledge Base
-                                    </CardTitle>
-                                    <CardDescription className="text-xs">
-                                        The AI will use these exact details to answer caller queries accurately without inventing facts.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4 pt-1">
-                                    <div className="space-y-1.5">
-                                        <Label className="text-xs font-semibold">Operating Hours & Address / Location</Label>
-                                        <Textarea
-                                            value={bizHoursAndLocation}
-                                            onChange={(e) => setBizHoursAndLocation(e.target.value)}
-                                            rows={2}
-                                            placeholder="e.g. Mon-Sat 9AM-8PM, Indiranagar, Bangalore. Free parking available."
-                                            className="text-xs"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <Label className="text-xs font-semibold">Services, Pricing & Frequently Asked Details</Label>
-                                        <Textarea
-                                            value={bizServices}
-                                            onChange={(e) => setBizServices(e.target.value)}
-                                            rows={4}
-                                            placeholder={`e.g.\nConsultation: ₹500\nDental Cleaning: ₹1,500\nRoot Canal: ₹3,500`}
-                                            className="text-xs font-mono"
-                                        />
-                                        <p className="text-[11px] text-[#737373]">
-                                            List your packages, menu items, or fees line-by-line. The AI will explain them during the call.
-                                        </p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Card 3: Lead Generation & Data Extraction */}
-                            <Card className="border-border shadow-sm">
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-base flex items-center gap-2">
-                                        <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4 text-primary" />
-                                        Step 4: Customer Information to Capture (Lead Generation)
-                                    </CardTitle>
-                                    <CardDescription className="text-xs">
-                                        Select what details your agent must ask the caller and save for your records.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4 pt-1">
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                        {COMMON_EXTRACTION_OPTIONS.map((field) => {
-                                            const isChecked = bizExtractionFields.includes(field);
-                                            return (
-                                                <button
-                                                    key={field}
-                                                    type="button"
-                                                    onClick={() => handleToggleField(field)}
-                                                    className={`px-3 py-2 rounded-lg border text-left text-xs flex items-center justify-between transition-all ${
-                                                        isChecked
-                                                            ? 'border-primary bg-primary/5 text-foreground font-medium'
-                                                            : 'border-border text-[#737373] hover:bg-neutral-50'
-                                                    }`}
-                                                >
-                                                    <span className="truncate">{field}</span>
-                                                    {isChecked && (
-                                                        <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-primary shrink-0 ml-1.5" />
-                                                    )}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-
-                                    {/* Add custom field */}
-                                    <div className="flex gap-2 pt-2 border-t border-[#E5E5E5]">
-                                        <Input
-                                            value={newCustomField}
-                                            onChange={(e) => setNewCustomField(e.target.value)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    e.preventDefault();
-                                                    handleAddCustomField();
-                                                }
-                                            }}
-                                            placeholder="Add custom detail (e.g. Car Model, Insurance Provider)"
-                                            className="text-xs h-9"
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={handleAddCustomField}
-                                            className="gap-1.5 shrink-0 text-xs h-9"
-                                        >
-                                            <HugeiconsIcon icon={PlusIcon} className="w-3.5 h-3.5" />
-                                            Add Field
-                                        </Button>
-                                    </div>
-
-                                    {/* Active field tags */}
-                                    <div className="flex flex-wrap gap-1.5 pt-1">
-                                        {bizExtractionFields.map((field) => (
-                                            <Badge
-                                                key={field}
-                                                variant="secondary"
-                                                className="text-[11px] gap-1 px-2.5 py-1 font-normal bg-neutral-100 text-neutral-800 border"
-                                            >
-                                                {field}
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveField(field)}
-                                                    className="hover:text-red-600 transition-colors ml-0.5"
-                                                >
-                                                    ×
-                                                </button>
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Card 4: Call Forwarding & Human Transfer */}
-                            <Card className="border-border shadow-sm">
-                                <CardHeader className="pb-3">
-                                    <div className="flex items-center justify-between">
-                                        <CardTitle className="text-base flex items-center gap-2">
-                                            <HugeiconsIcon icon={PhoneIcon} className="w-4 h-4 text-primary" />
-                                            Step 5: Call Forwarding & Live Human Transfer
-                                        </CardTitle>
-                                        <Switch
-                                            checked={forwardingEnabled}
-                                            onCheckedChange={setForwardingEnabled}
-                                        />
-                                    </div>
-                                    <CardDescription className="text-xs">
-                                        Seamlessly transfer the caller to your human staff or doctor when needed.
-                                    </CardDescription>
-                                </CardHeader>
-                                {forwardingEnabled && (
-                                    <CardContent className="space-y-4 pt-1 border-t border-[#E5E5E5] mt-2">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <div className="space-y-1.5">
-                                                <Label className="text-xs font-semibold">Forwarding Phone Number</Label>
-                                                <Input
-                                                    value={forwardingPhone}
-                                                    onChange={(e) => setForwardingPhone(e.target.value)}
-                                                    placeholder="+91 98765 43210"
-                                                    className="text-xs font-mono"
-                                                />
-                                            </div>
-                                            <div className="space-y-1.5">
-                                                <Label className="text-xs font-semibold">When should AI transfer the call?</Label>
-                                                <Input
-                                                    value={forwardingCondition}
-                                                    onChange={(e) => setForwardingCondition(e.target.value)}
-                                                    placeholder="e.g. When caller asks for doctor or reports emergency"
-                                                    className="text-xs"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="p-3 bg-neutral-50 rounded-lg text-xs text-[#737373] flex items-center gap-2 border">
-                                            <HugeiconsIcon icon={InfoIcon} className="w-4 h-4 text-primary shrink-0" />
-                                            <span>
-                                                The AI will politely say: <em>"Let me connect you with our specialist right away"</em> and initiate the transfer.
-                                            </span>
-                                        </div>
-                                    </CardContent>
-                                )}
-                            </Card>
-
-                            {/* Card 5: Messaging & Alerts */}
-                            <Card className="border-border shadow-sm">
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-base flex items-center gap-2">
-                                        <HugeiconsIcon icon={MessageSquareIcon} className="w-4 h-4 text-primary" />
-                                        Step 6: Instant Lead Alerts & Messaging Channels
-                                    </CardTitle>
-                                    <CardDescription className="text-xs">
-                                        Receive real-time notifications on your phone or CRM whenever a call completes.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4 pt-1">
-                                    {/* SMS / WhatsApp */}
-                                    <div className="p-3.5 rounded-xl border border-border bg-card space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-7 h-7 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                                                    <HugeiconsIcon icon={MessageSquareIcon} className="w-3.5 h-3.5" />
-                                                </div>
-                                                <div>
-                                                    <div className="text-xs font-semibold">SMS / WhatsApp Lead Alert</div>
-                                                    <div className="text-[11px] text-[#737373]">Send caller details directly to your mobile</div>
-                                                </div>
-                                            </div>
-                                            <Switch
-                                                checked={smsAlertEnabled}
-                                                onCheckedChange={setSmsAlertEnabled}
-                                            />
-                                        </div>
-                                        {smsAlertEnabled && (
-                                            <div className="pt-2">
-                                                <Input
-                                                    value={alertMobile}
-                                                    onChange={(e) => setAlertMobile(e.target.value)}
-                                                    placeholder="+91 98765 43210"
-                                                    className="text-xs font-mono h-8"
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Email Alert */}
-                                    <div className="p-3.5 rounded-xl border border-border bg-card space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-7 h-7 rounded-md bg-blue-100 text-blue-700 flex items-center justify-center">
-                                                    <HugeiconsIcon icon={Mail01Icon} className="w-3.5 h-3.5" />
-                                                </div>
-                                                <div>
-                                                    <div className="text-xs font-semibold">Email Summary Alert</div>
-                                                    <div className="text-[11px] text-[#737373]">Receive full transcript & captured data in your inbox</div>
-                                                </div>
-                                            </div>
-                                            <Switch
-                                                checked={emailAlertEnabled}
-                                                onCheckedChange={setEmailAlertEnabled}
-                                            />
-                                        </div>
-                                        {emailAlertEnabled && (
-                                            <div className="pt-2">
-                                                <Input
-                                                    value={alertEmail}
-                                                    onChange={(e) => setAlertEmail(e.target.value)}
-                                                    placeholder="owner@yourbusiness.com"
-                                                    className="text-xs h-8"
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Webhook */}
-                                    <div className="p-3.5 rounded-xl border border-border bg-card space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-7 h-7 rounded-md bg-purple-100 text-purple-700 flex items-center justify-center">
-                                                    <HugeiconsIcon icon={WorkflowIcon} className="w-3.5 h-3.5" />
-                                                </div>
-                                                <div>
-                                                    <div className="text-xs font-semibold">CRM / Zapier Webhook (Optional)</div>
-                                                    <div className="text-[11px] text-[#737373]">Auto-sync captured leads into HubSpot, Zoho, or Google Sheets</div>
-                                                </div>
-                                            </div>
-                                            <Switch
-                                                checked={webhookEnabled}
-                                                onCheckedChange={setWebhookEnabled}
-                                            />
-                                        </div>
-                                        {webhookEnabled && (
-                                            <div className="pt-2">
-                                                <Input
-                                                    value={webhookUrl}
-                                                    onChange={(e) => setWebhookUrl(e.target.value)}
-                                                    placeholder="https://hooks.zapier.com/hooks/catch/..."
-                                                    className="text-xs font-mono h-8"
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Card 6: Language & Speaking Tone */}
-                            <Card className="border-border shadow-sm">
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-base flex items-center gap-2">
-                                        <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-primary" />
-                                        Step 7: Voice Personality & Language
-                                    </CardTitle>
-                                    <CardDescription className="text-xs">
-                                        Select the spoken language and conversational manner of your voice agent.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4 pt-1">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="space-y-1.5">
-                                            <Label className="text-xs font-semibold">Primary Language</Label>
-                                            <Select value={bizLanguage} onValueChange={setBizLanguage}>
-                                                <SelectTrigger className="text-xs">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="English / Hinglish Mix">English / Hinglish Mix (Recommended)</SelectItem>
-                                                    <SelectItem value="English">English</SelectItem>
-                                                    <SelectItem value="Hindi">Hindi</SelectItem>
-                                                    <SelectItem value="Spanish">Spanish</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <Label className="text-xs font-semibold">Speaking Demeanor</Label>
-                                            <Select value={bizTone} onValueChange={setBizTone}>
-                                                <SelectTrigger className="text-xs">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="Warm, Polite & Empathetic">Warm, Polite & Empathetic</SelectItem>
-                                                    <SelectItem value="Professional & Formal">Professional & Formal</SelectItem>
-                                                    <SelectItem value="Energetic & Sales-Oriented">Energetic & Sales-Oriented</SelectItem>
-                                                    <SelectItem value="Casual & Friendly">Casual & Friendly</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-
-                        {/* Right Sticky Preview & Launch Column (4 cols) */}
-                        <div className="lg:col-span-4 sticky top-20 space-y-4">
-                            <Card className="shadow-lg border-border overflow-hidden">
-                                <div className="bg-gradient-to-br from-neutral-900 via-neutral-900 to-neutral-800 p-5 text-white">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                            Ready to Launch
-                                        </span>
-                                        <span className="text-[11px] text-neutral-400 font-mono">
-                                            Sub-500ms Voice
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-2xl bg-white/10 text-white flex items-center justify-center font-bold text-xl border border-white/10 shrink-0">
-                                            {bizAgentName.charAt(0) || 'A'}
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold text-base leading-tight">
-                                                {bizAgentName || 'AI Assistant'}
-                                            </h3>
-                                            <p className="text-xs text-neutral-300">
-                                                {bizName || 'Your Business'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <CardContent className="p-5 space-y-4">
-                                    <div className="space-y-2 text-xs">
-                                        <div className="flex items-center justify-between py-1.5 border-b border-[#E5E5E5]">
-                                            <span className="text-[#737373]">Call Type:</span>
-                                            <span className="font-semibold capitalize text-foreground">
-                                                {bizCallType === 'inbound' ? '📞 Inbound Receptionist' : '📤 Outbound Representative'}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center justify-between py-1.5 border-b border-[#E5E5E5]">
-                                            <span className="text-[#737373]">Language:</span>
-                                            <span className="font-semibold text-foreground">{bizLanguage}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between py-1.5 border-b border-[#E5E5E5]">
-                                            <span className="text-[#737373]">Live Forwarding:</span>
-                                            <span className={`font-semibold ${forwardingEnabled ? 'text-emerald-700' : 'text-[#737373]'}`}>
-                                                {forwardingEnabled ? forwardingPhone || 'Active' : 'Disabled'}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center justify-between py-1.5 border-b border-[#E5E5E5]">
-                                            <span className="text-[#737373]">Instant Alerts:</span>
-                                            <div className="flex gap-1">
-                                                {smsAlertEnabled && <Badge variant="secondary" className="text-[10px] px-1.5 py-0">SMS</Badge>}
-                                                {emailAlertEnabled && <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Email</Badge>}
-                                                {webhookEnabled && <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Webhook</Badge>}
-                                                {!smsAlertEnabled && !emailAlertEnabled && !webhookEnabled && (
-                                                    <span className="text-[#737373]">None</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="py-1.5">
-                                            <div className="text-[#737373] mb-1.5">Lead Data Captured ({bizExtractionFields.length}):</div>
-                                            <div className="flex flex-wrap gap-1">
-                                                {bizExtractionFields.slice(0, 5).map((f) => (
-                                                    <span key={f} className="text-[10px] bg-neutral-100 text-neutral-700 px-1.5 py-0.5 rounded">
-                                                        {f}
-                                                    </span>
-                                                ))}
-                                                {bizExtractionFields.length > 5 && (
-                                                    <span className="text-[10px] text-[#737373] self-center">
-                                                        +{bizExtractionFields.length - 5} more
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {bizError && (
-                                        <div className="p-3 bg-red-50 text-red-700 text-xs rounded-xl border border-red-200">
-                                            {bizError}
-                                        </div>
-                                    )}
-
-                                    <Button
-                                        onClick={handleBusinessSubmit}
-                                        disabled={isLoading}
-                                        className="w-full py-6 text-sm font-semibold gap-2 shadow-lg bg-neutral-950 hover:bg-neutral-800 text-white"
-                                    >
-                                        {isLoading ? (
-                                            <>
-                                                <HugeiconsIcon icon={RefreshCwIcon} className="w-4 h-4 animate-spin" />
-                                                Setting up Agent & Telephony...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <HugeiconsIcon icon={SparklesIcon} className="w-4 h-4" />
-                                                Launch Agent & Test Voice Call
-                                                <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-1" />
-                                            </>
-                                        )}
-                                    </Button>
-
-                                    <p className="text-[11px] text-[#737373] text-center">
-                                        Once created, you can test speaking with your agent via your microphone or phone!
-                                    </p>
-                                </CardContent>
-                            </Card>
-
-                            {/* Advanced Developer Callout */}
-                            <div className="p-4 rounded-xl border border-neutral-200 bg-neutral-50/70 text-xs text-[#737373] space-y-1.5">
-                                <div className="font-semibold text-neutral-900 flex items-center gap-1.5">
-                                    <HugeiconsIcon icon={Layers01Icon} className="w-3.5 h-3.5 text-primary" />
-                                    <span>Need developer tools?</span>
-                                </div>
-                                <p className="leading-relaxed">
-                                    Switch to <strong>Studio Form</strong> or <strong>AI Copilot</strong> in the top header anytime to customize raw prompts, tool calls, and node graphs.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ) : builderMode === 'classic' ? (
-                <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-                    {/* Header Banner */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#E5E5E5]">
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="text-xs bg-[#F0F3F9] text-[#7186AD] border-[#DCE3EF]">
-                                    ● Agent Builder Studio
-                                </Badge>
-                                <span className="text-xs text-[#737373]">Fast Visual Configuration</span>
-                            </div>
-                            <h2 className="text-2xl font-bold tracking-tight text-foreground mt-1">
-                                Design Your Voice AI Representative
-                            </h2>
-                            <p className="text-sm text-[#737373] mt-0.5">
-                                Select an industry template or customize your conversational instructions below.
+                                Select a pre-tuned starter template, customize persona & instructions below, or import an existing workflow JSON.
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <WorkflowTemplateSheet buttonSize="default" className="hidden sm:flex" />
+                        <div className="flex items-center gap-2.5">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="gap-2 text-xs font-medium border-border hover:bg-accent"
+                            >
+                                <Upload className="w-3.5 h-3.5 text-primary" />
+                                Import Workflow JSON
+                            </Button>
+                            <WorkflowTemplateSheet buttonSize="sm" />
                         </div>
                     </div>
 
@@ -1441,10 +706,10 @@ export default function CreateWorkflowPage() {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                                 <HugeiconsIcon icon={SparklesIcon} className="w-4 h-4 text-primary" />
-                                <span>Industry Starter Templates (1-Click Setup)</span>
+                                <span>Starter Templates (1-Click Setup)</span>
                             </div>
                             <span className="text-xs text-[#737373]">
-                                Click to instantly pre-fill all settings
+                                Click any card to auto-fill persona, voice tone, and system prompt
                             </span>
                         </div>
 
@@ -1456,11 +721,10 @@ export default function CreateWorkflowPage() {
                                         key={tmpl.id}
                                         type="button"
                                         onClick={() => handleSelectStarter(tmpl)}
-                                        className={`group text-left p-3.5 rounded-2xl border transition-all duration-200 flex flex-col justify-between space-y-3 ${
-                                            isSelected
-                                                ? 'bg-primary/5 border-primary ring-2 ring-primary/20 shadow-sm'
-                                                : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#DCE3EF] hover:bg-[#F7F7F7]/60 shadow-xs'
-                                        }`}
+                                        className={`group text-left p-3.5 rounded-2xl border transition-all duration-200 flex flex-col justify-between space-y-3 ${isSelected
+                                            ? 'bg-primary/5 border-primary ring-2 ring-primary/20 shadow-sm'
+                                            : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#DCE3EF] hover:bg-[#F7F7F7]/60 shadow-xs'
+                                            }`}
                                     >
                                         <div className="flex items-start justify-between gap-2">
                                             <span className="text-2xl p-1.5 rounded-xl bg-[#F7F7F7] group-hover:scale-105 transition-transform">
@@ -1468,11 +732,10 @@ export default function CreateWorkflowPage() {
                                             </span>
                                             <Badge
                                                 variant="outline"
-                                                className={`text-[10px] uppercase font-bold py-0 ${
-                                                    tmpl.callType === 'inbound'
-                                                        ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                                        : 'bg-amber-50 text-amber-700 border-amber-200'
-                                                }`}
+                                                className={`text-[10px] uppercase font-bold py-0 ${tmpl.callType === 'inbound'
+                                                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                                    : 'bg-amber-50 text-amber-700 border-amber-200'
+                                                    }`}
                                             >
                                                 {tmpl.badge}
                                             </Badge>
@@ -1509,8 +772,8 @@ export default function CreateWorkflowPage() {
                                             Agent Persona & Parameters
                                         </CardTitle>
                                         {selectedStarterId && (
-                                            <Badge variant="secondary" className="text-xs gap-1 font-medium">
-                                                Template Loaded
+                                            <Badge variant="secondary" className="text-xs gap-1 font-medium bg-primary/10 text-primary border-primary/20">
+                                                ✓ Template Loaded
                                             </Badge>
                                         )}
                                     </div>
@@ -1529,11 +792,10 @@ export default function CreateWorkflowPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setClassicCallType('inbound')}
-                                                className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all ${
-                                                    classicCallType === 'inbound'
-                                                        ? 'bg-blue-50/50 border-blue-500/50 ring-2 ring-blue-500/20 text-foreground'
-                                                        : 'bg-[#F7F7F7]/50 border-[#E5E5E5] text-[#737373] hover:text-foreground'
-                                                }`}
+                                                className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all ${classicCallType === 'inbound'
+                                                    ? 'bg-blue-50/50 border-blue-500/50 ring-2 ring-blue-500/20 text-foreground'
+                                                    : 'bg-[#F7F7F7]/50 border-[#E5E5E5] text-[#737373] hover:text-foreground'
+                                                    }`}
                                             >
                                                 <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600 mt-0.5">
                                                     <HugeiconsIcon icon={PhoneIncomingIcon} className="w-4 h-4" />
@@ -1547,11 +809,10 @@ export default function CreateWorkflowPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setClassicCallType('outbound')}
-                                                className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all ${
-                                                    classicCallType === 'outbound'
-                                                        ? 'bg-amber-50/50 border-amber-500/50 ring-2 ring-amber-500/20 text-foreground'
-                                                        : 'bg-[#F7F7F7]/50 border-[#E5E5E5] text-[#737373] hover:text-foreground'
-                                                }`}
+                                                className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all ${classicCallType === 'outbound'
+                                                    ? 'bg-amber-50/50 border-amber-500/50 ring-2 ring-amber-500/20 text-foreground'
+                                                    : 'bg-[#F7F7F7]/50 border-[#E5E5E5] text-[#737373] hover:text-foreground'
+                                                    }`}
                                             >
                                                 <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 mt-0.5">
                                                     <HugeiconsIcon icon={PhoneOutgoingIcon} className="w-4 h-4" />
@@ -1571,7 +832,7 @@ export default function CreateWorkflowPage() {
                                         </Label>
                                         <Input
                                             id="use-case"
-                                            placeholder="e.g. Apex Clinic Receptionist, Real Estate Qualifier"
+                                            placeholder="e.g. Apex Health Clinic Receptionist, Real Estate Qualifier"
                                             value={classicUseCase}
                                             onChange={(e) => setClassicUseCase(e.target.value)}
                                             className="text-sm font-medium"
@@ -1617,7 +878,7 @@ export default function CreateWorkflowPage() {
                                     </div>
 
                                     {/* Activity Description / System Prompt */}
-                                    <div className="space-y-1.5">
+                                    <div className="space-y-2">
                                         <div className="flex items-center justify-between">
                                             <Label htmlFor="activity-description" className="text-xs font-semibold text-foreground uppercase tracking-wider">
                                                 Conversational Instructions & System Prompt
@@ -1626,6 +887,40 @@ export default function CreateWorkflowPage() {
                                                 {classicActivityDescription.length > 0 && `${classicActivityDescription.length} characters`}
                                             </span>
                                         </div>
+
+                                        {/* Quick Prompt Insertion Chips */}
+                                        <div className="flex flex-wrap items-center gap-1.5 pb-1">
+                                            <span className="text-[11px] text-muted-foreground mr-1 font-medium">Quick Insert:</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleInsertPromptChip('[Required Information to Collect]:\n1. Full Name\n2. Phone Number & Email\n3. Preferred callback / meeting time')}
+                                                className="text-[11px] px-2 py-0.5 rounded-md border border-border bg-muted/60 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all font-medium text-foreground/80"
+                                            >
+                                                + Contact Info
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleInsertPromptChip('[Appointment Booking Rules]:\n- Always check availability via booking tools before proposing time slots.\n- Confirm the customer details.\n- Never claim appointment is confirmed until the tool succeeds.')}
+                                                className="text-[11px] px-2 py-0.5 rounded-md border border-border bg-muted/60 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all font-medium text-foreground/80"
+                                            >
+                                                + Appointment Tools
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleInsertPromptChip('[Objection Handling]:\n- If busy, ask for a convenient 2-minute callback window.\n- If price is questioned, highlight value proposition concisely.\n- Remain polite and never argue.')}
+                                                className="text-[11px] px-2 py-0.5 rounded-md border border-border bg-muted/60 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all font-medium text-foreground/80"
+                                            >
+                                                + Objections
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleInsertPromptChip('[Human Escalation]:\n- If the caller asks to speak to a human representative or specialist, politely state: "Let me connect you right away. Please hold on." and trigger the transfer tool.')}
+                                                className="text-[11px] px-2 py-0.5 rounded-md border border-border bg-muted/60 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all font-medium text-foreground/80"
+                                            >
+                                                + Human Transfer
+                                            </button>
+                                        </div>
+
                                         <Textarea
                                             id="activity-description"
                                             placeholder="Describe what the agent should say, rules, questions to ask the caller, and how to handle objections..."
@@ -1668,127 +963,129 @@ export default function CreateWorkflowPage() {
                             </Card>
                         </div>
 
-                        {/* Right Column: Live Pipeline Architecture Preview (5 cols) */}
-                        <div className="lg:col-span-5 space-y-6">
-                            {/* Pipeline Visualizer Card */}
-                            <Card className="shadow-md border-[#E5E5E5] bg-[#FFFFFF]">
+                        {/* Right Column: Import Dropzone + Live Blueprint + Pro Tips (5 cols) */}
+                        <div className="lg:col-span-5 space-y-5">
+                            {/* Card 1: Import Workflow JSON Dropzone */}
+                            <Card className="border-2 border-dashed border-[#E5E5E5] hover:border-primary/40 transition-colors bg-gradient-to-b from-card to-muted/20 shadow-sm">
+                                <CardContent className="p-6 text-center space-y-3">
+                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary mx-auto flex items-center justify-center">
+                                        <Upload className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-sm text-foreground">
+                                            Import Existing Workflow JSON
+                                        </h3>
+                                        <p className="text-xs text-muted-foreground mt-1 max-w-xs mx-auto leading-relaxed">
+                                            Have an existing agent backup or exported JSON? Upload it to restore the full visual canvas graph in 1 click.
+                                        </p>
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="gap-2 text-xs font-semibold shadow-xs"
+                                    >
+                                        <FileJson className="w-4 h-4 text-primary" />
+                                        Choose Workflow JSON
+                                    </Button>
+                                    <div className="text-[10px] text-muted-foreground pt-1">
+                                        Supports Studio canvas exports & Dograh Agent definitions
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* Card 2: Live Blueprint Card */}
+                            <Card className="border-[#E5E5E5] bg-card shadow-sm">
                                 <CardHeader className="pb-3">
-                                    <CardTitle className="text-base flex items-center gap-2">
-                                        <HugeiconsIcon icon={WorkflowIcon} className="w-4 h-4 text-primary" />
-                                        Generated Architecture Pipeline
-                                    </CardTitle>
-                                    <CardDescription>
-                                        How your inputs will be mapped to the live multi-node workflow engine.
-                                    </CardDescription>
+                                    <div className="flex items-center justify-between">
+                                        <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                            Live Architecture Blueprint
+                                        </CardTitle>
+                                        <Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-700 border-emerald-200">
+                                            ● Draft Active
+                                        </Badge>
+                                    </div>
                                 </CardHeader>
-
-                                <CardContent className="space-y-4">
-                                    {/* Step 1: Telephony Ingestion */}
-                                    <div className="p-3 rounded-xl bg-[#F7F7F7] border border-[#E5E5E5] space-y-1">
-                                        <div className="flex items-center justify-between text-xs font-semibold text-foreground">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-5 h-5 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center text-[10px] font-bold">
-                                                    1
-                                                </div>
-                                                <span>Telephony & Audio Layer</span>
-                                            </div>
-                                            <Badge variant="outline" className="text-[10px] capitalize">
-                                                {classicCallType}
+                                <CardContent className="space-y-3.5 text-xs">
+                                    <div className="p-3 rounded-xl bg-muted/40 border border-border/60 space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-muted-foreground font-medium">Agent Name:</span>
+                                            <span className="font-semibold text-foreground text-right truncate max-w-[180px]">
+                                                {classicUseCase || 'Unnamed Voice Agent'}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-muted-foreground font-medium">Direction:</span>
+                                            <Badge
+                                                variant="outline"
+                                                className={`text-[10px] uppercase font-bold py-0 ${classicCallType === 'inbound'
+                                                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                                    : 'bg-amber-50 text-amber-700 border-amber-200'
+                                                    }`}
+                                            >
+                                                {classicCallType === 'inbound' ? 'Inbound Calling' : 'Outbound Dialing'}
                                             </Badge>
                                         </div>
-                                        <p className="text-[11px] text-[#737373] pl-7">
-                                            LiveKit WebRTC audio session + Twilio PSTN SIP trunking with dual-channel stream.
-                                        </p>
-                                    </div>
-
-                                    {/* Step 2: Conversational Agent Brain */}
-                                    <div className="p-3 rounded-xl bg-primary/5 border border-primary/20 space-y-1">
-                                        <div className="flex items-center justify-between text-xs font-semibold text-foreground">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">
-                                                    2
-                                                </div>
-                                                <span>Agent Brain Node</span>
-                                            </div>
-                                            <Badge variant="secondary" className="text-[10px]">
-                                                {classicLanguage}
-                                            </Badge>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-muted-foreground font-medium">Voice Persona:</span>
+                                            <span className="font-medium text-foreground">{classicTone}</span>
                                         </div>
-                                        <div className="text-[11px] text-foreground/80 pl-7 space-y-0.5">
-                                            <div><strong>Name:</strong> {classicUseCase || 'Unnamed Agent'}</div>
-                                            <div><strong>Tone:</strong> {classicTone}</div>
-                                            <div><strong>Engine:</strong> Deepgram Nova-2 + Cartesia Sonic + LLaMA 3.3 / GPT-4o</div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-muted-foreground font-medium">Language:</span>
+                                            <span className="font-medium text-foreground">{classicLanguage}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-muted-foreground font-medium">System Prompt:</span>
+                                            <span className={classicActivityDescription ? 'text-emerald-600 font-medium' : 'text-amber-600 font-medium'}>
+                                                {classicActivityDescription ? `✓ ${classicActivityDescription.length} chars ready` : 'Pending input'}
+                                            </span>
                                         </div>
                                     </div>
 
-                                    {/* Step 3: Information Extraction / QA */}
-                                    <div className="p-3 rounded-xl bg-[#F7F7F7] border border-[#E5E5E5] space-y-1">
-                                        <div className="flex items-center justify-between text-xs font-semibold text-foreground">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-5 h-5 rounded-full bg-[#7186AD]/10 text-[#7186AD] flex items-center justify-center text-[10px] font-bold">
-                                                    3
-                                                </div>
-                                                <span>Structured Data Extraction</span>
+                                    {/* Visual Canvas Node Path */}
+                                    <div className="space-y-1.5 pt-1">
+                                        <span className="text-[11px] font-semibold text-foreground">Canvas Pipeline Preview:</span>
+                                        <div className="p-2.5 rounded-xl border bg-background space-y-2">
+                                            <div className="flex items-center gap-2 text-[11px]">
+                                                <div className="w-5 h-5 rounded-md bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold text-[10px]">1</div>
+                                                <span className="font-medium">Call Trigger Node</span>
+                                                <span className="text-[10px] text-muted-foreground ml-auto">{classicCallType === 'inbound' ? 'Inbound Webhook/DID' : 'Outbound Batch Dial'}</span>
                                             </div>
-                                            <span className="text-[10px] text-[#7186AD] font-medium">Automatic</span>
-                                        </div>
-                                        <p className="text-[11px] text-[#737373] pl-7">
-                                            Extracts caller intent, appointment times, phone/email, and qualification criteria.
-                                        </p>
-                                    </div>
-
-                                    {/* Step 4: Outcome & Termination */}
-                                    <div className="p-3 rounded-xl bg-[#F7F7F7] border border-[#E5E5E5] space-y-1">
-                                        <div className="flex items-center justify-between text-xs font-semibold text-foreground">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-5 h-5 rounded-full bg-neutral-200 text-neutral-700 flex items-center justify-center text-[10px] font-bold">
-                                                    4
-                                                </div>
-                                                <span>End of Call / Webhook Sync</span>
+                                            <div className="w-0.5 h-2 bg-border ml-2.5" />
+                                            <div className="flex items-center gap-2 text-[11px]">
+                                                <div className="w-5 h-5 rounded-md bg-purple-500/10 text-purple-600 flex items-center justify-center font-bold text-[10px]">2</div>
+                                                <span className="font-medium">Voice AI Speech Node</span>
+                                                <span className="text-[10px] text-muted-foreground ml-auto">LLM + TTS + STT</span>
                                             </div>
-                                            <span className="text-[10px] text-[#737373]">Live Logging</span>
-                                        </div>
-                                        <p className="text-[11px] text-[#737373] pl-7">
-                                            Saves recording, full conversational transcript, and dispatches webhook triggers.
-                                        </p>
-                                    </div>
-
-                                    {/* Platform Features Checklist */}
-                                    <div className="pt-3 border-t border-[#E5E5E5] space-y-2">
-                                        <div className="text-xs font-semibold text-foreground">
-                                            Built-in Enterprise Capabilities:
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-2 text-[11px] text-[#737373]">
-                                            <div className="flex items-center gap-1.5">
-                                                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-[#7186AD]" />
-                                                <span>Sub-500ms Voice</span>
+                                            <div className="w-0.5 h-2 bg-border ml-2.5" />
+                                            <div className="flex items-center gap-2 text-[11px]">
+                                                <div className="w-5 h-5 rounded-md bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-[10px]">3</div>
+                                                <span className="font-medium">Tool Calls & Actions</span>
+                                                <span className="text-[10px] text-muted-foreground ml-auto">Appointments / Transfer</span>
                                             </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-[#7186AD]" />
-                                                <span>Smart Interruption</span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-[#7186AD]" />
-                                                <span>Audio Recordings</span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-[#7186AD]" />
-                                                <span>Full Canvas Edit</span>
+                                            <div className="w-0.5 h-2 bg-border ml-2.5" />
+                                            <div className="flex items-center gap-2 text-[11px]">
+                                                <div className="w-5 h-5 rounded-md bg-neutral-500/10 text-neutral-600 flex items-center justify-center font-bold text-[10px]">4</div>
+                                                <span className="font-medium">Call Disposition & End</span>
+                                                <span className="text-[10px] text-muted-foreground ml-auto">Summary & Post-call</span>
                                             </div>
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            {/* Canvas Visual Guidance Card */}
-                            <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50/50 to-purple-50/30 border border-indigo-100 space-y-2">
-                                <div className="flex items-center gap-2 text-xs font-bold text-indigo-950">
-                                    <HugeiconsIcon icon={InfoIcon} className="w-4 h-4 text-indigo-600" />
-                                    <span>Visual Canvas Editing</span>
+                            {/* Card 3: Voice Best Practices Tips */}
+                            <div className="p-4 rounded-xl border border-neutral-200 bg-neutral-50/70 text-xs text-[#737373] space-y-2">
+                                <div className="font-semibold text-neutral-900 flex items-center gap-1.5">
+                                    <HugeiconsIcon icon={SparklesIcon} className="w-3.5 h-3.5 text-primary" />
+                                    <span>Voice Agent Best Practices</span>
                                 </div>
-                                <p className="text-xs text-indigo-900/80 leading-relaxed">
-                                    After generating, you can drag and drop custom <strong>Webhook nodes</strong>, <strong>Call Forwarding</strong>, and <strong>Tool calls</strong> directly onto the visual canvas!
-                                </p>
+                                <ul className="space-y-1.5 text-[11px] leading-relaxed list-disc list-inside">
+                                    <li><strong>Keep turns short:</strong> 1–2 sentences per turn maintain a natural, rapid conversational rhythm.</li>
+                                    <li><strong>Confirm key items:</strong> Always repeat collected numbers, dates, or emails before saving.</li>
+                                    <li><strong>Provide an exit:</strong> Include instructions to gracefully transfer to a human if asked.</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -1803,9 +1100,8 @@ export default function CreateWorkflowPage() {
                             {messages.map((msg, idx) => (
                                 <div
                                     key={idx}
-                                    className={`flex gap-3.5 ${
-                                        msg.role === 'user' ? 'justify-end' : 'justify-start'
-                                    }`}
+                                    className={`flex gap-3.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'
+                                        }`}
                                 >
                                     {msg.role === 'assistant' && (
                                         <div className="w-8 h-8 rounded-full bg-neutral-950 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
@@ -1814,11 +1110,10 @@ export default function CreateWorkflowPage() {
                                     )}
 
                                     <div
-                                        className={`max-w-[85%] space-y-3 ${
-                                            msg.role === 'user'
-                                                ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm'
-                                                : 'bg-[#FFFFFF] border text-card-foreground rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm'
-                                        }`}
+                                        className={`max-w-[85%] space-y-3 ${msg.role === 'user'
+                                            ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm'
+                                            : 'bg-[#FFFFFF] border text-card-foreground rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm'
+                                            }`}
                                     >
                                         <div className="text-sm leading-relaxed whitespace-pre-wrap">
                                             {msg.content}
@@ -1902,203 +1197,153 @@ export default function CreateWorkflowPage() {
                                     </Button>
                                 </div>
                             </form>
-                            <p className="text-[11px] text-[#737373] mt-2 px-1 text-center">
-                                Tip: You can reply in Hindi, Hinglish, or English. Copilot will design the agent accordingly.
-                            </p>
                         </div>
                     </div>
 
-                    {/* Right Pane: Live Agent Blueprint (Artifacts Card) */}
-                    <div className="lg:col-span-6 xl:col-span-5 flex flex-col h-full bg-[#F7F7F7] overflow-y-auto p-4 lg:p-6 space-y-5">
-                        {/* Blueprint Card Header */}
-                        <div className="flex items-center justify-between pb-3 border-b">
-                            <div>
-                                <h2 className="text-base font-semibold flex items-center gap-2">
+                    {/* Right Pane: Live Agent Blueprint & Instant Test Call */}
+                    <div className="lg:col-span-6 xl:col-span-5 flex flex-col h-full bg-[#FFFFFF] overflow-y-auto p-4 lg:p-6 space-y-6">
+                        <div>
+                            <div className="flex items-center justify-between mb-1">
+                                <h3 className="font-bold text-sm tracking-tight text-foreground flex items-center gap-2">
                                     <HugeiconsIcon icon={WorkflowIcon} className="w-4 h-4 text-primary" />
-                                    Live Agent Blueprint
-                                </h2>
-                                <p className="text-xs text-[#737373]">
-                                    Updates in real-time as you chat with the Copilot
-                                </p>
-                            </div>
-
-                            {workflowDraft ? (
+                                    Live Blueprint Preview
+                                </h3>
                                 <Badge
                                     variant="outline"
-                                    className={`text-xs gap-1.5 py-1 px-2.5 ${
-                                        isReadyToTest
-                                            ? 'bg-[#F0F3F9] text-[#7186AD] border-[#DCE3EF] font-semibold'
-                                            : 'bg-[#E5E5E5]/10 text-amber-600 border-amber-500/30'
-                                    }`}
-                                >
-                                    <span
-                                        className={`w-2 h-2 rounded-full ${
-                                            isReadyToTest
-                                                ? 'bg-[#171717] animate-pulse'
-                                                : 'bg-[#E5E5E5]'
+                                    className={`text-[10px] uppercase font-bold py-0.5 ${workflowDraft
+                                        ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'
+                                        : 'bg-[#F7F7F7] text-[#737373]'
                                         }`}
-                                    />
-                                    {isReadyToTest ? 'Ready to Deploy' : 'Drafting...'}
+                                >
+                                    {workflowDraft ? 'Architect Sync Active' : 'Waiting for details'}
                                 </Badge>
-                            ) : (
-                                <Badge variant="secondary" className="text-xs">
-                                    Waiting for input
-                                </Badge>
-                            )}
+                            </div>
+                            <p className="text-xs text-[#737373]">
+                                As you chat with Copilot on the left, your voice workflow blueprint automatically evolves in real time.
+                            </p>
                         </div>
 
-                        {/* Blueprint Body */}
                         {workflowDraft ? (
-                            <div className="space-y-4">
-                                {/* Agent Identity Box */}
-                                <Card className="border-[#E5E5E5] shadow-sm bg-[#FFFFFF]">
-                                    <CardContent className="p-4 space-y-3">
+                            <div className="space-y-5">
+                                {/* Agent Identity Summary Card */}
+                                <Card className="border-[#E5E5E5] shadow-xs">
+                                    <CardHeader className="pb-3">
                                         <div className="flex items-start justify-between">
                                             <div>
-                                                <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold">
-                                                    Agent Name
-                                                </span>
-                                                <h3 className="text-lg font-bold text-foreground">
-                                                    {workflowDraft.name}
-                                                </h3>
+                                                <CardTitle className="text-base font-bold">
+                                                    {workflowDraft.name || 'AI Voice Agent'}
+                                                </CardTitle>
+                                                <CardDescription className="text-xs mt-0.5">
+                                                    Direction:{' '}
+                                                    <span className="capitalize font-semibold text-foreground">
+                                                        {workflowDraft.call_type} Call
+                                                    </span>{' '}
+                                                    • Language: {workflowDraft.language || 'English / Hindi'}
+                                                </CardDescription>
                                             </div>
-                                            <div className="flex gap-1.5">
-                                                <Badge
-                                                    variant="secondary"
-                                                    className="gap-1 capitalize text-xs"
-                                                >
-                                                    {workflowDraft.call_type === 'inbound' ? (
-                                                        <HugeiconsIcon icon={PhoneIncomingIcon} className="w-3 h-3 text-[#7186AD]" />
-                                                    ) : (
-                                                        <HugeiconsIcon icon={PhoneOutgoingIcon} className="w-3 h-3 text-amber-500" />
-                                                    )}
-                                                    {workflowDraft.call_type}
-                                                </Badge>
-                                                <Badge variant="outline" className="text-xs uppercase">
-                                                    {workflowDraft.language || 'EN'}
-                                                </Badge>
-                                            </div>
+                                            <Badge
+                                                variant="secondary"
+                                                className="text-xs font-semibold capitalize"
+                                            >
+                                                {workflowDraft.call_type}
+                                            </Badge>
                                         </div>
-
-                                        {/* Opening Line / First Message */}
-                                        <div className="space-y-1.5 pt-2 border-t">
-                                            <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold flex items-center gap-1">
-                                                <HugeiconsIcon icon={MessageSquareIcon} className="w-3 h-3" />
-                                                Opening Greeting (Spoken First)
+                                    </CardHeader>
+                                    <CardContent className="space-y-4 text-xs">
+                                        {/* Opening Line */}
+                                        <div className="space-y-1">
+                                            <span className="font-semibold text-foreground uppercase tracking-wider text-[10px]">
+                                                First Spoken Sentence (Greeting)
                                             </span>
-                                            <div className="p-3 bg-[#F7F7F7] rounded-lg text-sm border font-normal italic text-foreground/90 leading-relaxed">
-                                                &ldquo;{workflowDraft.first_message}&rdquo;
+                                            <div className="p-3 bg-[#F7F7F7] rounded-xl border text-foreground/90 font-medium italic">
+                                                "{workflowDraft.first_message}"
                                             </div>
                                         </div>
-                                    </CardContent>
-                                </Card>
 
-                                {/* Questions / Extraction Checklist */}
-                                {workflowDraft.questions_to_ask &&
-                                    workflowDraft.questions_to_ask.length > 0 && (
-                                        <Card className="border-[#E5E5E5] shadow-sm bg-[#FFFFFF]">
-                                            <CardContent className="p-4 space-y-2.5">
-                                                <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold flex items-center gap-1.5">
-                                                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5 text-[#7186AD]" />
-                                                    Information to Gather
-                                                </span>
-                                                <div className="grid grid-cols-1 gap-1.5">
-                                                    {workflowDraft.questions_to_ask.map(
-                                                        (q, qIdx) => (
-                                                            <div
+                                        {/* Questions to Qualify */}
+                                        {workflowDraft.questions_to_ask &&
+                                            workflowDraft.questions_to_ask.length > 0 && (
+                                                <div className="space-y-1.5">
+                                                    <span className="font-semibold text-foreground uppercase tracking-wider text-[10px]">
+                                                        Key Qualification Criteria
+                                                    </span>
+                                                    <ul className="space-y-1">
+                                                        {workflowDraft.questions_to_ask.map((q, qIdx) => (
+                                                            <li
                                                                 key={qIdx}
-                                                                className="flex items-center gap-2 text-xs bg-[#F7F7F7] p-2 rounded-md border text-foreground/90 font-medium"
+                                                                className="flex items-start gap-2 p-2 rounded-lg bg-[#F7F7F7]/60 border text-[11px]"
                                                             >
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                                                                {q}
-                                                            </div>
-                                                        )
+                                                                <span className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 font-bold text-[9px] mt-0.5">
+                                                                    {qIdx + 1}
+                                                                </span>
+                                                                <span>{q}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                        {/* System Prompt View */}
+                                        {workflowDraft.system_prompt && (
+                                            <div className="space-y-1">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="font-semibold text-foreground uppercase tracking-wider text-[10px]">
+                                                        Compiled System Instructions
+                                                    </span>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-6 text-[10px] px-1.5 text-[#737373]"
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(
+                                                                workflowDraft.system_prompt
+                                                            );
+                                                            setCopiedPrompt(true);
+                                                            setTimeout(() => setCopiedPrompt(false), 2000);
+                                                        }}
+                                                    >
+                                                        <HugeiconsIcon
+                                                            icon={copiedPrompt ? CheckIcon : Copy01Icon}
+                                                            className="w-3 h-3 mr-1 text-primary"
+                                                        />
+                                                        {copiedPrompt ? 'Copied' : 'Copy Prompt'}
+                                                    </Button>
+                                                </div>
+                                                <div className="relative">
+                                                    <div
+                                                        className={`font-mono text-[11px] p-3 bg-[#F7F7F7] rounded-xl border text-[#737373] whitespace-pre-wrap leading-relaxed ${!showFullPrompt ? 'max-h-36 overflow-hidden' : ''
+                                                            }`}
+                                                    >
+                                                        {workflowDraft.system_prompt}
+                                                    </div>
+                                                    {!showFullPrompt && (
+                                                        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#F7F7F7] to-transparent flex items-end justify-center pb-1">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setShowFullPrompt(true)}
+                                                                className="text-[10px] text-primary font-semibold hover:underline bg-[#FFFFFF]/90 px-2.5 py-0.5 rounded-full shadow-xs border"
+                                                            >
+                                                                Show full prompt
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                    {showFullPrompt && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setShowFullPrompt(false)}
+                                                            className="text-[10px] text-primary font-semibold hover:underline mt-1 block"
+                                                        >
+                                                            Collapse prompt
+                                                        </button>
                                                     )}
                                                 </div>
-                                            </CardContent>
-                                        </Card>
-                                    )}
-
-                                {/* System Prompt Preview */}
-                                <Card className="border-[#E5E5E5] shadow-sm bg-[#FFFFFF]">
-                                    <CardContent className="p-4 space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold">
-                                                Persona & Rules (System Prompt)
-                                            </span>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    navigator.clipboard.writeText(
-                                                        workflowDraft.system_prompt
-                                                    );
-                                                    setCopiedPrompt(true);
-                                                    setTimeout(() => setCopiedPrompt(false), 2000);
-                                                }}
-                                                className="text-xs text-[#737373] hover:text-foreground flex items-center gap-1 transition-colors"
-                                            >
-                                                {copiedPrompt ? (
-                                                    <HugeiconsIcon icon={CheckIcon} className="w-3 h-3 text-[#7186AD]" />
-                                                ) : (
-                                                    <HugeiconsIcon icon={Copy01Icon} className="w-3 h-3" />
-                                                )}
-                                                {copiedPrompt ? 'Copied' : 'Copy'}
-                                            </button>
-                                        </div>
-
-                                        <div
-                                            className={`p-3 bg-[#F7F7F7] rounded-lg text-xs font-mono text-[#737373] whitespace-pre-wrap leading-relaxed border ${
-                                                !showFullPrompt ? 'max-h-36 overflow-hidden' : ''
-                                            }`}
-                                        >
-                                            {workflowDraft.system_prompt}
-                                        </div>
-
-                                        {workflowDraft.system_prompt.length > 200 && (
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowFullPrompt(!showFullPrompt)}
-                                                className="text-xs text-primary font-medium hover:underline pt-1"
-                                            >
-                                                {showFullPrompt ? 'Show Less' : 'Show Full Prompt'}
-                                            </button>
+                                            </div>
                                         )}
                                     </CardContent>
                                 </Card>
 
-                                {/* Flow Graph Visual Steps */}
-                                <Card className="border-[#E5E5E5] shadow-sm bg-[#FFFFFF]">
-                                    <CardContent className="p-4 space-y-2.5">
-                                        <span className="text-[11px] uppercase tracking-wider text-[#737373] font-semibold">
-                                            Generated Canvas Flow Nodes
-                                        </span>
-                                        <div className="flex items-center justify-between p-3 bg-[#F7F7F7] rounded-lg border text-xs font-medium">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 rounded-full bg-[#F0F3F9] text-[#7186AD] flex items-center justify-center font-bold text-[10px]">
-                                                    1
-                                                </div>
-                                                <span>Start Call</span>
-                                            </div>
-                                            <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5 text-[#737373]" />
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 rounded-full bg-[#F0F3F9] text-[#7186AD] flex items-center justify-center font-bold text-[10px]">
-                                                    2
-                                                </div>
-                                                <span>Agent ({workflowDraft.name})</span>
-                                            </div>
-                                            <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5 text-[#737373]" />
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 rounded-full bg-[#F0F3F9] text-[#7186AD] flex items-center justify-center font-bold text-[10px]">
-                                                    3
-                                                </div>
-                                                <span>End Call</span>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-
-                                {/* Action Buttons */}
-                                <div className="pt-2">
+                                {/* Action Button */}
+                                <div>
                                     <Button
                                         onClick={handleOpenInStudio}
                                         disabled={isSaving}
@@ -2165,6 +1410,87 @@ export default function CreateWorkflowPage() {
                     </div>
                 </div>
             )}
+
+            {/* Import Workflow JSON Confirmation Dialog Modal */}
+            <Dialog open={importModalOpen} onOpenChange={setImportModalOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Upload className="w-5 h-5 text-primary" />
+                            Import Workflow JSON
+                        </DialogTitle>
+                        <DialogDescription>
+                            Review the detected workflow structure below and confirm to import it into your workspace.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {importStats && (
+                        <div className="space-y-4 py-2">
+                            {/* File Summary Card */}
+                            <div className="p-3.5 rounded-xl border bg-muted/30 space-y-2">
+                                <div className="flex items-center justify-between text-xs font-semibold">
+                                    <span className="text-muted-foreground flex items-center gap-1.5">
+                                        <FileJson className="w-4 h-4 text-primary" />
+                                        {importStats.fileName}
+                                    </span>
+                                    <span className="text-muted-foreground">{importStats.fileSizeKb} KB</span>
+                                </div>
+                                <div className="flex items-center gap-2 pt-1">
+                                    <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                                        {importStats.nodesCount} Canvas Nodes
+                                    </Badge>
+                                    <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
+                                        {importStats.edgesCount} Connections
+                                    </Badge>
+                                </div>
+                            </div>
+
+                            {/* Workflow Name Field */}
+                            <div className="space-y-1.5">
+                                <Label htmlFor="import-wf-name" className="text-xs font-semibold">
+                                    Agent / Workflow Name *
+                                </Label>
+                                <Input
+                                    id="import-wf-name"
+                                    value={importName}
+                                    onChange={(e) => setImportName(e.target.value)}
+                                    placeholder="e.g. Lead Qualification Agent"
+                                    className="text-sm font-medium"
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    <DialogFooter className="gap-2 sm:gap-0">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setImportModalOpen(false)}
+                            disabled={isImporting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            onClick={handleConfirmImport}
+                            disabled={isImporting || !importName.trim()}
+                            className="gap-2 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold"
+                        >
+                            {isImporting ? (
+                                <>
+                                    <RotateCw className="w-4 h-4 animate-spin" />
+                                    Importing Workflow...
+                                </>
+                            ) : (
+                                <>
+                                    <CheckCircle2 className="w-4 h-4" />
+                                    Confirm Import & Open Studio
+                                </>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

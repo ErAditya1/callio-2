@@ -268,9 +268,9 @@ export const WORKFLOW_TEMPLATES: WorkflowTemplate[] = [
           data: {
             name: "Opening",
             greeting_type: "text",
-            greeting: "Hi {{first_name}}, this is an AI assistant calling on behalf of our team. Do you have 2 minutes to chat?",
+            greeting: "Hi there, this is an AI assistant calling on behalf of our team. Do you have 2 minutes to chat?",
             prompt:
-              "You are calling a lead. Introduce yourself warmly. Confirm you have reached the right person. Ask if they have a moment to speak.",
+              "You are calling a lead. Introduce yourself warmly. If the lead's name is known, address them politely. If their name is not known or blank, do not say placeholders like '[Your Name]'; simply ask who you are speaking with. Ask if they have a moment to speak.",
             allow_interrupt: true,
             add_global_prompt: true,
             is_start: true,
@@ -285,7 +285,7 @@ export const WORKFLOW_TEMPLATES: WorkflowTemplate[] = [
           data: {
             name: "Qualify",
             prompt:
-              "Qualify the lead using BANT criteria. Ask naturally — do not fire all questions at once. Cover: what problem they are trying to solve, their budget range, when they need a solution, and whether they make the buying decision. Be conversational.",
+              "Qualify the lead using BANT criteria. Ask naturally — do not fire all questions at once. Cover: what problem they are trying to solve, their budget range, when they need a solution, and whether they make the buying decision. Always speak in the customer's language. If the customer declines, is not interested, or asks to end the call, politely acknowledge, wish them well, and transition to Close.",
             allow_interrupt: true,
             add_global_prompt: true,
             is_start: false,
@@ -308,7 +308,7 @@ export const WORKFLOW_TEMPLATES: WorkflowTemplate[] = [
           data: {
             name: "Close",
             prompt:
-              "Thank the person for their time. If they are a good fit, let them know a team member will be in touch shortly to discuss next steps.",
+              "Thank the person for their time. If they are a good fit, let them know a team member will be in touch shortly. If they declined, wish them a great day and say goodbye.",
             is_start: false,
             is_end: true,
             extraction_enabled: false,
@@ -337,7 +337,9 @@ export const WORKFLOW_TEMPLATES: WorkflowTemplate[] = [
       ] as FlowNode[],
       edges: [
         { id: "e1-2", source: "1", target: "2", data: { label: "Available", condition: "Lead confirms they can talk" } },
+        { id: "e1-3", source: "1", target: "3", data: { label: "Unavailable", condition: "Lead is busy, asks to call back later, or refuses to speak" } },
         { id: "e2-3", source: "2", target: "3", data: { label: "Qualified", condition: "Lead qualification complete" } },
+        { id: "e2-3-declined", source: "2", target: "3", data: { label: "Declined", condition: "Lead is not interested, declines offer, or wants to hang up" } },
       ] as FlowEdge[],
       viewport: { x: 0, y: 0, zoom: 0.75 },
     },

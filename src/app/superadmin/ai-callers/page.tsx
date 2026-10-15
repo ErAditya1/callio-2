@@ -26,6 +26,8 @@ import {
   Calendar,
   DollarSign,
   TrendingUp,
+  Upload,
+  FileJson,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
@@ -35,6 +37,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -85,6 +88,8 @@ export interface WorkspaceWorkflow {
   created_at?: string;
   workflow_definition?: any;
   is_builtin?: boolean;
+  user_id?: number | null;
+  is_admin_created?: boolean;
 }
 
 export interface InventoryNumberItem {
@@ -163,6 +168,27 @@ export default function SuperadminAICallersPage() {
   const [publishDescription, setPublishDescription] = useState("");
   const [publishGoal, setPublishGoal] = useState("High Conversion Outreach");
   const [publishingWorkspace, setPublishingWorkspace] = useState(false);
+
+  // Workflow Import State
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importName, setImportName] = useState("");
+  const [importCategory, setImportCategory] = useState("Sales & Outreach");
+  const [importBadge, setImportBadge] = useState("Official Template");
+  const [importDescription, setImportDescription] = useState("");
+  const [importGoal, setImportGoal] = useState("Qualified lead conversion");
+  const [importDirectPublish, setImportDirectPublish] = useState(true);
+  const [importJsonData, setImportJsonData] = useState<{
+    name?: string;
+    workflow_definition: any;
+  } | null>(null);
+  const [importStats, setImportStats] = useState<{
+    nodesCount: number;
+    edgesCount: number;
+    fileName: string;
+    fileSizeKb: number;
+  } | null>(null);
 
   // Test Call Modal State
   const [testModalOpen, setTestModalOpen] = useState(false);
@@ -317,14 +343,14 @@ export default function SuperadminAICallersPage() {
     }
   };
 
-  // Open Workspace Picker (Option B)
+  // Open Workspace Picker (Option B) - Admin-only agents
   const handleOpenWorkspacePicker = async () => {
     try {
       setWorkspaceModalOpen(true);
       setSelectedWorkspaceAgent(null);
       setLoadingWorkspace(true);
       const headers = await getHeaders(false);
-      const res = await fetch("/api/v1/workflow/fetch?status=active", {
+      const res = await fetch("/api/v1/workflow/fetch?status=active&admin_only=true", {
         headers,
         cache: "no-store",
         credentials: "include",
@@ -334,7 +360,11 @@ export default function SuperadminAICallersPage() {
         const data = await res.json();
         const list: WorkspaceWorkflow[] = Array.isArray(data) ? data : data?.data || [];
         const existingBuiltinIds = new Set(agents.map((a) => a.id));
-        setWorkspaceAgents(list.filter((w) => !existingBuiltinIds.has(w.id)));
+        // Only show unpublished agents created by admins/superusers
+        const adminOnlyList = list.filter(
+          (w) => !existingBuiltinIds.has(w.id) && w.is_admin_created !== false
+        );
+        setWorkspaceAgents(adminOnlyList);
       } else {
         toast.error("Failed to load workspace agents");
       }
@@ -342,6 +372,146 @@ export default function SuperadminAICallersPage() {
       toast.error("Failed to load workspace agents");
     } finally {
       setLoadingWorkspace(false);
+    }
+  };
+
+  // Workflow JSON Import Handlers
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await processImportFile(file);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const processImportFile = async (file: File) => {
+    try {
+      const text = await file.text();
+      let parsed: any;
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        toast.error("Invalid JSON file. Please select a valid workflow JSON file.");
+        return;
+      }
+
+      let wfDef: any = null;
+      let detectedName = file.name.replace(/\.[^/.]+$/, "");
+
+      if (parsed.workflow_definition && (parsed.workflow_definition.nodes || Array.isArray(parsed.workflow_definition))) {
+        wfDef = parsed.workflow_definition;
+        if (parsed.name) detectedName = parsed.name;
+      } else if (parsed.nodes) {
+        wfDef = {
+          nodes: parsed.nodes,
+          edges: parsed.edges || [],
+          viewport: parsed.viewport || { x: 0, y: 0, zoom: 1 },
+        };
+        if (parsed.name) detectedName = parsed.name;
+      } else {
+        toast.error("Could not find valid workflow nodes/edges in this JSON file.");
+        return;
+      }
+
+      const nodesCount = Array.isArray(wfDef.nodes) ? wfDef.nodes.length : 0;
+      const edgesCount = Array.isArray(wfDef.edges) ? wfDef.edges.length : 0;
+
+      if (nodesCount === 0) {
+        toast.error("Workflow definition contains no nodes.");
+        return;
+      }
+
+      setImportJsonData({
+        name: detectedName,
+        workflow_definition: wfDef,
+      });
+      setImportStats({
+        nodesCount,
+        edgesCount,
+        fileName: file.name,
+        fileSizeKb: Math.max(1, Math.round(file.size / 1024)),
+      });
+      setImportName(detectedName);
+      setImportCategory("Sales & Outreach");
+      setImportBadge("Official Template");
+      setImportDescription(
+        parsed.description ||
+        `Platform certified ${detectedName} voice workflow.`
+      );
+      setImportGoal("Qualified lead conversion");
+      setImportDirectPublish(true);
+      setImportModalOpen(true);
+    } catch (err: any) {
+      toast.error("Failed to read file: " + (err?.message || "Unknown error"));
+    }
+  };
+
+  const handleConfirmImport = async () => {
+    if (!importJsonData || !importName.trim()) {
+      toast.error("Workflow name is required");
+      return;
+    }
+
+    try {
+      setImporting(true);
+      const headers = await getHeaders(true);
+
+      // 1. Create workflow in workspace
+      const createRes = await fetch("/api/v1/workflow/create/definition", {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: JSON.stringify({
+          name: importName.trim(),
+          workflow_definition: importJsonData.workflow_definition,
+        }),
+      });
+
+      if (!createRes.ok) {
+        const err = await createRes.json().catch(() => ({}));
+        const msg = Array.isArray(err?.detail)
+          ? err.detail.map((e: any) => e.msg || e.message).join(", ")
+          : (typeof err?.detail === "string" ? err.detail : (err?.message || "Failed to create workflow in workspace"));
+        throw new Error(msg);
+      }
+
+      const createdWf = await createRes.json();
+      const newWfId = createdWf.id;
+
+      // 2. If direct publish is checked, publish as platform built-in agent
+      if (importDirectPublish && newWfId) {
+        const pubRes = await fetch(`/api/v1/workflow/${newWfId}/publish-builtin`, {
+          method: "POST",
+          headers,
+          credentials: "include",
+          body: JSON.stringify({
+            category: importCategory,
+            badge: importBadge,
+            description: importDescription.trim() || importName.trim(),
+            confirm_tested: true,
+            variables: [],
+            conversion_goal: { goal: importGoal },
+          }),
+        });
+
+        if (!pubRes.ok) {
+          toast.warning("Workflow imported to workspace, but publishing failed. You can publish it manually.");
+        } else {
+          toast.success(`Workflow "${importName}" successfully imported and published as Platform AI Caller!`);
+        }
+      } else {
+        toast.success(`Workflow "${importName}" successfully imported to your workspace!`);
+      }
+
+      setImportModalOpen(false);
+      setImportJsonData(null);
+      setImportStats(null);
+      fetchAgents();
+    } catch (err: any) {
+      toast.error(err?.message || "Error importing workflow");
+    } finally {
+      setImporting(false);
     }
   };
 
@@ -534,6 +704,26 @@ export default function SuperadminAICallersPage() {
           <Button variant="outline" size="sm" onClick={fetchAgents} disabled={loading} className="h-9">
             <RotateCw className={`h-3.5 w-3.5 mr-1.5 ${loading ? "animate-spin" : ""}`} />
             Refresh
+          </Button>
+
+          {/* Hidden File Input for Importing Workflow JSON */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept=".json,application/json"
+            className="hidden"
+          />
+
+          {/* Import Workflow */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            className="h-9 gap-1.5 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+          >
+            <Upload className="h-4 w-4 text-emerald-400" />
+            Import Workflow
           </Button>
 
           {/* Option B: Publish from Workspace */}
@@ -1059,28 +1249,57 @@ export default function SuperadminAICallersPage() {
               Publish from Workspace Agents
             </DialogTitle>
             <DialogDescription>
-              Select an agent designed in your Studio / Workflows canvas and publish it as an official platform template.
+              Select an admin-created agent designed in your Studio canvas and publish it as an official platform template.
             </DialogDescription>
           </DialogHeader>
 
           <div className="overflow-y-auto px-6 py-4 flex-1 space-y-4">
             {loadingWorkspace ? (
               <div className="py-12 text-center text-xs text-muted-foreground animate-pulse">
-                Loading your workspace workflows...
+                Loading your admin workspace workflows...
               </div>
             ) : workspaceAgents.length === 0 ? (
-              <div className="py-12 text-center space-y-2">
-                <Bot className="h-8 w-8 text-muted-foreground mx-auto opacity-40" />
-                <p className="text-sm font-medium">No Unpublished Agents in Workspace</p>
-                <p className="text-xs text-muted-foreground">
-                  All your existing studio agents are either already published or you haven&apos;t created any yet in /workflow.
-                </p>
+              <div className="py-10 text-center space-y-3">
+                <Bot className="h-9 w-9 text-muted-foreground mx-auto opacity-40" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-foreground">No Unpublished Admin Agents in Workspace</p>
+                  <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                    Only workflows created by administrators are shown here. All existing admin agents are either published or you haven&apos;t created any yet in /workflow.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setWorkspaceModalOpen(false);
+                    fileInputRef.current?.click();
+                  }}
+                  className="h-8 text-xs border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10 gap-1.5"
+                >
+                  <Upload className="h-3.5 w-3.5 text-indigo-400" />
+                  Import Workflow JSON
+                </Button>
               </div>
             ) : !selectedWorkspaceAgent ? (
               <div className="space-y-2">
-                <Label className="text-xs font-semibold text-muted-foreground uppercase">
-                  Select an agent to publish:
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-semibold text-muted-foreground uppercase">
+                    Select an admin agent to publish:
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      fileInputRef.current?.click();
+                    }}
+                    className="h-7 text-xs text-indigo-400 hover:text-indigo-300 gap-1.5 px-2"
+                  >
+                    <Upload className="h-3.5 w-3.5" />
+                    Import JSON
+                  </Button>
+                </div>
                 <div className="grid grid-cols-1 gap-2 max-h-72 overflow-y-auto pr-1">
                   {workspaceAgents.map((wf) => (
                     <button
@@ -1089,9 +1308,14 @@ export default function SuperadminAICallersPage() {
                       onClick={() => handleSelectWorkspaceWorkflow(wf)}
                       className="w-full text-left p-3 rounded-xl border border-border/70 bg-card hover:border-indigo-500/50 hover:bg-muted/40 transition-all flex items-center justify-between group cursor-pointer"
                     >
-                      <div className="min-w-0">
-                        <div className="font-semibold text-xs text-foreground group-hover:text-indigo-400 transition-colors">
-                          {wf.name}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-xs text-foreground group-hover:text-indigo-400 transition-colors">
+                            {wf.name}
+                          </span>
+                          <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-indigo-500/20 bg-indigo-500/10 text-indigo-300 font-mono">
+                            Admin Agent
+                          </Badge>
                         </div>
                         <div className="text-[11px] text-muted-foreground truncate mt-0.5">
                           {wf.description || "Custom workflow designed on canvas"}
@@ -1190,6 +1414,159 @@ export default function SuperadminAICallersPage() {
                 {publishingWorkspace ? "Publishing..." : "Publish to Platform Catalog"}
               </Button>
             )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* MODAL 3: Import Workflow JSON */}
+      <Dialog open={importModalOpen} onOpenChange={setImportModalOpen}>
+        <DialogContent className="w-[95vw] sm:max-w-xl max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-2xl">
+          <DialogHeader className="px-6 pt-6 pb-3 border-b shrink-0 bg-muted/10">
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <Upload className="h-5 w-5 text-emerald-400" />
+              Import Workflow
+            </DialogTitle>
+            <DialogDescription>
+              Upload and review a workflow JSON file. You can save it to your workspace and immediately publish it as an official platform caller.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="overflow-y-auto px-6 py-4 flex-1 space-y-4">
+            {importStats && (
+              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <FileJson className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-emerald-300">{importStats.fileName}</div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {importStats.nodesCount} nodes · {importStats.edgesCount} transitions · {importStats.fileSizeKb} KB
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="h-7 text-xs text-emerald-400 hover:text-emerald-300"
+                >
+                  Change File
+                </Button>
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <Label htmlFor="imp-name">Workflow Name *</Label>
+              <Input
+                id="imp-name"
+                value={importName}
+                onChange={(e) => setImportName(e.target.value)}
+                placeholder="e.g. Lead Qualification Agent"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="imp-cat">Category</Label>
+                <Select value={importCategory} onValueChange={setImportCategory}>
+                  <SelectTrigger id="imp-cat">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.filter((c) => c !== "All").map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="imp-badge">Badge</Label>
+                <Select value={importBadge} onValueChange={setImportBadge}>
+                  <SelectTrigger id="imp-badge">
+                    <SelectValue placeholder="Badge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BADGE_OPTIONS.map((b) => (
+                      <SelectItem key={b} value={b}>
+                        {b}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="imp-desc">Platform Description</Label>
+              <Textarea
+                id="imp-desc"
+                rows={2}
+                value={importDescription}
+                onChange={(e) => setImportDescription(e.target.value)}
+                placeholder="Brief summary shown on platform catalog..."
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="imp-goal">Primary Conversion Goal</Label>
+              <Input
+                id="imp-goal"
+                value={importGoal}
+                onChange={(e) => setImportGoal(e.target.value)}
+                placeholder="e.g. Qualify lead and confirm interest"
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-3 rounded-xl border border-border/70 bg-card/60">
+              <div className="space-y-0.5">
+                <Label className="text-xs font-semibold cursor-pointer">Publish as Platform AI Caller</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Immediately certify and publish to platform catalog and showcase.
+                </p>
+              </div>
+              <Switch
+                checked={importDirectPublish}
+                onCheckedChange={setImportDirectPublish}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="px-6 py-3 border-t bg-muted/10 shrink-0 flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setImportModalOpen(false);
+                setImportJsonData(null);
+                setImportStats(null);
+              }}
+              disabled={importing}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleConfirmImport}
+              disabled={importing || !importName.trim()}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white gap-1.5"
+            >
+              {importing ? (
+                <>
+                  <RotateCw className="h-4 w-4 animate-spin" />
+                  Importing...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4" />
+                  {importDirectPublish ? "Import & Publish Caller" : "Import to Workspace"}
+                </>
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
