@@ -16087,3 +16087,236 @@ export type AutoscaleMetricApiV1HealthAutoscaleMetricGetResponses = {
 };
 
 export type AutoscaleMetricApiV1HealthAutoscaleMetricGetResponse = AutoscaleMetricApiV1HealthAutoscaleMetricGetResponses[keyof AutoscaleMetricApiV1HealthAutoscaleMetricGetResponses];
+
+/**
+ * ModelConfigurationMetricPrice
+ */
+export type ModelConfigurationMetricPrice = {
+    /**
+     * Metric Code
+     */
+    metric_code: string;
+    /**
+     * Display Name
+     */
+    display_name: string;
+    /**
+     * Unit
+     */
+    unit: string;
+    /**
+     * Price Per Minute
+     */
+    price_per_minute: number;
+    /**
+     * Currency
+     */
+    currency: string;
+    /**
+     * Rounding Policy
+     */
+    rounding_policy: string;
+};
+
+/**
+ * ModelConfigurationPricingResponse
+ *
+ * MPS-owned effective prices relevant to model configuration choices.
+ */
+export type ModelConfigurationPricingResponse = {
+    platform_usage?: ModelConfigurationMetricPrice | null;
+    dograh_model?: ModelConfigurationMetricPrice | null;
+};
+
+/**
+ * DograhManagedAIModelConfiguration
+ */
+export type DograhManagedAiModelConfiguration = {
+    /**
+     * Api Key
+     */
+    api_key: string;
+    /**
+     * Voice
+     */
+    voice?: string;
+    /**
+     * Speed
+     */
+    speed?: number;
+    /**
+     * Language
+     */
+    language?: string;
+};
+
+/**
+ * BYOKPipelineAIModelConfiguration
+ */
+export type ByokPipelineAiModelConfiguration = {
+    llm?: unknown;
+    tts?: unknown;
+    stt?: unknown;
+    embeddings?: unknown;
+    [key: string]: unknown;
+};
+
+/**
+ * BYOKRealtimeAIModelConfiguration
+ */
+export type ByokRealtimeAiModelConfiguration = {
+    realtime?: unknown;
+    llm?: unknown;
+    embeddings?: unknown;
+    [key: string]: unknown;
+};
+
+/**
+ * BYOKAIModelConfiguration
+ */
+export type ByokaiModelConfiguration = {
+    /**
+     * Mode
+     */
+    mode: 'pipeline' | 'realtime';
+    pipeline?: ByokPipelineAiModelConfiguration | null;
+    realtime?: ByokRealtimeAiModelConfiguration | null;
+    [key: string]: unknown;
+};
+
+/**
+ * OrganizationAIModelConfigurationV2
+ */
+export type OrganizationAiModelConfigurationV2 = {
+    /**
+     * Version
+     */
+    version?: 2;
+    /**
+     * Mode
+     */
+    mode: 'dograh' | 'byok';
+    dograh?: DograhManagedAiModelConfiguration | null;
+    byok?: ByokaiModelConfiguration | null;
+    use_platform_credentials?: boolean;
+    [key: string]: unknown;
+};
+
+/**
+ * OrganizationAIModelConfigurationResponse
+ */
+export type OrganizationAiModelConfigurationResponse = {
+    /**
+     * Configuration
+     */
+    configuration: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Effective Configuration
+     */
+    effective_configuration: {
+        [key: string]: unknown;
+    };
+    /**
+     * Source
+     */
+    source: 'organization_v2' | 'legacy_user_v1' | 'empty';
+};
+
+export type GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetData = {
+    body?: never;
+    headers?: {
+        authorization?: string | null;
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/organizations/model-configurations/v2/defaults';
+};
+
+export type GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetErrors = {
+    404: unknown;
+    422: HttpValidationError;
+};
+
+export type GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetError = GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetErrors[keyof GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetErrors];
+
+export type GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetResponses = {
+    200: unknown;
+};
+
+export type GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetResponse = GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetResponses[keyof GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetResponses];
+
+export type GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetData = {
+    body?: never;
+    headers?: {
+        authorization?: string | null;
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/organizations/model-configurations/v2';
+};
+
+export type GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetErrors = {
+    404: unknown;
+    422: HttpValidationError;
+};
+
+export type GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetError = GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetErrors[keyof GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetErrors];
+
+export type GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetResponses = {
+    200: OrganizationAiModelConfigurationResponse;
+};
+
+export type GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetResponse = GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetResponses[keyof GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetResponses];
+
+export type SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutData = {
+    body: OrganizationAiModelConfigurationV2;
+    headers?: {
+        authorization?: string | null;
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/organizations/model-configurations/v2';
+};
+
+export type SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutErrors = {
+    404: unknown;
+    422: HttpValidationError;
+};
+
+export type SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutError = SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutErrors[keyof SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutErrors];
+
+export type SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutResponses = {
+    200: OrganizationAiModelConfigurationResponse;
+};
+
+export type SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutResponse = SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutResponses[keyof SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutResponses];
+
+export type GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetData = {
+    body?: never;
+    headers?: {
+        authorization?: string | null;
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/organizations/model-configurations/v2/pricing';
+};
+
+export type GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetErrors = {
+    404: unknown;
+    422: HttpValidationError;
+};
+
+export type GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetError = GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetErrors[keyof GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetErrors];
+
+export type GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetResponses = {
+    200: ModelConfigurationPricingResponse;
+};
+
+export type GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetResponse = GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetResponses[keyof GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetResponses];
+

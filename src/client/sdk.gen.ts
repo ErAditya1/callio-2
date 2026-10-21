@@ -2270,3 +2270,34 @@ export const activeCallsApiV1HealthActiveCallsGet = <ThrowOnError extends boolea
  * successful scrape of 0 would instruct it to scale toward minReplicas.
  */
 export const autoscaleMetricApiV1HealthAutoscaleMetricGet = <ThrowOnError extends boolean = false>(options?: Options<AutoscaleMetricApiV1HealthAutoscaleMetricGetData, ThrowOnError>): RequestResult<AutoscaleMetricApiV1HealthAutoscaleMetricGetResponses, AutoscaleMetricApiV1HealthAutoscaleMetricGetErrors, ThrowOnError> => (options?.client ?? client).get<AutoscaleMetricApiV1HealthAutoscaleMetricGetResponses, AutoscaleMetricApiV1HealthAutoscaleMetricGetErrors, ThrowOnError>({ url: '/api/v1/health/autoscale-metric', ...options });
+
+import type {
+    GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetData,
+    GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetErrors,
+    GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetResponses,
+    GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetData,
+    GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetErrors,
+    GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetResponses,
+    GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetData,
+    GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetErrors,
+    GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetResponses,
+    SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutData,
+    SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutErrors,
+    SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutResponses,
+} from './types.gen';
+
+export const getModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGet = <ThrowOnError extends boolean = false>(options?: Options<GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetData, ThrowOnError>): RequestResult<GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetResponses, GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetErrors, ThrowOnError> => (options?.client ?? client).get<GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetResponses, GetModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGetErrors, ThrowOnError>({ url: '/api/v1/organizations/model-configurations/v2/defaults', ...options });
+
+export const getModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2Get = <ThrowOnError extends boolean = false>(options?: Options<GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetData, ThrowOnError>): RequestResult<GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetResponses, GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetErrors, ThrowOnError> => (options?.client ?? client).get<GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetResponses, GetModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2GetErrors, ThrowOnError>({ url: '/api/v1/organizations/model-configurations/v2', ...options });
+
+export const saveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2Put = <ThrowOnError extends boolean = false>(options: Options<SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutData, ThrowOnError>): RequestResult<SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutResponses, SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutErrors, ThrowOnError> => (options.client ?? client).put<SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutResponses, SaveModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2PutErrors, ThrowOnError>({
+    url: '/api/v1/organizations/model-configurations/v2',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const getModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGet = <ThrowOnError extends boolean = false>(options?: Options<GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetData, ThrowOnError>): RequestResult<GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetResponses, GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetErrors, ThrowOnError> => (options?.client ?? client).get<GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetResponses, GetModelConfigurationPricingApiV1OrganizationsModelConfigurationsV2PricingGetErrors, ThrowOnError>({ url: '/api/v1/organizations/model-configurations/v2/pricing', ...options });
+
