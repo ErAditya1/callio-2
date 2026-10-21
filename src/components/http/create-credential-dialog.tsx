@@ -4,12 +4,13 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   AlertCircleIcon,
   Loading02Icon,
-} from "@hugeicons/core-free-icons";;
+} from "@hugeicons/core-free-icons";
 import { useState } from "react";
 
-import { createCredentialApiV1CredentialsPost } from "@/client";
+import { createCredentialApiV1CredentialsPost, updateCredentialApiV1CredentialsCredentialUuidPut } from "@/client";
 import { CredentialResponse, WebhookCredentialType } from "@/client/types.gen";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     Dialog,
     DialogContent,
@@ -27,12 +28,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { detailFromError } from "@/lib/apiError";
 import { useAuth } from "@/lib/auth";
 
 interface CreateCredentialDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onCreated?: (credential: CredentialResponse) => void;
+    credential?: CredentialResponse;
+    onUpdated?: (credential: CredentialResponse) => void;
 }
 
 interface CredentialField {
@@ -68,53 +72,75 @@ const getCredentialDataFields = (type: WebhookCredentialType): CredentialField[]
     }
 };
 
-export function CreateCredentialDialog({
+export function CreateCredentialDialog(props: CreateCredentialDialogProps) {
+    // Unmount the form on close so secrets and errors never survive reopening.
+    return props.open ? <CredentialDialogForm key={props.credential?.uuid ?? "new"} {...props} /> : null;
+}
+
+function CredentialDialogForm({
     open,
     onOpenChange,
     onCreated,
+    credential,
+    onUpdated,
 }: CreateCredentialDialogProps) {
     const { getAccessToken } = useAuth();
 
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [credentialType, setCredentialType] = useState<WebhookCredentialType>("bearer_token");
+    const [name, setName] = useState(credential?.name ?? "");
+    const [description, setDescription] = useState(credential?.description ?? "");
+    const [credentialType, setCredentialType] = useState<WebhookCredentialType>(
+        (credential?.credential_type as WebhookCredentialType) ?? "bearer_token"
+    );
     const [credentialData, setCredentialData] = useState<Record<string, string>>({});
+    const [replaceAuthentication, setReplaceAuthentication] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const fields = getCredentialDataFields(credentialType);
+    const needsAuthentication = !credential || replaceAuthentication;
+    const canSave = Boolean(name.trim()) && (!needsAuthentication || fields.every(
+        (field) => credentialData[field.key]?.trim()
+    ));
 
     const handleCreate = async () => {
-        if (!name.trim()) return;
+        if (!canSave || isCreating) return;
 
         setIsCreating(true);
         setError(null);
 
         try {
             const accessToken = await getAccessToken();
-            const response = await createCredentialApiV1CredentialsPost({
-                headers: { Authorization: `Bearer ${accessToken}` },
-                body: {
-                    name,
-                    description: description || undefined,
-                    credential_type: credentialType,
-                    credential_data: credentialData,
-                },
-            });
+            const headers = { Authorization: `Bearer ${accessToken}` };
+            const body = { name: name.trim(), description: description.trim() };
+            const response = credential
+                ? await updateCredentialApiV1CredentialsCredentialUuidPut({
+                    headers,
+                    path: { credential_uuid: credential.uuid },
+                    body: {
+                        ...body,
+                        ...(replaceAuthentication ? {
+                            credential_type: credentialType,
+                            credential_data: credentialData,
+                        } : {}),
+                    },
+                })
+                : await createCredentialApiV1CredentialsPost({
+                    headers,
+                    body: { ...body, credential_type: credentialType, credential_data: credentialData },
+                });
 
             if (response.error) {
-                const errorDetail = (response.error as { detail?: string })?.detail
-                    || "Failed to create credential";
-                setError(errorDetail);
+                setError(detailFromError(response.error, "Failed to save credential"));
                 return;
             }
 
             if (response.data) {
-                onCreated?.(response.data);
+                if (credential) onUpdated?.(response.data);
+                else onCreated?.(response.data);
                 handleClose();
             }
         } catch (err) {
-            console.error("Failed to create credential:", err);
             setError(
-                err instanceof Error ? err.message : "An unexpected error occurred"
+                err instanceof Error ? err.message : "Failed to save credential"
             );
         } finally {
             setIsCreating(false);
@@ -123,41 +149,32 @@ export function CreateCredentialDialog({
 
     const handleClose = () => {
         onOpenChange(false);
-        // Reset form
-        setName("");
-        setDescription("");
-        setCredentialType("bearer_token");
-        setCredentialData({});
-        setError(null);
     };
 
     const handleOpenChange = (newOpen: boolean) => {
-        if (!newOpen) {
-            setError(null);
-        }
-        onOpenChange(newOpen);
+        if (!isCreating) onOpenChange(newOpen);
     };
-
-    const fields = getCredentialDataFields(credentialType);
 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Add Credential</DialogTitle>
+                    <DialogTitle>{credential ? "Edit Credential" : "Add Credential"}</DialogTitle>
                     <DialogDescription>
-                        Create a new credential for authentication.
+                        {credential
+                            ? "Update this credential. Changes apply everywhere it is used."
+                            : "Create a credential for authenticating tools and webhooks."}
                     </DialogDescription>
                 </DialogHeader>
 
                 {error && (
-                    <div className="flex items-start gap-2 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                    <div role="alert" className="flex items-start gap-2 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
                         <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <span>{error}</span>
                     </div>
                 )}
 
-                <div className="space-y-4 py-4">
+                <fieldset disabled={isCreating} className="min-w-0 space-y-4 py-4">
                     <div className="grid gap-2">
                         <Label htmlFor="cred-name">Name *</Label>
                         <Input
@@ -179,18 +196,20 @@ export function CreateCredentialDialog({
                     </div>
 
                     <div className="grid gap-2">
-                        <Label>Credential Type</Label>
+                        <Label htmlFor="cred-type">Credential Type</Label>
                         <Select
+                            disabled={!!credential || isCreating}
                             value={credentialType}
                             onValueChange={(v) => {
                                 setCredentialType(v as WebhookCredentialType);
                                 setCredentialData({});
                             }}
                         >
-                            <SelectTrigger>
+                            <SelectTrigger id="cred-type" className="w-full">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value="none">No Authentication</SelectItem>
                                 <SelectItem value="bearer_token">Bearer Token</SelectItem>
                                 <SelectItem value="api_key">API Key</SelectItem>
                                 <SelectItem value="basic_auth">Basic Auth</SelectItem>
@@ -199,12 +218,32 @@ export function CreateCredentialDialog({
                         </Select>
                     </div>
 
-                    {fields.map((field) => (
+                    {credential && fields.length > 0 && (
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                                <Checkbox
+                                    id="replace-authentication"
+                                    checked={replaceAuthentication}
+                                    onCheckedChange={(checked) => {
+                                        setReplaceAuthentication(checked === true);
+                                        setCredentialData({});
+                                    }}
+                                />
+                                <Label htmlFor="replace-authentication">Replace authentication details</Label>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                Saved values are hidden. Leave this unchecked to keep them.
+                            </p>
+                        </div>
+                    )}
+
+                    {needsAuthentication && fields.map((field) => (
                         <div key={field.key} className="grid gap-2">
                             <Label htmlFor={`cred-${field.key}`}>{field.label}</Label>
                             <Input
                                 id={`cred-${field.key}`}
                                 type={field.isSecret ? "password" : "text"}
+                                autoComplete="off"
                                 value={credentialData[field.key] || ""}
                                 onChange={(e) =>
                                     setCredentialData((prev) => ({
@@ -216,7 +255,7 @@ export function CreateCredentialDialog({
                             />
                         </div>
                     ))}
-                </div>
+                </fieldset>
 
                 <DialogFooter>
                     <Button
@@ -228,15 +267,15 @@ export function CreateCredentialDialog({
                     </Button>
                     <Button
                         onClick={handleCreate}
-                        disabled={!name.trim() || isCreating}
+                        disabled={!canSave || isCreating}
                     >
                         {isCreating ? (
                             <>
                                 <HugeiconsIcon icon={Loading02Icon} className="h-4 w-4 mr-2 animate-spin" />
-                                Creating...
+                                Saving...
                             </>
                         ) : (
-                            "Create"
+                            credential ? "Save Changes" : "Create"
                         )}
                     </Button>
                 </DialogFooter>
