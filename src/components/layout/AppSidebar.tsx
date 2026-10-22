@@ -20,7 +20,6 @@ import {
   PhoneCallIcon,
   Settings01Icon,
   ShieldCheckIcon,
-  SlidersHorizontalIcon,
   SparklesIcon,
   TriangleAlertIcon,
   UserRoundIcon,
@@ -123,11 +122,6 @@ const COLLAPSIBLE_NAV_SECTIONS: SidebarNavSection[] = [
     id: "ai-voice",
     label: "AI & Voice",
     items: [
-      {
-        title: "AI Providers",
-        url: "/provider-connections",
-        icon: SlidersHorizontalIcon,
-      },
       {
         title: "AI Models & Voices",
         url: "/model-configurations",

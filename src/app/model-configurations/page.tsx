@@ -1,8 +1,15 @@
-import ModelConfigurationsManager from "@/components/model-connections/ModelConfigurationsManager";
+import ModelConfigurationV2 from "@/components/ModelConfigurationV2";
 import { SETTINGS_DOCUMENTATION_URLS } from "@/constants/documentation";
 
 export default function ServiceConfigurationPage() {
     return (
-        <ModelConfigurationsManager docsUrl={SETTINGS_DOCUMENTATION_URLS.modelOverrides} />
+        <div className="min-h-screen">
+            <div className="app-page">
+                <div className="max-w-4xl mx-auto">
+                    <ModelConfigurationV2 docsUrl={SETTINGS_DOCUMENTATION_URLS.modelOverrides} />
+                </div>
+            </div>
+        </div>
     );
 }
+
