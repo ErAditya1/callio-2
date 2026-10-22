@@ -20,6 +20,7 @@ import {
   PhoneCallIcon,
   Settings01Icon,
   ShieldCheckIcon,
+  SlidersHorizontalIcon,
   SparklesIcon,
   TriangleAlertIcon,
   UserRoundIcon,
