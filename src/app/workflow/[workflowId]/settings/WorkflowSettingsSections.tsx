@@ -266,8 +266,8 @@ function GeneralSection({
     const [contextCompactionEnabled, setContextCompactionEnabled] = useState(
         workflowConfigurations.context_compaction_enabled,
     );
-    const [ttsCacheEnabled, setTtsCacheEnabled] = useState(
-        workflowConfigurations.tts_cache_enabled,
+    const [ttsCacheEnabled, setTtsCacheEnabled] = useState<boolean>(
+        Boolean(workflowConfigurations.tts_cache_enabled),
     );
     const [callDispositionRows, setCallDispositionRows] = useState<CallDispositionRow[]>(
         () => createCallDispositionRows(workflowConfigurations.call_dispositions),

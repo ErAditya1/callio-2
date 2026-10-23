@@ -118,7 +118,10 @@ const FALLBACK_PRESETS: Record<string, VoiceInfo[]> = {
 };
 
 interface VoiceSelectorModalProps {
+    id?: string;
     provider: string;
+    providerConnectionUuid?: string;
+    connectionRevision?: number;
     value: string;
     onChange: (voiceId: string) => void;
     /** Optional model passed through to the voice catalog query. */
@@ -150,7 +153,10 @@ function withSelected(options: string[], selected: string): string[] {
 }
 
 export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
+    id,
     provider,
+    providerConnectionUuid,
+    connectionRevision,
     value,
     onChange,
     model,
@@ -208,9 +214,11 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
             if (local && active) setSelectedVoiceInfo(local);
 
             try {
+                const query: Record<string, string> = { q: value };
+                if (providerConnectionUuid) query.provider_connection_uuid = providerConnectionUuid;
                 const response = await getVoicesApiV1UserConfigurationsVoicesProviderGet({
                     path: { provider: provider as never },
-                    query: { q: value },
+                    query,
                 });
                 if (!active) return;
                 const found = response.data?.voices?.find((voice) => voice.voice_id === value) ?? null;
@@ -228,7 +236,7 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
         return () => {
             active = false;
         };
-    }, [value, provider]);
+    }, [value, provider, providerConnectionUuid, connectionRevision]);
 
     // Fetch the voice list whenever the modal is open or a filter changes.
     useEffect(() => {
@@ -239,6 +247,7 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
         (async () => {
             const query: Record<string, string> = {};
             if (model) query.model = model;
+            if (providerConnectionUuid) query.provider_connection_uuid = providerConnectionUuid;
             if (gender !== ALL_FILTER_VALUE) query.gender = gender;
             if (accent !== ALL_FILTER_VALUE) query.accent = accent;
             if (language !== ALL_FILTER_VALUE) query.language = language;
@@ -301,7 +310,7 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
             }
             setIsLoading(false);
         })();
-    }, [isOpen, manualMode, provider, model, gender, accent, language, debouncedSearch]);
+    }, [isOpen, manualMode, provider, providerConnectionUuid, connectionRevision, model, gender, accent, language, debouncedSearch]);
 
     // Stop any preview when the modal closes / unmounts.
     useEffect(() => {
@@ -378,6 +387,7 @@ export const VoiceSelectorModal: React.FC<VoiceSelectorModalProps> = ({
     return (
         <div className={cn("space-y-2", className)}>
             <Button
+                id={id}
                 type="button"
                 variant="outline"
                 className={cn("w-full justify-between", !value && "text-muted-foreground")}
