@@ -651,7 +651,9 @@ export default function UsagePage() {
                                                     </TableCell>
                                                     <TableCell className="text-right font-medium">
                                                         {run.charge_usd !== undefined && run.charge_usd !== null
-                                                            ? `$${run.charge_usd.toFixed(4)}`
+                                                            ? (run.mode === 'textchat' || run.call_type === 'textchat')
+                                                                ? (run.charge_usd > 0 ? `$${run.charge_usd.toFixed(4)}` : 'Free')
+                                                                : `$${run.charge_usd.toFixed(4)}`
                                                             : '-'
                                                         }
                                                     </TableCell>

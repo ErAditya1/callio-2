@@ -389,8 +389,11 @@ export default function BillingPage() {
                                 </TableHeader>
                                 <TableBody>
                                     {runsList.map((run) => {
+                                        const isTextChat = run.call_type === 'textchat' || run.mode === 'textchat';
                                         const cost = typeof run.charge_usd === 'number'
                                             ? run.charge_usd
+                                            : isTextChat
+                                            ? 0
                                             : run.call_duration_seconds > 0
                                             ? (run.call_duration_seconds / 60) * 0.06
                                             : 0;
@@ -415,7 +418,7 @@ export default function BillingPage() {
                                                     {formatDuration(run.call_duration_seconds)}
                                                 </TableCell>
                                                 <TableCell className="text-sm font-mono font-semibold text-[#171717] dark:text-[#7186AD] whitespace-nowrap">
-                                                    {cost > 0 ? `$${cost.toFixed(4)}` : "-"}
+                                                    {isTextChat ? (cost > 0 ? `$${cost.toFixed(4)}` : "Free") : (cost > 0 ? `$${cost.toFixed(4)}` : "-")}
                                                 </TableCell>
                                                 <TableCell>
                                                     {run.disposition ? (

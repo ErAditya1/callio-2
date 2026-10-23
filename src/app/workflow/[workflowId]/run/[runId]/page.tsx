@@ -552,15 +552,23 @@ function RunMetricsSection({
     usageInfo,
     logs,
     gatheredContext,
+    isTextChat = false,
 }: {
     costInfo: WorkflowRunResponse['cost_info'];
     usageInfo: WorkflowRunResponse['usage_info'];
     logs: WorkflowRunLogs | null;
     gatheredContext: Record<string, string | number | boolean | object> | null;
+    isTextChat?: boolean;
 }) {
     const metrics = getTranscriptMetrics(logs, gatheredContext);
 
-    const cost = typeof costInfo?.charge_usd === 'number'
+    const cost = isTextChat
+        ? typeof costInfo?.charge_usd === 'number'
+            ? costInfo.charge_usd
+            : typeof costInfo?.total_cost_usd === 'number'
+            ? costInfo.total_cost_usd
+            : 0.0
+        : typeof costInfo?.charge_usd === 'number'
         ? costInfo.charge_usd
         : typeof costInfo?.total_cost_usd === 'number'
         ? costInfo.total_cost_usd
@@ -568,7 +576,11 @@ function RunMetricsSection({
         ? (costInfo.call_duration_seconds / 60) * 0.06
         : null;
 
-    const ratePerMin = typeof costInfo?.rate_per_minute === 'number'
+    const ratePerMin = isTextChat
+        ? typeof costInfo?.rate_per_minute === 'number'
+            ? costInfo.rate_per_minute
+            : 0.0
+        : typeof costInfo?.rate_per_minute === 'number'
         ? costInfo.rate_per_minute
         : 0.06;
 
@@ -589,18 +601,34 @@ function RunMetricsSection({
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
                 <div>
                     <CardTitle className="text-lg">Run Metrics &amp; Usage</CardTitle>
-                    <p className="text-xs text-[#737373] mt-0.5">Call duration, cost calculation, and conversation analytics</p>
+                    <p className="text-xs text-[#737373] mt-0.5">
+                        {isTextChat ? 'Chat duration, token usage, and conversation analytics' : 'Call duration, cost calculation, and conversation analytics'}
+                    </p>
                 </div>
                 {cost !== null && (
                     <div className="flex items-center gap-2 rounded-lg border border-[#DCE3EF] bg-[#F0F3F9] px-3 py-1.5 text-sm font-semibold text-[#7186AD] dark:text-[#7186AD]">
-                        <span>Total Cost: ${cost.toFixed(4)} USD</span>
+                        <span>Total Cost: {isTextChat && cost === 0 ? '$0.0000 USD (Text Chat)' : `$${cost.toFixed(4)} USD`}</span>
                     </div>
                 )}
             </CardHeader>
             <CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                <MetricCard label="Call Cost" value={cost !== null ? `$${cost.toFixed(4)} USD` : 'Free / Testing'} />
-                <MetricCard label="Billing Rate" value={`$${ratePerMin.toFixed(2)} / min`} />
-                <MetricCard label="Duration" value={formatDuration(costInfo?.call_duration_seconds)} />
+                <MetricCard
+                    label={isTextChat ? "Chat Cost" : "Call Cost"}
+                    value={
+                        isTextChat
+                            ? cost && cost > 0 ? `$${cost.toFixed(4)} USD` : 'Free (Text Chat)'
+                            : cost !== null ? `$${cost.toFixed(4)} USD` : 'Free / Testing'
+                    }
+                />
+                <MetricCard
+                    label="Billing Rate"
+                    value={
+                        isTextChat
+                            ? ratePerMin > 0 ? `$${ratePerMin.toFixed(2)} / min` : 'Free / Token-based'
+                            : `$${ratePerMin.toFixed(2)} / min`
+                    }
+                />
+                <MetricCard label={isTextChat ? "Chat Duration" : "Duration"} value={formatDuration(costInfo?.call_duration_seconds)} />
                 <MetricCard label="User Turns" value={String(metrics.userTurns)} />
                 <MetricCard label="Bot Turns" value={String(metrics.botTurns)} />
                 <MetricCard label="Tool Calls" value={String(metrics.toolCalls)} />
@@ -985,6 +1013,7 @@ export default function WorkflowRunPage() {
                             usageInfo={workflowRun?.usage_info ?? null}
                             logs={workflowRun?.logs ?? null}
                             gatheredContext={workflowRun?.gathered_context ?? null}
+                            isTextChat={isTextChatRun}
                         />
 
                         {!isTextChatRun && hasSplitTracks && (

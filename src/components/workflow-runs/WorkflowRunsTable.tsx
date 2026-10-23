@@ -188,10 +188,13 @@ export function WorkflowRunsTable({
                                 </TableHeader>
                                 <TableBody>
                                     {runs.map((run) => {
+                                        const isTextChat = run.mode === 'textchat' || run.call_type === 'textchat';
                                         const cost = typeof (run.cost_info as any)?.charge_usd === 'number'
                                             ? (run.cost_info as any).charge_usd
                                             : typeof (run.cost_info as any)?.total_cost_usd === 'number'
                                             ? (run.cost_info as any).total_cost_usd
+                                            : isTextChat
+                                            ? 0.0
                                             : run.is_completed && typeof run.cost_info?.call_duration_seconds === 'number' && run.cost_info.call_duration_seconds > 0
                                             ? (run.cost_info.call_duration_seconds / 60) * 0.06
                                             : null;
@@ -220,7 +223,7 @@ export function WorkflowRunsTable({
                                                     : "-"}
                                             </TableCell>
                                             <TableCell className="text-sm font-mono font-medium text-emerald-600 dark:text-emerald-400">
-                                                {cost !== null ? `$${cost.toFixed(4)}` : "-"}
+                                                {isTextChat ? (cost && cost > 0 ? `$${cost.toFixed(4)}` : "Free") : (cost !== null ? `$${cost.toFixed(4)}` : "-")}
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex flex-col gap-1 items-start">
