@@ -710,9 +710,17 @@ export function AIModelConfigurationV2Editor({
             // Preserve existing BYOK keys from configuration so user never loses personal credentials
             const rawConfig = asRecord(configuration);
             const existingPipeline = asRecord(asRecord(rawConfig?.byok)?.pipeline);
-            const existingLlmKey = (asRecord(existingPipeline?.llm)?.api_key as string) || "";
-            const existingTtsKey = (asRecord(existingPipeline?.tts)?.api_key as string) || "";
-            const existingSttKey = (asRecord(existingPipeline?.stt)?.api_key as string) || "";
+            const existingLlmProvider = asRecord(existingPipeline?.llm)?.provider as string | undefined;
+            const existingTtsProvider = asRecord(existingPipeline?.tts)?.provider as string | undefined;
+            const existingSttProvider = asRecord(existingPipeline?.stt)?.provider as string | undefined;
+
+            const rawLlmKey = (asRecord(existingPipeline?.llm)?.api_key as string) || "";
+            const rawTtsKey = (asRecord(existingPipeline?.tts)?.api_key as string) || "";
+            const rawSttKey = (asRecord(existingPipeline?.stt)?.api_key as string) || "";
+
+            const existingLlmKey = (existingLlmProvider === masterForm.llmProvider && !rawLlmKey.includes("***")) ? rawLlmKey : "";
+            const existingTtsKey = (existingTtsProvider === masterForm.ttsProvider && !rawTtsKey.includes("***")) ? rawTtsKey : "";
+            const existingSttKey = (existingSttProvider === masterForm.sttProvider && !rawSttKey.includes("***")) ? rawSttKey : "";
 
             await onSave({
                 version: 2,
@@ -749,6 +757,29 @@ export function AIModelConfigurationV2Editor({
         } finally {
             setIsSavingMaster(false);
         }
+    };
+
+    const saveMasterConfigurationFromForm = async (config: Record<string, unknown>) => {
+        setError(null);
+        const llm = requireByokService(config, "llm", defaultsForByok, defaults.platform_master_keys);
+        const embeddings = optionalByokService(config, "embeddings");
+        const body: OrganizationAiModelConfigurationV2 = {
+            version: 2,
+            mode: "byok",
+            use_platform_credentials: true,
+            byok: {
+                mode: "pipeline",
+                pipeline: {
+                    llm: llm as never,
+                    tts: requireByokService(config, "tts", defaultsForByok, defaults.platform_master_keys) as never,
+                    stt: requireByokService(config, "stt", defaultsForByok, defaults.platform_master_keys) as never,
+                    ...(embeddings ? { embeddings: embeddings as never } : {}),
+                },
+            },
+        };
+
+        await onSave(body);
+        setUsePlatformCredentials(true);
     };
 
     const saveByokConfiguration = async (config: Record<string, unknown>) => {
@@ -933,7 +964,7 @@ export function AIModelConfigurationV2Editor({
                             platformMasterKeys={defaults.platform_master_keys}
                             masterMode={true}
                             submitLabel="Save Platform Master Configuration"
-                            onSave={saveByokConfiguration}
+                            onSave={saveMasterConfigurationFromForm}
                         />
                     )}
                 </TabsContent>

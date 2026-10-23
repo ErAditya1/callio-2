@@ -520,11 +520,19 @@ export function ServiceConfigurationForm({
     };
 
     const buildServiceConfig = (service: ServiceSegment, data: FormValues) => {
+        const prov = serviceProviders[service];
         const config: Record<string, string | number | string[]> = {
-            provider: serviceProviders[service],
+            provider: prov,
         };
+        const effectiveMasterKeys = platformMasterKeys || (configurationDefaults as any)?.platform_master_keys;
+        const isMasterKeyActive = Boolean(prov && effectiveMasterKeys?.[service]?.[prov.toLowerCase()]);
+
         const keys = apiKeys[service].map(k => k.trim()).filter(k => k.length > 0);
-        if (keys.length > 0) {
+        const hasMaskedKey = keys.some(k => k.includes("***"));
+
+        if ((masterMode || isMasterKeyActive) && (hasMaskedKey || keys.length === 0)) {
+            config.api_key = "";
+        } else if (keys.length > 0) {
             config.api_key = mode === 'override' ? keys[0] : keys;
         } else {
             config.api_key = "";
