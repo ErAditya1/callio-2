@@ -248,7 +248,7 @@ export default function UsagePage() {
         setPreferencesLoading(true);
         try {
             const response = await getPreferencesApiV1OrganizationsPreferencesGet();
-            const nextPreferences = response.data || {};
+            const nextPreferences: OrganizationPreferences = response.data || {};
             setPreferences(nextPreferences);
             setSelectedTimezone(nextPreferences.timezone || localTimezone);
         } catch (error) {
