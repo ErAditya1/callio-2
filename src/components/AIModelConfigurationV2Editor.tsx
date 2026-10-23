@@ -272,12 +272,13 @@ function hasRequiredApiKey(
     serviceConfiguration: Record<string, unknown>,
     defaults: ServiceConfigurationDefaults,
     platformMasterKeys?: Record<string, Record<string, any>>,
+    usePlatformCredentials?: boolean,
 ): boolean {
     const provider = serviceConfiguration.provider as string | undefined;
     if (!provider) return false;
 
-    // If provider is configured with a platform master key, personal key is not required
-    if (platformMasterKeys?.[service]?.[provider.toLowerCase()]) {
+    // If master credentials mode is on or provider is configured with a platform master key, personal key is not required
+    if (usePlatformCredentials || platformMasterKeys?.[service]?.[provider.toLowerCase()]) {
         return true;
     }
 
@@ -299,13 +300,14 @@ function requireByokService(
     service: ServiceSegment,
     defaults: ServiceConfigurationDefaults,
     platformMasterKeys?: Record<string, Record<string, any>>,
+    usePlatformCredentials?: boolean,
 ): Record<string, unknown> {
     const serviceConfiguration = asRecord(config[service]);
     if (
         !serviceConfiguration
         || !serviceConfiguration.provider
         || serviceConfiguration.provider === "dograh"
-        || !hasRequiredApiKey(service, serviceConfiguration, defaults, platformMasterKeys)
+        || !hasRequiredApiKey(service, serviceConfiguration, defaults, platformMasterKeys, usePlatformCredentials)
     ) {
         throw new Error(`${service} configuration is required`);
     }
@@ -761,7 +763,7 @@ export function AIModelConfigurationV2Editor({
 
     const saveMasterConfigurationFromForm = async (config: Record<string, unknown>) => {
         setError(null);
-        const llm = requireByokService(config, "llm", defaultsForByok, defaults.platform_master_keys);
+        const llm = requireByokService(config, "llm", defaultsForByok, defaults.platform_master_keys, true);
         const embeddings = optionalByokService(config, "embeddings");
         const body: OrganizationAiModelConfigurationV2 = {
             version: 2,
@@ -771,8 +773,8 @@ export function AIModelConfigurationV2Editor({
                 mode: "pipeline",
                 pipeline: {
                     llm: llm as never,
-                    tts: requireByokService(config, "tts", defaultsForByok, defaults.platform_master_keys) as never,
-                    stt: requireByokService(config, "stt", defaultsForByok, defaults.platform_master_keys) as never,
+                    tts: requireByokService(config, "tts", defaultsForByok, defaults.platform_master_keys, true) as never,
+                    stt: requireByokService(config, "stt", defaultsForByok, defaults.platform_master_keys, true) as never,
                     ...(embeddings ? { embeddings: embeddings as never } : {}),
                 },
             },
@@ -785,17 +787,17 @@ export function AIModelConfigurationV2Editor({
     const saveByokConfiguration = async (config: Record<string, unknown>) => {
         setError(null);
         const isRealtime = Boolean(config.is_realtime);
-        const llm = requireByokService(config, "llm", defaultsForByok, defaults.platform_master_keys);
+        const llm = requireByokService(config, "llm", defaultsForByok, defaults.platform_master_keys, usePlatformCredentials);
         const embeddings = optionalByokService(config, "embeddings");
         const body: OrganizationAiModelConfigurationV2 = {
             version: 2,
             mode: "byok",
-            use_platform_credentials: false,
+            use_platform_credentials: usePlatformCredentials,
             byok: isRealtime
                 ? {
                     mode: "realtime",
                     realtime: {
-                        realtime: requireByokService(config, "realtime", defaultsForByok, defaults.platform_master_keys) as never,
+                        realtime: requireByokService(config, "realtime", defaultsForByok, defaults.platform_master_keys, usePlatformCredentials) as never,
                         llm: llm as never,
                         ...(embeddings ? { embeddings: embeddings as never } : {}),
                     },
@@ -804,37 +806,19 @@ export function AIModelConfigurationV2Editor({
                     mode: "pipeline",
                     pipeline: {
                         llm: llm as never,
-                        tts: requireByokService(config, "tts", defaultsForByok, defaults.platform_master_keys) as never,
-                        stt: requireByokService(config, "stt", defaultsForByok, defaults.platform_master_keys) as never,
+                        tts: requireByokService(config, "tts", defaultsForByok, defaults.platform_master_keys, usePlatformCredentials) as never,
+                        stt: requireByokService(config, "stt", defaultsForByok, defaults.platform_master_keys, usePlatformCredentials) as never,
                         ...(embeddings ? { embeddings: embeddings as never } : {}),
                     },
                 },
         };
 
         await onSave(body);
-        setUsePlatformCredentials(false);
+        setUsePlatformCredentials(usePlatformCredentials);
     };
 
-    const handleTogglePlatformCredentials = async (checked: boolean) => {
+    const handleTogglePlatformCredentials = (checked: boolean) => {
         setUsePlatformCredentials(checked);
-        if (checked) {
-            setMode("dograh");
-        } else {
-            setMode("byok");
-        }
-        const rawConfig = asRecord(configuration);
-        if (rawConfig && rawConfig.mode === "byok" && rawConfig.byok) {
-            try {
-                await onSave({
-                    ...(rawConfig as any),
-                    version: 2,
-                    mode: "byok",
-                    use_platform_credentials: checked,
-                });
-            } catch (err) {
-                console.warn("Could not persist credential toggle:", err);
-            }
-        }
     };
 
     return (
